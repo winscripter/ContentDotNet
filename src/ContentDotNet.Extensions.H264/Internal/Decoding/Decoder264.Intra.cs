@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.Abstractions;
+using ContentDotNet.Extensions.H264.Internal.Abstractions;
 using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Internal.Prediction;
 using ContentDotNet.Extensions.H264.Utilities;
@@ -567,19 +568,23 @@ internal partial class Decoder264
         Matrix16x16 cSL,
         Matrix8x8 predL,
         bool constrainedIntraPredFlag,
+        Span<int> p,
         DerivationContext dc)
     {
         int xO = 0;
         int yO = 0; // yo indeed!
         Util264.Inverse8x8LumaScan(luma8x8BlkIdx, ref xO, ref yO);
 
+        Span<int> availabilityBacking = stackalloc int[8 * 8];
+        Matrix8x8 availability = new(availabilityBacking);
+
         for (int y = -1; y < 8; y++)
-            Core(-1, y);
+            Core(-1, y, cSL, p, availability);
 
         for (int x = 0; x < 16; x++)
-            Core(x, -1);
+            Core(x, -1, cSL, p, availability);
 
-        void Core(int x, int y)
+        void Core(int x, int y, Matrix16x16 cSL, Span<int> p, Matrix8x8 availability)
         {
             int xN = xO + x;
             int yN = yO + y;
@@ -588,15 +593,15 @@ internal partial class Decoder264
             DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool mbAddrNAvailable);
 
             for (int yInner = -1; yInner < 8; yInner++)
-                Internal(-1, yInner, mbAddrN, mbAddrNAvailable);
+                Internal(-1, yInner, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
 
             for (int xInner = 0; xInner < 16; xInner++)
-                Internal(xInner, -1, mbAddrN, mbAddrNAvailable);
+                Internal(xInner, -1, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
         }
 
-        void Internal(int x, int y, int xW, int yW, Matrix8x8 availability, Matrix16x16 cSL, Span<int> p, int mbAddrN, bool available)
+        static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, Matrix8x8 availability, Matrix16x16 cSL, Span<int> p, int mbAddrN, bool available)
         {
-            bool isUnavailable = !available || (_macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag);
+            bool isUnavailable = !available || (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag);
             availability[x, y] = isUnavailable ? 0 : 1;
 
             int xM = 0;
@@ -606,7 +611,7 @@ internal partial class Decoder264
             {
                 Util264.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xM, ref yM);
             
-                if (dc.IsMbaff && !_macroblockUtility.IsFrameMacroblock(mbAddrN))
+                if (dc.IsMbaff && !macroblockUtility.IsFrameMacroblock(mbAddrN))
                 {
                     PSet(p, x, y, cSL[xM + xW, yM + 2 * yW]);
                 }
