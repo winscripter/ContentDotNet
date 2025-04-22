@@ -1,0 +1,18 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Models\Boxes\ThirdParty\Apple\" />
+    <Folder Include="Models\Boxes\ThirdParty\Adobe\" />
+    <Folder Include="Models\Boxes\ThirdParty\Google\" />
+    <Folder Include="Models\Boxes\ThirdParty\Microsoft\" />
+    <Folder Include="Models\Boxes\ThirdParty\Netflix\" />
+    <Folder Include="Models\Boxes\ThirdParty\Sony\" />
+  </ItemGroup>
+
+</Project>
