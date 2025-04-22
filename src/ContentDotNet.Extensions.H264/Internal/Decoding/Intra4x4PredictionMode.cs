@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264.Internal.Prediction;
+﻿namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
 internal enum Intra4x4PredictionMode : byte
 {
