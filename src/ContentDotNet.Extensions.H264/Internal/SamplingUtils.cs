@@ -4,7 +4,7 @@ internal static class SamplingUtils
 {
     private static int PGet(Span<int> p, int x, int y)
     {
-        return p[x == -1 ? y + 1 : x + 17];
+        return p[x == -1 ? y + 1 : x + 5];
     }
 
     public static bool AnyMarkedAvailable(Span<int> availability, int xStart, int yStart, int xEnd, int yEnd)
