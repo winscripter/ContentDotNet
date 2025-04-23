@@ -159,4 +159,10 @@ internal static class Util264
              : sliceGroupMapType == 5 ? sliceGroupChangeDirectionFlag ? RefinedSliceGroupMapType.WipeRight : RefinedSliceGroupMapType.WipeLeft
              : throw new InvalidOperationException();
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Clip3(int a, int b, int c) => c < a ? a : c > b ? b : c;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Clip1Y(int e, int bitDepthY) => Clip3(0, 1 << bitDepthY, e);
 }

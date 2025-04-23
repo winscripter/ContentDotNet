@@ -909,4 +909,162 @@ internal partial class Decoder264
             PSet(pB, -1, 7, (PGet(p, -1, 6) + 3 * PGet(p, -1, 7) + 2) >> 2);
         }
     }
+
+    public void Intra16x16SamplePredict(
+        int luma8x8BlkIdx,
+        Matrix16x16 cSL,
+        Matrix16x16 predL,
+        bool constrainedIntraPredFlag,
+        int intra16x16PredMode,
+        Span<int> p,
+        DerivationContext dc)
+    {
+        Span<int> availability = stackalloc int[16];
+
+        for (int y = -1; y < 16; y++) Core(-1, y, dc, p, availability, cSL, constrainedIntraPredFlag, _macroblockUtility);
+        for (int x = 0; x < 16; x++)  Core(x, -1, dc, p, availability, cSL, constrainedIntraPredFlag, _macroblockUtility);
+
+        if (intra16x16PredMode == 0)
+        {
+            // Vertical
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 16))
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        predL[x, y] = PGet(p, x, -1);
+                    }
+                }
+            }
+        }
+        else if (intra16x16PredMode == 1)
+        {
+            // Horizontal
+            if (SamplingUtils.YAllMarkedAvailable(availability, 0, 16))
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        predL[x, y] = PGet(p, -1, y);
+                    }
+                }
+            }
+        }
+        else if (intra16x16PredMode == 2)
+        {
+            // DC
+            if (SamplingUtils.AllMarkedAvailable(availability, 0, 15, 0, 15))
+            {
+                int xc = 0;
+                int yc = 0;
+
+                for (int i = 0; i < 16; i++) xc += PGet(p, i, -1);
+                for (int i = 0; i < 16; i++) yc += PGet(p, -1, i);
+
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        predL[x, y] = (xc + yc + 16) >> 5;
+                    }
+                }
+            }
+            else if (SamplingUtils.XAllMarkedNotAvailable(availability, 0, 15) &&
+                     SamplingUtils.YAllMarkedAvailable(availability, 0, 15))
+            {
+                int yc = 0;
+                for (int i = 0; i < 16; i++) yc += PGet(p, -1, i);
+
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        predL[x, y] = (yc + 8) >> 4;
+                    }
+                }
+            }
+            else if (SamplingUtils.YAllMarkedNotAvailable(availability, 0, 15) &&
+                     SamplingUtils.XAllMarkedAvailable(availability, 0, 15))
+            {
+                int xc = 0;
+                for (int i = 0; i < 16; i++) xc += PGet(p, i, -1);
+
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        predL[x, y] = (xc + 8) >> 4;
+                    }
+                }
+            }
+            else
+            {
+                for (int x = 0; x < 16; x++)
+                {
+                    for (int y = 0; y < 16; y++)
+                    {
+                        predL[x, y] = 1 << (dc.BitDepthY - 1);
+                    }
+                }
+            }
+        }
+        else if (intra16x16PredMode == 3)
+        {
+            // Plane
+
+            int h = 0;
+            int v = 0;
+
+            for (int i = 0; i < 8; i++) h += (i + 1) * (PGet(p, 8 + i, -1) - PGet(p, 6 - i, -1));
+            for (int i = 0; i < 8; i++) v += (i + 1) * (PGet(p, -1, 8 + i) - PGet(p, -1, 6 - i));
+
+            int a = 16 * (PGet(p, -1, 15) + PGet(p, 15, -1));
+            int b = (5 * h + 32) >> 6;
+            int c = (5 * v + 32) >> 6;
+
+            for (int x = 0; x < 16; x++)
+            {
+                for (int y = 0; y < 16; y++)
+                {
+                    predL[x, y] = Util264.Clip1Y((a + b * (x - 7) + c * (y - 7) + 16) >> 5, dc.BitDepthY);
+                }
+            }
+        }
+
+        static void Core(int x, int y, DerivationContext dc, Span<int> p, Span<int> availability, Matrix16x16 cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
+        {
+            int mbAddrN = 0;
+            DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
+
+            for (int yInner = -1; yInner < 16; yInner++) Internal(-1, yInner, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
+            for (int xInner = 0; xInner < 16; xInner++)  Internal(xInner, -1, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
+
+            static void Internal(int x, int y, int xW, int yW, Span<int> p, Matrix16x16 cSL, bool mbAddrValid, IMacroblockUtility macroblockUtility, int mbAddrN, DerivationContext dc, bool constrainedIntraPredFlag, Span<int> availability)
+            {
+                bool isUnavailable = !mbAddrValid ||
+                                     (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag) ||
+                                     (macroblockUtility.IsMacroblockOfTypeSi(mbAddrN) && constrainedIntraPredFlag);
+
+                if (isUnavailable)
+                {
+                    PSet(availability, x, y, 0);
+                }
+                else
+                {
+                    PSet(availability, x, y, 1);
+
+                    int xM = 0;
+                    int yM = 0;
+                    Util264.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xM, ref yM);
+
+                    if (dc.IsMbaff && !macroblockUtility.IsFrameMacroblock(mbAddrN))
+                        PSet(p, x, y, cSL[xM + xW, yM + 2 * yW]);
+                    else
+                        PSet(p, x, y, cSL[xM + xW, yM + yW]);
+                }
+            }
+        }
+    }
 }
