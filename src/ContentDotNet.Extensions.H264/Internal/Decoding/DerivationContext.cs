@@ -12,5 +12,7 @@ internal struct DerivationContext
     public int CurrMbAddr;
     public int MbType;
     public int SubMbType;
+    public int PictureWidthInSamplesL;
     public bool MbAddrXFrameFlag;
+    public int BitDepthY;
 }

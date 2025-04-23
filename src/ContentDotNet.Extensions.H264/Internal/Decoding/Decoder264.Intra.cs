@@ -1,7 +1,6 @@
 ﻿using ContentDotNet.Abstractions;
 using ContentDotNet.Extensions.H264.Internal.Abstractions;
 using ContentDotNet.Extensions.H264.Internal.Macroblocks;
-using ContentDotNet.Extensions.H264.Internal.Prediction;
 using ContentDotNet.Extensions.H264.Utilities;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
@@ -17,7 +16,7 @@ internal partial class Decoder264
         Span<int> remIntra4x4PredMode,
         Span<bool> prevIntra4x4PredModeFlag)
     {
-        InterPrediction.Derive4x4LumaBlocks(luma4x4BlkIdx, dc, out int mbAddrA, out bool mbAddrAAvailable, out int luma4x4BlkIdxA, out _, out int mbAddrB, out bool mbAddrBAvailable, out int luma4x4BlkIdxB, out _);
+        Derive4x4LumaBlocks(luma4x4BlkIdx, dc, out int mbAddrA, out bool mbAddrAAvailable, out int luma4x4BlkIdxA, out _, out int mbAddrB, out bool mbAddrBAvailable, out int luma4x4BlkIdxB, out _);
 
         bool dcPredModePredictedFlag = !mbAddrAAvailable || !mbAddrBAvailable
                                        || mbAddrAAvailable && constrainedIntraPredFlag
@@ -161,12 +160,12 @@ internal partial class Decoder264
 
     private static void PSet(Span<int> p, int x, int y, int value)
     {
-        p[x == -1 ? y + 1 : x + 17] = value;
+        p[x == -1 ? y + 1 : x + 5] = value;
     }
 
     private static int PGet(Span<int> p, int x, int y)
     {
-        return p[x == -1 ? y + 1 : x + 17];
+        return p[x == -1 ? y + 1 : x + 5];
     }
 
     public static void Intra4x4SamplePredict(
@@ -201,7 +200,7 @@ internal partial class Decoder264
             int xN = xO + x;
             int yN = yO + y;
 
-            InterPrediction.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
+            DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
             Util264.Inverse4x4LumaScan(mbAddrN, ref xW, ref yW);
 
             if (isAvailable)
@@ -506,7 +505,7 @@ internal partial class Decoder264
         Span<bool> prevIntra8x8PredModeFlag,
         int luma8x8BlkIdx)
     {
-        InterPrediction.Derive8x8LumaBlocks(
+        Derive8x8LumaBlocks(
             dc,
             luma8x8BlkIdx,
             out int mbAddrA, out bool mbAddrAAvailable, out int luma8x8BlkIdxA, out bool luma8x8BlkIdxAAvailable,
@@ -568,6 +567,7 @@ internal partial class Decoder264
         Matrix16x16 cSL,
         Matrix8x8 predL,
         bool constrainedIntraPredFlag,
+        Span<int> intra8x8PredMode,
         Span<int> p,
         DerivationContext dc)
     {
@@ -575,8 +575,7 @@ internal partial class Decoder264
         int yO = 0; // yo indeed!
         Util264.Inverse8x8LumaScan(luma8x8BlkIdx, ref xO, ref yO);
 
-        Span<int> availabilityBacking = stackalloc int[8 * 8];
-        Matrix8x8 availability = new(availabilityBacking);
+        Span<int> availability = stackalloc int[8 * 8];
 
         for (int y = -1; y < 8; y++)
             Core(-1, y, cSL, p, availability);
@@ -584,7 +583,239 @@ internal partial class Decoder264
         for (int x = 0; x < 16; x++)
             Core(x, -1, cSL, p, availability);
 
-        void Core(int x, int y, Matrix16x16 cSL, Span<int> p, Matrix8x8 availability)
+        Span<int> pB = stackalloc int[8 * 8];
+
+        for (int y = -1; y < 8; y++)
+            Intra8x8SamplePredictionReferenceSampleFilter(-1, y, p, availability, pB);
+        for (int x = 0; x < 16; x++)
+            Intra8x8SamplePredictionReferenceSampleFilter(x, -1, p, availability, pB);
+
+        int mode = intra8x8PredMode[luma8x8BlkIdx];
+        if (mode == 0)
+        {
+            // Vertical
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 8))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        predL[x, y] = PGet(pB, x, -1);
+                    }
+                }
+            }
+        }
+        else if (mode == 1)
+        {
+            // Horizontal
+            if (SamplingUtils.YAllMarkedAvailable(availability, 0, 8))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        predL[x, y] = PGet(pB, -1, y);
+                    }
+                }
+            }
+        }
+        else if (mode == 2)
+        {
+            // DC
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 8) &&
+                SamplingUtils.YAllMarkedAvailable(availability, 0, 8))
+            {
+                int xSum = 0;
+                int ySum = 0;
+                for (int i = 0; i < 8; i++)
+                    xSum += PGet(pB, i, -1);
+                for (int i = 0; i < 8; i++)
+                    ySum += PGet(pB, -1, i);
+
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        predL[x, y] = (xSum + ySum + 8) >> 4;
+                    }
+                }
+            }
+            else if (SamplingUtils.XAnyMarkedNotAvailable(availability, 0, 8) &&
+                     SamplingUtils.YAllMarkedAvailable(availability, 0, 8))
+            {
+                int sum = 0;
+                for (int i = 0; i < 8; i++)
+                    sum += PGet(pB, -1, i);
+
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        predL[x, y] = (sum + 4) >> 3;
+                    }
+                }
+            }
+            else if (SamplingUtils.YAnyMarkedNotAvailable(availability, 0, 8) &&
+                     SamplingUtils.XAllMarkedAvailable(availability, 0, 8))
+            {
+                int sum = 0;
+                for (int i = 0; i < 8; i++)
+                    sum += PGet(pB, i, -1);
+
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        predL[x, y] = (sum + 4) >> 3;
+                    }
+                }
+            }
+            else
+            {
+                int sum = 1 << (dc.BitDepthY - 1);
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        predL[x, y] = sum;
+                    }
+                }
+            }
+        }
+        else if (mode == 3)
+        {
+            // Diagonal Down Left
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 16))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (x == 7 && y == 7)
+                        {
+                            predL[x, y] = (PGet(pB, 14, -1) + 3 * PGet(pB, 15, -1) + 2) >> 2;
+                        }
+                        else
+                        {
+                            predL[x, y] = (PGet(pB, x + y, -1) + 2 * PGet(pB, x + y + 1, -1) + PGet(pB, x + y + 2, -1) + 2) >> 2;
+                        }
+                    }
+                }
+            }
+        }
+        else if (mode == 4)
+        {
+            // Diagonal Down Right
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 8) &&
+                SamplingUtils.YAllMarkedAvailable(availability, -1, 8))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (x > y)
+                        {
+                            predL[x, y] = (PGet(pB, x - y - 2, -1) + 2 * PGet(pB, x - y - 1, -1) + PGet(pB, x - y, -1) + 2 ) >> 2;
+                        }
+                        else if (x < y)
+                        {
+                            predL[x, y] = (PGet(pB,  -1, y - x - 2) + 2 * PGet(pB,  -1, y - x - 1) + PGet(pB,  -1, y - x) + 2 ) >> 2;
+                        }
+                        else // x == y
+                        {
+                            predL[x, y] = (PGet(pB, 0, -1) + 2 * PGet(pB,  -1, -1) + PGet(pB,  -1, 0) + 2 ) >> 2;
+                        }
+                    }
+                }
+            }
+        }
+        else if (mode == 5)
+        {
+            // Vertical Right
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 8) &&
+                SamplingUtils.YAllMarkedAvailable(availability, -1, 8))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        int zVR = 2 * x - y;
+                        if (zVR is 0 or 2 or 4 or 6 or 8 or 10 or 12 or 14)
+                            predL[x, y] = (PGet(pB, x - (y >> 1) - 1, -1) + PGet(pB, x - (y >> 1), -1) + 1) >> 1;
+                        else if (zVR is 1 or 3 or 5 or 7 or 9 or 11 or 13)
+                            predL[x, y] = (PGet(pB, x - (y >> 1) - 2, -1) + 2 * PGet(pB, x - (y >> 1) - 1, -1) + PGet(pB, x - (y >> 1), -1) + 2) >> 2;
+                        else if (zVR == -1)
+                            predL[x, y] = (PGet(pB, -1, 0) + 2 * PGet(pB, -1, -1) + PGet(pB, 0, -1) + 2) >> 2;
+                        else
+                            predL[x, y] = (PGet(pB, -1, y - 2 * x - 1) + 2 * PGet(pB, -1, y - 2 * x - 2) + PGet(pB, -1, y - 2 * x - 3) + 2) >> 2;
+                    }
+                }
+            }
+        }
+        else if (mode == 6)
+        {
+            // Horizontal Down
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 8) &&
+                SamplingUtils.YAllMarkedAvailable(availability, -1, 8))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        int zHD = 2 * x - y;
+                        if (zHD is 0 or 2 or 4 or 6 or 8 or 10 or 12 or 14)
+                            predL[x, y] = (PGet(pB, -1, y - (x >> 1) - 1) + PGet(pB, -1, y - (x >> 1)) + 1) >> 1;
+                        else if (zHD is 1 or 3 or 5 or 9 or 11 or 13)
+                            predL[x, y] = (PGet(pB, -1, y - (x >> 1) - 2) + 2 * PGet(pB, -1, y - (x >> 1) - 1) + PGet(pB, -1, y - (x >> 1)) + 2) >> 2;
+                        else if (zHD == -1)
+                            predL[x, y] = (PGet(pB, -1, 0) + 2 * PGet(pB, -1, -1) + PGet(pB, 0, -1) + 2) >> 2;
+                        else
+                            predL[x, y] = (PGet(pB, x - 2 * y - 1, -1) + 2 * PGet(pB, x - 2 * y - 2, -1) + PGet(pB, x - 2 * y - 3, -1) + 2) >> 2;
+                    }
+                }
+            }
+        }
+        else if (mode == 7)
+        {
+            // Vertical Left
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 16))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        if (y is 0 or 2 or 4 or 6)
+                            predL[x, y] = (PGet(pB, x + (y >> 1), -1) + PGet(pB, x + (y >> 1) + 1, -1) + 1) >> 1;
+                        else
+                            predL[x, y] = (PGet(pB, x + (y >> 1), -1) + 2 * PGet(pB, x + (y >> 1) + 1, -1) + PGet(pB, x + (y >> 1) + 2, -1) + 2) >> 2;
+                    }
+                }
+            }
+        }
+        else if (mode == 8)
+        {
+            // Horizontal Up
+            if (SamplingUtils.XAllMarkedAvailable(availability, 0, 8))
+            {
+                for (int x = 0; x < 8; x++)
+                {
+                    for (int y = 0; y < 8; y++)
+                    {
+                        int zHU = x + 2 * y;
+                        if (zHU is 0 or 2 or 4 or 6 or 8 or 10 or 12)
+                            predL[x, y] = (PGet(pB, -1, y + (x >> 1)) + PGet(pB, -1, y + (x >> 1) + 1) + 1) >> 1;
+                        else if (zHU is 1 or 3 or 5 or 7 or 9 or 11)
+                            predL[x, y] = (PGet(pB, -1, y + (x >> 1)) + 2 * PGet(pB, -1, y + (x >> 1) + 1) + PGet(pB, -1, y + (x >> 1) + 2) + 2) >> 2;
+                        else if (zHU == 13)
+                            predL[x, y] = (PGet(pB, -1, 6) + 3 * PGet(pB, -1, 7) + 2 ) >> 2;
+                        else
+                            predL[x, y] = PGet(pB, -1, 7);
+                    }
+                }
+            }
+        }
+
+        void Core(int x, int y, Matrix16x16 cSL, Span<int> p, Span<int> availability)
         {
             int xN = xO + x;
             int yN = yO + y;
@@ -599,10 +830,10 @@ internal partial class Decoder264
                 Internal(xInner, -1, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
         }
 
-        static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, Matrix8x8 availability, Matrix16x16 cSL, Span<int> p, int mbAddrN, bool available)
+        static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, Span<int> availability, Matrix16x16 cSL, Span<int> p, int mbAddrN, bool available)
         {
             bool isUnavailable = !available || (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag);
-            availability[x, y] = isUnavailable ? 0 : 1;
+            PSet(availability, x, y, isUnavailable ? 0 : 1);
 
             int xM = 0;
             int yM = 0;
@@ -620,6 +851,62 @@ internal partial class Decoder264
                     PSet(p, x, y, cSL[yM + xW, yM + yW]);
                 }
             }
+        }
+    }
+
+    private static void Intra8x8SamplePredictionReferenceSampleFilter(int x, int y, Span<int> p, Span<int> availability, Span<int> pB /*p`, e.g. pB<acktick>*/)
+    {
+        if (SamplingUtils.XAllMarkedAvailable(availability, 0, 16))
+        {
+            if (PGet(availability, -1, -1) == 1)
+                PSet(pB, 0, -1, (PGet(p, -1, -1) + 2 * PGet(p, 0, -1) + PGet(p, 1, -1) + 2) >> 2);
+            else
+                PSet(pB, 0, -1, (3 * PGet(p, 0, -1) + PGet(p, 1, -1) + 2) >> 2);
+
+            PSet(pB, x, -1, (PGet(p, x - 1, -1) + 2 * PGet(p, x, -1) + PGet(p, x + 1, -1) + 2) >> 2);
+            PSet(pB, 15, -1, (PGet(p, 14, -1) + 3 * PGet(p, 15, -1) + 2) >> 2);
+        }
+        
+        if (PGet(availability, -1, -1) == 1)
+        {
+            if (PGet(availability, 0, -1) == 0 || PGet(availability, -1, 0) == 0)
+            {
+                if (PGet(availability, 0, -1) == 1)
+                {
+                    PSet(pB, -1, -1, (3 * PGet(p, -1, -1) + PGet(p, 0, -1) + 2) >> 2);
+                }
+                else if (PGet(availability, 0, -1) == 0 && PGet(availability, 0, -1) == 0)
+                {
+                    PSet(pB, -1, -1, (3 * PGet(p, -1, -1) + PGet(p, -1, 0) + 2) >> 2);
+                }
+                else
+                {
+                    PSet(pB, -1, -1, PGet(p, -1, -1));
+                }
+            }
+            else
+            {
+                PSet(pB, -1, -1, (PGet(p, 0, -1) + 2 * PGet(p, -1, -1) + PGet(p, -1, 0) + 2) >> 2);
+            }
+        }
+
+        if (SamplingUtils.YAllMarkedAvailable(availability, 0, 8))
+        {
+            if (PGet(availability, -1, -1) == 1)
+            {
+                PSet(pB, -1, 0, (PGet(p, -1, -1) + 2 * PGet(p, -1, 0) + PGet(p, -1, 1) + 2) >> 2);
+            }
+            else
+            {
+                PSet(pB, -1, 0, (3 * PGet(p, -1, 0) + PGet(p, -1, 1) + 2) >> 2);
+            }
+
+            for (int y2 = 1; y2 < 7; y2++)
+            {
+                PSet(pB, -1, y2, (PGet(p, -1, y2 - 1) + 2 * PGet(p, -1, y2) + PGet(p, -1, y2 + 1) + 2) >> 2);
+            }
+
+            PSet(pB, -1, 7, (PGet(p, -1, 6) + 3 * PGet(p, -1, 7) + 2) >> 2);
         }
     }
 }
