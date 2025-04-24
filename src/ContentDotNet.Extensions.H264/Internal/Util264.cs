@@ -52,7 +52,7 @@ internal static class Util264
     // Rec. ITU-T H.264 (V15) (08/2024), Page 52
     public static void InverseSubMacroblockPartitionScan(int subMbPartIdx, Span<int> subMbType, int mbPartIdx, int mbType, ref int x, ref int y)
     {
-        if (mbType is MacroblockKinds.P_8x8 or MacroblockKinds.P_8x8ref0 or MacroblockKinds.B_8x8)
+        if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
         {
             x = InverseRasterScan(subMbPartIdx, SubMbPartWidth(subMbType[mbPartIdx]), SubMbPartHeight(subMbType[mbPartIdx]), 8, 0);
             y = InverseRasterScan(subMbPartIdx, SubMbPartWidth(subMbType[mbPartIdx]), SubMbPartHeight(subMbType[mbPartIdx]), 8, 1);

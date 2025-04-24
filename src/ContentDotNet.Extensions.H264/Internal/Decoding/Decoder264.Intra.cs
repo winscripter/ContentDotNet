@@ -22,13 +22,13 @@ internal partial class Decoder264
                                        || mbAddrAAvailable && constrainedIntraPredFlag
                                        || mbAddrBAvailable && constrainedIntraPredFlag;
         Intra4x4PredictionMode intraMxMPredModeA;
-        if (dcPredModePredictedFlag || mbAddrA != MacroblockKinds.Intra_4x4 && mbAddrA != MacroblockKinds.Intra_8x8)
+        if (dcPredModePredictedFlag || mbAddrA != SliceTypes.Intra_4x4 && mbAddrA != SliceTypes.Intra_8x8)
         {
             intraMxMPredModeA = Intra4x4PredictionMode.Dc;
         }
         else
         {
-            if (mbAddrA == MacroblockKinds.Intra_4x4)
+            if (mbAddrA == SliceTypes.Intra_4x4)
             {
                 intraMxMPredModeA = (Intra4x4PredictionMode)intra4x4PredMode[luma4x4BlkIdxA];
             }
@@ -39,13 +39,13 @@ internal partial class Decoder264
         }
 
         Intra4x4PredictionMode intraMxMPredModeB;
-        if (dcPredModePredictedFlag || mbAddrB != MacroblockKinds.Intra_4x4 && mbAddrB != MacroblockKinds.Intra_8x8)
+        if (dcPredModePredictedFlag || mbAddrB != SliceTypes.Intra_4x4 && mbAddrB != SliceTypes.Intra_8x8)
         {
             intraMxMPredModeB = Intra4x4PredictionMode.Dc;
         }
         else
         {
-            if (mbAddrB == MacroblockKinds.Intra_4x4)
+            if (mbAddrB == SliceTypes.Intra_4x4)
             {
                 intraMxMPredModeB = (Intra4x4PredictionMode)intra4x4PredMode[luma4x4BlkIdxB];
             }

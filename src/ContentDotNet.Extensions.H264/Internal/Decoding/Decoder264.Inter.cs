@@ -98,7 +98,7 @@ internal partial class Decoder264
 
     public static void DeriveMacroblockAndSubMacroblockPartitionIndices(int xP, int yP, int mbType, Span<int> subMbType, ref int mbPartIdx, ref int subMbPartIdx)
     {
-        if (mbType == MacroblockKinds.I)
+        if (mbType == SliceTypes.I)
         {
             mbPartIdx = 0;
         }
@@ -107,7 +107,7 @@ internal partial class Decoder264
             mbPartIdx = 16 / Util264.MbPartWidth(mbType) * (yP / Util264.MbPartHeight(mbType)) + xP / Util264.MbPartWidth(mbType);
         }
 
-        if (mbType is MacroblockKinds.P_8x8 or MacroblockKinds.P_8x8ref0 or MacroblockKinds.B_8x8 or MacroblockKinds.B_Skip or MacroblockKinds.B_Direct_16x16)
+        if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8 or SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
         {
             subMbPartIdx = 0;
         }
@@ -138,17 +138,17 @@ internal partial class Decoder264
 
         int xS = 0;
         int yS = 0;
-        if (mbType is MacroblockKinds.P_8x8 or MacroblockKinds.P_8x8ref0 or MacroblockKinds.B_8x8)
+        if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
             Util264.InverseSubMacroblockPartitionScan(subMbPartIdx, subMbType, mbPartIdx, mbType, ref xS, ref yS);
 
         int predPartWidth = 0;
-        if (mbType is MacroblockKinds.P_Skip or MacroblockKinds.B_Skip or MacroblockKinds.B_Direct_16x16)
+        if (mbType is SliceTypes.P_Skip or SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
         {
             predPartWidth = 16;
         }
-        else if (mbType is MacroblockKinds.B_8x8)
+        else if (mbType is SliceTypes.B_8x8)
         {
-            if (currSubMbType == MacroblockKinds.B_Direct_8x8)
+            if (currSubMbType == SliceTypes.B_Direct_8x8)
             {
                 predPartWidth = 16;
             }
@@ -157,7 +157,7 @@ internal partial class Decoder264
                 predPartWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx]);
             }
         }
-        else if (mbType is MacroblockKinds.P_8x8 or MacroblockKinds.P_8x8ref0)
+        else if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0)
         {
             predPartWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx]);
         }
@@ -186,10 +186,10 @@ internal partial class Decoder264
         {
             int mbTypeA = mbTypeArray[mbAddrN];
             int subMbTypeA = 0;
-            if (mbTypeA is MacroblockKinds.P_8x8 or MacroblockKinds.P_8x8ref0 or MacroblockKinds.B_8x8)
+            if (mbTypeA is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
                 subMbTypeA = subMbType[mbAddrN];
 
-            if (mbTypeA is MacroblockKinds.P_8x8 or MacroblockKinds.P_8x8ref0 or MacroblockKinds.B_8x8)
+            if (mbTypeA is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
             {
                 DeriveMacroblockAndSubMacroblockPartitionIndices(xW, yW, mbType, subMbType, ref mbPartIdxN, ref subMbPartIdxN);
             }
