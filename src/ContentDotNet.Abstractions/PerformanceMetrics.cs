@@ -12,6 +12,29 @@ public sealed class PerformanceMetrics : INotifyPropertyChanged
     /// </summary>
     public event PropertyChangedEventHandler? PropertyChanged;
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="PerformanceMetrics"/> class.
+    /// </summary>
+    /// <param name="isMultithreaded">Is multithreading enabled?</param>
+    /// <param name="threadCount">Number of threads</param>
+    /// <param name="enableHardwareAcceleration">Is hardware acceleration enabled?</param>
+    /// <param name="hardwareAcceleratorName">Name of the hardware accelerator</param>
+    public PerformanceMetrics(bool isMultithreaded, int threadCount, bool enableHardwareAcceleration, string? hardwareAcceleratorName)
+    {
+        _isMultithreaded = isMultithreaded;
+        _threadCount = threadCount;
+        _enableHardwareAcceleration = enableHardwareAcceleration;
+        _hardwareAcceleratorName = hardwareAcceleratorName;
+    }
+
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="PerformanceMetrics"/> class with default values,
+    ///   which include disabling multithreading and not using any accelerators.
+    /// </summary>
+    public PerformanceMetrics() : this(false, 1, false, null)
+    {
+    }
+
     private bool _isMultithreaded;
 
     /// <summary>
