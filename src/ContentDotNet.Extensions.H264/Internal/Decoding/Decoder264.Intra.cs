@@ -1385,5 +1385,6 @@ internal partial class Decoder264
         _ = p;
         _ = chromaArrayType;
 
+        NYI.ImplementLater();
     }
 }
