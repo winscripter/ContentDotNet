@@ -63,6 +63,13 @@ public sealed class PerformanceMetrics : INotifyPropertyChanged, IEquatable<Perf
     /// <summary>
     ///   Number of threads to use.
     /// </summary>
+    /// <remarks>
+    ///   If multithreading is disabled (e.g. <see cref="IsMultithreaded"/> is <see langword="false"/>),
+    ///   this property will return 1; use <see cref="ActualThreadCount"/> to get actual number of threads
+    ///   independent of whether or not is multithreading enabled. In addition, trying to set this property
+    ///   while <see cref="IsMultithreaded"/> is <see langword="false"/> will throw an
+    ///   <see cref="InvalidOperationException"/> with text <c>Multithreading is disabled</c>.
+    /// </remarks>
     public int ThreadCount
     {
         get
@@ -86,7 +93,8 @@ public sealed class PerformanceMetrics : INotifyPropertyChanged, IEquatable<Perf
     }
 
     /// <summary>
-    ///   Actual number of threads.
+    ///   Actual number of threads, independent of the value of the
+    ///   <see cref="IsMultithreaded"/> property.
     /// </summary>
     public int ActualThreadCount
     {
