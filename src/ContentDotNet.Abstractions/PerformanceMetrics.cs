@@ -1,10 +1,12 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 
 namespace ContentDotNet.Abstractions;
 
 /// <summary>
 /// Performance Metrics control performance options for the encoder/decoder.
 /// </summary>
+[DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
 public sealed class PerformanceMetrics : INotifyPropertyChanged, IEquatable<PerformanceMetrics?>
 {
     /// <summary>
@@ -195,17 +197,20 @@ public sealed class PerformanceMetrics : INotifyPropertyChanged, IEquatable<Perf
     {
         var hash = new HashCode();
         hash.Add(_isMultithreaded);
-        hash.Add(IsMultithreaded);
         hash.Add(_threadCount);
-        hash.Add(ThreadCount);
-        hash.Add(ActualThreadCount);
         hash.Add(_enableHardwareAcceleration);
-        hash.Add(EnableHardwareAcceleration);
         hash.Add(_hardwareAcceleratorName);
-        hash.Add(HardwareAcceleratorName);
         return hash.ToHashCode();
     }
 
+    /// <summary>
+    ///   Formats performance metrics as a string.
+    /// </summary>
+    /// <returns>Performance metrics.</returns>
+    public override string ToString()
+    {
+        return this.HardwareAcceleratorName is null ? "Does not use accelerators" : $"Uses accelerator {this.HardwareAcceleratorName}";
+    }
 
     /// <summary>
     ///   Determines whether two <see cref="PerformanceMetrics"/> instances are equal.
@@ -231,5 +236,15 @@ public sealed class PerformanceMetrics : INotifyPropertyChanged, IEquatable<Perf
     public static bool operator !=(PerformanceMetrics? left, PerformanceMetrics? right)
     {
         return !(left == right);
+    }
+
+    /// <summary>
+    ///   Internal method for debugging purposes, which is used to present text to the
+    ///   debugger's Locals/Autos window.
+    /// </summary>
+    /// <returns>Text that's displayed in the Locals or Autos window when debugging.</returns>
+    private string GetDebuggerDisplay()
+    {
+        return ToString();
     }
 }
