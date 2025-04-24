@@ -171,6 +171,36 @@ internal partial class Decoder264
     public static void Intra4x4SamplePredict(
         DerivationContext dc,
         int luma4x4BlkIdx,
+        bool available,
+        int mbAddrN,
+        bool constrainedInterPredFlag,
+        Span<int> p,
+        Matrix16x16 cSL,
+        Matrix4x4 predL,
+        Span<int> availableForIntraPred,
+        Span<int> intra4x4PredMode,
+        IMacroblockUtility util) =>
+        Intra4x4SamplePredict(
+            dc,
+            luma4x4BlkIdx,
+            available,
+            constrainedInterPredFlag,
+            dc.IsMbaff && util.IsFieldMacroblock(mbAddrN),
+            mbAddrN,
+            dc.IsMbaff,
+            dc.PictureWidthInSamplesL,
+            dc.IsMbaffFieldMacroblock,
+            dc.IsMbaffFieldMacroblock,
+            dc.BitDepthY,
+            p,
+            cSL,
+            predL,
+            availableForIntraPred,
+            intra4x4PredMode);
+
+    public static void Intra4x4SamplePredict(
+        DerivationContext dc,
+        int luma4x4BlkIdx,
         bool mbAddrNAvailable,
         bool constrainedInterPredFlag,
         bool mbaffFrameAndMbIsField,
@@ -1066,5 +1096,293 @@ internal partial class Decoder264
                 }
             }
         }
+    }
+
+    public void IntraChromaSamplePredict(
+        Matrix16x16 cSC,
+        Matrix16x16 predC,
+        MacroblockSizeChroma sizes,
+        Span<int> p,
+        DerivationContext dc,
+        bool constrainedIntraPredFlag,
+        int intraChromaPredMode,
+        int chromaArrayType)
+    {
+        if (chromaArrayType == 3u)
+        {
+            IntraChromaSamplePredictChromaArrayType3(cSC, predC, _macroblockUtility, dc, p, chromaArrayType);
+            return;
+        }
+
+        Span<int> availability = stackalloc int[16 * 16];
+        availability.Fill(1);
+
+        bool isSI = _macroblockUtility.IsMacroblockOfTypeSi(dc.CurrMbAddr);
+
+        for (int y = -1; y < sizes.Height; y++)
+        {
+            Core(-1, y, availability, p, cSC, dc, sizes, _macroblockUtility, constrainedIntraPredFlag, isSI);
+        }
+
+        for (int x = 0; x < sizes.Width; x++)
+        {
+            Core(x, -1, availability, p, cSC, dc, sizes, _macroblockUtility, constrainedIntraPredFlag, isSI);
+        }
+
+        if (intraChromaPredMode == 0)
+        {
+            // DC
+            for (int chroma4x4BlkIdx = 0; chroma4x4BlkIdx < (1 << (chromaArrayType + 1)) - 1; chroma4x4BlkIdx++)
+            {
+                Util264.Inverse4x4ChromaScan(chroma4x4BlkIdx, out int xO, out int yO);
+                if ((xO == 0 && yO == 0) || (xO > 0 && yO > 0))
+                {
+                    if (SamplingUtils.AllMarkedAvailable(availability, xO, xO + 3, yO, yO + 3) &&
+                        SamplingUtils.AllMarkedAvailable(availability, xO, xO + 3, yO, yO + 3))
+                    {
+                        int sumXCb = 0;
+                        int sumYCb = 0;
+                        for (int tempX = 0; tempX < 4; tempX++) sumXCb += PGet(p, tempX + xO, -1);
+                        for (int tempY = 0; tempY < 4; tempY++) sumYCb += PGet(p, -1, tempY + yO);
+
+                        int sumXCr = 0;
+                        int sumYCr = 0;
+                        for (int tempX = 0; tempX < 4; tempX++) sumXCr += PGet(p, tempX + xO, -1);
+                        for (int tempY = 0; tempY < 4; tempY++) sumYCr += PGet(p, -1, tempY + yO);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sumXCb + sumYCb + 4) >> 3;
+                            }
+                        }
+                    }
+                    else if (SamplingUtils.XAnyMarkedNotAvailable(availability, xO, xO + 3) &&
+                             SamplingUtils.YAllMarkedAvailable(availability, yO, yO + 3))
+                    {
+                        int sum = 0;
+                        for (int y = 0; y < 4; y++) sum += PGet(p, -1, y + yO);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sum + 2) >> 2;
+                            }
+                        }
+                    }
+                    else if (SamplingUtils.YAnyMarkedNotAvailable(availability, xO, xO + 3) &&
+                             SamplingUtils.XAllMarkedAvailable(availability, yO, yO + 3))
+                    {
+                        int sum = 0;
+                        for (int x = 0; x < 4; x++) sum += PGet(p, x + xO, -1);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sum + 2) >> 2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = 1 << (dc.BitDepthC - 1);
+                            }
+                        }
+                    }
+                }
+                else if (xO > 0 && yO == 0)
+                {
+                    if (SamplingUtils.XAllMarkedAvailable(availability, xO, xO + 3))
+                    {
+                        int sum = 0;
+                        for (int x = 0; x < 4; x++) sum += PGet(p, x + xO, -1);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sum + 2) >> 2;
+                            }
+                        }
+                    }
+                    else if (SamplingUtils.YAllMarkedAvailable(availability, yO, yO + 3))
+                    {
+                        int sum = 0;
+                        for (int y = 0; y < 4; y++) sum += PGet(p, -1, y + yO);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sum + 2) >> 2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = 1 << (dc.BitDepthC - 1);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    if (SamplingUtils.YAllMarkedAvailable(availability, yO, yO + 3))
+                    {
+                        int sum = 0;
+
+                        for (int y = 0; y < 4; y++) sum += PGet(p, -1, y + yO);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sum + 2) >> 2;
+                            }
+                        }
+                    }
+                    else if (SamplingUtils.XAllMarkedAvailable(availability, xO, yO + 3))
+                    {
+                        int sum = 0;
+
+                        for (int x = 0; x < 4; x++) sum += PGet(p, x + xO, -1);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = (sum + 2) >> 2;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                predC[x + xO, y + yO] = 1 << (dc.BitDepthC - 1);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        else if (intraChromaPredMode == 1)
+        {
+            // Horizontal
+
+            if (SamplingUtils.YAllMarkedAvailable(p, 0, sizes.Height))
+            {
+                for (int x = 0; x < sizes.Width; x++)
+                {
+                    for (int y = 0; y < sizes.Height; y++)
+                    {
+                        predC[x, y] = PGet(p, -1, y);
+                    }
+                }
+            }
+        }
+        else if (intraChromaPredMode == 2)
+        {
+            // Vertical
+
+            if (SamplingUtils.XAllMarkedAvailable(p, 0, sizes.Width))
+            {
+                for (int x = 0; x < sizes.Width; x++)
+                {
+                    for (int y = 0; y < sizes.Height; y++)
+                    {
+                        predC[x, y] = PGet(p, x, -1);
+                    }
+                }
+            }
+        }
+        else if (intraChromaPredMode == 3)
+        {
+            // Plane
+
+            if (SamplingUtils.AllMarkedAvailable(availability, 0, -1, sizes.Width, sizes.Height))
+            {
+                int xCF = chromaArrayType == 3 ? 4 : 0;
+                int yCF = chromaArrayType != 1 ? 4 : 0;
+
+                int h = 0;
+                int v = 0;
+
+                for (int x = 0; x < 3 + xCF; x++) h += (x + 1) * (PGet(p, 4 + xCF + x, -1) - PGet(p, 2 + xCF - x, -1));
+                for (int y = 0; y < 3 + yCF; y++) v += (y + 1) * (PGet(p, -1, 4 + yCF + y) - PGet(p, -1, 2 + yCF - y));
+
+                int a = 16 * (PGet(p, -1, sizes.Height - 1) + PGet(p, sizes.Width - 1, -1));
+                int b = ((34 - 29 * Int32Boolean.I32(chromaArrayType == 3)) * h + 32) >> 6;
+                int c = ((34 - 29 * Int32Boolean.I32(chromaArrayType != 1)) * v + 32) >> 6;
+
+                for (int x = 0; x < sizes.Width; x++)
+                {
+                    for (int y = 0; y < sizes.Height; y++)
+                    {
+                        predC[x, y] = Util264.Clip1C((a + b * (x - 3 - xCF) + c * (y - 3 - yCF) + 16) >> 5, dc.BitDepthC);
+                    }
+                }
+            }
+        }
+
+        static void Core(int x, int y, Span<int> availability, Span<int> p, Matrix16x16 cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
+        {
+            int mbAddrN = 0;
+            DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
+
+            bool isUnavailable = !valid ||
+                                 (util.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag) ||
+                                 (!isSiMb && constrainedIntraPredFlag && util.IsMacroblockOfTypeSi(mbAddrN));
+
+            if (isUnavailable)
+            {
+                PSet(availability, x, y, 0);
+            }
+            else
+            {
+                PSet(availability, x, y, 1);
+
+                int xL = 0;
+                int yL = 0;
+                Util264.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xL, ref yL);
+
+                int xM = (xL >> 4) * sizes.Width;
+                int yM = ((yL >> 4) * sizes.Height) + (yL % 2);
+
+                if (dc.IsMbaff && dc.IsMbaffFieldMacroblock)
+                    PSet(p, x, y, cSC[xM + xW, yM + 2 * yW]);
+                else
+                    PSet(p, x, y, cSC[xM + xW, yM + yW]);
+            }
+        }
+    }
+
+    public static void IntraChromaSamplePredictChromaArrayType3(
+        Matrix16x16 cSC,
+        Matrix16x16 predC,
+        IMacroblockUtility util,
+        DerivationContext dc,
+        Span<int> p,
+        int chromaArrayType)
+    {
+        _ = cSC;
+        _ = predC;
+        _ = util;
+        _ = dc;
+        _ = p;
+        _ = chromaArrayType;
     }
 }

@@ -12,5 +12,6 @@ internal interface IMacroblockUtility
     void GetIntra16x16PredMode(int mbAddr, Span<int> output);
 
     bool IsFrameMacroblock(int mbAddr);
+    bool IsFieldMacroblock(int mbAddr);
     bool IsMacroblockOfTypeSi(int mbAddr);
 }

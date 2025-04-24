@@ -93,7 +93,7 @@ internal static class Util264
     }
 
     // Rec. ITU-T H.264 (V15) (08/2024), Page 56
-    public static void Inverse4x4ChromaScan(int chroma4x4BlkIdx, ref int x, ref int y)
+    public static void Inverse4x4ChromaScan(int chroma4x4BlkIdx, out int x, out int y)
     {
         x = InverseRasterScan(chroma4x4BlkIdx, 4, 4, 8, 0);
         y = InverseRasterScan(chroma4x4BlkIdx, 4, 4, 8, 1);
@@ -165,4 +165,7 @@ internal static class Util264
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Clip1Y(int e, int bitDepthY) => Clip3(0, 1 << bitDepthY, e);
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Clip1C(int e, int bitDepthC) => Clip3(0, 1 << bitDepthC, e);
 }

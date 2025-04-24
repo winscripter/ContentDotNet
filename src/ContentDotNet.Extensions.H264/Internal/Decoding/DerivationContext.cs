@@ -15,4 +15,5 @@ internal struct DerivationContext
     public int PictureWidthInSamplesL;
     public bool MbAddrXFrameFlag;
     public int BitDepthY;
+    public int BitDepthC;
 }
