@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264.Internal.Abstractions;
+﻿namespace ContentDotNet.Extensions.H264.Internal.Macroblocks;
 
 internal interface IMacroblockUtility
 {
