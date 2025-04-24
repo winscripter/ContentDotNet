@@ -294,11 +294,11 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
                     {
                         if (i < 6)
                         {
-                            _ = ParseScalingList(reader, 16);
+                            _ = ScalingMatrices.ParseScalingList(reader, 16);
                         }
                         else
                         {
-                            _ = ParseScalingList(reader, 64);
+                            _ = ScalingMatrices.ParseScalingList(reader, 64);
                         }
                     }
                 }
@@ -390,168 +390,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         );
     }
 
-    private static ArrayReferrer ParseScalingList(BitStreamReader reader, int size)
-    {
-        int elementsCount = 0;
-        int lastScale = 8;
-        int nextScale = 8;
-        for (int j = 0; j < size; j++)
-        {
-            if (nextScale != 0)
-            {
-                int deltaScale = reader.ReadSE();
-                nextScale = (lastScale + deltaScale + 256) % 256;
-                elementsCount++;
-            }
-            lastScale = nextScale == 0 ? lastScale : nextScale;
-        }
-        return new ArrayReferrer(elementsCount);
-    }
-
-    /// <summary>
-    /// Writes just the scaling list from the SPS. If you want to write the entire SPS,
-    /// including the scaling list, use the <see cref="Write(BitStreamWriter, ReadOnlySpan{int})"/>
-    /// method instead.
-    /// </summary>
-    /// <param name="writer">Bitstream to write the scaling list to.</param>
-    /// <param name="index">Index of the scaling list</param>
-    /// <param name="scalingList">Scaling list elements.</param>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static void WriteScalingList(BitStreamWriter writer, int index, ReadOnlySpan<int> scalingList)
-    {
-        int scalingMatrixSize = ScalingMatrices.GetListLength(index);
-        if (scalingMatrixSize is not 16 or 64)
-            throw new InvalidOperationException("Scaling matrix of the SPS must have either 16 or 64 elements");
-        if (scalingList.Length < scalingMatrixSize)
-            throw new InvalidOperationException("Provided scaling matrix must have at minimum of " + scalingMatrixSize + " elements");
-
-        int elementsCount = 0;
-        int lastScale = 8;
-        int nextScale = 8;
-        for (int j = 0; j < scalingMatrixSize; j++)
-        {
-            if (nextScale != 0)
-            {
-                int deltaScale = scalingList[elementsCount++];
-                writer.WriteSE(deltaScale);
-                nextScale = (lastScale + deltaScale + 256) % 256;
-                elementsCount++;
-            }
-            lastScale = nextScale == 0 ? lastScale : nextScale;
-        }
-    }
-
-    /// <summary>
-    /// Writes just the scaling list from the SPS. If you want to write the entire SPS,
-    /// including the scaling matrix, use the <see cref="Write(BitStreamWriter, ReadOnlySpan{int})"/>
-    /// method instead.
-    /// </summary>
-    /// <param name="writer">Bitstream to write the scaling list to.</param>
-    /// <param name="index">Scaling list index</param>
-    /// <param name="scalingMatrix">Scaling list elements.</param>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static void WriteScalingList(BitStreamWriter writer, int index, ReadOnlyMemory<int> scalingMatrix) => WriteScalingList(writer, index, scalingMatrix.Span);
-
-    /// <summary>
-    /// Writes just the scaling list from the SPS. If you want to write the entire SPS,
-    /// including the scaling list, use the <see cref="Write(BitStreamWriter, ReadOnlySpan{int})"/>
-    /// method instead.
-    /// </summary>
-    /// <param name="writer">Bitstream to write the scaling list to.</param>
-    /// <param name="index">Index of the scaling list</param>
-    /// <param name="scalingList">Scaling list elements.</param>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static async Task WriteScalingListAsync(BitStreamWriter writer, int index, ReadOnlyMemory<int> scalingList)
-    {
-        int scalingMatrixSize = ScalingMatrices.GetListLength(index);
-        if (scalingMatrixSize is not 16 or 64)
-            throw new InvalidOperationException("Scaling matrix of the SPS must have either 16 or 64 elements");
-        if (scalingList.Length < scalingMatrixSize)
-            throw new InvalidOperationException("Provided scaling matrix must have at minimum of " + scalingMatrixSize + " elements");
-
-        int elementsCount = 0;
-        int lastScale = 8;
-        int nextScale = 8;
-        for (int j = 0; j < scalingMatrixSize; j++)
-        {
-            if (nextScale != 0)
-            {
-                int deltaScale = scalingList.Span[elementsCount++];
-                await writer.WriteSEAsync(deltaScale);
-                nextScale = (lastScale + deltaScale + 256) % 256;
-                elementsCount++;
-            }
-            lastScale = nextScale == 0 ? lastScale : nextScale;
-        }
-    }
-
-    /// <summary>
-    /// Writes just the scaling list from the SPS. If you want to write the entire SPS,
-    /// including the scaling matrix, use the <see cref="Write(BitStreamWriter, ReadOnlySpan{int})"/>
-    /// method instead.
-    /// </summary>
-    /// <param name="writer">Bitstream to write the scaling list to.</param>
-    /// <param name="index">Scaling list index</param>
-    /// <param name="scalingMatrix">Scaling list elements.</param>
-    /// <exception cref="InvalidOperationException"></exception>
-    public static async Task WriteScalingListAsync(BitStreamWriter writer, int index, int[] scalingMatrix) => await WriteScalingListAsync(writer, index, scalingMatrix);
-
-    /// <summary>
-    /// Writes just the entire scaling matrix out of the SPS into the specified bitstream.
-    /// </summary>
-    /// <param name="writer">Data where the matrix is written to</param>
-    /// <param name="entireH264Reader">The entire H.264 bitstream reader. Doesn't matter where the position of the bitstream is.</param>
-    public readonly void WriteScalingMatrix(BitStreamWriter writer, BitStreamReader entireH264Reader)
-    {
-        if (this.ScalingMatrix is null)
-            throw new InvalidOperationException("No scaling matrix");
-
-        for (int i = 0; i < this.ScalingMatrix.Value.ListCount; i++)
-        {
-            _Core(i, in this);
-        }
-
-        void _Core(int index, in SequenceParameterSet source)
-        {
-            Span<int> buffer = stackalloc int[ScalingMatrices.GetListLength(index)];
-            source.ScalingMatrix!.Value.ReadList(entireH264Reader, buffer, out bool isPresent, index);
-
-            writer.WriteBit(isPresent);
-            if (isPresent)
-            {
-                WriteScalingList(writer, index, buffer);
-            }
-        }
-    }
-
-    /// <summary>
-    /// Writes just the entire scaling matrix out of the SPS into the specified bitstream.
-    /// </summary>
-    /// <param name="writer">Data where the matrix is written to</param>
-    /// <param name="entireH264Reader">The entire H.264 bitstream reader. Doesn't matter where the position of the bitstream is.</param>
-    /// <remarks>
-    ///   <b>Warning</b>: This method performs heap allocations. Consider using the
-    ///   non-asynchronous method, <see cref="WriteScalingMatrix(BitStreamWriter, BitStreamReader)"/>,
-    ///   for a stack-allocated flavor.
-    /// </remarks>
-    public readonly async Task WriteScalingMatrixAsync(BitStreamWriter writer, BitStreamReader entireH264Reader)
-    {
-        if (this.ScalingMatrix is null)
-            throw new InvalidOperationException("No scaling matrix");
-
-        for (int i = 0; i < this.ScalingMatrix.Value.ListCount; i++)
-        {
-            Memory<int> buffer = new(new int[i < 6 ? 16 : 64]);
-            this.ScalingMatrix!.Value.ReadList(entireH264Reader, buffer, out bool isPresent, i);
-
-            await writer.WriteBitAsync(isPresent);
-            if (isPresent)
-            {
-                await WriteScalingListAsync(writer, i, buffer);
-            }
-        }
-    }
-
+    
     /// <summary>
     ///   Writes the SPS to the bitstream.
     /// </summary>
@@ -981,6 +820,62 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
 
         var span = new Memory<int>();
         await WriteAsync(writer, span, vuiWriteOptions, builder);
+    }
+
+    /// <summary>
+    /// Writes just the entire scaling matrix out of the SPS into the specified bitstream.
+    /// </summary>
+    /// <param name="writer">Data where the matrix is written to</param>
+    /// <param name="entireH264Reader">The entire H.264 bitstream reader. Doesn't matter where the position of the bitstream is.</param>
+    public readonly void WriteScalingMatrix(BitStreamWriter writer, BitStreamReader entireH264Reader)
+    {
+        if (this.ScalingMatrix is null)
+            throw new InvalidOperationException("No scaling matrix");
+
+        for (int i = 0; i < this.ScalingMatrix.Value.ListCount; i++)
+        {
+            _Core(i, in this);
+        }
+
+        void _Core(int index, in SequenceParameterSet source)
+        {
+            Span<int> buffer = stackalloc int[ScalingMatrices.GetListLength(index)];
+            source.ScalingMatrix!.Value.ReadList(entireH264Reader, buffer, out bool isPresent, index);
+
+            writer.WriteBit(isPresent);
+            if (isPresent)
+            {
+                ScalingMatrices.WriteScalingList(writer, index, buffer);
+            }
+        }
+    }
+
+    /// <summary>
+    /// Writes just the entire scaling matrix out of the SPS into the specified bitstream.
+    /// </summary>
+    /// <param name="writer">Data where the matrix is written to</param>
+    /// <param name="entireH264Reader">The entire H.264 bitstream reader. Doesn't matter where the position of the bitstream is.</param>
+    /// <remarks>
+    ///   <b>Warning</b>: This method performs heap allocations. Consider using the
+    ///   non-asynchronous method, <see cref="WriteScalingMatrix(BitStreamWriter, BitStreamReader)"/>,
+    ///   for a stack-allocated flavor.
+    /// </remarks>
+    public readonly async Task WriteScalingMatrixAsync(BitStreamWriter writer, BitStreamReader entireH264Reader)
+    {
+        if (this.ScalingMatrix is null)
+            throw new InvalidOperationException("No scaling matrix");
+
+        for (int i = 0; i < this.ScalingMatrix.Value.ListCount; i++)
+        {
+            Memory<int> buffer = new(new int[i < 6 ? 16 : 64]);
+            this.ScalingMatrix!.Value.ReadList(entireH264Reader, buffer, out bool isPresent, i);
+
+            await writer.WriteBitAsync(isPresent);
+            if (isPresent)
+            {
+                await ScalingMatrices.WriteScalingListAsync(writer, i, buffer);
+            }
+        }
     }
 
     public readonly override bool Equals(object? obj)

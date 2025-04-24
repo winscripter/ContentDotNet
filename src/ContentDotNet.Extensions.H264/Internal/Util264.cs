@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H264.Internal.Decoding;
+﻿using ContentDotNet.Abstractions;
+using ContentDotNet.Extensions.H264.Internal.Decoding;
 using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using System.Runtime.CompilerServices;
@@ -168,4 +169,6 @@ internal static class Util264
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Clip1C(int e, int bitDepthC) => Clip3(0, 1 << bitDepthC, e);
+
+    public static bool MoreRbspData(BitStreamReader reader) => reader.GetState().CurrentByte < reader.Length - 1;
 }

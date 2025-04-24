@@ -90,4 +90,14 @@ public sealed class BitStreamReader(Stream input) : IDisposable
         stream?.Dispose();
         GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    /// Represents the backing stream of this bitstream reader.
+    /// </summary>
+    public Stream BaseStream => stream;
+
+    /// <summary>
+    /// Length, in bytes, in the entire stream.
+    /// </summary>
+    public long Length => stream.Length;
 }

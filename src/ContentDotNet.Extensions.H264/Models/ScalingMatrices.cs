@@ -202,7 +202,7 @@ public readonly struct ScalingMatrices
                 return;
             }
 
-            ParseScalingList(reader, scalingMatrix, i);
+            ParseScalingList(reader, scalingMatrix.Span, i);
             return;
         }
 
@@ -236,10 +236,17 @@ public readonly struct ScalingMatrices
         }
     }
 
-    private static void ParseScalingList(BitStreamReader reader, Memory<int> output, int index)
+    /// <summary>
+    /// Returns the length of the elements in the scaling list based on its zero-based index.
+    /// </summary>
+    /// <param name="index">Zero-based scaling list index</param>
+    /// <returns>Number of elements inside of it (either 16 or 64).</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetListLength(int index) => index < 6 ? 16 : 64;
+
+    public static ArrayReferrer ParseScalingList(BitStreamReader reader, int size)
     {
         int elementsCount = 0;
-        int size = index < 6 ? 16 : 64;
         int lastScale = 8;
         int nextScale = 8;
         for (int j = 0; j < size; j++)
@@ -248,17 +255,94 @@ public readonly struct ScalingMatrices
             {
                 int deltaScale = reader.ReadSE();
                 nextScale = (lastScale + deltaScale + 256) % 256;
-                output.Span[elementsCount++] = deltaScale;
+                elementsCount++;
+            }
+            lastScale = nextScale == 0 ? lastScale : nextScale;
+        }
+        return new ArrayReferrer(elementsCount);
+    }
+
+    /// <summary>
+    /// Writes just the scaling list from the SPS. If you want to write the entire SPS,
+    /// including the scaling list, use the <see cref="Write(BitStreamWriter, ReadOnlySpan{int})"/>
+    /// method instead.
+    /// </summary>
+    /// <param name="writer">Bitstream to write the scaling list to.</param>
+    /// <param name="index">Index of the scaling list</param>
+    /// <param name="scalingList">Scaling list elements.</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static void WriteScalingList(BitStreamWriter writer, int index, ReadOnlySpan<int> scalingList)
+    {
+        int scalingMatrixSize = ScalingMatrices.GetListLength(index);
+        if (scalingMatrixSize is not 16 or 64)
+            throw new InvalidOperationException("Scaling matrix of the SPS must have either 16 or 64 elements");
+        if (scalingList.Length < scalingMatrixSize)
+            throw new InvalidOperationException("Provided scaling matrix must have at minimum of " + scalingMatrixSize + " elements");
+
+        int elementsCount = 0;
+        int lastScale = 8;
+        int nextScale = 8;
+        for (int j = 0; j < scalingMatrixSize; j++)
+        {
+            if (nextScale != 0)
+            {
+                int deltaScale = scalingList[elementsCount++];
+                writer.WriteSE(deltaScale);
+                nextScale = (lastScale + deltaScale + 256) % 256;
+                elementsCount++;
             }
             lastScale = nextScale == 0 ? lastScale : nextScale;
         }
     }
 
     /// <summary>
-    /// Returns the length of the elements in the scaling list based on its zero-based index.
+    /// Writes the scaling list.
     /// </summary>
-    /// <param name="index">Zero-based scaling list index</param>
-    /// <returns>Number of elements inside of it (either 16 or 64).</returns>
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int GetListLength(int index) => index < 6 ? 16 : 64;
+    /// <param name="writer">Bitstream to write the scaling list to.</param>
+    /// <param name="index">Scaling list index</param>
+    /// <param name="scalingMatrix">Scaling list elements.</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static void WriteScalingList(BitStreamWriter writer, int index, ReadOnlyMemory<int> scalingMatrix) => WriteScalingList(writer, index, scalingMatrix.Span);
+
+    /// <summary>
+    /// Writes just the scaling list.
+    /// </summary>
+    /// <param name="writer">Bitstream to write the scaling list to.</param>
+    /// <param name="index">Index of the scaling list</param>
+    /// <param name="scalingList">Scaling list elements.</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static async Task WriteScalingListAsync(BitStreamWriter writer, int index, ReadOnlyMemory<int> scalingList)
+    {
+        int scalingMatrixSize = ScalingMatrices.GetListLength(index);
+        if (scalingMatrixSize is not 16 or 64)
+            throw new InvalidOperationException("Scaling matrix of the SPS must have either 16 or 64 elements");
+        if (scalingList.Length < scalingMatrixSize)
+            throw new InvalidOperationException("Provided scaling matrix must have at minimum of " + scalingMatrixSize + " elements");
+
+        int elementsCount = 0;
+        int lastScale = 8;
+        int nextScale = 8;
+        for (int j = 0; j < scalingMatrixSize; j++)
+        {
+            if (nextScale != 0)
+            {
+                int deltaScale = scalingList.Span[elementsCount++];
+                await writer.WriteSEAsync(deltaScale);
+                nextScale = (lastScale + deltaScale + 256) % 256;
+                elementsCount++;
+            }
+            lastScale = nextScale == 0 ? lastScale : nextScale;
+        }
+    }
+
+    /// <summary>
+    /// Writes just the scaling list from the SPS. If you want to write the entire SPS,
+    /// including the scaling matrix, use the <see cref="Write(BitStreamWriter, ReadOnlySpan{int})"/>
+    /// method instead.
+    /// </summary>
+    /// <param name="writer">Bitstream to write the scaling list to.</param>
+    /// <param name="index">Scaling list index</param>
+    /// <param name="scalingMatrix">Scaling list elements.</param>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static async Task WriteScalingListAsync(BitStreamWriter writer, int index, int[] scalingMatrix) => await WriteScalingListAsync(writer, index, scalingMatrix);
 }
