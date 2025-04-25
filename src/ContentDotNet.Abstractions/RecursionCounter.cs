@@ -10,6 +10,7 @@ public sealed class InfiniteLoopException : Exception
     ///   Initializes a new instance of the <see cref="InfiniteLoopException"/> class.
     /// </summary>
     public InfiniteLoopException()
+        : this("An infinite loop has been detected")
     {
     }
 
