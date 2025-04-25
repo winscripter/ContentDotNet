@@ -1,0 +1,32 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="H264\FillerPayload\" />
+    <Folder Include="H264\DecRefPicMarkingRepetition\" />
+    <Folder Include="H264\FullFrameFreeze\" />
+    <Folder Include="H264\FullFrameFreezeRelease\" />
+    <Folder Include="H264\ProgressiveRefinementSegmentEnd\" />
+    <Folder Include="H264\ProgressiveRefinementSegmentStart\" />
+    <Folder Include="H264\SubSeqCharacteristics\" />
+    <Folder Include="H264\SubSeqLayerCharacteristics\" />
+    <Folder Include="H264\SubSeqInfo\" />
+    <Folder Include="H264\SceneInfo\" />
+    <Folder Include="H264\SparePic\" />
+    <Folder Include="H264\RecoveryPoint\" />
+    <Folder Include="H264\UserDataUnregistered\" />
+    <Folder Include="H264\UserDataRegisteredItuTT35\" />
+    <Folder Include="H264\PanScanRect\" />
+    <Folder Include="H264\PicTiming\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContentDotNet.Extensions.H26x\ContentDotNet.Extensions.H26x.csproj" />
+  </ItemGroup>
+
+</Project>

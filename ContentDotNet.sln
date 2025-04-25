@@ -30,6 +30,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.VectorGraphic
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Rtsp", "src\ContentDotNet.Rtsp\ContentDotNet.Rtsp.csproj", "{28BEBEA5-B93A-4AA1-8203-EAF30CC8CD33}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.H26x", "src\ContentDotNet.Extensions.H26x\ContentDotNet.Extensions.H26x.csproj", "{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.H26x.Sei", "src\ContentDotNet.Extensions.H26x.Sei\ContentDotNet.Extensions.H26x.Sei.csproj", "{96A32FA2-963D-4B04-9887-4DDC59C2BB75}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +72,14 @@ Global
 		{28BEBEA5-B93A-4AA1-8203-EAF30CC8CD33}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{28BEBEA5-B93A-4AA1-8203-EAF30CC8CD33}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{28BEBEA5-B93A-4AA1-8203-EAF30CC8CD33}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{96A32FA2-963D-4B04-9887-4DDC59C2BB75}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{96A32FA2-963D-4B04-9887-4DDC59C2BB75}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{96A32FA2-963D-4B04-9887-4DDC59C2BB75}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{96A32FA2-963D-4B04-9887-4DDC59C2BB75}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,5 +93,7 @@ Global
 		{E38A2D1B-7245-46E9-B989-EBEA87C6499D} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{B66EF47B-4C21-4271-AF4E-E001B951BDFE} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{28BEBEA5-B93A-4AA1-8203-EAF30CC8CD33} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
+		{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
+		{96A32FA2-963D-4B04-9887-4DDC59C2BB75} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 	EndGlobalSection
 EndGlobal

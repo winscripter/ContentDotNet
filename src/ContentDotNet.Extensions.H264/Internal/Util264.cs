@@ -83,7 +83,7 @@ internal static class Util264
             _ => SliceTypes.na
         };
 
-    public static int NumMbPartHeight(int mbType, GeneralSliceType sliceType)
+    public static int NumMbPart(int mbType, GeneralSliceType sliceType)
         => sliceType switch
         {
             GeneralSliceType.I => SliceTypes.na,

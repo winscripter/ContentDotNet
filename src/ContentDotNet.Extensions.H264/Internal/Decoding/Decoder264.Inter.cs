@@ -1,5 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Internal.Macroblocks;
+using ContentDotNet.Extensions.H264.Utilities;
 using System.Runtime.CompilerServices;
+using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
@@ -8,6 +10,25 @@ internal partial class Decoder264
     private static readonly (int x, int y) LumaLocationsA = (-1, 0);
     private static readonly (int x, int y) LumaLocationsB = (0, -1);
     private static readonly (int x, int y) LumaLocationsD = (-1, -1);
+
+    private MacroblockTypeHistory mbTypeArray;
+    private MacroblockTypeHistory subMbTypeArray;
+    private GeneralSliceType sliceType;
+    private int mbType;
+    private int subMbType;
+    private int mbPartIdx;
+    private int subMbPartIdx;
+
+    private void InitializeInterPrediction()
+    {
+        sliceType = GeneralSliceType.I; // Default
+        mbTypeArray = new();
+        subMbTypeArray = new();
+        mbType = 0;
+        subMbType = 0;
+        mbPartIdx = 0;
+        subMbPartIdx = 0;
+    }
 
     public static void Derive4x4LumaBlocks(
         int luma4x4BlkIdx,
@@ -96,15 +117,15 @@ internal partial class Decoder264
         luma8x8BlkIdx = 2 * (yP / 8) + xP / 8;
     }
 
-    public static void DeriveMacroblockAndSubMacroblockPartitionIndices(int xP, int yP, int mbType, Span<int> subMbType, ref int mbPartIdx, ref int subMbPartIdx)
+    public void DeriveMacroblockAndSubMacroblockPartitionIndices(int xP, int yP, int mbType, Span<int> subMbType, ref int mbPartIdx, ref int subMbPartIdx)
     {
-        if (mbType == SliceTypes.I)
+        if (SliceTypes.IsI(mbType))
         {
             mbPartIdx = 0;
         }
         else
         {
-            mbPartIdx = 16 / Util264.MbPartWidth(mbType) * (yP / Util264.MbPartHeight(mbType)) + xP / Util264.MbPartWidth(mbType);
+            mbPartIdx = 16 / Util264.MbPartWidth(mbType, sliceType) * (yP / Util264.MbPartHeight(mbType, sliceType)) + xP / Util264.MbPartWidth(mbType, sliceType);
         }
 
         if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8 or SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
@@ -534,5 +555,49 @@ internal partial class Decoder264
 
         xW = (xN + maxW) % maxW;
         yW = (yM + maxH) % maxH;
+    }
+
+    public void InterPredict(Matrix16x16 predL, Matrix16x16 predCb, Matrix16x16 predCr)
+    {
+        int mbPartIdxMin = 0;
+        int mbPartIdxMax = 0;
+
+        if (mbType is SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
+        {
+            mbPartIdxMax = 3;
+        }
+        else
+        {
+            mbPartIdxMax = Util264.NumMbPart(mbType, sliceType) - 1;
+        }
+    }
+
+    private void DeriveMotionVectors(Matrix16x16 mvL0, Matrix16x16 mvL1, Matrix16x16 mvCL0cb, Matrix16x16 mvCL1cb, Matrix16x16 mvCL0cr, Matrix16x16 mvCL1cr, out int refIdxL0, out int refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt, Span<int> refIdxL0Array, Span<int> refIdxL1Array)
+    {
+        if (mbType == P_Skip)
+        {
+            DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSP(mvL0, out refIdxL0);
+            predFlagL0 = true;
+            predFlagL1 = false;
+            refIdxL1 = 0;
+            subMvCnt = 1;
+
+            return;
+        }
+
+        if (mbType is B_Skip or B_Direct_16x16 || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
+        {
+            DeriveLumaMotionVectorsForBSkipAndBDirect16x16AndBDirect8x8(mbPartIdx, subMbPartIdx, mvL0, mvL1, out refIdxL0, out refIdxL1, out subMvCnt, out predFlagL0, out predFlagL1);
+            return;
+        }
+
+        DeriveInternal(out predFlagL0, mvL0, out refIdxL0, Pred_L0, refIdxL0Array, sliceType);
+        DeriveInternal(out predFlagL1, mvL1, out refIdxL1, Pred_L1, refIdxL1Array, sliceType);
+
+        static void DeriveInternal(out bool predFlagLX, bool transformSize8x8Flag, Span<int> subMbTypeArray, int mbType, int mbPartIdx, Matrix16x16 mvLX, out int refIdxLX, int predLX, Span<int> refIdxLXArray, GeneralSliceType sliceType)
+        {
+            int partPredMode = Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType);
+            int subMbPredMode = Util264.SubMbPredMode(subMbTypeArray[mbPartIdx]);)
+        }
     }
 }

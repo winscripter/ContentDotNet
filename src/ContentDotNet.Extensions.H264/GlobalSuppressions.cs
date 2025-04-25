@@ -5,5 +5,5 @@
 
 using System.Diagnostics.CodeAnalysis;
 
-[assembly: SuppressMessage("Style", "IDE0018:Inline variable declaration", Justification = "<Pending>", Scope = "member", Target = "~M:ContentDotNet.Extensions.H264.Internal.InterPrediction.DeriveNeighboringPartitions(ContentDotNet.Extensions.H264.Internal.DerivationContext,System.Int32,System.Int32,System.Int32,System.Int32,System.Span{System.Int32},System.Span{System.Int32},System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.Int32@,System.Int32@,System.Int32@,System.Boolean@,System.Int32@,System.Int32@,System.Int32@,System.Boolean@)")]
-[assembly: SuppressMessage("Reliability", "CA2014:Do not use stackalloc in loops", Justification = "<Pending>", Scope = "member", Target = "~M:ContentDotNet.Extensions.H264.Internal.IntraPrediction.Intra4x4LumaPredict(ContentDotNet.Extensions.H264.Utilities.Matrix16x4x4,System.Span{System.Int32},System.Span{System.Int32},System.Span{System.Int32})")]
+[assembly: SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>", Scope = "member", Target = "~F:ContentDotNet.Extensions.H264.Utilities.MacroblockTypeHistory._1")]
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~F:ContentDotNet.Extensions.H264.Utilities.MacroblockTypeHistory._1")]

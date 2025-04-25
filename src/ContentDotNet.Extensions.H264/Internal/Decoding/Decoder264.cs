@@ -11,5 +11,7 @@ internal sealed partial class Decoder264
     {
         _derivationContext = derivationContext;
         _macroblockUtility = macroblockUtility;
+
+        InitializeInterPrediction();
     }
 }
