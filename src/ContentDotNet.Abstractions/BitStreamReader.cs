@@ -100,4 +100,27 @@ public sealed class BitStreamReader(Stream input) : IDisposable
     /// Length, in bytes, in the entire stream.
     /// </summary>
     public long Length => stream.Length;
+
+    /// <summary>
+    ///   Returns the next number of bits without advancing in the bitstream.
+    /// </summary>
+    /// <param name="count">Number of bits</param>
+    /// <returns>Next <paramref name="count"/> bits.</returns>
+    public uint PeekBits(uint count)
+    {
+        ReaderState activeState = this.GetState();
+        uint b;
+        try
+        {
+            b = this.ReadBits(count);
+        }
+        catch
+        {
+            this.GoTo(activeState);
+            throw;
+        }
+
+        this.GoTo(activeState);
+        return b;
+    }
 }
