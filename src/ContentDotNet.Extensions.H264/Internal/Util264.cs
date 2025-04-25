@@ -50,6 +50,50 @@ internal static class Util264
         y = InverseRasterScan(mbPartIdx, MbPartWidth(mbType), MbPartHeight(mbType), 16, 1);
     }
 
+    public static int MbPartPredMode(int mbType, int a, bool transformSize8x8Flag, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => ISliceFunctions.MbPartPredMode(mbType, transformSize8x8Flag),
+            GeneralSliceType.P => PSliceFunctions.MbPartPredMode(mbType, a),
+            GeneralSliceType.B => BSliceFunctions.MbPartPredMode(mbType, a),
+            GeneralSliceType.SI => ISliceFunctions.MbPartPredMode(mbType, transformSize8x8Flag),
+            GeneralSliceType.SP => PSliceFunctions.MbPartPredMode(mbType, a),
+            _ => 0
+        };
+
+    public static int MbPartWidth(int mbType, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => SliceTypes.na,
+            GeneralSliceType.P => PSliceFunctions.MbPartWidth(mbType),
+            GeneralSliceType.B => BSliceFunctions.MbPartWidth(mbType),
+            GeneralSliceType.SI => SliceTypes.na,
+            GeneralSliceType.SP => PSliceFunctions.MbPartWidth(mbType),
+            _ => SliceTypes.na
+        };
+
+    public static int MbPartHeight(int mbType, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => SliceTypes.na,
+            GeneralSliceType.P => PSliceFunctions.MbPartHeight(mbType),
+            GeneralSliceType.B => BSliceFunctions.MbPartHeight(mbType),
+            GeneralSliceType.SI => SliceTypes.na,
+            GeneralSliceType.SP => PSliceFunctions.MbPartHeight(mbType),
+            _ => SliceTypes.na
+        };
+
+    public static int NumMbPartHeight(int mbType, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => SliceTypes.na,
+            GeneralSliceType.P => PSliceFunctions.NumMbPart(mbType),
+            GeneralSliceType.B => BSliceFunctions.NumMbPart(mbType),
+            GeneralSliceType.SI => SliceTypes.na,
+            GeneralSliceType.SP => PSliceFunctions.NumMbPart(mbType),
+            _ => SliceTypes.na
+        };
+
     // Rec. ITU-T H.264 (V15) (08/2024), Page 52
     public static void InverseSubMacroblockPartitionScan(int subMbPartIdx, Span<int> subMbType, int mbPartIdx, int mbType, ref int x, ref int y)
     {
