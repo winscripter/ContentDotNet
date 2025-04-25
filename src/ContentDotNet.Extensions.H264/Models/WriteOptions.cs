@@ -149,3 +149,43 @@ public ref struct HrdWriteOptions
         CbrFlag = cbrFlag;
     }
 }
+
+public ref struct SliceHeaderWriteOptions
+{
+    public PredWeightTableListWriteOptions PredWeightTableL0;
+    public PredWeightTableListWriteOptions PredWeightTableL1;
+    public Span<RefPicListModificationEntry> RefPicListModificationEntries;
+    public Span<RefPicListMvcModificationEntry> RefPicListMvcModificationL0;
+    public Span<RefPicListMvcModificationEntry> RefPicListMvcModificationL1;
+    public Span<DecRefPicMarkingEntry> DecRefPicMarkingEntries;
+
+    public SliceHeaderWriteOptions(PredWeightTableListWriteOptions predWeightTableL0, PredWeightTableListWriteOptions predWeightTableL1, Span<RefPicListModificationEntry> refPicListModificationEntries, Span<RefPicListMvcModificationEntry> refPicListMvcModificationL0, Span<RefPicListMvcModificationEntry> refPicListMvcModificationL1, Span<DecRefPicMarkingEntry> decRefPicMarkingEntries)
+    {
+        PredWeightTableL0 = predWeightTableL0;
+        PredWeightTableL1 = predWeightTableL1;
+        RefPicListModificationEntries = refPicListModificationEntries;
+        RefPicListMvcModificationL0 = refPicListMvcModificationL0;
+        RefPicListMvcModificationL1 = refPicListMvcModificationL1;
+        DecRefPicMarkingEntries = decRefPicMarkingEntries;
+    }
+}
+
+public struct MemorySliceHeaderWriteOptions
+{
+    public MemoryPredWeightTableListWriteOptions PredWeightTableL0;
+    public MemoryPredWeightTableListWriteOptions PredWeightTableL1;
+    public Memory<RefPicListModificationEntry> RefPicListModificationEntries;
+    public Memory<RefPicListMvcModificationEntry> RefPicListMvcModificationL0;
+    public Memory<RefPicListMvcModificationEntry> RefPicListMvcModificationL1;
+    public Memory<DecRefPicMarkingEntry> DecRefPicMarkingEntries;
+
+    public MemorySliceHeaderWriteOptions(MemoryPredWeightTableListWriteOptions predWeightTableL0, MemoryPredWeightTableListWriteOptions predWeightTableL1, Memory<RefPicListModificationEntry> refPicListModificationEntries, Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL0, Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL1, Memory<DecRefPicMarkingEntry> decRefPicMarkingEntries)
+    {
+        PredWeightTableL0 = predWeightTableL0;
+        PredWeightTableL1 = predWeightTableL1;
+        RefPicListModificationEntries = refPicListModificationEntries;
+        RefPicListMvcModificationL0 = refPicListMvcModificationL0;
+        RefPicListMvcModificationL1 = refPicListMvcModificationL1;
+        DecRefPicMarkingEntries = decRefPicMarkingEntries;
+    }
+}

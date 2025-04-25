@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿using System.Runtime.CompilerServices;
+
+namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 ///   Constants representing slice/macroblock types according to the H.264
@@ -88,6 +90,37 @@ public static class SliceTypes
 
     internal const int NA = 255;
     internal const int na = NA;
+
+    #endregion
+
+    #region Public Functions
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsP(int sliceType) => sliceType is 0 or 5;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsB(int sliceType) => sliceType is 1 or 6;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsI(int sliceType) => sliceType is 2 or 7;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsP(uint sliceType) => sliceType is 0 or 5;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsB(uint sliceType) => sliceType is 1 or 6;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsI(uint sliceType) => sliceType is 2 or 7;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsSP(int sliceType) => sliceType is 3 or 8;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsSP(uint sliceType) => sliceType is 3 or 8;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsSI(int sliceType) => sliceType is 4 or 9;
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsSI(uint sliceType) => sliceType is 4 or 9;
 
     #endregion
 }

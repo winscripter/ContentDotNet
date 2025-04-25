@@ -5,6 +5,8 @@
 /// </summary>
 public readonly struct ReaderState
 {
+    public static readonly ReaderState Blank = new(-1, 255, 255);
+
     /// <summary>
     ///   Byte offset.
     /// </summary>
