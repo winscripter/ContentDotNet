@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.Abstractions;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 ///   This is a marker interface that can represent one of the following types:
@@ -49,6 +51,11 @@ public struct NalUnit
         SvcExtensionFlag = svcExtensionFlag;
         Avc3DExtensionFlag = avc3DExtensionFlag;
         Extension = extension;
+    }
+
+    public static bool GoToStartCode(BitStreamReader reader)
+    {
+        
     }
 }
 
