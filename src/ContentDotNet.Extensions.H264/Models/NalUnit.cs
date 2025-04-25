@@ -19,6 +19,8 @@ public interface INalUnitHeaderExtension
 /// </summary>
 public struct NalUnit
 {
+    private static readonly int StartCodeFindingRecursionLimit = DataSize.Megabytes(1);
+
     /// <summary>
     /// NAL Ref Idc.
     /// </summary>
@@ -53,16 +55,52 @@ public struct NalUnit
         Extension = extension;
     }
 
-    public static bool GoToStartCode(BitStreamReader reader)
+    /// <summary>
+    ///   Finds &amp; skips the start code 0x00 0x00 0x00 0x01. After invoking this method, you're essentially in the NAL
+    ///   unit itself.
+    /// </summary>
+    /// <param name="reader">Bitstream reader</param>
+    /// <returns><see langword="false"/> if end of stream was reached before there was a chance to find the start code.</returns>
+    public static bool SkipStartCode(BitStreamReader reader)
     {
-        
+        RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
+        int stream = 0;
+        while (true)
+        {
+            try
+            {
+                recursionCounter.Increment();
+
+                byte current = (byte)reader.ReadBits(8);
+                if (stream != 3 && current == 0)
+                {
+                    stream++;
+                    continue;
+                }
+                else if (stream == 3 && current == 1)
+                {
+                    _ = reader.ReadBits(8);
+                    return true;
+                }
+                else
+                {
+                    stream = 0;
+                }
+            }
+            catch (EndOfStreamException)
+            {
+                return false;
+            }
+            catch (InfiniteLoopException)
+            {
+                throw;
+            }
+        }
     }
 }
 
 public struct Avc3DNalUnitHeaderExtension : INalUnitHeaderExtension
 {
-    private const uint StructureSize = 23;
-
     public bool NonIDRFlag;
     public uint PriorityId;
     public uint ViewId;
