@@ -4,7 +4,7 @@ using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264.Internal;
+namespace ContentDotNet.Extensions.H264.Helpers;
 
 internal static class Util264
 {
@@ -24,12 +24,12 @@ internal static class Util264
         if (isFrame)
         {
             x = xO;
-            y = yO + (mbAddr % 2) * 16;
+            y = yO + mbAddr % 2 * 16;
         }
         else if (isField)
         {
             x = xO;
-            y = yO + (mbAddr % 2);
+            y = yO + mbAddr % 2;
         }
         else if (mbaffFrameFlag)
         {
@@ -207,10 +207,10 @@ internal static class Util264
         bool availableC = IsMacroblockAddressAvailable(macroblocks.MbAddrC = currMbAddr - picWidthInMbs + 1, currMbAddr);
         bool availableD = IsMacroblockAddressAvailable(macroblocks.MbAddrD = currMbAddr - picWidthInMbs - 1, currMbAddr);
 
-        macroblocks.IsMbAddrAAvailable = availableA || (currMbAddr % picWidthInMbs) == 0;
+        macroblocks.IsMbAddrAAvailable = availableA || currMbAddr % picWidthInMbs == 0;
         macroblocks.IsMbAddrBAvailable = availableB;
-        macroblocks.IsMbAddrCAvailable = availableC || ((currMbAddr + 1) % picWidthInMbs) == 0;
-        macroblocks.IsMbAddrDAvailable = availableD || (currMbAddr % picWidthInMbs) == 0;
+        macroblocks.IsMbAddrCAvailable = availableC || (currMbAddr + 1) % picWidthInMbs == 0;
+        macroblocks.IsMbAddrDAvailable = availableD || currMbAddr % picWidthInMbs == 0;
     }
 
     // Rec. ITU-T H.264 (V15) (08/2024), Page 57
@@ -224,10 +224,10 @@ internal static class Util264
         bool availableC = IsMacroblockAddressAvailable(macroblocks.MbAddrC = 2 * (currMbAddr / 2 - picWidthInMbs + 1), currMbAddr);
         bool availableD = IsMacroblockAddressAvailable(macroblocks.MbAddrD = 2 * (currMbAddr / 2 - picWidthInMbs - 1), currMbAddr);
 
-        macroblocks.IsMbAddrAAvailable = availableA || (currMbAddr / 2) % picWidthInMbs == 0;
+        macroblocks.IsMbAddrAAvailable = availableA || currMbAddr / 2 % picWidthInMbs == 0;
         macroblocks.IsMbAddrBAvailable = availableB;
         macroblocks.IsMbAddrCAvailable = availableC || (currMbAddr / 2 + 1) % picWidthInMbs == 0;
-        macroblocks.IsMbAddrDAvailable = availableD || (currMbAddr / 2) % picWidthInMbs == 0;
+        macroblocks.IsMbAddrDAvailable = availableD || currMbAddr / 2 % picWidthInMbs == 0;
     }
 
     public static void DeriveNeighboringMacroblockAddresses(int currMbAddr, int picWidthInMbs, bool isMbaff, out NeighboringMacroblocks macroblocks)
@@ -238,7 +238,7 @@ internal static class Util264
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int InverseRasterScan(int a, int b, int c, int d, int e)
-        => e == 0 ? (a % (d / b)) * b : (a / (d / b)) * c;
+        => e == 0 ? a % (d / b) * b : a / (d / b) * c;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static RefinedSliceGroupMapType GetRefinedSliceGroupMapType(int sliceGroupMapType, bool sliceGroupChangeDirectionFlag)

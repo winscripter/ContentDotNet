@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264.Internal;
+﻿namespace ContentDotNet.Extensions.H264.Helpers;
 
 internal static class SamplingUtils
 {

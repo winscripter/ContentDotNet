@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.Abstractions;
+using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Utilities;
 
