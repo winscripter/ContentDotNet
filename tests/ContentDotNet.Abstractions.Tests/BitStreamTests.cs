@@ -9,6 +9,7 @@ public class BitStreamTests
             (writer) =>
             {
                 writer.WriteUE(1);
+                writer.WriteBits(0u, 16);
             },
             (reader) =>
             {
