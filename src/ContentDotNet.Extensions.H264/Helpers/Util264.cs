@@ -44,10 +44,10 @@ internal static class Util264
     }
 
     // Rec. ITU-T H.264 (V15) (08/2024), Page 52
-    public static void InverseMacroblockPartitionScan(int mbPartIdx, int mbType, ref int x, ref int y)
+    public static void InverseMacroblockPartitionScan(int mbPartIdx, int mbType, GeneralSliceType sliceType, ref int x, ref int y)
     {
-        x = InverseRasterScan(mbPartIdx, MbPartWidth(mbType), MbPartHeight(mbType), 16, 0);
-        y = InverseRasterScan(mbPartIdx, MbPartWidth(mbType), MbPartHeight(mbType), 16, 1);
+        x = InverseRasterScan(mbPartIdx, MbPartWidth(mbType, sliceType), MbPartHeight(mbType, sliceType), 16, 0);
+        y = InverseRasterScan(mbPartIdx, MbPartWidth(mbType, sliceType), MbPartHeight(mbType, sliceType), 16, 1);
     }
 
     public static int MbPartPredMode(int mbType, int a, bool transformSize8x8Flag, GeneralSliceType sliceType)
@@ -139,12 +139,12 @@ internal static class Util264
         };
 
     // Rec. ITU-T H.264 (V15) (08/2024), Page 52
-    public static void InverseSubMacroblockPartitionScan(int subMbPartIdx, Span<int> subMbType, int mbPartIdx, int mbType, ref int x, ref int y)
+    public static void InverseSubMacroblockPartitionScan(int subMbPartIdx, Span<int> subMbType, int mbPartIdx, int mbType, GeneralSliceType sliceType, ref int x, ref int y)
     {
         if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
         {
-            x = InverseRasterScan(subMbPartIdx, SubMbPartWidth(subMbType[mbPartIdx]), SubMbPartHeight(subMbType[mbPartIdx]), 8, 0);
-            y = InverseRasterScan(subMbPartIdx, SubMbPartWidth(subMbType[mbPartIdx]), SubMbPartHeight(subMbType[mbPartIdx]), 8, 1);
+            x = InverseRasterScan(subMbPartIdx, SubMbPartWidth(subMbType[mbPartIdx], sliceType), SubMbPartHeight(subMbType[mbPartIdx], sliceType), 8, 0);
+            y = InverseRasterScan(subMbPartIdx, SubMbPartWidth(subMbType[mbPartIdx], sliceType), SubMbPartHeight(subMbType[mbPartIdx], sliceType), 8, 1);
         }
         else
         {

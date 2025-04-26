@@ -15,6 +15,11 @@ public static class SliceTypes
     public const int BiPred = 4;
     public const int Direct = 5;
 
+    public const int Intra_4x4 = 0;
+    public const int Intra_16x16 = 1;
+    public const int Intra_8x8 = 2;
+    public const int Inter = 3;
+
     #region P
 
     // Page 129

@@ -120,7 +120,7 @@ internal partial class Decoder264
 
     public void DeriveMacroblockAndSubMacroblockPartitionIndices(int xP, int yP, int mbType, Span<int> subMbType, ref int mbPartIdx, ref int subMbPartIdx)
     {
-        if (SliceTypes.IsI(mbType))
+        if (IsI(mbType))
         {
             mbPartIdx = 0;
         }
@@ -129,19 +129,19 @@ internal partial class Decoder264
             mbPartIdx = 16 / Util264.MbPartWidth(mbType, sliceType) * (yP / Util264.MbPartHeight(mbType, sliceType)) + xP / Util264.MbPartWidth(mbType, sliceType);
         }
 
-        if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8 or SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
+        if (mbType is P_8x8 or P_8x8ref0 or B_8x8 or B_Skip or B_Direct_16x16)
         {
             subMbPartIdx = 0;
         }
         else
         {
-            subMbPartIdx = 8 / SubMbPartWidth(subMbType[mbPartIdx])
-                         * (yP % 8 / SubMbPartHeight(subMbType[mbPartIdx]))
-                         + xP % 8 / SubMbPartWidth(subMbType[mbPartIdx]);
+            subMbPartIdx = 8 / Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType)
+                         * (yP % 8 / Util264.SubMbPartHeight(subMbType[mbPartIdx], sliceType))
+                         + xP % 8 / Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
         }
     }
 
-    public static void DeriveNeighboringPartitions(
+    public void DeriveNeighboringPartitions(
         DerivationContext dc,
         int mbPartIdx,
         int currSubMbType,
@@ -156,48 +156,46 @@ internal partial class Decoder264
     {
         int x = 0;
         int y = 0;
-        Util264.InverseMacroblockPartitionScan(mbPartIdx, mbType, ref x, ref y);
+        Util264.InverseMacroblockPartitionScan(mbPartIdx, mbType, sliceType, ref x, ref y);
 
         int xS = 0;
         int yS = 0;
-        if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
-            Util264.InverseSubMacroblockPartitionScan(subMbPartIdx, subMbType, mbPartIdx, mbType, ref xS, ref yS);
+        if (mbType is P_8x8 or P_8x8ref0 or B_8x8)
+            Util264.InverseSubMacroblockPartitionScan(subMbPartIdx, subMbType, mbPartIdx, mbType, sliceType, ref xS, ref yS);
 
-        int predPartWidth = 0;
-        if (mbType is SliceTypes.P_Skip or SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
+        int predPartWidth;
+        if (mbType is P_Skip or B_Skip or B_Direct_16x16)
         {
             predPartWidth = 16;
         }
-        else if (mbType is SliceTypes.B_8x8)
+        else if (mbType is B_8x8)
         {
-            if (currSubMbType == SliceTypes.B_Direct_8x8)
+            if (currSubMbType == B_Direct_8x8)
             {
                 predPartWidth = 16;
             }
             else
             {
-                predPartWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx]);
+                predPartWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
             }
         }
-        else if (mbType is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0)
+        else if (mbType is P_8x8 or P_8x8ref0)
         {
-            predPartWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx]);
+            predPartWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
         }
         else
         {
-            predPartWidth = Util264.MbPartWidth(mbType);
+            predPartWidth = Util264.MbPartWidth(mbType, sliceType);
         }
 
-        int xW = 0;
-        int yW = 0;
 
-        DeriveNeighboringPartition(x, y, xS, yS, out xW, out yW, LumaLocationsA, mbTypeArray, subMbType, ref mbAddrA, ref mbPartIdxA, ref subMbPartIdxA, ref validA, dc, mbType);
+        DeriveNeighboringPartition(x, y, xS, yS, out int xW, out int yW, LumaLocationsA, mbTypeArray, subMbType, ref mbAddrA, ref mbPartIdxA, ref subMbPartIdxA, ref validA, dc, mbType);
         DeriveNeighboringPartition(x, y, xS, yS, out xW, out yW, LumaLocationsB, mbTypeArray, subMbType, ref mbAddrB, ref mbPartIdxB, ref subMbPartIdxB, ref validB, dc, mbType);
         DeriveNeighboringPartition(x, y, xS, yS, out xW, out yW, (predPartWidth, -1), mbTypeArray, subMbType, ref mbAddrC, ref mbPartIdxC, ref subMbPartIdxC, ref validC, dc, mbType);
         DeriveNeighboringPartition(x, y, xS, yS, out xW, out yW, LumaLocationsD, mbTypeArray, subMbType, ref mbAddrD, ref mbPartIdxD, ref subMbPartIdxD, ref validD, dc, mbType);
     }
 
-    private static void DeriveNeighboringPartition(int x, int y, int xS, int yS, out int xW, out int yW, (int x, int y) locations, Span<int> mbTypeArray, Span<int> subMbType, ref int mbAddrN, ref int mbPartIdxN, ref int subMbPartIdxN, ref bool validN, DerivationContext dc, int mbType)
+    private void DeriveNeighboringPartition(int x, int y, int xS, int yS, out int xW, out int yW, (int x, int y) locations, Span<int> mbTypeArray, Span<int> subMbType, ref int mbAddrN, ref int mbPartIdxN, ref int subMbPartIdxN, ref bool validN, DerivationContext dc, int mbType)
     {
         int xNa = x + xS + locations.x;
         int yNa = y + yS + locations.y;
@@ -208,10 +206,10 @@ internal partial class Decoder264
         {
             int mbTypeA = mbTypeArray[mbAddrN];
             int subMbTypeA = 0;
-            if (mbTypeA is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
+            if (mbTypeA is P_8x8 or P_8x8ref0 or B_8x8)
                 subMbTypeA = subMbType[mbAddrN];
 
-            if (mbTypeA is SliceTypes.P_8x8 or SliceTypes.P_8x8ref0 or SliceTypes.B_8x8)
+            if (mbTypeA is P_8x8 or P_8x8ref0 or B_8x8)
             {
                 DeriveMacroblockAndSubMacroblockPartitionIndices(xW, yW, mbType, subMbType, ref mbPartIdxN, ref subMbPartIdxN);
             }
@@ -563,7 +561,7 @@ internal partial class Decoder264
         int mbPartIdxMin = 0;
         int mbPartIdxMax = 0;
 
-        if (mbType is SliceTypes.B_Skip or SliceTypes.B_Direct_16x16)
+        if (mbType is B_Skip or B_Direct_16x16)
         {
             mbPartIdxMax = 3;
         }
@@ -573,48 +571,48 @@ internal partial class Decoder264
         }
     }
 
-    private void DeriveMotionVectors(Matrix16x16 mvL0, Matrix16x16 mvL1, Matrix16x16 mvCL0cb, Matrix16x16 mvCL1cb, Matrix16x16 mvCL0cr, Matrix16x16 mvCL1cr, out int refIdxL0, out int refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt, Span<int> refIdxL0Array, Span<int> refIdxL1Array)
-    {
-        if (mbType == P_Skip)
-        {
-            DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSP(mvL0, out refIdxL0);
-            predFlagL0 = true;
-            predFlagL1 = false;
-            refIdxL1 = 0;
-            subMvCnt = 1;
+    //private void DeriveMotionVectors(Matrix16x16 mvL0, Matrix16x16 mvL1, Matrix16x16 mvCL0cb, Matrix16x16 mvCL1cb, Matrix16x16 mvCL0cr, Matrix16x16 mvCL1cr, out int refIdxL0, out int refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt, Span<int> refIdxL0Array, Span<int> refIdxL1Array)
+    //{
+    //    if (mbType == P_Skip)
+    //    {
+    //        DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSP(mvL0, out refIdxL0);
+    //        predFlagL0 = true;
+    //        predFlagL1 = false;
+    //        refIdxL1 = 0;
+    //        subMvCnt = 1;
 
-            return;
-        }
+    //        return;
+    //    }
 
-        if (mbType is B_Skip or B_Direct_16x16 || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
-        {
-            DeriveLumaMotionVectorsForBSkipAndBDirect16x16AndBDirect8x8(mbPartIdx, subMbPartIdx, mvL0, mvL1, out refIdxL0, out refIdxL1, out subMvCnt, out predFlagL0, out predFlagL1);
-            return;
-        }
+    //    if (mbType is B_Skip or B_Direct_16x16 || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
+    //    {
+    //        DeriveLumaMotionVectorsForBSkipAndBDirect16x16AndBDirect8x8(mbPartIdx, subMbPartIdx, mvL0, mvL1, out refIdxL0, out refIdxL1, out subMvCnt, out predFlagL0, out predFlagL1);
+    //        return;
+    //    }
 
-        DeriveInternal(out predFlagL0, mvL0, out refIdxL0, Pred_L0, refIdxL0Array, sliceType);
-        DeriveInternal(out predFlagL1, mvL1, out refIdxL1, Pred_L1, refIdxL1Array, sliceType);
+    //    DeriveInternal(out predFlagL0, mvL0, out refIdxL0, Pred_L0, refIdxL0Array, sliceType);
+    //    DeriveInternal(out predFlagL1, mvL1, out refIdxL1, Pred_L1, refIdxL1Array, sliceType);
 
-        static void DeriveInternal(out bool predFlagLX, bool transformSize8x8Flag, Span<int> subMbTypeArray, int mbType, int mbPartIdx, Matrix16x16 mvLX, out int refIdxLX, int predLX, Span<int> refIdxLXArray, GeneralSliceType sliceType)
-        {
-            int partPredMode = Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType);
-            int subMbPredMode = Util264.SubMbPredMode(subMbTypeArray[mbPartIdx]);
+    //    static void DeriveInternal(out bool predFlagLX, bool transformSize8x8Flag, Span<int> subMbTypeArray, int mbType, int mbPartIdx, Matrix16x16 mvLX, out int refIdxLX, int predLX, Span<int> refIdxLXArray, GeneralSliceType sliceType)
+    //    {
+    //        int partPredMode = Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType);
+    //        int subMbPredMode = Util264.SubMbPredMode(subMbTypeArray[mbPartIdx]);
 
-            if (mbPartIdx == predLX || mbPartIdx == BiPred || subMbPredMode == predLX || subMbPredMode == BiPred)
-            {
-                refIdxLX = refIdxLXArray[mbPartIdx];
-                predFlagLX = true;
-            }
-            else
-            {
-                refIdxLX = -1;
-                predFlagLX = false;
-            }
+    //        if (mbPartIdx == predLX || mbPartIdx == BiPred || subMbPredMode == predLX || subMbPredMode == BiPred)
+    //        {
+    //            refIdxLX = refIdxLXArray[mbPartIdx];
+    //            predFlagLX = true;
+    //        }
+    //        else
+    //        {
+    //            refIdxLX = -1;
+    //            predFlagLX = false;
+    //        }
 
-            int currSubMbType = mbType is B_8x8 ? subMbTypeArray[mbPartIdx] : na;
+    //        int currSubMbType = mbType is B_8x8 ? subMbTypeArray[mbPartIdx] : na;
 
-            Span<int> mvpLx = stackalloc int[2];
+    //        Span<int> mvpLx = stackalloc int[2];
 
-        }
-    }
+    //    }
+    //}
 }

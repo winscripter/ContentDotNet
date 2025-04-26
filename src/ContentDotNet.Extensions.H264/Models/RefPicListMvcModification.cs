@@ -228,10 +228,8 @@ public struct RefPicListMvcModificationList : IEquatable<RefPicListMvcModificati
         await writer.WriteBitAsync(Flag);
         if (Flag)
         {
-            foreach (RefPicListMvcModificationEntry entry in entries.Span)
-            {
-                await entry.WriteAsync(writer);
-            }
+            for (int i = 0; i < entries.Length; i++)
+                await entries.Span[i].WriteAsync(writer);
         }
     }
 

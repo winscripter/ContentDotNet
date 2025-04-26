@@ -477,19 +477,19 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
             {
                 for (int i = 0; i < this.ScalingMatrix!.Value.ListCount; i++)
                 {
-                    await _AsyncCore(i, this.ScalingMatrix!.Value, writer, build);
+                    _Core(i, this.ScalingMatrix!.Value, writer, build);
 
-                    static async Task _AsyncCore(int i, ScalingMatrices matrix, BitStreamWriter writer, ScalingMatrixBuilder builder)
+                    static void _Core(int i, ScalingMatrices matrix, BitStreamWriter writer, ScalingMatrixBuilder builder)
                     {
                         Span<int> sp = stackalloc int[i < 6 ? 16 : 64];
                         builder.BuildSink(i, matrix.ListCount, sp, out bool present);
 
-                        await writer.WriteBitAsync(present);
+                        writer.WriteBit(present);
                         if (present)
                         {
                             for (int j = 0; j < matrix.ListCount; j++)
                             {
-                                await writer.WriteSEAsync(sp[j]);
+                                writer.WriteSE(sp[j]);
                             }
                         }
                     }
