@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Abstractions.Tests;
+﻿using Newtonsoft.Json.Linq;
+
+namespace ContentDotNet.Abstractions.Tests;
 
 public class BitStreamTests
 {
@@ -200,6 +202,24 @@ public class BitStreamTests
                         Assert.True(reader.ReadBit());
                     else
                         Assert.False(reader.ReadBit());
+            });
+    }
+
+    [Fact]
+    public void UEGolomb_1()
+    {
+        const uint VALUE = 1;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteUE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                uint b = reader.ReadUE();
+                Assert.Equal(VALUE, b);
             });
     }
 
