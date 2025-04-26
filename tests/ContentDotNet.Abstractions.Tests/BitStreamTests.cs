@@ -208,7 +208,7 @@ public class BitStreamTests
     [Fact]
     public void UEGolomb_1()
     {
-        const uint VALUE = 1;
+        const uint VALUE = 400;
 
         UseBSWriterThenReader(
             writer =>
