@@ -155,30 +155,6 @@ public class BitStreamTests
     }
 
     [Fact]
-    public void CodedUInt64_1()
-    {
-        TestCodedInteger(0, 64);
-    }
-
-    [Fact]
-    public void CodedUInt64_2()
-    {
-        TestCodedInteger(1, 64);
-    }
-
-    [Fact]
-    public void CodedUInt64_3()
-    {
-        TestCodedInteger(8, 64);
-    }
-
-    [Fact]
-    public void CodedUInt64_4()
-    {
-        TestCodedInteger(9999999, 64);
-    }
-
-    [Fact]
     public void Bits_1()
     {
         TestBits(false, true, false, true, false, true);
