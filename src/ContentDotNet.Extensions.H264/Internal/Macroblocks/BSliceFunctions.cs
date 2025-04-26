@@ -70,4 +70,39 @@ internal static class BSliceFunctions
 
         throw new InvalidOperationException("Invalid macroblock type for MbPartHeight");
     }
+
+    public static int NumSubMbPart(int mbType)
+    {
+        if (mbType is B_Direct_8x8 || mbType is >= B_L0_4x4 and <= B_Bi_4x4) return 4;
+        if (mbType is >= B_L0_8x8 and <= B_Bi_8x8) return 1;
+        if (mbType is >= B_L0_8x4 and <= B_Bi_4x8) return 2;
+
+        throw new InvalidOperationException("Invalid macroblock type for NumSubMbPart");
+    }
+
+    public static int SubMbPredMode(int mbType)
+    {
+        if (mbType == B_Direct_8x8) return Direct;
+        if (mbType is B_L0_8x8 or B_L0_8x4 or B_L0_4x8 or B_L0_4x4) return Pred_L0;
+        if (mbType is B_L1_8x8 or B_L1_8x4 or B_L1_4x8 or B_L1_4x4) return Pred_L1;
+        if (mbType is B_Bi_8x8 or B_Bi_8x4 or B_Bi_4x8 or B_Bi_4x4) return BiPred;
+
+        throw new InvalidOperationException("Invalid macroblock type for SubMbPredMode");
+    }
+
+    public static int SubMbPartWidth(int mbType)
+    {
+        if (mbType is B_Direct_8x8 or B_L0_4x8 or B_L1_4x8 or B_Bi_4x8 or B_L0_4x4 or B_L1_4x4 or B_Bi_4x4) return 4;
+        if (mbType is B_L0_8x8 or B_L1_8x8 or B_Bi_8x8 or B_L0_8x4 or B_L1_8x4 or B_Bi_8x4) return 8;
+
+        throw new InvalidOperationException("Invalid macroblock type for SubMbPartWidth");
+    }
+
+    public static int SubMbPartHeight(int mbType)
+    {
+        if (mbType is B_Direct_8x8 or B_L0_8x4 or B_L1_8x4 or B_Bi_8x4 or B_L0_4x4 or B_L1_4x4 or B_Bi_4x4) return 4;
+        if (mbType is B_L0_8x8 or B_L1_8x8 or B_Bi_8x8 or B_L0_4x8 or B_L1_4x8 or B_Bi_4x8) return 8;
+
+        throw new InvalidOperationException("Invalid macroblock type for SubMbPartHeight");
+    }
 }

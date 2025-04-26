@@ -10,6 +10,11 @@ public static class SliceTypes
 {
     #region Public Constants
 
+    public const int Pred_L0 = 2;
+    public const int Pred_L1 = 3;
+    public const int BiPred = 4;
+    public const int Direct = 5;
+
     #region P
 
     // Page 129
@@ -19,6 +24,12 @@ public static class SliceTypes
     public const int P_8x8 = 3;
     public const int P_8x8ref0 = 4;
     public const int P_Skip = 0; // They say it's "inferred", but, what does that mean...
+
+    // Page 134
+    public const int P_L0_8x8 = 0;
+    public const int P_L0_8x4 = 1;
+    public const int P_L0_4x8 = 2;
+    public const int P_L0_4x4 = 3;
 
     #endregion
 
@@ -49,6 +60,21 @@ public static class SliceTypes
     public const int B_Bi_Bi_8x16 = 21;
     public const int B_8x8 = 22;
     public const int B_Skip = 0; // They say it's "inferred", but, what does that mean...
+
+    // Page 135
+    public const int B_Direct_8x8 = 0;
+    public const int B_L0_8x8 = 1;
+    public const int B_L1_8x8 = 2;
+    public const int B_Bi_8x8 = 3;
+    public const int B_L0_8x4 = 4;
+    public const int B_L0_4x8 = 5;
+    public const int B_L1_8x4 = 6;
+    public const int B_L1_4x8 = 7;
+    public const int B_Bi_8x4 = 8;
+    public const int B_Bi_4x8 = 9;
+    public const int B_L0_4x4 = 10;
+    public const int B_L1_4x4 = 11;
+    public const int B_Bi_4x4 = 12;
 
     #endregion
 

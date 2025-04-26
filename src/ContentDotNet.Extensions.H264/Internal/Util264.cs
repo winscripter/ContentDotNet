@@ -72,6 +72,50 @@ internal static class Util264
             _ => SliceTypes.na
         };
 
+    public static int SubMbPartWidth(int mbType, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => SliceTypes.na,
+            GeneralSliceType.P => PSliceFunctions.SubMbPartWidth(mbType),
+            GeneralSliceType.B => BSliceFunctions.SubMbPartWidth(mbType),
+            GeneralSliceType.SI => SliceTypes.na,
+            GeneralSliceType.SP => PSliceFunctions.SubMbPartWidth(mbType),
+            _ => SliceTypes.na
+        };
+
+    public static int SubMbPartHeight(int mbType, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => SliceTypes.na,
+            GeneralSliceType.P => PSliceFunctions.SubMbPartHeight(mbType),
+            GeneralSliceType.B => BSliceFunctions.SubMbPartHeight(mbType),
+            GeneralSliceType.SI => SliceTypes.na,
+            GeneralSliceType.SP => PSliceFunctions.SubMbPartHeight(mbType),
+            _ => SliceTypes.na
+        };
+
+    public static int NumSubMbPart(int mbType, GeneralSliceType sliceType)
+        => sliceType switch
+        {
+            GeneralSliceType.I => SliceTypes.na,
+            GeneralSliceType.P => PSliceFunctions.NumSubMbPart(mbType),
+            GeneralSliceType.B => BSliceFunctions.NumSubMbPart(mbType),
+            GeneralSliceType.SI => SliceTypes.na,
+            GeneralSliceType.SP => PSliceFunctions.NumSubMbPart(mbType),
+            _ => SliceTypes.na
+        };
+
+    public static int SubMbPredMode(int mbType, GeneralSliceType sliceType)
+       => sliceType switch
+       {
+           GeneralSliceType.I => SliceTypes.na,
+           GeneralSliceType.P => PSliceFunctions.SubMbPredMode(mbType),
+           GeneralSliceType.B => BSliceFunctions.SubMbPredMode(mbType),
+           GeneralSliceType.SI => SliceTypes.na,
+           GeneralSliceType.SP => PSliceFunctions.SubMbPredMode(mbType),
+           _ => SliceTypes.na
+       };
+
     public static int MbPartHeight(int mbType, GeneralSliceType sliceType)
         => sliceType switch
         {

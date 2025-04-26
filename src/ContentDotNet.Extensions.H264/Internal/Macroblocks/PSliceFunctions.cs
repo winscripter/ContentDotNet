@@ -52,4 +52,31 @@ internal static class PSliceFunctions
 
         throw new InvalidOperationException("Invalid macroblock type for MbPartHeight");
     }
+
+    public static int NumSubMbPart(int mbType)
+    {
+        if (mbType is P_L0_8x8) return 1;
+        if (mbType is P_L0_8x4 or P_L0_4x8) return 2;
+        if (mbType is P_L0_4x4) return 4;
+
+        throw new InvalidOperationException("Invalid macroblock type for NumSubMbPart");
+    }
+
+    public static int SubMbPredMode(int mbType) => 4;
+
+    public static int SubMbPartWidth(int mbType)
+    {
+        if (mbType is P_L0_8x8 or P_L0_8x4) return 8;
+        if (mbType is P_L0_4x8 or P_L0_4x4) return 4;
+
+        throw new InvalidOperationException("Invalid macroblock type for SubMbPartWidth");
+    }
+
+    public static int SubMbPartHeight(int mbType)
+    {
+        if (mbType is P_L0_8x8 or P_L0_4x8) return 8;
+        if (mbType is P_L0_8x4 or P_L0_4x4) return 4;
+
+        throw new InvalidOperationException("Invalid macroblock type for SubMbPartHeight");
+    }
 }

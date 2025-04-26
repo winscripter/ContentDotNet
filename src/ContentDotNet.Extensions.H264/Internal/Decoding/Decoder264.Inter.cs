@@ -597,7 +597,23 @@ internal partial class Decoder264
         static void DeriveInternal(out bool predFlagLX, bool transformSize8x8Flag, Span<int> subMbTypeArray, int mbType, int mbPartIdx, Matrix16x16 mvLX, out int refIdxLX, int predLX, Span<int> refIdxLXArray, GeneralSliceType sliceType)
         {
             int partPredMode = Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType);
-            int subMbPredMode = Util264.SubMbPredMode(subMbTypeArray[mbPartIdx]);)
+            int subMbPredMode = Util264.SubMbPredMode(subMbTypeArray[mbPartIdx]);
+
+            if (mbPartIdx == predLX || mbPartIdx == BiPred || subMbPredMode == predLX || subMbPredMode == BiPred)
+            {
+                refIdxLX = refIdxLXArray[mbPartIdx];
+                predFlagLX = true;
+            }
+            else
+            {
+                refIdxLX = -1;
+                predFlagLX = false;
+            }
+
+            int currSubMbType = mbType is B_8x8 ? subMbTypeArray[mbPartIdx] : na;
+
+            Span<int> mvpLx = stackalloc int[2];
+
         }
     }
 }
