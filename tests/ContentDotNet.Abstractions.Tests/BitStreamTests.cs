@@ -3,18 +3,18 @@
 public class BitStreamTests
 {
     [Fact]
-    public void UE_Golomb_1()
+    public void Bit_1()
     {
         UseBSWriterThenReader(
             (writer) =>
             {
-                writer.WriteUE(1);
+                writer.WriteBit(true);
                 writer.WriteBits(0u, 16);
             },
             (reader) =>
             {
-                uint ueGolomb = reader.ReadUE();
-                Assert.Equal(1u, ueGolomb);
+                bool bit = reader.ReadBit();
+                Assert.True(bit);
             });
     }
 
