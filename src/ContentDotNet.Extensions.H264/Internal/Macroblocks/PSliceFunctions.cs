@@ -13,20 +13,16 @@ internal static class PSliceFunctions
         throw new InvalidOperationException("Invalid macroblock type for NumMbPart");
     }
 
-    public static int MbPartPredMode(int mbType, int thing /*🐣*/)
+    public static int MbPartPredMode(int mbType, int mbPartIdx)
     {
-        // I named the second parameter 'thing' because I have no idea what
-        // is its actual name. ITU-T just provides 'MbPartPredMode(mb_type, 0)'
-        // and 1.
-
-        if (thing == 0)
+        if (mbPartIdx == 0)
         {
             if (mbType is P_Skip or P_L0_16x16 or P_L0_L0_16x8 or P_L0_L0_8x16) return Pred_L0;
             else if (mbType is P_8x8 or P_8x8ref0) return na;
 
             throw new InvalidOperationException("Invalid macroblock type for MbPartPredMode");
         }
-        else if (thing == 1)
+        else if (mbPartIdx == 1)
         {
             if (mbType is P_L0_16x16 or P_8x8 or P_8x8ref0 or P_Skip) return na;
             else if (mbType is P_L0_L0_16x8 or P_L0_L0_8x16) return Pred_L0;

@@ -4,7 +4,7 @@ namespace ContentDotNet.Extensions.H264.Internal.Macroblocks;
 
 internal static class ISliceFunctions
 {
-    public static int MbPartPredMode(int mbType, bool transformSize8x8Flag /*🐔🎶*/)
+    public static int MbPartPredMode(int mbType, bool transformSize8x8Flag)
     {
         if (mbType == I_NxN)
         {

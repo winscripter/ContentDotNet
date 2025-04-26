@@ -14,9 +14,9 @@ internal static class BSliceFunctions
         throw new InvalidOperationException("Invalid macroblock type for NumMbPart");
     }
 
-    public static int MbPartPredMode(int mbType, int thing /*🐣🐣🐣🐣🐣🐣🐣🐤🐤🐤🐤🐤🐤🐤🐤🐤🐤🐤*/)
+    public static int MbPartPredMode(int mbType, int mbPartIdx)
     {
-        if (thing == 0)
+        if (mbPartIdx == 0)
         {
             if (mbType is B_Direct_16x16 or B_Skip) return Direct;
             if (mbType is >= B_Bi_L0_16x8 and <= B_Bi_Bi_8x16 or B_Bi_16x16) return BiPred;
@@ -29,7 +29,7 @@ internal static class BSliceFunctions
 
             throw new InvalidOperationException("Invalid macroblock type for MbPartPredMode");
         }
-        else if (thing == 1)
+        else if (mbPartIdx == 1)
         {
             if (mbType is B_Direct_16x16 or B_L0_16x16 or B_L1_16x16 or B_Bi_16x16 or B_Skip) return na;
             if (mbType is B_L0_L0_16x8 or B_L0_L0_8x16 or B_L1_L0_16x8 or B_L1_L0_8x16 or
