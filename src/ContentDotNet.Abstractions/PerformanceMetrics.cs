@@ -4,6 +4,40 @@ using System.Diagnostics;
 namespace ContentDotNet.Abstractions;
 
 /// <summary>
+/// Exception thrown when there is a mismatch between the requested performance metrics
+/// and the capabilities of the codec service.
+/// </summary>
+public sealed class PerformanceMetricsMismatchException : Exception
+{
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PerformanceMetricsMismatchException"/> class.
+    /// </summary>
+    public PerformanceMetricsMismatchException()
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PerformanceMetricsMismatchException"/> class
+    /// with a specified error message.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    public PerformanceMetricsMismatchException(string? message) : base(message)
+    {
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="PerformanceMetricsMismatchException"/> class
+    /// with a specified error message and a reference to the inner exception that is the cause
+    /// of this exception.
+    /// </summary>
+    /// <param name="message">The message that describes the error.</param>
+    /// <param name="innerException">The exception that is the cause of the current exception.</param>
+    public PerformanceMetricsMismatchException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
+}
+
+/// <summary>
 /// Performance Metrics control performance options for the encoder/decoder.
 /// </summary>
 [DebuggerDisplay($"{{{nameof(GetDebuggerDisplay)}(),nq}}")]
