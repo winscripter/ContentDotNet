@@ -9,7 +9,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ContentDotNet.Abstractions\ContentDotNet.Abstractions.csproj" />
+    <ProjectReference Include="..\ContentDotNet.Extensions.H26x\ContentDotNet.Extensions.H26x.csproj" />
   </ItemGroup>
 
 </Project>
