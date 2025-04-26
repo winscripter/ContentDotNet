@@ -23,5 +23,5 @@ public interface ISeiHandler
     /// </summary>
     /// <param name="reader">Reader</param>
     /// <returns>A handle.</returns>
-    static abstract ISeiModelHandle SkipData(BitStreamReader reader);
+    static abstract ISeiModelHandle SkipData(Abstractions.BitStreamReader reader);
 }
