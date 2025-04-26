@@ -219,7 +219,79 @@ public class BitStreamTests
             reader =>
             {
                 uint b = reader.ReadUE();
-                Assert.Equal(VALUE, b);
+                Assert.Equal(VALUE + 1, b);
+            });
+    }
+
+    [Fact]
+    public void UEGolomb_2()
+    {
+        const uint VALUE = 1;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteUE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                uint b = reader.ReadUE();
+                Assert.Equal(VALUE + 1, b);
+            });
+    }
+
+    [Fact]
+    public void UEGolomb_3()
+    {
+        const uint VALUE = 0;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteUE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                uint b = reader.ReadUE();
+                Assert.Equal(VALUE + 1, b);
+            });
+    }
+
+    [Fact]
+    public void UEGolomb_4()
+    {
+        const uint VALUE = 1637;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteUE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                uint b = reader.ReadUE();
+                Assert.Equal(VALUE + 1, b);
+            });
+    }
+
+    [Fact]
+    public void UEGolomb_5()
+    {
+        const uint VALUE = 7676;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteUE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                uint b = reader.ReadUE();
+                Assert.Equal(VALUE + 1, b);
             });
     }
 
