@@ -1,6 +1,6 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264.Utilities;
+namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 ///   A container for 16 <see cref="bool"/>s.
