@@ -58,7 +58,17 @@ public class SPSTests
     private static void ValidateSpsFields(SequenceParameterSet expected)
     {
         UseBSWriterThenReader(
-            writer => expected.Write(writer, []),
+            writer =>
+            {
+                expected.Write(writer, []);
+                for (int i = 0; i < 4; i++)
+                {
+                    writer.WriteUE(123);
+                    writer.WriteUE(456);
+                    writer.WriteUE(789);
+                }
+            },
+
             reader =>
             {
                 SequenceParameterSet composed = SequenceParameterSet.Read(reader);
