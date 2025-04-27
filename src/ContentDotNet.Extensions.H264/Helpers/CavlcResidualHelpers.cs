@@ -2,7 +2,7 @@
 
 namespace ContentDotNet.Extensions.H264.Helpers;
 
-internal static class CavlcResidualLUT
+internal static class CavlcResidualHelpers
 {
     // Each element is separated with the following columns:
     //
