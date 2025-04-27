@@ -1,7 +1,17 @@
-﻿namespace ContentDotNet.Extensions.H264.Helpers;
+﻿using ContentDotNet.Abstractions;
+
+namespace ContentDotNet.Extensions.H264.Helpers;
 
 internal static class CavlcResidualLUT
 {
+    // Each element is separated with the following columns:
+    //
+    // *1 - TO is an abbreviation for TrailingOnes(coeff_token)
+    // *2 - TC is an abbreviation for TotalCoeff(coeff_token)
+    //
+    //   TO*1   TC*2    0 <= nC < 2     2 <= nC < 4     4 <= nC < 8     8 <= nC     nC = = −1       nC = = −2  
+    //
+
     public static ReadOnlySpan<byte> LUT =>
     [
         0,      0,      0b1,    0b11,   0b1111, 0b000011,       0b01,   0b1,
@@ -68,6 +78,10 @@ internal static class CavlcResidualLUT
         3,      16,     0b0000000000001000,     0b00000000000100,       0b0000000010,   0b111111,       0b0,    0b0,
     ];
 
+    /// <summary>
+    ///   Specifies number of bits to read for every column/row in <see cref="LUT"/>. First two columns
+    ///   shall be ignored as they imply TotalCoeff and TrailingOnes.
+    /// </summary>
     public static ReadOnlySpan<int> Sizes =>
     [
         1,      1,      1,      2,      4,      6,      2,      1,
@@ -133,4 +147,33 @@ internal static class CavlcResidualLUT
         1,      2,      16,     14,     10,     6,      1,      1,
         1,      2,      16,     14,     10,     6,      1,      1,
     ];
+
+    public static (int TotalCoeff, int TrailingOnes)? DecodeCoeffToken(BitStreamReader reader, int nC)
+    {
+        int column;
+        if (nC >= 0 && nC < 2) column = 2;
+        else if (nC < 4) column = 3;
+        else if (nC < 8) column = 4;
+        else if (nC >= 8) column = 5;
+        else if (nC == -1) column = 6;
+        else if (nC == -2) column = 7;
+        else throw new ArgumentOutOfRangeException(nameof(nC));
+
+        for (int row = 0; row < LUT.Length; row += 8)
+        {
+            int to = LUT[row];
+            int tc = LUT[row + 1];
+            byte vlc = LUT[row + column];
+            int size = Sizes[row + column];
+
+            uint bits = reader.PeekBits((uint)size);
+            if (bits == vlc)
+            {
+                _ = reader.ReadBits((uint)size);
+                return (tc, to);
+            }
+        }
+
+        return null;
+    }
 }
