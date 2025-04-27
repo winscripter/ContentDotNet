@@ -28,6 +28,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.H2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Abstractions.Tests", "tests\ContentDotNet.Abstractions.Tests\ContentDotNet.Abstractions.Tests.csproj", "{62E5C884-72EA-4230-B41E-A93D7D5F45BA}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.H264.Tests", "tests\ContentDotNet.Extensions.H264.Tests\ContentDotNet.Extensions.H264.Tests.csproj", "{73163E69-33BD-4666-A3AA-98F2B16A88E2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -62,6 +64,10 @@ Global
 		{62E5C884-72EA-4230-B41E-A93D7D5F45BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{62E5C884-72EA-4230-B41E-A93D7D5F45BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{62E5C884-72EA-4230-B41E-A93D7D5F45BA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -74,5 +80,6 @@ Global
 		{3D03ECFA-1FD6-4E4F-ACB2-1BC8DACFD8CA} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{96A32FA2-963D-4B04-9887-4DDC59C2BB75} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{62E5C884-72EA-4230-B41E-A93D7D5F45BA} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
+		{73163E69-33BD-4666-A3AA-98F2B16A88E2} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
 	EndGlobalSection
 EndGlobal
