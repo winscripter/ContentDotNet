@@ -4,7 +4,6 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <LangVersion>12.0</LangVersion>
     <AssemblyTitle>H.264 ContentDotNet extension</AssemblyTitle>
     <Description>Adds H.264 parsing, editing and exporting support for ContentDotNet</Description>
