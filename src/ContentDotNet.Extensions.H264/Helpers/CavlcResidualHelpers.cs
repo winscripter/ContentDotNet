@@ -1,6 +1,7 @@
 ﻿using ContentDotNet.Abstractions;
 using ContentDotNet.Extensions.H264.Internal.Decoding;
 using ContentDotNet.Extensions.H264.Models;
+using System.Reflection.PortableExecutable;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Helpers;
@@ -150,6 +151,31 @@ internal static class CavlcResidualHelpers
         1,      2,      16,     14,     10,     6,      0,      0,
         1,      2,      16,     14,     10,     6,      0,      0,
     ];
+
+    public static (byte vlc, int size) GetVlcAndSize(int coeffToken, int nC)
+    {
+        int column;
+        if (nC >= 0 && nC < 2) column = 2;
+        else if (nC < 4) column = 3;
+        else if (nC < 8) column = 4;
+        else if (nC >= 8) column = 5;
+        else if (nC == -1) column = 6;
+        else if (nC == -2) column = 7;
+        else throw new ArgumentOutOfRangeException(nameof(nC));
+
+        for (int row = 0; row < LUT.Length; row += 8)
+        {
+            if (LUT[row] == coeffToken)
+            {
+                byte vlc = LUT[row + column];
+                int size = Sizes[row + column];
+
+                return (vlc, size);
+            }
+        }
+
+        throw new InvalidOperationException("Could not retrieve VLC");
+    }
 
     public static (int TotalCoeff, int TrailingOnes)? DecodeCoeffToken(BitStreamReader reader, int nC)
     {
