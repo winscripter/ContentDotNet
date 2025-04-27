@@ -402,14 +402,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     /// <exception cref="InvalidOperationException"></exception>
     public readonly void Write(BitStreamWriter writer, Span<int> offsetForRefFrames, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
     {
-        if (builder is null && this.SeqScalingMatrixPresentFlag)
-            throw new ArgumentNullException(nameof(builder), "Scaling matrices are present in the SPS but the scaling matrix builder is not provided");
-
-        if (this.VuiParametersPresentFlag && this.VuiParameters is null)
-            throw new InvalidOperationException("VuiParametersPresentFlag is true but actual VUI parameters aren't provided in the SPS");
-
-        if (PicOrderCntType == 1u && offsetForRefFrames.Length < NumRefFramesInPicOrderCntCycle)
-            throw new ArgumentOutOfRangeException(nameof(offsetForRefFrames), "Not enough offsets for ref frames; expected " + NumRefFramesInPicOrderCntCycle + ", got " + offsetForRefFrames.Length);
+        PrepareForWrite(builder, offsetForRefFrames);
 
         writer.WriteBits(ProfileIdc, 8);
         writer.WriteBit(ConstraintSet0Flag);
@@ -708,14 +701,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     /// <exception cref="InvalidOperationException"></exception>
     public readonly async Task WriteAsync(BitStreamWriter writer, Memory<int> offsetForRefFrames, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
     {
-        if (builder is null && this.SeqScalingMatrixPresentFlag)
-            throw new ArgumentNullException(nameof(builder), "Scaling matrices are present in the SPS but the scaling matrix builder is not provided");
-
-        if (this.VuiParametersPresentFlag && this.VuiParameters is null)
-            throw new InvalidOperationException("VuiParametersPresentFlag is true but actual VUI parameters aren't provided in the SPS");
-
-        if (PicOrderCntType == 1u && offsetForRefFrames.Length < NumRefFramesInPicOrderCntCycle)
-            throw new ArgumentOutOfRangeException(nameof(offsetForRefFrames), "Not enough offsets for ref frames; expected " + NumRefFramesInPicOrderCntCycle + ", got " + offsetForRefFrames.Length);
+        PrepareForWrite(builder, offsetForRefFrames.Span);
 
         await writer.WriteBitsAsync(ProfileIdc, 8);
         await writer.WriteBitAsync(ConstraintSet0Flag);
@@ -985,5 +971,17 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     public static bool operator !=(SequenceParameterSet left, SequenceParameterSet right)
     {
         return !(left == right);
+    }
+
+    private readonly void PrepareForWrite(ScalingMatrixBuilder? builder, Span<int> offsetForRefFrames)
+    {
+        if (builder is null && this.SeqScalingMatrixPresentFlag)
+            throw new ArgumentNullException(nameof(builder), "Scaling matrices are present in the SPS but the scaling matrix builder is not provided");
+
+        if (this.VuiParametersPresentFlag && this.VuiParameters is null)
+            throw new InvalidOperationException("VuiParametersPresentFlag is true but actual VUI parameters aren't provided in the SPS");
+
+        if (PicOrderCntType == 1u && offsetForRefFrames.Length < NumRefFramesInPicOrderCntCycle)
+            throw new ArgumentOutOfRangeException(nameof(offsetForRefFrames), "Not enough offsets for ref frames; expected " + NumRefFramesInPicOrderCntCycle + ", got " + offsetForRefFrames.Length);
     }
 }
