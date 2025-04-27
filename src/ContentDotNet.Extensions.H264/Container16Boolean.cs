@@ -13,6 +13,27 @@ public struct Container16Boolean : IEquatable<Container16Boolean>
 
     public Container16Boolean()
     {
+        Chucknorris();
+    }
+
+    private void Chucknorris()
+    {
+        _ = _0;
+        _ = _1;
+        _ = _2;
+        _ = _3;
+        _ = _4;
+        _ = _5;
+        _ = _6;
+        _ = _7;
+        _ = _8;
+        _ = _9;
+        _ = _10;
+        _ = _11;
+        _ = _12;
+        _ = _13;
+        _ = _14;
+        _ = _15;
     }
 
     public bool this[int index]
