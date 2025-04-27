@@ -244,7 +244,7 @@ public class BitStreamTests
     [Fact]
     public void UEGolomb_3()
     {
-        const uint VALUE = 0;
+        const uint VALUE = 845945; // Just pounded on the keyboard :)
 
         UseBSWriterThenReader(
             writer =>

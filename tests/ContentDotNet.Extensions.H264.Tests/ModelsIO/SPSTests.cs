@@ -8,38 +8,38 @@ public class SPSTests
     [Fact]
     public void SpsTest_WriteAndRead_ValidatesFields()
     {
-        const uint profileIDC = 0;
+        const uint profileIDC = 1;
         const bool constraintSet0Flag = false, constraintSet1Flag = false, constraintSet2Flag = false,
                    constraintSet3Flag = false, constraintSet4Flag = false, constraintSet5Flag = false;
-        const uint reservedZBits = 0u;
-        const uint levelIDC = 0u;
-        const uint spsID = 0u;
-        const uint chromaFormatIDC = 0u;
+        const uint reservedZBits = 1;
+        const uint levelIDC = 1;
+        const uint spsID = 1;
+        const uint chromaFormatIDC = 1;
         const bool separateColourPlaneFlag = false;
-        const uint bitDepthLumaMinus8 = 0u;
-        const uint bitDepthChromaMinus8 = 0u;
+        const uint bitDepthLumaMinus8 = 1;
+        const uint bitDepthChromaMinus8 = 1;
         const bool qpprimeYZeroTransformBypassFlag = false;
         const bool matrixPresentFlag = false;
         ScalingMatrices? matrix = null;
-        const uint log2MaxFrameNumMinus4 = 0u;
-        const uint picOrderCntType = 0u;
-        const uint log2MaxPicOrderCntLsbMinus4 = 0u;
+        const uint log2MaxFrameNumMinus4 = 1;
+        const uint picOrderCntType = 1;
+        const uint log2MaxPicOrderCntLsbMinus4 = 1;
         const bool deltaPicOrderAlwaysZeroFlag = false;
-        const int offsetForNonRefPic = 0;
+        const int offsetForNonRefPic = 1;
         const int offsetForTopToBottomField = 1;
-        const uint numRefFramesInPicOrderCntCycle = 0u;
-        const uint maxNumRefFrames = 0u;
+        const uint numRefFramesInPicOrderCntCycle = 1;
+        const uint maxNumRefFrames = 1;
         const bool gapsInFrameNumValueAllowedFlag = false;
-        const uint picWidthInMbsMinus1 = 0u;
-        const uint picHeightInMapUnitsMinus1 = 0u;
+        const uint picWidthInMbsMinus1 = 1;
+        const uint picHeightInMapUnitsMinus1 = 1;
         const bool frameMbsOnlyFlag = false;
         const bool macroblockAdaptiveFrameFieldFlag = false;
         const bool direct8x8InferenceFlag = false;
         const bool frameCroppingFlag = false;
-        const uint frameCropLeftOffset = 0u,
-                   frameCropRightOffset = 0u,
-                   frameCropTopOffset = 0u,
-                   frameCropBottomOffset = 0u;
+        const uint frameCropLeftOffset = 1,
+                   frameCropRightOffset = 1,
+                   frameCropTopOffset = 1,
+                   frameCropBottomOffset = 1;
         const bool vuiParametersPresentFlag = false;
         VuiParameters? vuip = null;
 
