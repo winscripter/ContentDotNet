@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Extensions.H264.Internal.Macroblocks;
-
-namespace ContentDotNet.Extensions.H264.Internal.Decoding;
+﻿namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
 internal sealed partial class Decoder264
 {

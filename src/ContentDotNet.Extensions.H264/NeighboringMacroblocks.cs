@@ -1,6 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Internal.Macroblocks;
+﻿namespace ContentDotNet.Extensions.H264;
 
-internal struct NeighboringMacroblocks
+public struct NeighboringMacroblocks
 {
     public int MbAddrA;
     public int MbAddrB;

@@ -1,8 +1,6 @@
-﻿using ContentDotNet.Extensions.H264.Internal.Macroblocks;
+﻿namespace ContentDotNet.Extensions.H264;
 
-namespace ContentDotNet.Extensions.H264.Internal.Decoding;
-
-internal struct DerivationContext
+public struct DerivationContext
 {
     public int MbAddrX;
     public bool IsMbaff;

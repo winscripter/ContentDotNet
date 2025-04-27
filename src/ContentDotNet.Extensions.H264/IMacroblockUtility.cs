@@ -1,6 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Internal.Macroblocks;
+﻿namespace ContentDotNet.Extensions.H264;
 
-internal interface IMacroblockUtility
+public interface IMacroblockUtility
 {
     bool IsCodedWithIntra4x4(int mbAddr);
     bool IsCodedWithIntra8x8(int mbAddr);

@@ -91,7 +91,22 @@ public struct CavlcResidual
         TrailingOnes = trailingOnes;
     }
 
-    public static CavlcResidual Read(BitStreamReader reader, Span<uint> coeffLevel, int startIdx, int endIdx, int maxNumCoeff)
+    public static CavlcResidual Read(
+        BitStreamReader reader,
+        Span<uint> coeffLevel,
+        int startIdx,
+        int endIdx,
+        int maxNumCoeff,
+        NalUnit nalu,
+        DerivationContext dc,
+        int chromaArrayType,
+        ref int luma4x4BlkIdx,
+        ref int cb4x4BlkIdx,
+        ref int cr4x4BlkIdx,
+        int chroma4x4BlkIdx,
+        ResidualMode mode,
+        IMacroblockUtility util,
+        bool constrainedIntraPredFlag)
     {
         for (int i = 0; i < maxNumCoeff; i++)
             coeffLevel[i] = 0u;
@@ -101,6 +116,7 @@ public struct CavlcResidual
         int TotalCoeff = 0;
         int TrailingOnes = 0;
 
+        int nC = CavlcResidualHelpers.GetNC(reader, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
         var totalCoeffAndTrailingOnes = CavlcResidualHelpers.DecodeCoeffToken(reader, nC)
                                         ?? throw new VideoCodecDecoderException("Could not retrieve TotalCoeff(coeff_token) and TrailingOnes(coeff_token) for CAVLC residual block");
     
