@@ -14,7 +14,7 @@ public class SPSTests
         const uint reservedZBits = 1;
         const uint levelIDC = 1;
         const uint spsID = 1;
-        const uint chromaFormatIDC = 1;
+        const uint chromaFormatIDC = 8;
         const bool separateColourPlaneFlag = false;
         const uint bitDepthLumaMinus8 = 1;
         const uint bitDepthChromaMinus8 = 1;
