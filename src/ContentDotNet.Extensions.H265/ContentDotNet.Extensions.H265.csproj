@@ -4,6 +4,11 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyTitle>H.265 ContentDotNet extension</AssemblyTitle>
+    <Description>Adds H.265 parsing, editing and exporting support for ContentDotNet</Description>
+    <Company>winscripter</Company>
+    <Copyright>Copyright (c) 2023-2025, winscripter</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
   </PropertyGroup>
 
   <ItemGroup>
