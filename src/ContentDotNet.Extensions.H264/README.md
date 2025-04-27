@@ -6,6 +6,10 @@ All H.264 code is implemented directly in C#; no external libraries
 and kits like FFmpeg, DirectShow, Media Foundation, VLC, OpenH264,
 or x264, are used.
 
+Note that this package does not come with SEI support by default- it does, but
+it can't represent any SEI model. To add support for parsing SEI models and
+payloads, make sure to add the `ContentDotNet.Extensions.H26x.Sei` package.
+
 ### What is H.264?
 It's a video codec, essentially dictates the binary format required to represent
 video. It's usually embedded in video formats like MP4, MKV, AVI and TS, and is the

@@ -3,24 +3,24 @@
 namespace ContentDotNet.Extensions.H264.Utilities;
 
 /// <summary>
-///   A container for 16 <see cref="uint"/>s.
+///   A container for 16 <see cref="bool"/>s.
 /// </summary>
-public struct Container16UInt32 : IEquatable<Container16UInt32>
+public struct Container16Boolean : IEquatable<Container16Boolean>
 {
-    private uint _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+    private bool _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
 
-    public Container16UInt32()
+    public Container16Boolean()
     {
     }
 
-    public uint this[int index]
+    public bool this[int index]
     {
         get
         {
             if ((uint)index >= 16)
                 throw new IndexOutOfRangeException();
 
-            ref uint firstElement = ref _0;
+            ref bool firstElement = ref _0;
             return Unsafe.Add(ref firstElement, index);
         }
         set
@@ -28,17 +28,17 @@ public struct Container16UInt32 : IEquatable<Container16UInt32>
             if ((uint)index >= 16)
                 throw new IndexOutOfRangeException();
 
-            ref uint firstElement = ref _0;
+            ref bool firstElement = ref _0;
             Unsafe.Add(ref firstElement, index) = value;
         }
     }
 
     public override bool Equals(object? obj)
     {
-        return obj is Container16UInt32 @int && Equals(@int);
+        return obj is Container16Boolean boolean && Equals(boolean);
     }
 
-    public bool Equals(Container16UInt32 other)
+    public bool Equals(Container16Boolean other)
     {
         return _0 == other._0 &&
                _1 == other._1 &&
@@ -80,12 +80,12 @@ public struct Container16UInt32 : IEquatable<Container16UInt32>
         return hash.ToHashCode();
     }
 
-    public static bool operator ==(Container16UInt32 left, Container16UInt32 right)
+    public static bool operator ==(Container16Boolean left, Container16Boolean right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(Container16UInt32 left, Container16UInt32 right)
+    public static bool operator !=(Container16Boolean left, Container16Boolean right)
     {
         return !(left == right);
     }

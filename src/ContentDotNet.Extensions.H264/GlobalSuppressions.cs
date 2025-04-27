@@ -10,3 +10,5 @@ using System.Diagnostics.CodeAnalysis;
 [assembly: SuppressMessage("Style", "IDE0060:Remove unused parameter", Justification = "<Pending>", Scope = "member", Target = "~M:ContentDotNet.Extensions.H264.Internal.Macroblocks.PSliceFunctions.SubMbPredMode(System.Int32)~System.Int32")]
 [assembly: SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>", Scope = "member", Target = "~F:ContentDotNet.Extensions.H264.Utilities.Container16UInt32._1")]
 [assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~F:ContentDotNet.Extensions.H264.Utilities.Container16UInt32._1")]
+[assembly: SuppressMessage("Style", "IDE0044:Add readonly modifier", Justification = "<Pending>", Scope = "member", Target = "~F:ContentDotNet.Extensions.H264.Utilities.Container16Boolean._1")]
+[assembly: SuppressMessage("CodeQuality", "IDE0051:Remove unused private members", Justification = "<Pending>", Scope = "member", Target = "~F:ContentDotNet.Extensions.H264.Utilities.Container16Boolean._3")]

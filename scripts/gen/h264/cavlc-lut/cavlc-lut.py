@@ -9,7 +9,12 @@ def lut_bitsizes(s: list[list[str]]) -> str:
     bld = ""
     for x in s:
         xn = []
-        for e in x:
+        for idx in range(len(x)):
+            e = x[idx]
+            if idx != 0 and idx != 1 and e == "0":
+                xn.append('0')
+                continue
+            
             if str(len(e.strip())) == "0":
                 continue
 
