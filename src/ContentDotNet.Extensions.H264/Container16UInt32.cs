@@ -2,6 +2,8 @@
 
 namespace ContentDotNet.Extensions.H264;
 
+#pragma warning disable
+
 /// <summary>
 ///   A container for 16 <see cref="uint"/>s.
 /// </summary>
