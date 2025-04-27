@@ -22,7 +22,7 @@ public class SPSTests
         const bool matrixPresentFlag = false;
         ScalingMatrices? matrix = null;
         const uint log2MaxFrameNumMinus4 = 1;
-        const uint picOrderCntType = 1;
+        const uint picOrderCntType = 2;
         const uint log2MaxPicOrderCntLsbMinus4 = 1;
         const bool deltaPicOrderAlwaysZeroFlag = false;
         const int offsetForNonRefPic = 1;

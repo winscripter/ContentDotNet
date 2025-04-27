@@ -408,6 +408,9 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         if (this.VuiParametersPresentFlag && this.VuiParameters is null)
             throw new InvalidOperationException("VuiParametersPresentFlag is true but actual VUI parameters aren't provided in the SPS");
 
+        if (PicOrderCntType == 1u && offsetForRefFrames.Length < NumRefFramesInPicOrderCntCycle)
+            throw new ArgumentOutOfRangeException(nameof(offsetForRefFrames), "Not enough offsets for ref frames; expected " + NumRefFramesInPicOrderCntCycle + ", got " + offsetForRefFrames.Length);
+
         writer.WriteBits(ProfileIdc, 8);
         writer.WriteBit(ConstraintSet0Flag);
         writer.WriteBit(ConstraintSet1Flag);
@@ -710,6 +713,9 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
 
         if (this.VuiParametersPresentFlag && this.VuiParameters is null)
             throw new InvalidOperationException("VuiParametersPresentFlag is true but actual VUI parameters aren't provided in the SPS");
+
+        if (PicOrderCntType == 1u && offsetForRefFrames.Length < NumRefFramesInPicOrderCntCycle)
+            throw new ArgumentOutOfRangeException(nameof(offsetForRefFrames), "Not enough offsets for ref frames; expected " + NumRefFramesInPicOrderCntCycle + ", got " + offsetForRefFrames.Length);
 
         await writer.WriteBitsAsync(ProfileIdc, 8);
         await writer.WriteBitAsync(ConstraintSet0Flag);
