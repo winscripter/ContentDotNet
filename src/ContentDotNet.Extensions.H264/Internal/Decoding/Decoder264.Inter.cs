@@ -65,6 +65,38 @@ internal partial class Decoder264
         }
     }
 
+    public static void Derive4x4ChromaBlocks(
+        DerivationContext dc,
+        int chroma4x4BlkIdx,
+        out int mbAddrA, out bool mbAddrAAvailable, out int chroma4x4BlkIdxA, out bool chroma4x4BlkIdxAAvailable,
+        out int mbAddrB, out bool mbAddrBAvailable, out int chroma4x4BlkIdxB, out bool chroma4x4BlkIdxBAvailable)
+    {
+        InternalDerive(LumaLocationsA, chroma4x4BlkIdx, out mbAddrA, out chroma4x4BlkIdxA, out chroma4x4BlkIdxAAvailable, dc, out mbAddrAAvailable);
+        InternalDerive(LumaLocationsB, chroma4x4BlkIdx, out mbAddrB, out chroma4x4BlkIdxB, out chroma4x4BlkIdxBAvailable, dc, out mbAddrBAvailable);
+
+        static void InternalDerive((int x, int y) locations, int chroma4x4BlkIdx, out int mbAddrN, out int chroma4x4BlkIdxN, out bool chroma4x4BlkIdxNAvailable, DerivationContext dc, out bool valid)
+        {
+            mbAddrN = 0;
+
+            Util264.Inverse4x4ChromaScan(chroma4x4BlkIdx, out int x, out int y);
+            int xN = x + locations.x;
+            int yN = y + locations.y;
+
+            DeriveNeighboringLocations(dc, false, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out valid);
+
+            if (!valid)
+            {
+                chroma4x4BlkIdxN = 0;
+                chroma4x4BlkIdxNAvailable = false;
+            }
+            else
+            {
+                Derive4x4ChromaBlockIndices(xW, yW, out chroma4x4BlkIdxN);
+                chroma4x4BlkIdxNAvailable = true;
+            }
+        }
+    }
+
     public static void Derive8x8LumaBlocks(
         DerivationContext dc,
         int luma8x8BlkIdx,

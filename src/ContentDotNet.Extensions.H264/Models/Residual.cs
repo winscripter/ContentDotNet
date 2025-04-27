@@ -6,6 +6,62 @@ using ContentDotNet.Extensions.H26x;
 namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
+///   Residual Mode can be used to specify the current operation in the residual.
+/// </summary>
+public enum ResidualMode
+{
+    /// <summary>
+    ///   Invoked for the Chroma DC level.
+    /// </summary>
+    ChromaDcLevel,
+
+    /// <summary>
+    ///   Invoked for the Intra 16x16 DC level.
+    /// </summary>
+    Intra16x16DcLevel,
+
+    /// <summary>
+    ///   Invoked for the Intra 16x16 AC level.
+    /// </summary>
+    Intra16x16AcLevel,
+
+    /// <summary>
+    ///   Invoked for the Intra 16x16 DC Level under the Chrominance #1 channel.
+    /// </summary>
+    CbIntra16x16DcLevel,
+
+    /// <summary>
+    ///   Invoked for the Intra 16x16 DC Level under the Chrominance #2 channel.
+    /// </summary>
+    CrIntra16x16DcLevel,
+
+    /// <summary>
+    ///   Invoked for the Luma 4x4 Level.
+    /// </summary>
+    LumaLevel4x4,
+
+    /// <summary>
+    ///   Invoked for the Chroma 4x4 Level #1.
+    /// </summary>
+    CbLevel4x4,
+
+    /// <summary>
+    ///   Invoked for the Chroma 4x4 Level #2.
+    /// </summary>
+    CrLevel4x4,
+
+    /// <summary>
+    ///   Invoked for Intra 16x16 AC Level for Chrominance #1 channels.
+    /// </summary>
+    CbIntra16x16AcLevel,
+
+    /// <summary>
+    ///   Invoked for Intra 16x16 AC Level for Chrominance #2 channels.
+    /// </summary>
+    CrIntra16x16AcLevel,
+}
+
+/// <summary>
 ///   Represents a CAVLC residual.
 /// </summary>
 public struct CavlcResidual

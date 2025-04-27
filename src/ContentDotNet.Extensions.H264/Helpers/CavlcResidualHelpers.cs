@@ -1,4 +1,8 @@
 ﻿using ContentDotNet.Abstractions;
+using ContentDotNet.Extensions.H264.Internal.Decoding;
+using ContentDotNet.Extensions.H264.Internal.Macroblocks;
+using ContentDotNet.Extensions.H264.Models;
+using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Helpers;
 
@@ -175,5 +179,189 @@ internal static class CavlcResidualHelpers
         }
 
         return null;
+    }
+
+    public static int GetNC(BitStreamReader reader, NalUnit nalu, DerivationContext dc, int chromaArrayType, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx, int chroma4x4BlkIdx, ResidualMode mode, IMacroblockUtility util, bool constrainedIntraPredFlag)
+    {
+        if (mode == ResidualMode.ChromaDcLevel)
+            return chromaArrayType == 1 ? -1 : -2;
+
+        if (mode == ResidualMode.Intra16x16DcLevel)
+            luma4x4BlkIdx = 0;
+
+        if (mode == ResidualMode.CbIntra16x16DcLevel)
+            cb4x4BlkIdx = 0;
+
+        if (mode == ResidualMode.CrIntra16x16DcLevel)
+            cr4x4BlkIdx = 0;
+
+        (int address, int block) blkA = (128, 128);
+        (int address, int block) blkB = (128, 128);
+
+        bool mbAddrAAvailable;
+        int mbAddrA;
+        int mbAddrB;
+        bool mbAddrBAvailable;
+
+        if (mode is ResidualMode.Intra16x16DcLevel or ResidualMode.Intra16x16AcLevel or ResidualMode.LumaLevel4x4)
+        {
+            Decoder264.Derive4x4LumaBlocks(luma4x4BlkIdx, dc,
+                out mbAddrA, out mbAddrAAvailable, out int luma4x4BlkIdxA, out bool luma4x4BlkIdxAAvailable,
+                out mbAddrB, out mbAddrBAvailable, out int luma4x4BlkIdxB, out bool luma4x4BlkIdxBAvailable);
+
+            if (mbAddrAAvailable)
+                blkA.address = mbAddrA;
+            else
+                blkA.address = 128;
+
+            if (luma4x4BlkIdxAAvailable)
+                blkA.block = luma4x4BlkIdxA;
+            else
+                blkA.block = 128;
+
+            if (mbAddrBAvailable)
+                blkB.address = mbAddrB;
+            else
+                blkB.address = 128;
+
+            if (luma4x4BlkIdxBAvailable)
+                blkB.block = luma4x4BlkIdxB;
+            else
+                blkB.block = 128;
+        }
+        else if (mode is ResidualMode.CbIntra16x16DcLevel or ResidualMode.CbIntra16x16AcLevel or ResidualMode.CbLevel4x4)
+        {
+            Decoder264.Derive4x4LumaBlocks(
+                cb4x4BlkIdx, dc,
+                out mbAddrA, out mbAddrAAvailable, out int cb4x4BlkIdxA, out bool cb4x4BlkIdxAAvailable,
+                out mbAddrB, out mbAddrBAvailable, out int cb4x4BlkIdxB, out bool cb4x4BlkIdxBAvailable);
+
+            if (mbAddrAAvailable)
+                blkA.address = mbAddrA;
+            else
+                blkA.address = 128;
+
+            if (cb4x4BlkIdxAAvailable)
+                blkA.block = cb4x4BlkIdxA;
+            else
+                blkA.block = 128;
+
+            if (mbAddrBAvailable)
+                blkB.address = mbAddrB;
+            else
+                blkB.address = 128;
+
+            if (cb4x4BlkIdxBAvailable)
+                blkB.block = cb4x4BlkIdxB;
+            else
+                blkB.block = 128;
+        }
+        else if (mode is ResidualMode.CrIntra16x16DcLevel or ResidualMode.CrIntra16x16AcLevel or ResidualMode.CrLevel4x4)
+        {
+            Decoder264.Derive4x4LumaBlocks(
+                cr4x4BlkIdx, dc,
+                out mbAddrA, out mbAddrAAvailable, out int cr4x4BlkIdxA, out bool cr4x4BlkIdxAAvailable,
+                out mbAddrB, out mbAddrBAvailable, out int cr4x4BlkIdxB, out bool cr4x4BlkIdxBAvailable);
+
+            if (mbAddrAAvailable)
+                blkA.address = mbAddrA;
+            else
+                blkA.address = 128;
+
+            if (cr4x4BlkIdxAAvailable)
+                blkA.block = cr4x4BlkIdxA;
+            else
+                blkA.block = 128;
+
+            if (mbAddrBAvailable)
+                blkB.address = mbAddrB;
+            else
+                blkB.address = 128;
+
+            if (cr4x4BlkIdxBAvailable)
+                blkB.block = cr4x4BlkIdxB;
+            else
+                blkB.block = 128;
+        }
+        else
+        {
+            Decoder264.Derive4x4ChromaBlocks(dc, chroma4x4BlkIdx,
+                out mbAddrA, out mbAddrAAvailable, out int chroma4x4BlkIdxA, out bool chroma4x4BlkIdxAAvailable,
+                out mbAddrB, out mbAddrBAvailable, out int chroma4x4BlkIdxB, out bool chroma4x4BlkIdxBAvailable
+            );
+
+            if (mbAddrAAvailable)
+                blkA.address = mbAddrA;
+            else
+                blkA.address = 128;
+
+            if (mbAddrBAvailable)
+                blkB.address = mbAddrB;
+            else
+                blkB.address = 128;
+
+            if (chroma4x4BlkIdxAAvailable)
+                blkA.block = chroma4x4BlkIdxA;
+            else
+                blkA.block = 128;
+
+            if (chroma4x4BlkIdxBAvailable)
+                blkB.block = chroma4x4BlkIdxB;
+            else
+                blkB.block = 128;
+        }
+
+        bool availableFlagA = !(!mbAddrAAvailable || (util.IsCodedWithIntra(dc.CurrMbAddr) && constrainedIntraPredFlag && util.IsCodedWithInter(mbAddrA) && nalu.NalUnitType is 2 or 3 or 4));
+        bool availableFlagB = !(!mbAddrBAvailable || (util.IsCodedWithIntra(dc.CurrMbAddr) && constrainedIntraPredFlag && util.IsCodedWithInter(mbAddrB) && nalu.NalUnitType is 2 or 3 or 4));
+
+        int nA = 0;
+        int nB = 0;
+
+        if (availableFlagA)
+        {
+            uint targetMbType = util.GetMbType(mbAddrA);
+            if (targetMbType is P_Skip or B_Skip)
+            {
+                nA = 0;
+            }
+            else if (targetMbType is not I_PCM && util.AllAcResidualTransformsAreZeroDueToCodedBlockPatternsBeingZero(blkA.address))
+            {
+                nA = 0;
+            }
+            else if (targetMbType is I_PCM)
+            {
+                nA = 16;
+            }
+            else
+            {
+                nA = util.GetTotalCoefficient(blkA.address);
+            }
+        }
+
+        if (availableFlagB)
+        {
+            uint targetMbType = util.GetMbType(mbAddrB);
+            if (targetMbType is P_Skip or B_Skip)
+            {
+                nB = 0;
+            }
+            else if (targetMbType is not I_PCM && util.AllAcResidualTransformsAreZeroDueToCodedBlockPatternsBeingZero(blkB.address))
+            {
+                nB = 0;
+            }
+            else if (targetMbType is I_PCM)
+            {
+                nB = 16;
+            }
+            else
+            {
+                nB = util.GetTotalCoefficient(blkB.address);
+            }
+        }
+
+        return (availableFlagA && availableFlagB) ? nA + nB :
+               (availableFlagA && !availableFlagB) ? nA :
+               (!availableFlagA && availableFlagB) ? nB :
+               0;
     }
 }

@@ -5,6 +5,7 @@ internal interface IMacroblockUtility
     bool IsCodedWithIntra4x4(int mbAddr);
     bool IsCodedWithIntra8x8(int mbAddr);
     bool IsCodedWithIntra16x16(int mbAddr);
+    bool IsCodedWithIntra(int mbAddr);
     bool IsCodedWithInter(int mbAddr);
 
     void GetIntra4x4PredMode(int mbAddr, Span<int> output);
@@ -14,4 +15,8 @@ internal interface IMacroblockUtility
     bool IsFrameMacroblock(int mbAddr);
     bool IsFieldMacroblock(int mbAddr);
     bool IsMacroblockOfTypeSi(int mbAddr);
+
+    bool AllAcResidualTransformsAreZeroDueToCodedBlockPatternsBeingZero(int address);
+    uint GetMbType(int mbAddr);
+    int GetTotalCoefficient(int mbAddr);
 }
