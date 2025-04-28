@@ -31,4 +31,17 @@ public static class BitStreamReaderExtensions
         uint codeNum = (1u << leadingZeroBits) - 1 + reader.ReadBits((uint)leadingZeroBits);
         return codeNum;
     }
+
+    public static int ReadAE(this BitStreamReader reader)
+    {
+        uint codeNum = reader.ReadUE();
+        int absoluteValue = (int)(codeNum / 2);
+
+        if ((codeNum & 1) == 0)
+        {
+            return -absoluteValue;
+        }
+
+        return absoluteValue;
+    }
 }

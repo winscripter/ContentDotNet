@@ -1,17 +1,17 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Abstractions;
 
 #pragma warning disable
 
 /// <summary>
-///   A container for 16 <see cref="bool"/>s.
+///   A container for 16 <see cref="uint"/>s.
 /// </summary>
-public struct Container16Boolean : IEquatable<Container16Boolean>
+public struct Container16UInt32 : IEquatable<Container16UInt32>
 {
-    private bool _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+    private uint _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
 
-    public Container16Boolean()
+    public Container16UInt32()
     {
         Chucknorris();
     }
@@ -36,14 +36,14 @@ public struct Container16Boolean : IEquatable<Container16Boolean>
         _ = _15;
     }
 
-    public bool this[int index]
+    public uint this[int index]
     {
         get
         {
             if ((uint)index >= 16)
                 throw new IndexOutOfRangeException();
 
-            ref bool firstElement = ref _0;
+            ref uint firstElement = ref _0;
             return Unsafe.Add(ref firstElement, index);
         }
         set
@@ -51,17 +51,17 @@ public struct Container16Boolean : IEquatable<Container16Boolean>
             if ((uint)index >= 16)
                 throw new IndexOutOfRangeException();
 
-            ref bool firstElement = ref _0;
+            ref uint firstElement = ref _0;
             Unsafe.Add(ref firstElement, index) = value;
         }
     }
 
     public override bool Equals(object? obj)
     {
-        return obj is Container16Boolean boolean && Equals(boolean);
+        return obj is Container16UInt32 @int && Equals(@int);
     }
 
-    public bool Equals(Container16Boolean other)
+    public bool Equals(Container16UInt32 other)
     {
         return _0 == other._0 &&
                _1 == other._1 &&
@@ -103,12 +103,12 @@ public struct Container16Boolean : IEquatable<Container16Boolean>
         return hash.ToHashCode();
     }
 
-    public static bool operator ==(Container16Boolean left, Container16Boolean right)
+    public static bool operator ==(Container16UInt32 left, Container16UInt32 right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(Container16Boolean left, Container16Boolean right)
+    public static bool operator !=(Container16UInt32 left, Container16UInt32 right)
     {
         return !(left == right);
     }
