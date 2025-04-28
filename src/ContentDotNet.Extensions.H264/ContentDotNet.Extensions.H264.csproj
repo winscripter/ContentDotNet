@@ -10,6 +10,7 @@
     <Company>winscripter</Company>
     <Copyright>Copyright (c) 2023-2025, winscripter</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
   <ItemGroup>

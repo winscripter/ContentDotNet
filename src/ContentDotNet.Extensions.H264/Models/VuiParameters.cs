@@ -179,6 +179,43 @@ public struct VuiParameters : IEquatable<VuiParameters>
     /// </summary>
     public uint MaxDecFrameBuffering;
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="VuiParameters"/> structure.
+    /// </summary>
+    /// <param name="aspectRatioInfoPresentFlag"></param>
+    /// <param name="aspectRatioIdc"></param>
+    /// <param name="sarWidth"></param>
+    /// <param name="sarHeight"></param>
+    /// <param name="overscanInfoPresentFlag"></param>
+    /// <param name="overscanAppropriateFlag"></param>
+    /// <param name="videoSignalTypePresentFlag"></param>
+    /// <param name="videoFormat"></param>
+    /// <param name="videoFullRangeFlag"></param>
+    /// <param name="colourDescriptionPresentFlag"></param>
+    /// <param name="colourPrimaries"></param>
+    /// <param name="transferCharacteristics"></param>
+    /// <param name="matrixCoefficients"></param>
+    /// <param name="chromaLocInfoPresentFlag"></param>
+    /// <param name="chromaSampleLocTypeTopField"></param>
+    /// <param name="chromaSampleLocTypeBottomField"></param>
+    /// <param name="timingInfoPresentFlag"></param>
+    /// <param name="numUnitsInTick"></param>
+    /// <param name="timeScale"></param>
+    /// <param name="fixedFrameRateFlag"></param>
+    /// <param name="nalHrdParametersPresentFlag"></param>
+    /// <param name="nalHrdParameters"></param>
+    /// <param name="vclHrdParametersPresentFlag"></param>
+    /// <param name="vclHrdParameters"></param>
+    /// <param name="lowDelayHrdFlag"></param>
+    /// <param name="picStructPresentFlag"></param>
+    /// <param name="bitstreamRestrictionFlag"></param>
+    /// <param name="motionVectorsOverPicBoundariesFlag"></param>
+    /// <param name="maxBytesPerPicDenom"></param>
+    /// <param name="maxBitsPerMbDenom"></param>
+    /// <param name="log2MaxMvLengthHorizontal"></param>
+    /// <param name="log2MaxMvLengthVertical"></param>
+    /// <param name="maxNumReorderFrames"></param>
+    /// <param name="maxDecFrameBuffering"></param>
     public VuiParameters(bool aspectRatioInfoPresentFlag, uint aspectRatioIdc, uint sarWidth, uint sarHeight, bool overscanInfoPresentFlag, bool overscanAppropriateFlag, bool videoSignalTypePresentFlag, uint videoFormat, bool videoFullRangeFlag, bool colourDescriptionPresentFlag, uint colourPrimaries, uint transferCharacteristics, uint matrixCoefficients, bool chromaLocInfoPresentFlag, uint chromaSampleLocTypeTopField, uint chromaSampleLocTypeBottomField, bool timingInfoPresentFlag, uint numUnitsInTick, uint timeScale, bool fixedFrameRateFlag, bool nalHrdParametersPresentFlag, HrdParameters? nalHrdParameters, bool vclHrdParametersPresentFlag, HrdParameters? vclHrdParameters, bool lowDelayHrdFlag, bool picStructPresentFlag, bool bitstreamRestrictionFlag, bool motionVectorsOverPicBoundariesFlag, uint maxBytesPerPicDenom, uint maxBitsPerMbDenom, uint log2MaxMvLengthHorizontal, uint log2MaxMvLengthVertical, uint maxNumReorderFrames, uint maxDecFrameBuffering)
     {
         AspectRatioInfoPresentFlag = aspectRatioInfoPresentFlag;
@@ -653,11 +690,21 @@ public struct VuiParameters : IEquatable<VuiParameters>
         }
     }
 
+    /// <summary>  
+    /// Determines whether the specified object is equal to the current instance.  
+    /// </summary>  
+    /// <param name="obj">The object to compare with the current instance.</param>  
+    /// <returns><c>true</c> if the specified object is equal to the current instance; otherwise, <c>false</c>.</returns>  
     public readonly override bool Equals(object? obj)
     {
         return obj is VuiParameters parameters && Equals(parameters);
     }
 
+    /// <summary>  
+    /// Determines whether the specified <see cref="PictureParameterSet"/> is equal to the current instance.  
+    /// </summary>  
+    /// <param name="other">The <see cref="PictureParameterSet"/> to compare with the current instance.</param>  
+    /// <returns><c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.</returns>  
     public readonly bool Equals(VuiParameters other)
     {
         return AspectRatioInfoPresentFlag == other.AspectRatioInfoPresentFlag &&
@@ -696,6 +743,10 @@ public struct VuiParameters : IEquatable<VuiParameters>
                MaxDecFrameBuffering == other.MaxDecFrameBuffering;
     }
 
+    /// <summary>
+    ///   Determines the hash code for the PPS.
+    /// </summary>
+    /// <returns>PPS hash code.</returns>
     public readonly override int GetHashCode()
     {
         var hash = new HashCode();
@@ -738,11 +789,23 @@ public struct VuiParameters : IEquatable<VuiParameters>
         return hash.ToHashCode();
     }
 
+    /// <summary>  
+    /// Determines whether two <see cref="VuiParameters"/> instances are equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="VuiParameters"/> to compare.</param>  
+    /// <param name="right">The second <see cref="VuiParameters"/> to compare.</param>  
+    /// <returns><c>true</c> if the two instances are equal; otherwise, <c>false</c>.</returns>  
     public static bool operator ==(VuiParameters left, VuiParameters right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>  
+    /// Determines whether two <see cref="VuiParameters"/> instances are not equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="VuiParameters"/> to compare.</param>  
+    /// <param name="right">The second <see cref="VuiParameters"/> to compare.</param>  
+    /// <returns><c>true</c> if the two instances are not equal; otherwise, <c>false</c>.</returns>  
     public static bool operator !=(VuiParameters left, VuiParameters right)
     {
         return !(left == right);

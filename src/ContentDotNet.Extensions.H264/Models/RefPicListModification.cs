@@ -129,11 +129,33 @@ public struct RefPicListModificationEntry : IEquatable<RefPicListModificationEnt
 /// </summary>
 public struct RefPicListModification : IEquatable<RefPicListModification>
 {
+    /// <summary>
+    /// Indicates whether reference picture list modification is enabled for list 0.
+    /// </summary>
     public bool RefPicListModificationFlagL0;
+
+    /// <summary>
+    /// Indicates whether reference picture list modification is enabled for list 1.
+    /// </summary>
     public bool RefPicListModificationFlagL1;
+
+    /// <summary>
+    /// Represents the offset in the bitstream pool where the reference picture list modification entries are stored.
+    /// </summary>
     public ReaderState PoolOffset;
+
+    /// <summary>
+    /// The number of elements in the reference picture list modification.
+    /// </summary>
     public int NumberOfElements;
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="RefPicListModification"/> struct.
+    /// </summary>
+    /// <param name="refPicListModificationFlagL0">Flag indicating if list 0 modification is enabled.</param>
+    /// <param name="refPicListModificationFlagL1">Flag indicating if list 1 modification is enabled.</param>
+    /// <param name="poolOffset">The offset in the bitstream pool for the modification entries.</param>
+    /// <param name="numberOfElements">The number of elements in the modification list.</param>
     public RefPicListModification(bool refPicListModificationFlagL0, bool refPicListModificationFlagL1, ReaderState poolOffset, int numberOfElements)
     {
         RefPicListModificationFlagL0 = refPicListModificationFlagL0;

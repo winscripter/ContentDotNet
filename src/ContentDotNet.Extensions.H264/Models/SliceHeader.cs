@@ -368,6 +368,14 @@ public struct SliceHeader : IEquatable<SliceHeader>
             sliceAlphaC0OffsetDiv2, sliceBetaOffsetDiv2, sliceGroupChangeCycle);       
     }
 
+    /// <summary>
+    ///   Writes this slice header to the given bitstream.
+    /// </summary>
+    /// <param name="writer">Bitstream writer where the slice header is written to.</param>
+    /// <param name="nalu">Current NAL unit</param>
+    /// <param name="sps">Last SPS</param>
+    /// <param name="pps">Last PPS</param>
+    /// <param name="options">Options for writing this slice header</param>
     public readonly void Write(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps, SliceHeaderWriteOptions options)
     {
         writer.WriteUE(FirstMbInSlice);
@@ -459,6 +467,14 @@ public struct SliceHeader : IEquatable<SliceHeader>
             writer.WriteBits(SliceGroupChangeCycle, (uint)Math.Ceiling(Math.Log2(pps.PicSizeInMapUnitsMinus1 + 1u / pps.SliceGroupChangeRateMinus1 + 1u)));
     }
 
+    /// <summary>
+    ///   Writes this slice header to the given bitstream.
+    /// </summary>
+    /// <param name="writer">Bitstream writer where the slice header is written to.</param>
+    /// <param name="nalu">Current NAL unit</param>
+    /// <param name="sps">Last SPS</param>
+    /// <param name="pps">Last PPS</param>
+    /// <param name="options">Options for writing this slice header</param>
     public readonly async Task WriteAsync(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps, MemorySliceHeaderWriteOptions options)
     {
         await writer.WriteUEAsync(FirstMbInSlice);
@@ -635,11 +651,24 @@ public struct SliceHeader : IEquatable<SliceHeader>
         return hash.ToHashCode();
     }
 
+
+    /// <summary>  
+    /// Determines whether two <see cref="SliceHeader"/> instances are equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="SliceHeader"/> instance to compare.</param>  
+    /// <param name="right">The second <see cref="SliceHeader"/> instance to compare.</param>  
+    /// <returns><c>true</c> if the two instances are equal; otherwise, <c>false</c>.</returns>  
     public static bool operator ==(SliceHeader left, SliceHeader right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>  
+    /// Determines whether two <see cref="SliceHeader"/> instances are not equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="SliceHeader"/> instance to compare.</param>  
+    /// <param name="right">The second <see cref="SliceHeader"/> instance to compare.</param>  
+    /// <returns><c>true</c> if the two instances are not equal; otherwise, <c>false</c>.</returns>  
     public static bool operator !=(SliceHeader left, SliceHeader right)
     {
         return !(left == right);

@@ -358,11 +358,25 @@ public struct Avc3DNalUnitHeaderExtension : INalUnitHeaderExtension, IEquatable<
         );
     }
 
+    /// <summary>
+    /// Determines whether this instance is equal to a specified object.
+    /// </summary>
+    /// <param name="obj">The object to compare with the current instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the specified object is equal to the current instance; otherwise, <see langword="false"/>.
+    /// </returns>
     public readonly override bool Equals(object? obj)
     {
         return obj is Avc3DNalUnitHeaderExtension extension && Equals(extension);
     }
 
+    /// <summary>
+    /// Determines whether this instance is equal to another <see cref="Avc3DNalUnitHeaderExtension"/>.
+    /// </summary>
+    /// <param name="other">The <see cref="Avc3DNalUnitHeaderExtension"/> to compare with the current instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the specified <see cref="Avc3DNalUnitHeaderExtension"/> is equal to the current instance; otherwise, <see langword="false"/>.
+    /// </returns>
     public readonly bool Equals(Avc3DNalUnitHeaderExtension other)
     {
         return ViewIdx == other.ViewIdx &&
@@ -373,6 +387,10 @@ public struct Avc3DNalUnitHeaderExtension : INalUnitHeaderExtension, IEquatable<
                InterViewFlag == other.InterViewFlag;
     }
 
+    /// <summary>
+    /// Returns the hash code for this instance.
+    /// </summary>
+    /// <returns>A 32-bit signed integer hash code.</returns>
     public readonly override int GetHashCode()
     {
         return HashCode.Combine(ViewIdx, DepthFlag, NonIDRFlag, TemporalId, AnchorPicFlag, InterViewFlag);
@@ -406,11 +424,24 @@ public struct Avc3DNalUnitHeaderExtension : INalUnitHeaderExtension, IEquatable<
         await writer.WriteBitAsync(InterViewFlag);
     }
 
+
+    /// <summary>
+    /// Determines whether two <see cref="Avc3DNalUnitHeaderExtension"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="Avc3DNalUnitHeaderExtension"/> instance.</param>
+    /// <param name="right">The second <see cref="Avc3DNalUnitHeaderExtension"/> instance.</param>
+    /// <returns><see langword="true"/> if the instances are equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator ==(Avc3DNalUnitHeaderExtension left, Avc3DNalUnitHeaderExtension right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="Avc3DNalUnitHeaderExtension"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="Avc3DNalUnitHeaderExtension"/> instance.</param>
+    /// <param name="right">The second <see cref="Avc3DNalUnitHeaderExtension"/> instance.</param>
+    /// <returns><see langword="true"/> if the instances are not equal; otherwise, <see langword="false"/>.</returns>
     public static bool operator !=(Avc3DNalUnitHeaderExtension left, Avc3DNalUnitHeaderExtension right)
     {
         return !(left == right);

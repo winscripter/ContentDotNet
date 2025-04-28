@@ -19,6 +19,10 @@ public sealed class ScalingMatrixBuilder
     /// </summary>
     public ScalingListBuild BuildSink { get; }
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="ScalingMatrixBuilder"/> class.
+    /// </summary>
+    /// <param name="buildSink">Invoked when building a single scaling list is required.</param>
     public ScalingMatrixBuilder(ScalingListBuild buildSink)
     {
         BuildSink = buildSink;

@@ -150,16 +150,57 @@ public ref struct HrdWriteOptions
     }
 }
 
+/// <summary>
+/// Represents the write options for a slice header using spans.
+/// </summary>
 public ref struct SliceHeaderWriteOptions
 {
+    /// <summary>
+    /// Prediction weight table list write options for list 0.
+    /// </summary>
     public PredWeightTableListWriteOptions PredWeightTableL0;
+
+    /// <summary>
+    /// Prediction weight table list write options for list 1.
+    /// </summary>
     public PredWeightTableListWriteOptions PredWeightTableL1;
+
+    /// <summary>
+    /// Reference picture list modification entries.
+    /// </summary>
     public Span<RefPicListModificationEntry> RefPicListModificationEntries;
+
+    /// <summary>
+    /// Reference picture list MVC modification entries for list 0.
+    /// </summary>
     public Span<RefPicListMvcModificationEntry> RefPicListMvcModificationL0;
+
+    /// <summary>
+    /// Reference picture list MVC modification entries for list 1.
+    /// </summary>
     public Span<RefPicListMvcModificationEntry> RefPicListMvcModificationL1;
+
+    /// <summary>
+    /// Decoded reference picture marking entries.
+    /// </summary>
     public Span<DecRefPicMarkingEntry> DecRefPicMarkingEntries;
 
-    public SliceHeaderWriteOptions(PredWeightTableListWriteOptions predWeightTableL0, PredWeightTableListWriteOptions predWeightTableL1, Span<RefPicListModificationEntry> refPicListModificationEntries, Span<RefPicListMvcModificationEntry> refPicListMvcModificationL0, Span<RefPicListMvcModificationEntry> refPicListMvcModificationL1, Span<DecRefPicMarkingEntry> decRefPicMarkingEntries)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SliceHeaderWriteOptions"/> struct.
+    /// </summary>
+    /// <param name="predWeightTableL0">Prediction weight table list write options for list 0.</param>
+    /// <param name="predWeightTableL1">Prediction weight table list write options for list 1.</param>
+    /// <param name="refPicListModificationEntries">Reference picture list modification entries.</param>
+    /// <param name="refPicListMvcModificationL0">Reference picture list MVC modification entries for list 0.</param>
+    /// <param name="refPicListMvcModificationL1">Reference picture list MVC modification entries for list 1.</param>
+    /// <param name="decRefPicMarkingEntries">Decoded reference picture marking entries.</param>
+    public SliceHeaderWriteOptions(
+        PredWeightTableListWriteOptions predWeightTableL0,
+        PredWeightTableListWriteOptions predWeightTableL1,
+        Span<RefPicListModificationEntry> refPicListModificationEntries,
+        Span<RefPicListMvcModificationEntry> refPicListMvcModificationL0,
+        Span<RefPicListMvcModificationEntry> refPicListMvcModificationL1,
+        Span<DecRefPicMarkingEntry> decRefPicMarkingEntries)
     {
         PredWeightTableL0 = predWeightTableL0;
         PredWeightTableL1 = predWeightTableL1;
@@ -170,16 +211,57 @@ public ref struct SliceHeaderWriteOptions
     }
 }
 
+/// <summary>
+/// Represents the write options for a slice header using memory.
+/// </summary>
 public struct MemorySliceHeaderWriteOptions
 {
+    /// <summary>
+    /// Prediction weight table list write options for list 0.
+    /// </summary>
     public MemoryPredWeightTableListWriteOptions PredWeightTableL0;
+
+    /// <summary>
+    /// Prediction weight table list write options for list 1.
+    /// </summary>
     public MemoryPredWeightTableListWriteOptions PredWeightTableL1;
+
+    /// <summary>
+    /// Reference picture list modification entries.
+    /// </summary>
     public Memory<RefPicListModificationEntry> RefPicListModificationEntries;
+
+    /// <summary>
+    /// Reference picture list MVC modification entries for list 0.
+    /// </summary>
     public Memory<RefPicListMvcModificationEntry> RefPicListMvcModificationL0;
+
+    /// <summary>
+    /// Reference picture list MVC modification entries for list 1.
+    /// </summary>
     public Memory<RefPicListMvcModificationEntry> RefPicListMvcModificationL1;
+
+    /// <summary>
+    /// Decoded reference picture marking entries.
+    /// </summary>
     public Memory<DecRefPicMarkingEntry> DecRefPicMarkingEntries;
 
-    public MemorySliceHeaderWriteOptions(MemoryPredWeightTableListWriteOptions predWeightTableL0, MemoryPredWeightTableListWriteOptions predWeightTableL1, Memory<RefPicListModificationEntry> refPicListModificationEntries, Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL0, Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL1, Memory<DecRefPicMarkingEntry> decRefPicMarkingEntries)
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MemorySliceHeaderWriteOptions"/> struct.
+    /// </summary>
+    /// <param name="predWeightTableL0">Prediction weight table list write options for list 0.</param>
+    /// <param name="predWeightTableL1">Prediction weight table list write options for list 1.</param>
+    /// <param name="refPicListModificationEntries">Reference picture list modification entries.</param>
+    /// <param name="refPicListMvcModificationL0">Reference picture list MVC modification entries for list 0.</param>
+    /// <param name="refPicListMvcModificationL1">Reference picture list MVC modification entries for list 1.</param>
+    /// <param name="decRefPicMarkingEntries">Decoded reference picture marking entries.</param>
+    public MemorySliceHeaderWriteOptions(
+        MemoryPredWeightTableListWriteOptions predWeightTableL0,
+        MemoryPredWeightTableListWriteOptions predWeightTableL1,
+        Memory<RefPicListModificationEntry> refPicListModificationEntries,
+        Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL0,
+        Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL1,
+        Memory<DecRefPicMarkingEntry> decRefPicMarkingEntries)
     {
         PredWeightTableL0 = predWeightTableL0;
         PredWeightTableL1 = predWeightTableL1;

@@ -11,6 +11,9 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
 {
     private static readonly ScalingMatrixBuilder BogusBuilder = new((int a, int b, Span<int> c, out bool d) => { d = false; });
 
+    /// <summary>
+    ///   Represents the type of the parameter set.
+    /// </summary>
     public readonly ParameterSetKind Kind => ParameterSetKind.Picture;
 
     /// <summary>
@@ -138,6 +141,31 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     /// </summary>
     public int SecondChromaQpIndexOffset;
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="PictureParameterSet"/> structure.
+    /// </summary>
+    /// <param name="spsId">Part of the PPS.</param>
+    /// <param name="ppsId">Part of the PPS.</param>
+    /// <param name="entropyCodingModeFlag">Part of the PPS.</param>
+    /// <param name="bottomFieldPicOrderInFramePresentFlag">Part of the PPS.</param>
+    /// <param name="numSliceGroupsMinus1">Part of the PPS.</param>
+    /// <param name="topLeft">Part of the PPS.</param>
+    /// <param name="bottomRight">Part of the PPS.</param>
+    /// <param name="sliceGroupChangeDirectionFlag">Part of the PPS.</param>
+    /// <param name="sliceGroupChangeRateMinus1">Part of the PPS.</param>
+    /// <param name="sliceGroupMapType">Part of the PPS.</param>
+    /// <param name="picSizeInMapUnitsMinus1">Part of the PPS.</param>
+    /// <param name="numRefIdxL0DefaultActiveMinus1">Part of the PPS.</param>
+    /// <param name="numRefIdxL1DefaultActiveMinus1">Part of the PPS.</param>
+    /// <param name="weightedPredFlag">Part of the PPS.</param>
+    /// <param name="weightedBiPredIdc">Part of the PPS.</param>
+    /// <param name="picInitQpMinus26">Part of the PPS.</param>
+    /// <param name="picInitQsMinus26">Part of the PPS.</param>
+    /// <param name="chromaQpIndexOffset">Part of the PPS.</param>
+    /// <param name="deblockingFilterControlPresentFlag">Part of the PPS.</param>
+    /// <param name="constrainedIntraPredFlag">Part of the PPS.</param>
+    /// <param name="redundantPicCntPresentFlag">Part of the PPS.</param>
+    /// <param name="secondChromaQpIndexOffset">Part of the PPS.</param>
     public PictureParameterSet(uint spsId, uint ppsId, bool entropyCodingModeFlag, bool bottomFieldPicOrderInFramePresentFlag, uint numSliceGroupsMinus1, Span<uint> topLeft, Span<uint> bottomRight, bool sliceGroupChangeDirectionFlag, uint sliceGroupChangeRateMinus1, uint sliceGroupMapType, uint picSizeInMapUnitsMinus1, uint numRefIdxL0DefaultActiveMinus1, uint numRefIdxL1DefaultActiveMinus1, bool weightedPredFlag, uint weightedBiPredIdc, int picInitQpMinus26, int picInitQsMinus26, int chromaQpIndexOffset, bool deblockingFilterControlPresentFlag, bool constrainedIntraPredFlag, bool redundantPicCntPresentFlag, int secondChromaQpIndexOffset)
     {
         SpsId = spsId;
@@ -525,6 +553,13 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         await WriteAsync(writer, runLengthMinus1, sliceGroupId, moreRBSPData, BogusBuilder);
     }
 
+    /// <summary>
+    ///   Returns the top-left value from <see cref="TopLeft1"/> to <see cref="TopLeft8"/>
+    ///   using the given index. When the index is out of bounds or invalid, returns 0
+    ///   instead of throwing an exception.
+    /// </summary>
+    /// <param name="i">Index of the top-left value.</param>
+    /// <returns>Value of the top-left field by the given index.</returns>
     public readonly uint GetTopLeftFast(int i)
     {
         return i switch
@@ -541,6 +576,13 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         };
     }
 
+    /// <summary>
+    ///   Sets the value of the top-left field from <see cref="TopLeft1"/>
+    ///   to <see cref="TopLeft8"/> by the given index. Does not do anything
+    ///   if index is invalid or out of bounds.
+    /// </summary>
+    /// <param name="i">Index of the top-left value to set.</param>
+    /// <param name="value">Value to set to the top-left field.</param>
     public void SetTopLeftFast(int i, uint value)
     {
         if (i == 0) TopLeft1 = value;
@@ -553,6 +595,13 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         if (i == 7) TopLeft8 = value;
     }
 
+    /// <summary>
+    ///   Returns the bottom-right value from <see cref="BottomRight1"/> to <see cref="BottomRight8"/>
+    ///   using the given index. When the index is out of bounds or invalid, returns 0
+    ///   instead of throwing an exception.
+    /// </summary>
+    /// <param name="i">Index of the bottom-right value.</param>
+    /// <returns>Value of the bottom-right field by the given index.</returns>
     public readonly uint GetBottomRightFast(int i)
     {
         return i switch
@@ -569,6 +618,13 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         };
     }
 
+    /// <summary>
+    ///   Sets the value of the bottom-right field from <see cref="BottomRight1"/>
+    ///   to <see cref="BottomRight8"/> by the given index. Does not do anything
+    ///   if index is invalid or out of bounds.
+    /// </summary>
+    /// <param name="i">Index of the bottom-right value to set.</param>
+    /// <param name="value">Value to set to the bottom-right field.</param>
     public void SetBottomRightFast(int i, uint value)
     {
         if (i == 0) BottomRight1 = value;
@@ -581,11 +637,21 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         if (i == 7) BottomRight8 = value;
     }
 
+    /// <summary>  
+    /// Determines whether the specified object is equal to the current instance.  
+    /// </summary>  
+    /// <param name="obj">The object to compare with the current instance.</param>  
+    /// <returns><c>true</c> if the specified object is equal to the current instance; otherwise, <c>false</c>.</returns>  
     public readonly override bool Equals(object? obj)
     {
         return obj is PictureParameterSet set && Equals(set);
     }
 
+    /// <summary>  
+    /// Determines whether the specified <see cref="PictureParameterSet"/> is equal to the current instance.  
+    /// </summary>  
+    /// <param name="other">The <see cref="PictureParameterSet"/> to compare with the current instance.</param>  
+    /// <returns><c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.</returns>  
     public readonly bool Equals(PictureParameterSet other)
     {
         return Kind == other.Kind &&
@@ -630,6 +696,10 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
                SecondChromaQpIndexOffset == other.SecondChromaQpIndexOffset;
     }
 
+    /// <summary>
+    ///   Determines the hash code for the PPS.
+    /// </summary>
+    /// <returns>PPS hash code.</returns>
     public readonly override int GetHashCode()
     {
         var hash = new HashCode();
@@ -676,11 +746,24 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         return hash.ToHashCode();
     }
 
+
+    /// <summary>  
+    /// Determines whether two <see cref="PictureParameterSet"/> instances are equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="PictureParameterSet"/> to compare.</param>  
+    /// <param name="right">The second <see cref="PictureParameterSet"/> to compare.</param>  
+    /// <returns><c>true</c> if the two instances are equal; otherwise, <c>false</c>.</returns>  
     public static bool operator ==(PictureParameterSet left, PictureParameterSet right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>  
+    /// Determines whether two <see cref="PictureParameterSet"/> instances are not equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="PictureParameterSet"/> to compare.</param>  
+    /// <param name="right">The second <see cref="PictureParameterSet"/> to compare.</param>  
+    /// <returns><c>true</c> if the two instances are not equal; otherwise, <c>false</c>.</returns>  
     public static bool operator !=(PictureParameterSet left, PictureParameterSet right)
     {
         return !(left == right);

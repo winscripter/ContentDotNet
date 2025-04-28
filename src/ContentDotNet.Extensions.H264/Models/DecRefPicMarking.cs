@@ -240,6 +240,12 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
         return lastEntry;
     }
 
+    /// <summary>
+    ///   Parses the dec ref pic marking from the bitstream.
+    /// </summary>
+    /// <param name="reader">Bitstream reader where it's parsed from.</param>
+    /// <param name="idrPicFlag">Is the current NAL unit an IDR picture?</param>
+    /// <returns><see cref="DecRefPicMarking"/></returns>
     public static DecRefPicMarking Read(BitStreamReader reader, bool idrPicFlag)
     {
         if (idrPicFlag)

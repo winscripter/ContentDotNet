@@ -143,6 +143,26 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
         TrailingOnes = trailingOnes;
     }
 
+    /// <summary>
+    ///   Reads the CAVLC residual.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="coeffLevel"></param>
+    /// <param name="startIdx"></param>
+    /// <param name="endIdx"></param>
+    /// <param name="maxNumCoeff"></param>
+    /// <param name="nalu"></param>
+    /// <param name="dc"></param>
+    /// <param name="chromaArrayType"></param>
+    /// <param name="luma4x4BlkIdx"></param>
+    /// <param name="cb4x4BlkIdx"></param>
+    /// <param name="cr4x4BlkIdx"></param>
+    /// <param name="chroma4x4BlkIdx"></param>
+    /// <param name="mode"></param>
+    /// <param name="util"></param>
+    /// <param name="constrainedIntraPredFlag"></param>
+    /// <returns></returns>
+    /// <exception cref="VideoCodecDecoderException"></exception>
     public static CavlcResidual Read(
         BitStreamReader reader,
         Span<uint> coeffLevel,
@@ -307,6 +327,10 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
                TrailingOnes == other.TrailingOnes;
     }
 
+    /// <summary>
+    ///   Returns the hash code for the CAVLC residual.
+    /// </summary>
+    /// <returns>CAVLC residual hash code.</returns>
     public readonly override int GetHashCode()
     {
         var hash = new HashCode();
@@ -323,6 +347,15 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
         return hash.ToHashCode();
     }
 
+    /// <summary>
+    ///   Writes this CAVLC residual to the bitstream.
+    /// </summary>
+    /// <param name="writer">Writer</param>
+    /// <param name="coeffLevel">Coefficient level</param>
+    /// <param name="startIdx">Start index</param>
+    /// <param name="endIdx">End index</param>
+    /// <param name="maxNumCoeff">Maximum coefficients</param>
+    /// <param name="nC">nC</param>
     public void Write(
         BitStreamWriter writer,
         Span<uint> coeffLevel,
@@ -420,6 +453,15 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
         }
     }
 
+    /// <summary>
+    ///   Writes this CAVLC residual to the bitstream.
+    /// </summary>
+    /// <param name="writer">Writer</param>
+    /// <param name="coeffLevel">Coefficient level</param>
+    /// <param name="startIdx">Start index</param>
+    /// <param name="endIdx">End index</param>
+    /// <param name="maxNumCoeff">Maximum coefficients</param>
+    /// <param name="nC">nC</param>
     public async Task WriteAsync(
         BitStreamWriter writer,
         Memory<uint> coeffLevel,
@@ -517,11 +559,28 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
         }
     }
 
+
+    /// <summary>
+    /// Determines whether two <see cref="CavlcResidual"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="CavlcResidual"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="CavlcResidual"/> instance to compare.</param>
+    /// <returns>
+    /// <see langword="true"/> if the two <see cref="CavlcResidual"/> instances are equal; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool operator ==(CavlcResidual left, CavlcResidual right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>
+    /// Determines whether two <see cref="CavlcResidual"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="CavlcResidual"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="CavlcResidual"/> instance to compare.</param>
+    /// <returns>
+    /// <see langword="true"/> if the two <see cref="CavlcResidual"/> instances are not equal; otherwise, <see langword="false"/>.
+    /// </returns>
     public static bool operator !=(CavlcResidual left, CavlcResidual right)
     {
         return !(left == right);

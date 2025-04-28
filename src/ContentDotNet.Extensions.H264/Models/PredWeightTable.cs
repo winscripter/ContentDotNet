@@ -138,6 +138,9 @@ public struct PredWeightTableWeightOffsetEntry : IEquatable<PredWeightTableWeigh
     }
 }
 
+/// <summary>
+///   A single list (L0 or L1) of the prediction weight table.
+/// </summary>
 public struct PredWeightTableList : IEquatable<PredWeightTableList>
 {
     /// <summary>
@@ -275,20 +278,44 @@ public struct PredWeightTableList : IEquatable<PredWeightTableList>
     }
 
 
+    /// <summary>
+    ///   Writes the prediction weight table list.
+    /// </summary>
+    /// <param name="writer">Bitstream writer where the list is written to.</param>
+    /// <param name="chromaArrayType">Chroma Array Type should be taken from the SPS.</param>
+    /// <param name="numRefIdxLActiveMinus1">Should be taken from the PPS.</param>
+    /// <param name="options">Options for writing the prediction weight table list.</param>
     public static void Write(
         BitStreamWriter writer,
         int chromaArrayType,
-        int numRefIdxL0ActiveMinus1,
+        int numRefIdxLActiveMinus1,
         PredWeightTableListWriteOptions options)
-        => Write(writer, chromaArrayType, numRefIdxL0ActiveMinus1, options.IncludeLuma, options.IncludeChroma, options.Luma, options.Chroma);
+        => Write(writer, chromaArrayType, numRefIdxLActiveMinus1, options.IncludeLuma, options.IncludeChroma, options.Luma, options.Chroma);
 
+    /// <summary>
+    ///   Writes the prediction weight table list.
+    /// </summary>
+    /// <param name="writer">Bitstream writer where the list is written to.</param>
+    /// <param name="chromaArrayType">Chroma Array Type should be taken from the SPS.</param>
+    /// <param name="numRefIdxLActiveMinus1">Should be taken from the PPS.</param>
+    /// <param name="options">Options for writing the prediction weight table list.</param>
     public static void Write(
         BitStreamWriter writer,
         int chromaArrayType,
-        int numRefIdxL0ActiveMinus1,
+        int numRefIdxLActiveMinus1,
         MemoryPredWeightTableListWriteOptions options)
-        => Write(writer, chromaArrayType, numRefIdxL0ActiveMinus1, options.IncludeLuma.Span, options.IncludeChroma.Span, options.Luma.Span, options.Chroma.Span);
+        => Write(writer, chromaArrayType, numRefIdxLActiveMinus1, options.IncludeLuma.Span, options.IncludeChroma.Span, options.Luma.Span, options.Chroma.Span);
 
+    /// <summary>
+    /// Writes a prediction weight table list to the stream.
+    /// </summary>
+    /// <param name="writer">The bit stream writer.</param>
+    /// <param name="chromaArrayType">The chroma array type.</param>
+    /// <param name="numRefIdxL0ActiveMinus1">The number of active references minus one.</param>
+    /// <param name="includeLuma">Flags indicating inclusion of luma entries.</param>
+    /// <param name="includeChroma">Flags indicating inclusion of chroma entries.</param>
+    /// <param name="luma">The luma entries.</param>
+    /// <param name="chroma">The chroma entries.</param>
     public static async Task WriteAsync(
         BitStreamWriter writer,
         int chromaArrayType,
@@ -325,12 +352,19 @@ public struct PredWeightTableList : IEquatable<PredWeightTableList>
         }
     }
 
+    /// <summary>
+    ///   Writes the prediction weight table list.
+    /// </summary>
+    /// <param name="writer">Bitstream writer where the list is written to.</param>
+    /// <param name="chromaArrayType">Chroma Array Type should be taken from the SPS.</param>
+    /// <param name="numRefIdxLActiveMinus1">Should be taken from the PPS.</param>
+    /// <param name="options">Options for writing the prediction weight table list.</param>
     public static async Task WriteAsync(
         BitStreamWriter writer,
         int chromaArrayType,
-        int numRefIdxL0ActiveMinus1,
+        int numRefIdxLActiveMinus1,
         MemoryPredWeightTableListWriteOptions options)
-        => await WriteAsync(writer, chromaArrayType, numRefIdxL0ActiveMinus1, options.IncludeLuma, options.IncludeChroma, options.Luma, options.Chroma);
+        => await WriteAsync(writer, chromaArrayType, numRefIdxLActiveMinus1, options.IncludeLuma, options.IncludeChroma, options.Luma, options.Chroma);
     
     /// <summary>
     /// Checks whether the current object is equal to another <see cref="PredWeightTableList"/> object.
@@ -362,11 +396,24 @@ public struct PredWeightTableList : IEquatable<PredWeightTableList>
         return HashCode.Combine(Offset, Count);
     }
 
+
+    /// <summary>  
+    /// Determines whether two instances of <see cref="PredWeightTableList"/> are equal.  
+    /// </summary>  
+    /// <param name="left">The first instance to compare.</param>  
+    /// <param name="right">The second instance to compare.</param>  
+    /// <returns>True if the instances are equal; otherwise, false.</returns>  
     public static bool operator ==(PredWeightTableList left, PredWeightTableList right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>  
+    /// Determines whether two instances of <see cref="PredWeightTableList"/> are not equal.  
+    /// </summary>  
+    /// <param name="left">The first instance to compare.</param>  
+    /// <param name="right">The second instance to compare.</param>  
+    /// <returns>True if the instances are not equal; otherwise, false.</returns>  
     public static bool operator !=(PredWeightTableList left, PredWeightTableList right)
     {
         return !(left == right);

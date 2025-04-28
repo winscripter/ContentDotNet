@@ -204,6 +204,47 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     /// </summary>
     public VuiParameters? VuiParameters;
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="SequenceParameterSet"/> structure.
+    /// </summary>
+    /// <param name="profileIdc">Part of the SPS</param>
+    /// <param name="constraintSet0Flag">Part of the SPS</param>
+    /// <param name="constraintSet1Flag">Part of the SPS</param>
+    /// <param name="constraintSet2Flag">Part of the SPS</param>
+    /// <param name="constraintSet3Flag">Part of the SPS</param>
+    /// <param name="constraintSet4Flag">Part of the SPS</param>
+    /// <param name="constraintSet5Flag">Part of the SPS</param>
+    /// <param name="reservedZero2Bits">Part of the SPS</param>
+    /// <param name="levelIdc">Part of the SPS</param>
+    /// <param name="spsId">Part of the SPS</param>
+    /// <param name="chromaFormatIdc">Part of the SPS</param>
+    /// <param name="separateColourPlaneFlag">Part of the SPS</param>
+    /// <param name="bitDepthLumaMinus8">Part of the SPS</param>
+    /// <param name="bitDepthChromaMinus8">Part of the SPS</param>
+    /// <param name="qpprimeYZeroTransformBypassFlag">Part of the SPS</param>
+    /// <param name="seqScalingMatrixPresentFlag">Part of the SPS</param>
+    /// <param name="scalingMatrix">Part of the SPS</param>
+    /// <param name="log2MaxFrameNumMinus4">Part of the SPS</param>
+    /// <param name="picOrderCntType">Part of the SPS</param>
+    /// <param name="log2MaxPicOrderCntLsbMinus4">Part of the SPS</param>
+    /// <param name="deltaPicOrderAlwaysZeroFlag">Part of the SPS</param>
+    /// <param name="offsetForNonRefPic">Part of the SPS</param>
+    /// <param name="offsetForTopToBottomField">Part of the SPS</param>
+    /// <param name="numRefFramesInPicOrderCntCycle">Part of the SPS</param>
+    /// <param name="maxNumRefFrames">Part of the SPS</param>
+    /// <param name="gapsInFrameNumValueAllowedFlag">Part of the SPS</param>
+    /// <param name="picWidthInMbsMinus1">Part of the SPS</param>
+    /// <param name="picHeightInMapUnitsMinus1">Part of the SPS</param>
+    /// <param name="frameMbsOnlyFlag">Part of the SPS</param>
+    /// <param name="mbAdaptiveFrameFieldFlag">Part of the SPS</param>
+    /// <param name="direct8X8InferenceFlag">Part of the SPS</param>
+    /// <param name="frameCroppingFlag">Part of the SPS</param>
+    /// <param name="frameCropLeftOffset">Part of the SPS</param>
+    /// <param name="frameCropRightOffset">Part of the SPS</param>
+    /// <param name="frameCropTopOffset">Part of the SPS</param>
+    /// <param name="frameCropBottomOffset">Part of the SPS</param>
+    /// <param name="vuiParametersPresentFlag">Part of the SPS</param>
+    /// <param name="vuiParameters">Part of the SPS</param>
     public SequenceParameterSet(uint profileIdc, bool constraintSet0Flag, bool constraintSet1Flag, bool constraintSet2Flag, bool constraintSet3Flag, bool constraintSet4Flag, bool constraintSet5Flag, uint reservedZero2Bits, uint levelIdc, uint spsId, uint chromaFormatIdc, bool separateColourPlaneFlag, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, bool qpprimeYZeroTransformBypassFlag, bool seqScalingMatrixPresentFlag, ScalingMatrices? scalingMatrix, uint log2MaxFrameNumMinus4, uint picOrderCntType, uint log2MaxPicOrderCntLsbMinus4, bool deltaPicOrderAlwaysZeroFlag, int offsetForNonRefPic, int offsetForTopToBottomField, uint numRefFramesInPicOrderCntCycle, uint maxNumRefFrames, bool gapsInFrameNumValueAllowedFlag, uint picWidthInMbsMinus1, uint picHeightInMapUnitsMinus1, bool frameMbsOnlyFlag, bool mbAdaptiveFrameFieldFlag, bool direct8X8InferenceFlag, bool frameCroppingFlag, uint frameCropLeftOffset, uint frameCropRightOffset, uint frameCropTopOffset, uint frameCropBottomOffset, bool vuiParametersPresentFlag, VuiParameters? vuiParameters)
     {
         ProfileIdc = profileIdc;
@@ -608,7 +649,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     ///   Writes the SPS to the bitstream.
     /// </summary>
     /// <param name="writer">Bitstream writer.</param>
-    /// <param name="options">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
+    /// <param name="vuiWriteOptions">Writing options for the VUI.</param>
     /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
@@ -801,7 +842,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     ///   Writes the SPS to the bitstream.
     /// </summary>
     /// <param name="writer">Bitstream writer.</param>
-    /// <param name="options">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
+    /// <param name="vuiWriteOptions">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
     /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
@@ -870,11 +911,21 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         }
     }
 
+    /// <summary>  
+    /// Determines whether the specified type is equal to the current instance.  
+    /// </summary>  
+    /// <param name="obj">The other type to compare.</param>  
+    /// <returns><c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.</returns>
     public readonly override bool Equals(object? obj)
     {
         return obj is SequenceParameterSet set && Equals(set);
     }
 
+    /// <summary>  
+    /// Determines whether the specified <see cref="SequenceParameterSet"/> is equal to the current instance.  
+    /// </summary>  
+    /// <param name="other">The other <see cref="SequenceParameterSet"/> to compare.</param>  
+    /// <returns><c>true</c> if the specified instance is equal to the current instance; otherwise, <c>false</c>.</returns>
     public readonly bool Equals(SequenceParameterSet other)
     {
         return Kind == other.Kind &&
@@ -918,6 +969,10 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
                EqualityComparer<VuiParameters?>.Default.Equals(VuiParameters, other.VuiParameters);
     }
 
+    /// <summary>
+    ///   Determines the hash code for the SPS.
+    /// </summary>
+    /// <returns>SPS hash code.</returns>
     public readonly override int GetHashCode()
     {
         var hash = new HashCode();
@@ -963,11 +1018,24 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         return hash.ToHashCode();
     }
 
+
+    /// <summary>  
+    /// Determines whether two <see cref="SequenceParameterSet"/> instances are equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="SequenceParameterSet"/> to compare.</param>  
+    /// <param name="right">The second <see cref="SequenceParameterSet"/> to compare.</param>  
+    /// <returns><c>true</c> if the two instances are equal; otherwise, <c>false</c>.</returns>  
     public static bool operator ==(SequenceParameterSet left, SequenceParameterSet right)
     {
         return left.Equals(right);
     }
 
+    /// <summary>  
+    /// Determines whether two <see cref="SequenceParameterSet"/> instances are not equal.  
+    /// </summary>  
+    /// <param name="left">The first <see cref="SequenceParameterSet"/> to compare.</param>  
+    /// <param name="right">The second <see cref="SequenceParameterSet"/> to compare.</param>  
+    /// <returns><c>true</c> if the two instances are not equal; otherwise, <c>false</c>.</returns>  
     public static bool operator !=(SequenceParameterSet left, SequenceParameterSet right)
     {
         return !(left == right);
