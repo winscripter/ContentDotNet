@@ -61,4 +61,16 @@ public static class BitStreamWriterExtensions
 
         await writer.WriteBitsAsync(codeNum & ((1u << leadingZeroBits) - 1), (uint)leadingZeroBits);
     }
+
+    public static void WriteAE(this BitStreamWriter writer, int absoluteExpGolombValue)
+    {
+        uint codeNum = (uint)(absoluteExpGolombValue * 2);
+        writer.WriteUE(codeNum);
+    }
+
+    public static async Task WriteAEAsync(this BitStreamWriter writer, int absoluteExpGolombValue)
+    {
+        uint codeNum = (uint)(absoluteExpGolombValue * 2);
+        await writer.WriteUEAsync(codeNum);
+    }
 }

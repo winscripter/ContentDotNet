@@ -3,11 +3,11 @@
 namespace ContentDotNet.Abstractions;
 
 /// <summary>
-///   A container for 16 <see cref="uint"/>s.
+///   A container for 64 <see cref="bool"/>s.
 /// </summary>
 public struct Container64Boolean : IEquatable<Container64Boolean>
 {
-    private uint _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31,
+    private bool _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15, _16, _17, _18, _19, _20, _21, _22, _23, _24, _25, _26, _27, _28, _29, _30, _31,
                  _32, _33, _34, _35, _36, _37, _38, _39, _40, _41, _42, _43, _44, _45, _46, _47, _48, _49, _50, _51, _52, _53, _54, _55, _56, _57, _58, _59, _60, _61, _62, _63;
 
     public Container64Boolean()
@@ -226,14 +226,14 @@ public struct Container64Boolean : IEquatable<Container64Boolean>
         return hash.ToHashCode();
     }
 
-    public uint this[int index]
+    public bool this[int index]
     {
         get
         {
             if ((uint)index >= 64)
                 throw new IndexOutOfRangeException();
 
-            ref uint firstElement = ref _0;
+            ref bool firstElement = ref _0;
             return Unsafe.Add(ref firstElement, index);
         }
         set
@@ -241,7 +241,7 @@ public struct Container64Boolean : IEquatable<Container64Boolean>
             if ((uint)index >= 64)
                 throw new IndexOutOfRangeException();
 
-            ref uint firstElement = ref _0;
+            ref bool firstElement = ref _0;
             Unsafe.Add(ref firstElement, index) = value;
         }
     }

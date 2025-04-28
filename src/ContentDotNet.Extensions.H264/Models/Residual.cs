@@ -2,6 +2,7 @@
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
+using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264.Models;
 
@@ -582,6 +583,318 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
     /// <see langword="true"/> if the two <see cref="CavlcResidual"/> instances are not equal; otherwise, <see langword="false"/>.
     /// </returns>
     public static bool operator !=(CavlcResidual left, CavlcResidual right)
+    {
+        return !(left == right);
+    }
+}
+
+/// <summary>
+/// Represents a CABAC residual.
+/// </summary>
+public struct CabacResidual : IEquatable<CabacResidual>
+{
+    /// <summary>
+    /// Indicates whether the block is coded.
+    /// </summary>
+    public bool CodedBlockFlag;
+
+    /// <summary>
+    /// The maximum number of coefficients in the residual block.
+    /// </summary>
+    public int MaxNumCoeff;
+
+    /// <summary>
+    /// The chroma array type of the residual block.
+    /// </summary>
+    public int ChromaArrayType;
+
+    /// <summary>
+    /// Flags indicating whether each coefficient is significant.
+    /// </summary>
+    public Container64Boolean SignificantCoeffFlag;
+
+    /// <summary>
+    /// Flags indicating whether each coefficient is the last significant coefficient.
+    /// </summary>
+    public Container64Boolean LastSignificantCoeffFlag;
+
+    /// <summary>
+    /// The absolute level minus one for each coefficient.
+    /// </summary>
+    public Container64UInt32 CoeffAbsLevelMinus1;
+
+    /// <summary>
+    /// Flags indicating the sign of each coefficient.
+    /// </summary>
+    public Container64Boolean CoeffSignFlag;
+
+    /// <summary>
+    /// Start index.
+    /// </summary>
+    public int StartIdx;
+
+    /// <summary>
+    /// End index.
+    /// </summary>
+    public int EndIdx;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CabacResidual"/> struct.
+    /// </summary>
+    /// <param name="codedBlockFlag">Indicates whether the block is coded.</param>
+    /// <param name="maxNumCoeff">The maximum number of coefficients in the residual block.</param>
+    /// <param name="chromaArrayType">The chroma array type of the residual block.</param>
+    /// <param name="significantCoeffFlag">Flags indicating whether each coefficient is significant.</param>
+    /// <param name="lastSignificantCoeffFlag">Flags indicating whether each coefficient is the last significant coefficient.</param>
+    /// <param name="coeffAbsLevelMinus1">The absolute level minus one for each coefficient.</param>
+    /// <param name="coeffSignFlag">Flags indicating the sign of each coefficient.</param>
+    /// <param name="startIdx">Start index.</param>
+    /// <param name="endIdx">End index.</param>
+    public CabacResidual(
+        bool codedBlockFlag,
+        int maxNumCoeff,
+        int chromaArrayType,
+        Container64Boolean significantCoeffFlag,
+        Container64Boolean lastSignificantCoeffFlag,
+        Container64UInt32 coeffAbsLevelMinus1,
+        Container64Boolean coeffSignFlag,
+        int startIdx,
+        int endIdx)
+    {
+        CodedBlockFlag = codedBlockFlag;
+        MaxNumCoeff = maxNumCoeff;
+        ChromaArrayType = chromaArrayType;
+        SignificantCoeffFlag = significantCoeffFlag;
+        LastSignificantCoeffFlag = lastSignificantCoeffFlag;
+        CoeffAbsLevelMinus1 = coeffAbsLevelMinus1;
+        CoeffSignFlag = coeffSignFlag;
+        StartIdx = startIdx;
+        EndIdx = endIdx;
+    }
+
+    /// <summary>
+    ///   Reads the CABAC residual from the given bitstream.
+    /// </summary>
+    /// <param name="reader"></param>
+    /// <param name="coeffLevel"></param>
+    /// <param name="startIdx"></param>
+    /// <param name="endIdx"></param>
+    /// <param name="maxNumCoeff"></param>
+    /// <param name="chromaArrayType"></param>
+    /// <returns></returns>
+    public static CabacResidual Read(BitStreamReader reader, Span<uint> coeffLevel, int startIdx, int endIdx, int maxNumCoeff, int chromaArrayType)
+    {
+        bool codedBlockFlag = false;
+        if (maxNumCoeff != 64 || chromaArrayType == 3)
+            codedBlockFlag = Int32Boolean.B(reader.ReadAE());
+
+        for (int i = 0; i < maxNumCoeff; i++)
+            coeffLevel[i] = 0u;
+
+        Container64Boolean significantCoeffFlag = new();
+        Container64Boolean lastSignificantCoeffFlag = new();
+        Container64UInt32 coeffAbsLevelMinus1 = new();
+        Container64Boolean coeffSignFlag = new();
+
+        if (codedBlockFlag)
+        {
+            int numCoeff = endIdx + 1;
+            int i = startIdx;
+            while (i < numCoeff - 1)
+            {
+                significantCoeffFlag[i] = Int32Boolean.B(reader.ReadAE());
+                if (significantCoeffFlag[i])
+                {
+                    lastSignificantCoeffFlag[i] = Int32Boolean.B(reader.ReadAE());
+                    if (lastSignificantCoeffFlag[i])
+                        numCoeff = i + 1;
+                }
+                i++;
+            }
+
+            coeffAbsLevelMinus1[numCoeff - 1] = (uint)reader.ReadAE();
+            coeffSignFlag[numCoeff - 1] = Int32Boolean.B(reader.ReadAE());
+
+            coeffLevel[numCoeff - 1] = (coeffAbsLevelMinus1[numCoeff - 1] + 1) *
+                                       (1 - 2 * Int32Boolean.U32(coeffSignFlag[numCoeff - 1]));
+
+            for (i = numCoeff - 2; i >= startIdx; i--)
+            {
+                if (significantCoeffFlag[i])
+                {
+                    coeffAbsLevelMinus1[i] = (uint)reader.ReadAE();
+                    coeffSignFlag[i] = Int32Boolean.B(reader.ReadAE());
+                    coeffLevel[i] = (coeffAbsLevelMinus1[i] + 1) *
+                                    (1 - 2 * Int32Boolean.U32(coeffSignFlag[i])); 
+                }
+            }
+        }
+
+        return new CabacResidual(codedBlockFlag, maxNumCoeff, chromaArrayType, significantCoeffFlag, lastSignificantCoeffFlag, coeffAbsLevelMinus1, coeffSignFlag, startIdx, endIdx);
+    }
+
+    /// <summary>
+    ///   Writes the CABAC residual to the given bitstream writer.
+    /// </summary>
+    /// <param name="writer">Bitstream writer</param>
+    /// <param name="coeffLevel">All coefficient levels.</param>
+    public readonly void Write(BitStreamWriter writer, Span<uint> coeffLevel)
+    {
+        if (MaxNumCoeff != 64 || ChromaArrayType == 3)
+            writer.WriteAE(Int32Boolean.I32(CodedBlockFlag));
+
+        for (int i = 0; i < MaxNumCoeff; i++)
+            coeffLevel[i] = 0u;
+
+        if (CodedBlockFlag)
+        {
+            int numCoeff = EndIdx + 1;
+            int i = StartIdx;
+            while (i < numCoeff - 1)
+            {
+                writer.WriteAE(Int32Boolean.I32(SignificantCoeffFlag[i]));
+                if (SignificantCoeffFlag[i])
+                {
+                    writer.WriteAE(Int32Boolean.I32(LastSignificantCoeffFlag[i]));
+                    if (LastSignificantCoeffFlag[i])
+                        numCoeff = i + 1;
+                }
+                i++;
+            }
+
+            writer.WriteAE((int)CoeffAbsLevelMinus1[numCoeff - 1]);
+            writer.WriteAE(Int32Boolean.I32(CoeffSignFlag[numCoeff - 1]));
+
+            coeffLevel[numCoeff - 1] = (CoeffAbsLevelMinus1[numCoeff - 1] + 1) *
+                                       (1 - 2 * Int32Boolean.U32(CoeffSignFlag[numCoeff - 1]));
+
+            for (i = numCoeff - 2; i >= StartIdx; i--)
+            {
+                if (SignificantCoeffFlag[i])
+                {
+                    writer.WriteAE((int)CoeffAbsLevelMinus1[i]);
+                    writer.WriteAE(Int32Boolean.I32(CoeffSignFlag[i]));
+                    coeffLevel[i] = (CoeffAbsLevelMinus1[i] + 1) *
+                                    (1 - 2 * Int32Boolean.U32(CoeffSignFlag[i]));
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    ///   Writes the CABAC residual to the given bitstream writer.
+    /// </summary>
+    /// <param name="writer">Bitstream writer</param>
+    /// <param name="coeffLevel">All coefficient levels.</param>
+    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> coeffLevel)
+    {
+        if (MaxNumCoeff != 64 || ChromaArrayType == 3)
+            await writer.WriteAEAsync(Int32Boolean.I32(CodedBlockFlag));
+
+        for (int i = 0; i < MaxNumCoeff; i++)
+            coeffLevel.Span[i] = 0u;
+
+        if (CodedBlockFlag)
+        {
+            int numCoeff = EndIdx + 1;
+            int i = StartIdx;
+            while (i < numCoeff - 1)
+            {
+                await writer.WriteAEAsync(Int32Boolean.I32(SignificantCoeffFlag[i]));
+                if (SignificantCoeffFlag[i])
+                {
+                    await writer.WriteAEAsync(Int32Boolean.I32(LastSignificantCoeffFlag[i]));
+                    if (LastSignificantCoeffFlag[i])
+                        numCoeff = i + 1;
+                }
+                i++;
+            }
+
+            await writer.WriteAEAsync((int)CoeffAbsLevelMinus1[numCoeff - 1]);
+            await writer.WriteAEAsync(Int32Boolean.I32(CoeffSignFlag[numCoeff - 1]));
+
+            coeffLevel.Span[numCoeff - 1] = (CoeffAbsLevelMinus1[numCoeff - 1] + 1) *
+                                       (1 - 2 * Int32Boolean.U32(CoeffSignFlag[numCoeff - 1]));
+
+            for (i = numCoeff - 2; i >= StartIdx; i--)
+            {
+                if (SignificantCoeffFlag[i])
+                {
+                    await writer.WriteAEAsync((int)CoeffAbsLevelMinus1[i]);
+                    await writer.WriteAEAsync(Int32Boolean.I32(CoeffSignFlag[i]));
+                    coeffLevel.Span[i] = (CoeffAbsLevelMinus1[i] + 1) *
+                                    (1 - 2 * Int32Boolean.U32(CoeffSignFlag[i]));
+                }
+            }
+        }
+    }
+
+    /// <inheritdoc/>
+    public readonly override bool Equals(object? obj)
+    {
+        return obj is CabacResidual residual && Equals(residual);
+    }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="CabacResidual"/> is equal to the current instance.
+    /// </summary>
+    /// <param name="other">The <see cref="CabacResidual"/> to compare with the current instance.</param>
+    /// <returns>
+    /// <see langword="true"/> if the specified <see cref="CabacResidual"/> is equal to the current instance; otherwise, <see langword="false"/>.
+    /// </returns>
+    public readonly bool Equals(CabacResidual other)
+    {
+        return CodedBlockFlag == other.CodedBlockFlag &&
+               MaxNumCoeff == other.MaxNumCoeff &&
+               ChromaArrayType == other.ChromaArrayType &&
+               SignificantCoeffFlag.Equals(other.SignificantCoeffFlag) &&
+               LastSignificantCoeffFlag.Equals(other.LastSignificantCoeffFlag) &&
+               CoeffAbsLevelMinus1.Equals(other.CoeffAbsLevelMinus1) &&
+               CoeffSignFlag.Equals(other.CoeffSignFlag) &&
+               StartIdx == other.StartIdx &&
+               EndIdx == other.EndIdx;
+    }
+
+    /// <inheritdoc/>
+    public readonly override int GetHashCode()
+    {
+        var hash = new HashCode();
+
+        hash.Add(CodedBlockFlag);
+        hash.Add(MaxNumCoeff);
+        hash.Add(ChromaArrayType);
+        hash.Add(SignificantCoeffFlag);
+        hash.Add(LastSignificantCoeffFlag);
+        hash.Add(CoeffAbsLevelMinus1);
+        hash.Add(CoeffSignFlag);
+        hash.Add(StartIdx);
+        hash.Add(EndIdx);
+
+        return hash.ToHashCode();
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="CabacResidual"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="CabacResidual"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="CabacResidual"/> instance to compare.</param>
+    /// <returns>
+    /// <see langword="true"/> if the two <see cref="CabacResidual"/> instances are equal; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool operator ==(CabacResidual left, CabacResidual right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="CabacResidual"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The first <see cref="CabacResidual"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="CabacResidual"/> instance to compare.</param>
+    /// <returns>
+    /// <see langword="true"/> if the two <see cref="CabacResidual"/> instances are not equal; otherwise, <see langword="false"/>.
+    /// </returns>
+    public static bool operator !=(CabacResidual left, CabacResidual right)
     {
         return !(left == right);
     }
