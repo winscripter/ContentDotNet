@@ -29,6 +29,8 @@ internal partial class Decoder264
     private int[] refIdxL1 = null!;
     private ArrayMatrix4x4x2 mvL0 = null!;
     private ArrayMatrix4x4x2 mvL1 = null!;
+    private ArrayMatrix4x4x2 mvCL0 = null!;
+    private ArrayMatrix4x4x2 mvCL1 = null!;
 
     private void InitializeInterPrediction()
     {
@@ -43,6 +45,8 @@ internal partial class Decoder264
         refIdxL1 = new int[16];
         mvL0 = new ArrayMatrix4x4x2();
         mvL1 = new ArrayMatrix4x4x2();
+        mvCL0 = new ArrayMatrix4x4x2();
+        mvCL1 = new ArrayMatrix4x4x2();
     }
 
     public static void Derive4x4LumaBlocks(
@@ -619,7 +623,7 @@ internal partial class Decoder264
 
     public void DeriveMotionVectors(
         int chromaArrayType,
-        Matrix16x16 mvL0, Matrix16x16 mvL1, Matrix16x16 mvCL0, Matrix16x16 mvCL1, Span<int> refIdxL0, Span<int> refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
+        Span<int> refIdxL0, Span<int> refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
     {
         predFlagL0 = false;
         predFlagL1 = false;
