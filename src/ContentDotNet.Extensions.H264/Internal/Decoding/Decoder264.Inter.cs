@@ -623,7 +623,7 @@ internal partial class Decoder264
 
     public void DeriveMotionVectors(
         int chromaArrayType,
-        Span<int> refIdxL0, Span<int> refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
+        out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
     {
         predFlagL0 = false;
         predFlagL1 = false;
