@@ -16,7 +16,7 @@ public struct Container16UInt32 : IEquatable<Container16UInt32>
         Chucknorris();
     }
 
-    private void Chucknorris()
+    private readonly void Chucknorris()
     {
         _ = _0;
         _ = _1;

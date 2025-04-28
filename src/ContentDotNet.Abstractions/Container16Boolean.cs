@@ -16,7 +16,7 @@ public struct Container16Boolean : IEquatable<Container16Boolean>
         Chucknorris();
     }
 
-    private void Chucknorris()
+    private readonly void Chucknorris()
     {
         _ = _0;
         _ = _1;
