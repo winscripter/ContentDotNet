@@ -642,16 +642,57 @@ internal partial class Decoder264
     {
         refIdxL0 = 0; // Literally!
 
+        DeriveMotionDataOfNeighboringPartitions(na, 0, 0, false,
+            out int mbAddrA, out int mbPartIdxA, out int subMbPartIdxA, out bool validA,
+            out int mbAddrB, out int mbPartIdxB, out int subMbPartIdxB, out bool validB,
+            out int mbAddrC, out int mbPartIdxC, out int subMbPartIdxC, out bool validC,
+            out MotionVector mvL0A, out MotionVector mvL1A, out int refIdxL0A, out int refIdxL1A,
+            out MotionVector mvL0B, out MotionVector mvL1B, out int refIdxL0B, out int refIdxL1B,
+            out MotionVector mvL0C, out MotionVector mvL1C, out int refIdxL0C, out int refIdxL1C,
+            out MotionVector mvL0D, out MotionVector mvL1D, out int refIdxL0D, out int refIdxL1D
+        );
+
+        if (!validA || !validB || (refIdxL0A == 0 && mvL0A.X == 0 && mvL0A.Y == 0) || (refIdxL0B == 0 && mvL0B.X == 0 && mvL0B.Y == 0))
+        {
+            mvL0.Clear();
+        }
+        else
+        {
+            DeriveLumaMotionVectors();
+        }
     }
 
     private void DeriveMotionDataOfNeighboringPartitions(
         int currSubMbType,
+        int mbPartIdx,
+        int subMbPartIdx,
         bool listSuffixFlag,
         out int mbAddrA, out int mbPartIdxA, out int subMbPartIdxA, out bool validA,
         out int mbAddrB, out int mbPartIdxB, out int subMbPartIdxB, out bool validB,
         out int mbAddrC, out int mbPartIdxC, out int subMbPartIdxC, out bool validC,
-        ref MotionVector mvL0N, ref MotionVector mvL1N, ref int refIdxL0N, ref int refIdxL1N)
+        out MotionVector mvL0A, out MotionVector mvL1A, out int refIdxL0A, out int refIdxL1A,
+        out MotionVector mvL0B, out MotionVector mvL1B, out int refIdxL0B, out int refIdxL1B,
+        out MotionVector mvL0C, out MotionVector mvL1C, out int refIdxL0C, out int refIdxL1C,
+        out MotionVector mvL0D, out MotionVector mvL1D, out int refIdxL0D, out int refIdxL1D)
     {
+        mvL0A = default;
+        mvL1A = default;
+        mvL0B = default;
+        mvL1B = default;
+        mvL0C = default;
+        mvL1C = default;
+        mvL0D = default;
+        mvL1D = default;
+
+        refIdxL0A = default;
+        refIdxL1A = default;
+        refIdxL0B = default;
+        refIdxL1B = default;
+        refIdxL0C = default;
+        refIdxL1C = default;
+        refIdxL0D = default;
+        refIdxL1D = default;
+
         mbAddrA = 0;
         mbAddrB = 0;
         mbAddrC = 0;
@@ -688,26 +729,26 @@ internal partial class Decoder264
         }
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, out mvL0A, out refIdxL0A, mvL0, refIdxL0);
         else
-            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, out mvL1A, out refIdxL1A, mvL1, refIdxL1);
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, out mvL0B, out refIdxL0B, mvL0, refIdxL0);
         else
-            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, out mvL1B, out refIdxL1B, mvL1, refIdxL1);
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, out mvL0C, out refIdxL0C, mvL0, refIdxL0);
         else
-            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, out mvL1C, out refIdxL1C, mvL1, refIdxL1);
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, out mvL0D, out refIdxL0D, mvL0, refIdxL0);
         else
-            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, out mvL1D, out refIdxL1D, mvL1, refIdxL1);
 
-        void DeriveInternal(int mbAddrN, int mbPartIdxN, int subMbPartIdxN, bool validN, ref MotionVector mvLXN, ref int refIdxLXN, ArrayMatrix4x4x2 mvLx, int[] refIdxLX)
+        void DeriveInternal(int mbAddrN, int mbPartIdxN, int subMbPartIdxN, bool validN, out MotionVector mvLXN, out int refIdxLXN, ArrayMatrix4x4x2 mvLx, int[] refIdxLX)
         {
             if (!validN || _macroblockUtility.IsCodedWithIntra(_derivationContext.CurrMbAddr))
             {
