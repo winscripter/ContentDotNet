@@ -22,7 +22,9 @@ internal partial class Decoder264
 
     // NOTE: Initialization of the following fields is performed in
     //       the InitializeInterPrediction method, which is invoked
-    //       by the constructor.
+    //       by the constructor. The constructor doesn't directly
+    //       initialize them. Use null! to suppress CS8618 warnings.
+
     private int[] refIdxL0 = null!;
     private int[] refIdxL1 = null!;
     private ArrayMatrix4x4x2 mvL0 = null!;
