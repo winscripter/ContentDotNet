@@ -20,6 +20,14 @@ internal partial class Decoder264
     private int mbPartIdx;
     private int subMbPartIdx;
 
+    // NOTE: Initialization of the following fields is performed in
+    //       the InitializeInterPrediction method, which is invoked
+    //       by the constructor.
+    private int[] refIdxL0 = null!;
+    private int[] refIdxL1 = null!;
+    private ArrayMatrix4x4x2 mvL0 = null!;
+    private ArrayMatrix4x4x2 mvL1 = null!;
+
     private void InitializeInterPrediction()
     {
         sliceType = GeneralSliceType.I; // Default
@@ -29,6 +37,10 @@ internal partial class Decoder264
         subMbType = 0;
         mbPartIdx = 0;
         subMbPartIdx = 0;
+        refIdxL0 = new int[16];
+        refIdxL1 = new int[16];
+        mvL0 = new ArrayMatrix4x4x2();
+        mvL1 = new ArrayMatrix4x4x2();
     }
 
     public static void Derive4x4LumaBlocks(
@@ -632,7 +644,6 @@ internal partial class Decoder264
         out int mbAddrA, out int mbPartIdxA, out int subMbPartIdxA, out bool validA,
         out int mbAddrB, out int mbPartIdxB, out int subMbPartIdxB, out bool validB,
         out int mbAddrC, out int mbPartIdxC, out int subMbPartIdxC, out bool validC,
-        Matrix4x4x2 mvL0, Matrix4x4x2 mvL1, Span<int> refIdxL0, Span<int> refIdxL1,
         ref MotionVector mvL0N, ref MotionVector mvL1N, ref int refIdxL0N, ref int refIdxL1N)
     {
         mbAddrA = 0;
@@ -690,7 +701,7 @@ internal partial class Decoder264
         else
             DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
 
-        void DeriveInternal(int mbAddrN, int mbPartIdxN, int subMbPartIdxN, bool validN, ref MotionVector mvLXN, ref int refIdxLXN, Matrix4x4x2 mvLx, Span<int> refIdxLX)
+        void DeriveInternal(int mbAddrN, int mbPartIdxN, int subMbPartIdxN, bool validN, ref MotionVector mvLXN, ref int refIdxLXN, ArrayMatrix4x4x2 mvLx, int[] refIdxLX)
         {
             if (!validN || _macroblockUtility.IsCodedWithIntra(_derivationContext.CurrMbAddr))
             {
