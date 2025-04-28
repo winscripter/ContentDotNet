@@ -150,7 +150,7 @@ internal partial class Decoder264
         luma8x8BlkIdx = 2 * (yP / 8) + xP / 8;
     }
 
-    public void DeriveMacroblockAndSubMacroblockPartitionIndices(int xP, int yP, int mbType, Span<int> subMbType, ref int mbPartIdx, ref int subMbPartIdx)
+    public void DeriveMacroblockAndSubMacroblockPartitionIndices(int xP, int yP, int mbType, MacroblockTypeHistory subMbType, ref int mbPartIdx, ref int subMbPartIdx)
     {
         if (IsI(mbType))
         {
@@ -179,8 +179,8 @@ internal partial class Decoder264
         int currSubMbType,
         int subMbPartIdx,
         int mbType,
-        Span<int> mbTypeArray,
-        Span<int> subMbType,
+        MacroblockTypeHistory mbTypeArray,
+        MacroblockTypeHistory subMbType,
         ref int mbAddrA, ref int mbPartIdxA, ref int subMbPartIdxA, ref bool validA,
         ref int mbAddrB, ref int mbPartIdxB, ref int subMbPartIdxB, ref bool validB,
         ref int mbAddrC, ref int mbPartIdxC, ref int subMbPartIdxC, ref bool validC,
@@ -227,7 +227,7 @@ internal partial class Decoder264
         DeriveNeighboringPartition(x, y, xS, yS, out xW, out yW, LumaLocationsD, mbTypeArray, subMbType, ref mbAddrD, ref mbPartIdxD, ref subMbPartIdxD, ref validD, dc, mbType);
     }
 
-    private void DeriveNeighboringPartition(int x, int y, int xS, int yS, out int xW, out int yW, (int x, int y) locations, Span<int> mbTypeArray, Span<int> subMbType, ref int mbAddrN, ref int mbPartIdxN, ref int subMbPartIdxN, ref bool validN, DerivationContext dc, int mbType)
+    private void DeriveNeighboringPartition(int x, int y, int xS, int yS, out int xW, out int yW, (int x, int y) locations, MacroblockTypeHistory mbTypeArray, MacroblockTypeHistory subMbType, ref int mbAddrN, ref int mbPartIdxN, ref int subMbPartIdxN, ref bool validN, DerivationContext dc, int mbType)
     {
         int xNa = x + xS + locations.x;
         int yNa = y + yS + locations.y;
@@ -247,7 +247,7 @@ internal partial class Decoder264
             }
             else
             {
-                Span<int> subMbTypeDISCARD = stackalloc int[16];
+                MacroblockTypeHistory subMbTypeDISCARD = new();
                 int mbPartIdxDISCARD = 0;
                 int subMbPartIdxDISCARD = 0;
                 DeriveMacroblockAndSubMacroblockPartitionIndices(xW, yW, mbType, subMbTypeDISCARD, ref mbPartIdxDISCARD, ref subMbPartIdxDISCARD);
@@ -600,6 +600,120 @@ internal partial class Decoder264
         else
         {
             mbPartIdxMax = Util264.NumMbPart(mbType, sliceType) - 1;
+        }
+    }
+
+    public void DeriveMotionVectors(
+        int chromaArrayType,
+        Matrix16x16 mvL0, Matrix16x16 mvL1, Matrix16x16 mvCL0, Matrix16x16 mvCL1, Span<int> refIdxL0, Span<int> refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
+    {
+        predFlagL0 = false;
+        predFlagL1 = false;
+        subMvCnt = 0;
+
+        if (mbType == P_Skip)
+        {
+            DeriveLumaMotionVectorsForSkippedPAndSPSlices();
+            return;
+        }
+
+
+    }
+
+    private void DeriveLumaMotionVectorsForSkippedPAndSPSlices(out int refIdxL0)
+    {
+        refIdxL0 = 0; // Literally!
+
+    }
+
+    private void DeriveMotionDataOfNeighboringPartitions(
+        int currSubMbType,
+        bool listSuffixFlag,
+        out int mbAddrA, out int mbPartIdxA, out int subMbPartIdxA, out bool validA,
+        out int mbAddrB, out int mbPartIdxB, out int subMbPartIdxB, out bool validB,
+        out int mbAddrC, out int mbPartIdxC, out int subMbPartIdxC, out bool validC,
+        Matrix4x4x2 mvL0, Matrix4x4x2 mvL1, Span<int> refIdxL0, Span<int> refIdxL1,
+        ref MotionVector mvL0N, ref MotionVector mvL1N, ref int refIdxL0N, ref int refIdxL1N)
+    {
+        mbAddrA = 0;
+        mbAddrB = 0;
+        mbAddrC = 0;
+        int mbAddrD = 0;
+
+        mbPartIdxA = 0;
+        mbPartIdxB = 0;
+        mbPartIdxC = 0;
+        int mbPartIdxD = 0;
+
+        subMbPartIdxA = 0;
+        subMbPartIdxB = 0;
+        subMbPartIdxC = 0;
+        int subMbPartIdxD = 0;
+
+        validA = false;
+        validB = false;
+        validC = false;
+        bool validD = false;
+        DeriveNeighboringPartitions(
+            _derivationContext, mbPartIdx, currSubMbType, subMbPartIdx,
+            mbType, mbTypeArray, subMbTypeArray,
+            ref mbAddrA, ref mbPartIdxA, ref subMbPartIdxA, ref validA,
+            ref mbAddrB, ref mbPartIdxB, ref subMbPartIdxB, ref validB,
+            ref mbAddrC, ref mbPartIdxC, ref subMbPartIdxC, ref validC,
+            ref mbAddrD, ref mbPartIdxD, ref subMbPartIdxD, ref validD
+        );
+
+        if (validC)
+        {
+            mbAddrC = mbAddrD;
+            mbPartIdxC = mbPartIdxD;
+            subMbPartIdxC = subMbPartIdxD;
+        }
+
+        if (listSuffixFlag)
+            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+        else
+            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+
+        if (listSuffixFlag)
+            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+        else
+            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+
+        if (listSuffixFlag)
+            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+        else
+            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+
+        if (listSuffixFlag)
+            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, ref mvL0N, ref refIdxL0N, mvL0, refIdxL0);
+        else
+            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, ref mvL1N, ref refIdxL1N, mvL1, refIdxL1);
+
+        void DeriveInternal(int mbAddrN, int mbPartIdxN, int subMbPartIdxN, bool validN, ref MotionVector mvLXN, ref int refIdxLXN, Matrix4x4x2 mvLx, Span<int> refIdxLX)
+        {
+            if (!validN || _macroblockUtility.IsCodedWithIntra(_derivationContext.CurrMbAddr))
+            {
+                mvLXN = (0, 0);
+                refIdxLXN = -1;
+                return;
+            }
+
+            mvLXN.X = mvLx[mbPartIdxN, subMbPartIdxN, 0];
+            mvLXN.Y = mvLx[mbPartIdxN, subMbPartIdxN, 1];
+
+            refIdxLXN = refIdxLX[mbPartIdxN];
+
+            if (_macroblockUtility.IsFieldMacroblock(_derivationContext.CurrMbAddr) && _macroblockUtility.IsFrameMacroblock(mbAddrN))
+            {
+                mvLXN.Y /= 2;
+                refIdxLXN *= 2;
+            }
+            else
+            {
+                mvLXN.Y *= 2;
+                refIdxLXN /= 2;
+            }
         }
     }
 
