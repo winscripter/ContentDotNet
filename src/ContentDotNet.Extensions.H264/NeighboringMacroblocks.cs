@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿using ContentDotNet.Extensions.H264.Models;
+
+namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 /// Represents the neighboring macroblocks in an H.264 video stream.
@@ -66,6 +68,76 @@ public struct NeighboringMacroblocks : IEquatable<NeighboringMacroblocks>
         IsMbAddrBAvailable = isMbAddrBAvailable;
         IsMbAddrCAvailable = isMbAddrCAvailable;
         IsMbAddrDAvailable = isMbAddrDAvailable;
+    }
+
+    /// <summary>
+    ///   Changes all macroblock addresses and their availability statuses to match
+    ///   with the given macroblock address, and the Sequence Parameter Set (SPS).
+    /// </summary>
+    /// <param name="macroblockAddress">Address of the macroblock to compute neighboring macroblocks of.</param>
+    /// <param name="sps">The SPS provides necessary parameters for computing neighboring macroblocks.</param>
+    public void Refresh(int macroblockAddress, SequenceParameterSet sps)
+    {
+        Refresh(
+            macroblockAddress,
+            (int)sps.PicWidthInMbsMinus1 + 1,
+            ((int)sps.PicWidthInMbsMinus1 + 1) * ((int)sps.PicHeightInMapUnitsMinus1 + 1)
+        );
+    }
+
+    /// <summary>
+    ///   Changes all macroblock addresses and their availability statuses to match
+    ///   with the given macroblock address, macroblocks per row, and number of
+    ///   macroblocks in the current frame.
+    /// </summary>
+    /// <param name="macroblockAddress">Address of the macroblock to compute neighboring macroblocks of.</param>
+    /// <param name="mbPerRow">Number of macroblocks per row.</param>
+    /// <param name="numMbsInFrame">Number of macroblocks in a single frame.</param>
+    public void Refresh(int macroblockAddress, int mbPerRow, int numMbsInFrame)
+    {
+        if (macroblockAddress % mbPerRow != 0)
+        {
+            this.MbAddrA = macroblockAddress - 1;
+            this.IsMbAddrAAvailable = true;
+        }
+        else
+        {
+            this.MbAddrA = 0;
+            this.IsMbAddrAAvailable = false;
+        }
+
+        if (macroblockAddress >= mbPerRow)
+        {
+            this.MbAddrB = macroblockAddress - mbPerRow;
+            this.IsMbAddrBAvailable = true;
+        }
+        else
+        {
+            this.MbAddrB = 0;
+            this.IsMbAddrBAvailable = false;
+        }
+
+        if (macroblockAddress % mbPerRow != 0 && macroblockAddress > mbPerRow)
+        {
+            this.MbAddrC = macroblockAddress - mbPerRow - 1;
+            this.IsMbAddrCAvailable = true;
+        }
+        else
+        {
+            this.MbAddrC = 0;
+            this.IsMbAddrCAvailable = false;
+        }
+
+        if (macroblockAddress < numMbsInFrame - mbPerRow && macroblockAddress % mbPerRow != 0)
+        {
+            this.MbAddrD = macroblockAddress + mbPerRow - 1;
+            this.IsMbAddrDAvailable = true;
+        }
+        else
+        {
+            this.MbAddrD = 0;
+            this.IsMbAddrDAvailable = false;
+        }
     }
 
     /// <inheritdoc/>
