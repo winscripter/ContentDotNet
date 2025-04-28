@@ -2,6 +2,8 @@
 
 namespace ContentDotNet.Extensions.H264.Utilities;
 
+#pragma warning disable
+
 /// <summary>
 ///   Holds previous macroblocks.
 /// </summary>
