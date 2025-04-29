@@ -70,7 +70,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Data_2()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 20, false, true, new MvcNalUnitHeaderExtension(true, 2, 3, 2, false, true, true));
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 20, false, false, new MvcNalUnitHeaderExtension(true, 2, 3, 2, false, true, true));
 
         UseBSWriterThenReader(
             writer =>
@@ -91,7 +91,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Data_3()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 21, false, false, new Avc3DNalUnitHeaderExtension(2, false, true, 3, true, false));
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 21, false, true, new Avc3DNalUnitHeaderExtension(2, false, true, 3, true, false));
 
         UseBSWriterThenReader(
             writer =>
