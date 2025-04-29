@@ -608,7 +608,6 @@ internal partial class Decoder264
 
     public void InterPredict(Matrix16x16 predL, Matrix16x16 predCb, Matrix16x16 predCr)
     {
-        int mbPartIdxMin = 0;
         int mbPartIdxMax = 0;
 
         if (mbType is B_Skip or B_Direct_16x16)
@@ -621,34 +620,34 @@ internal partial class Decoder264
         }
     }
 
-    public void DeriveMotionVectors(
-        int chromaArrayType,
-        out MotionVector mvL0, out MotionVector mvL1, out MotionVector mvCL0, MotionVector mvCL1,
-        out int refIdxL0, out int refIdxL1,
-        out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
-    {
-        predFlagL0 = false;
-        predFlagL1 = false;
-        subMvCnt = 0;
+    //public void DeriveMotionVectors(
+    //    int chromaArrayType,
+    //    out MotionVector mvL0, out MotionVector mvL1, out MotionVector mvCL0, out MotionVector mvCL1,
+    //    out int refIdxL0, out int refIdxL1,
+    //    out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
+    //{
+    //    predFlagL0 = false;
+    //    predFlagL1 = false;
+    //    subMvCnt = 0;
 
-        if (mbType == P_Skip)
-        {
-            DeriveLumaMotionVectorsForSkippedPAndSPSlices(out refIdxL0, out mvL0);
-            refIdxL0 = 1;
-            predFlagL0 = true;
-            mvL1 = default;
-            mvCL1 = default;
-            mvCL0 = default;
-            refIdxL1 = 0;
-            subMvCnt = 1;
-            return;
-        }
+    //    if (mbType == P_Skip)
+    //    {
+    //        DeriveLumaMotionVectorsForSkippedPAndSPSlices(out refIdxL0, out mvL0);
+    //        refIdxL0 = 1;
+    //        predFlagL0 = true;
+    //        mvL1 = default;
+    //        mvCL1 = default;
+    //        mvCL0 = default;
+    //        refIdxL1 = 0;
+    //        subMvCnt = 1;
+    //        return;
+    //    }
 
-        if (mbType is B_Direct_16x16 or B_Skip || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
-        {
-            DeriveLumaMotionVectorsForBSlices(mbPartIdx, subMbPartIdx);
-        }
-    }
+    //    if (mbType is B_Direct_16x16 or B_Skip || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
+    //    {
+    //        DeriveLumaMotionVectorsForBSlices(mbPartIdx, subMbPartIdx);
+    //    }
+    //}
 
     private void DeriveLumaMotionVectorsForBSlices(int mbPartIdx, int subMbPartIdx, bool directSpatialMvPredFlag)
     {
@@ -826,24 +825,24 @@ internal partial class Decoder264
         }
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, out mvL0A, out refIdxL0A, mvL0, refIdxL0);
+            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, out mvL0A, out refIdxL0A, mvL0, refIdxL0N);
         else
-            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, out mvL1A, out refIdxL1A, mvL1, refIdxL1);
+            DeriveInternal(mbAddrA, mbPartIdxA, subMbPartIdxA, validA, out mvL1A, out refIdxL1A, mvL1, refIdxL1N);
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, out mvL0B, out refIdxL0B, mvL0, refIdxL0);
+            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, out mvL0B, out refIdxL0B, mvL0, refIdxL0N);
         else
-            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, out mvL1B, out refIdxL1B, mvL1, refIdxL1);
+            DeriveInternal(mbAddrB, mbPartIdxB, subMbPartIdxB, validB, out mvL1B, out refIdxL1B, mvL1, refIdxL1N);
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, out mvL0C, out refIdxL0C, mvL0, refIdxL0);
+            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, out mvL0C, out refIdxL0C, mvL0, refIdxL0N);
         else
-            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, out mvL1C, out refIdxL1C, mvL1, refIdxL1);
+            DeriveInternal(mbAddrC, mbPartIdxC, subMbPartIdxC, validC, out mvL1C, out refIdxL1C, mvL1, refIdxL1N);
 
         if (listSuffixFlag)
-            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, out mvL0D, out refIdxL0D, mvL0, refIdxL0);
+            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, out mvL0D, out refIdxL0D, mvL0, refIdxL0N);
         else
-            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, out mvL1D, out refIdxL1D, mvL1, refIdxL1);
+            DeriveInternal(mbAddrD, mbPartIdxD, subMbPartIdxD, validD, out mvL1D, out refIdxL1D, mvL1, refIdxL1N);
 
         void DeriveInternal(int mbAddrN, int mbPartIdxN, int subMbPartIdxN, bool validN, out MotionVector mvLXN, out int refIdxLXN, ArrayMatrix4x4x2 mvLx, int[] refIdxLX)
         {
@@ -871,49 +870,4 @@ internal partial class Decoder264
             }
         }
     }
-
-    //private void DeriveMotionVectors(Matrix16x16 mvL0, Matrix16x16 mvL1, Matrix16x16 mvCL0cb, Matrix16x16 mvCL1cb, Matrix16x16 mvCL0cr, Matrix16x16 mvCL1cr, out int refIdxL0, out int refIdxL1, out bool predFlagL0, out bool predFlagL1, out int subMvCnt, Span<int> refIdxL0Array, Span<int> refIdxL1Array)
-    //{
-    //    if (mbType == P_Skip)
-    //    {
-    //        DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSP(mvL0, out refIdxL0);
-    //        predFlagL0 = true;
-    //        predFlagL1 = false;
-    //        refIdxL1 = 0;
-    //        subMvCnt = 1;
-
-    //        return;
-    //    }
-
-    //    if (mbType is B_Skip or B_Direct_16x16 || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
-    //    {
-    //        DeriveLumaMotionVectorsForBSkipAndBDirect16x16AndBDirect8x8(mbPartIdx, subMbPartIdx, mvL0, mvL1, out refIdxL0, out refIdxL1, out subMvCnt, out predFlagL0, out predFlagL1);
-    //        return;
-    //    }
-
-    //    DeriveInternal(out predFlagL0, mvL0, out refIdxL0, Pred_L0, refIdxL0Array, sliceType);
-    //    DeriveInternal(out predFlagL1, mvL1, out refIdxL1, Pred_L1, refIdxL1Array, sliceType);
-
-    //    static void DeriveInternal(out bool predFlagLX, bool transformSize8x8Flag, Span<int> subMbTypeArray, int mbType, int mbPartIdx, Matrix16x16 mvLX, out int refIdxLX, int predLX, Span<int> refIdxLXArray, GeneralSliceType sliceType)
-    //    {
-    //        int partPredMode = Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType);
-    //        int subMbPredMode = Util264.SubMbPredMode(subMbTypeArray[mbPartIdx]);
-
-    //        if (mbPartIdx == predLX || mbPartIdx == BiPred || subMbPredMode == predLX || subMbPredMode == BiPred)
-    //        {
-    //            refIdxLX = refIdxLXArray[mbPartIdx];
-    //            predFlagLX = true;
-    //        }
-    //        else
-    //        {
-    //            refIdxLX = -1;
-    //            predFlagLX = false;
-    //        }
-
-    //        int currSubMbType = mbType is B_8x8 ? subMbTypeArray[mbPartIdx] : na;
-
-    //        Span<int> mvpLx = stackalloc int[2];
-
-    //    }
-    //}
 }
