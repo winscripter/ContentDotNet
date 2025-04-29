@@ -6,7 +6,7 @@ namespace ContentDotNet.Extensions.H264.Tests.ModelsIO;
 public class NALTests
 {
     [Fact]
-    public void TestStartCodes()
+    public void Test_Start_Codes()
     {
         UseBSWriterThenReader(
             writer =>
@@ -22,6 +22,27 @@ public class NALTests
             {
                 Assert.True(NalUnit.SkipStartCode(reader));
                 Assert.Equal(7, reader.BaseStream.Position);
+            });
+    }
+
+    [Fact]
+    public void Test_NALU_Data()
+    {
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6, false, false, null);
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                NalUnit composed = NalUnit.Read(reader, 1);
+
+                Assert.Equal(nalu, composed);
             });
     }
 
