@@ -91,7 +91,7 @@ public sealed class BitStreamWriter(Stream output) : IDisposable
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public void WriteUE(uint value)
     {
-        uint vMinusOne = value - 1u;
+        uint vMinusOne = value - 1;
         int numBits = (int)Math.Floor(Math.Log(vMinusOne + 1, 2));
 
         for (int i = 0; i < numBits; i++)
