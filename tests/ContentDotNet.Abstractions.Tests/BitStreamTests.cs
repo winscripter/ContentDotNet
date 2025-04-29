@@ -295,6 +295,54 @@ public class BitStreamTests
             });
     }
 
+    [Fact]
+    public void BitsInteger_1()
+    {
+        UseBSWriterThenReader(
+            writer => writer.WriteBits(123, 7),
+            reader => Assert.Equal(123u, reader.ReadBits(7)));
+    }
+
+    [Fact]
+    public void BitsInteger_2()
+    {
+        UseBSWriterThenReader(
+            writer => writer.WriteBits(1, 7),
+            reader => Assert.Equal(1u, reader.ReadBits(7)));
+    }
+
+    [Fact]
+    public void BitsInteger_3()
+    {
+        UseBSWriterThenReader(
+            writer => writer.WriteBits(1, 1),
+            reader => Assert.Equal(1u, reader.ReadBits(1)));
+    }
+
+    [Fact]
+    public void BitsInteger_4()
+    {
+        UseBSWriterThenReader(
+            writer => writer.WriteBits(2, 2),
+            reader => Assert.Equal(2u, reader.ReadBits(2)));
+    }
+
+    [Fact]
+    public void BitsInteger_5()
+    {
+        UseBSWriterThenReader(
+            writer => writer.WriteBits(255, 8),
+            reader => Assert.Equal(255u, reader.ReadBits(8)));
+    }
+
+    [Fact]
+    public void BitsInteger_6()
+    {
+        UseBSWriterThenReader(
+            writer => writer.WriteBits(12352, 16),
+            reader => Assert.Equal(12352u, reader.ReadBits(16)));
+    }
+
     private static void TestCodedInteger(uint value, uint bits)
     {
         UseBSWriterThenReader(
