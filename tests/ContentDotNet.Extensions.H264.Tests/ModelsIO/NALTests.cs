@@ -32,7 +32,11 @@ public class NALTests
 
         NalUnit newNalu = NalUnit.Read(br, 1);
 
-        Assert.Equal(nalu, newNalu);
+        Assert.Equal(nalu.NalRefIdc, newNalu.NalRefIdc);
+        Assert.Equal(nalu.NalUnitType, newNalu.NalUnitType);
+        Assert.Equal(nalu.SvcExtensionFlag, newNalu.SvcExtensionFlag);
+        Assert.Equal(nalu.Avc3DExtensionFlag, newNalu.Avc3DExtensionFlag);
+        Assert.Equal(nalu.Extension, newNalu.Extension);
 
         try
         {
@@ -75,7 +79,11 @@ public class NALTests
 
         NalUnit newNalu = NalUnit.Read(br, 1);
 
-        Assert.Equal(nalu, newNalu);
+        Assert.Equal(nalu.NalRefIdc, newNalu.NalRefIdc);
+        Assert.Equal(nalu.NalUnitType, newNalu.NalUnitType);
+        Assert.Equal(nalu.SvcExtensionFlag, newNalu.SvcExtensionFlag);
+        Assert.Equal(nalu.Avc3DExtensionFlag, newNalu.Avc3DExtensionFlag);
+        Assert.Equal(nalu.Extension, newNalu.Extension);
 
         try
         {
