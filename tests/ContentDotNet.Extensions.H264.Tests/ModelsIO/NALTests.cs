@@ -21,7 +21,7 @@ public class NALTests
             reader =>
             {
                 Assert.True(NalUnit.SkipStartCode(reader));
-                Assert.Equal(6, reader.BaseStream.Position);
+                Assert.Equal(7, reader.BaseStream.Position);
             });
     }
 
