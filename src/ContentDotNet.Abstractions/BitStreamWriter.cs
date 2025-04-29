@@ -110,6 +110,8 @@ public sealed class BitStreamWriter(Stream output) : IDisposable
 
         WriteBit(true);
         WriteBits(value, leadingZeros);
+
+        WriteBit(true);
     }
 
     /// <summary>
