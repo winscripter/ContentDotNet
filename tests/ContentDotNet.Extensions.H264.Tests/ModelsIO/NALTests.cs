@@ -28,7 +28,10 @@ public class NALTests
 
         NalUnit.SkipStartCode(br);
 
+        NalUnit newNalu = NalUnit.Read(br, 42);
+
         Assert.Equal(4, br.BaseStream.Position);
+        Assert.Equal(nalu, newNalu);
 
         try
         {
@@ -67,7 +70,10 @@ public class NALTests
 
         NalUnit.SkipStartCode(br);
 
+        NalUnit newNalu = NalUnit.Read(br, 42);
+
         Assert.Equal(7, br.BaseStream.Position);
+        Assert.Equal(nalu, newNalu);
 
         try
         {
