@@ -30,6 +30,7 @@ public class NALTests
         _ = br.ReadBits(8);
 
         Assert.Equal(5, br.BaseStream.Position);
+        Assert.Equal(1, br.GetState().BitPosition);
 
         NalUnit newNalu = NalUnit.Read(br, 1);
 
@@ -78,6 +79,7 @@ public class NALTests
         _ = br.ReadBits(8);
 
         Assert.Equal(8, br.BaseStream.Position);
+        Assert.Equal(1, br.GetState().BitPosition);
 
         NalUnit newNalu = NalUnit.Read(br, 1);
 
