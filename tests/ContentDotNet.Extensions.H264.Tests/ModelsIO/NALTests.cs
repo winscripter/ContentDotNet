@@ -26,6 +26,33 @@ public class NALTests
     }
 
     [Fact]
+    public void Test_Start_Codes_And_Data()
+    {
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6u, false, false, null);
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                for (int i = 0; i < 6; i++)
+                    writer.WriteBits(0, 8);
+                writer.WriteBits(1u, 8);
+
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                Assert.True(NalUnit.SkipStartCode(reader));
+                Assert.Equal(7, reader.BaseStream.Position);
+
+                NalUnit newNalu = NalUnit.Read(reader, 1);
+                Assert.Equal(nalu, newNalu);
+            });
+    }
+
+    [Fact]
     public void Test_NALU_Data()
     {
         var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6, false, false, null);
