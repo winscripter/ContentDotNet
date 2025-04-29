@@ -82,6 +82,7 @@ public class NALTests
         var br = new BitStreamReader(ms);
 
         NalUnit.SkipStartCode(br);
+        Assert.Equal(1, br.GetState().BitPosition);
         _ = br.ReadBits(8);
 
         Assert.Equal(8, br.BaseStream.Position);
