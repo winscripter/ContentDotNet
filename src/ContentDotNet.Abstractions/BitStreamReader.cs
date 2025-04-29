@@ -24,7 +24,7 @@ public sealed class BitStreamReader(Stream input) : IDisposable
         }
 
         bool bit = (currentByte >> (7 - bitPosition) & 1) == 1;
-        bitPosition = (bitPosition + 1) % 8; // Reset to 0 after 8 bits
+        bitPosition = bitPosition % 8; // Reset to 0 after 8 bits
         return bit;
     }
 
