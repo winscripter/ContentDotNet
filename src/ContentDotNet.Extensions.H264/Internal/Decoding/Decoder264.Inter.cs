@@ -27,6 +27,10 @@ internal partial class Decoder264
 
     private int[] refIdxL0N = null!;
     private int[] refIdxL1N = null!;
+    private ArrayMatrix4x4x2 mvL0 = null!;
+    private ArrayMatrix4x4x2 mvL1 = null!;
+    private ArrayMatrix4x4x2 mvCL0 = null!;
+    private ArrayMatrix4x4x2 mvCL1 = null!;
 
     private void InitializeInterPrediction()
     {
@@ -39,6 +43,10 @@ internal partial class Decoder264
         subMbPartIdx = 0;
         refIdxL0N = new int[16];
         refIdxL1N = new int[16];
+        mvL0 = new ArrayMatrix4x4x2();
+        mvL1 = new ArrayMatrix4x4x2();
+        mvCL0 = new ArrayMatrix4x4x2();
+        mvCL1 = new ArrayMatrix4x4x2();
     }
 
     public static void Derive4x4LumaBlocks(
