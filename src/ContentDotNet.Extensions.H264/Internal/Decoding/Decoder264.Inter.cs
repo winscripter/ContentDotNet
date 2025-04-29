@@ -25,12 +25,8 @@ internal partial class Decoder264
     //       by the constructor. The constructor doesn't directly
     //       initialize them. Use null! to suppress CS8618 warnings.
 
-    private int[] refIdxL0 = null!;
-    private int[] refIdxL1 = null!;
-    private ArrayMatrix4x4x2 mvL0 = null!;
-    private ArrayMatrix4x4x2 mvL1 = null!;
-    private ArrayMatrix4x4x2 mvCL0 = null!;
-    private ArrayMatrix4x4x2 mvCL1 = null!;
+    private int[] refIdxL0N = null!;
+    private int[] refIdxL1N = null!;
 
     private void InitializeInterPrediction()
     {
@@ -41,12 +37,8 @@ internal partial class Decoder264
         subMbType = 0;
         mbPartIdx = 0;
         subMbPartIdx = 0;
-        refIdxL0 = new int[16];
-        refIdxL1 = new int[16];
-        mvL0 = new ArrayMatrix4x4x2();
-        mvL1 = new ArrayMatrix4x4x2();
-        mvCL0 = new ArrayMatrix4x4x2();
-        mvCL1 = new ArrayMatrix4x4x2();
+        refIdxL0N = new int[16];
+        refIdxL1N = new int[16];
     }
 
     public static void Derive4x4LumaBlocks(
@@ -255,7 +247,7 @@ internal partial class Decoder264
         if (validN)
         {
             int mbTypeA = mbTypeArray[mbAddrN];
-            int subMbTypeA = 0;
+            int subMbTypeA;
             if (mbTypeA is P_8x8 or P_8x8ref0 or B_8x8)
                 subMbTypeA = subMbType[mbAddrN];
 
@@ -623,6 +615,8 @@ internal partial class Decoder264
 
     public void DeriveMotionVectors(
         int chromaArrayType,
+        out MotionVector mvL0, out MotionVector mvL1, out MotionVector mvCL0, MotionVector mvCL1,
+        out int refIdxL0, out int refIdxL1,
         out bool predFlagL0, out bool predFlagL1, out int subMvCnt)
     {
         predFlagL0 = false;
@@ -631,14 +625,29 @@ internal partial class Decoder264
 
         if (mbType == P_Skip)
         {
-            DeriveLumaMotionVectorsForSkippedPAndSPSlices();
+            DeriveLumaMotionVectorsForSkippedPAndSPSlices(out refIdxL0, out mvL0);
+            refIdxL0 = 1;
+            predFlagL0 = true;
+            mvL1 = default;
+            mvCL1 = default;
+            mvCL0 = default;
+            refIdxL1 = 0;
+            subMvCnt = 1;
             return;
         }
 
+        if (mbType is B_Direct_16x16 or B_Skip || subMbTypeArray[mbPartIdx] == B_Direct_8x8)
+        {
+            DeriveLumaMotionVectorsForBSlices(mbPartIdx, subMbPartIdx);
+        }
+    }
+
+    private void DeriveLumaMotionVectorsForBSlices(int mbPartIdx, int subMbPartIdx, bool directSpatialMvPredFlag)
+    {
 
     }
 
-    private void DeriveLumaMotionVectorsForSkippedPAndSPSlices(out int refIdxL0)
+    private void DeriveLumaMotionVectorsForSkippedPAndSPSlices(out int refIdxL0, out MotionVector mvL0)
     {
         refIdxL0 = 0; // Literally!
 
@@ -654,11 +663,91 @@ internal partial class Decoder264
 
         if (!validA || !validB || (refIdxL0A == 0 && mvL0A.X == 0 && mvL0A.Y == 0) || (refIdxL0B == 0 && mvL0B.X == 0 && mvL0B.Y == 0))
         {
-            mvL0.Clear();
+            mvL0 = default;
         }
         else
         {
-            DeriveLumaMotionVectors();
+            DeriveLumaMotionVectors(0, 0, refIdxL0, na, true, out var mvpLX);
+            mvL0 = mvpLX!.Value;
+        }
+    }
+
+    private void DeriveLumaMotionVectors(int mbPartIdx, int subMbPartIdx, int refIdxLX, int currSubMbType, bool listSuffixFlag, out MotionVector? mvpLX)
+    {
+        DeriveMotionDataOfNeighboringPartitions(
+            currSubMbType, mbPartIdx, subMbPartIdx, listSuffixFlag,
+            out int mbAddrA, out int mbPartIdxA, out int subMbPartIdxA, out bool validA,
+            out int mbAddrB, out int mbPartIdxB, out int subMbPartIdxB, out bool validB,
+            out int mbAddrC, out int mbPartIdxC, out int subMbPartIdxC, out bool validC,
+            out MotionVector mvL0A, out MotionVector mvL1A, out int refIdxL0A, out int refIdxL1A,
+            out MotionVector mvL0B, out MotionVector mvL1B, out int refIdxL0B, out int refIdxL1B,
+            out MotionVector mvL0C, out MotionVector mvL1C, out int refIdxL0C, out int refIdxL1C,
+            out _, out _, out _, out _
+        );
+
+        mvpLX =
+            Util264.MbPartWidth(mbType, sliceType) == 16 && Util264.MbPartHeight(mbType, sliceType) == 8 && mbPartIdx == 0 && (listSuffixFlag ? refIdxL0B : refIdxL1B) == refIdxLX ? mvL0B :
+            Util264.MbPartWidth(mbType, sliceType) == 16 && Util264.MbPartHeight(mbType, sliceType) == 8 && mbPartIdx == 1 && (listSuffixFlag ? refIdxL0A : refIdxL1A) == refIdxLX ? mvL0A :
+            Util264.MbPartWidth(mbType, sliceType) == 8 && Util264.MbPartHeight(mbType, sliceType) == 16 && mbPartIdx == 0 && (listSuffixFlag ? refIdxL0A : refIdxL1A) == refIdxLX ? mvL0A :
+            Util264.MbPartWidth(mbType, sliceType) == 8 && Util264.MbPartHeight(mbType, sliceType) == 16 && mbPartIdx == 1 && (listSuffixFlag ? refIdxL0C : refIdxL1C) == refIdxLX ? mvL0C :
+            null;
+
+        if (mvpLX is null)
+        {
+            if (listSuffixFlag)
+            {
+                DeriveMedianLumaMotionVectorPrediction(
+                    mbAddrA, mbPartIdxA, subMbPartIdxA, validA,
+                    mbAddrB, mbPartIdxB, subMbPartIdxB, validB,
+                    mbAddrC, mbPartIdxC, subMbPartIdxC, validC,
+                    mvL0A, mvL0B, mvL0C, refIdxL0A, refIdxL0B, refIdxL0C, refIdxLX,
+                    out var mvpLX1);
+                mvpLX = mvpLX1!;
+            }
+            else
+            {
+                DeriveMedianLumaMotionVectorPrediction(
+                    mbAddrA, mbPartIdxA, subMbPartIdxA, validA,
+                    mbAddrB, mbPartIdxB, subMbPartIdxB, validB,
+                    mbAddrC, mbPartIdxC, subMbPartIdxC, validC,
+                    mvL1A, mvL1B, mvL1C, refIdxL1A, refIdxL1B, refIdxL1C, refIdxLX,
+                    out var mvpLX1);
+                mvpLX = mvpLX1!;
+            }
+        }
+    }
+
+    private void DeriveMedianLumaMotionVectorPrediction(
+        int mbAddrA, int mbPartIdxA, int subMbPartIdxA, bool validA,
+        int mbAddrB, int mbPartIdxB, int subMbPartIdxB, bool validB,
+        int mbAddrC, int mbPartIdxC, int subMbPartIdxC, bool validC,
+        MotionVector mvLXA, MotionVector mvLXB, MotionVector mvLXC,
+        int refIdxLXA, int refIdxLXB, int refIdxLXC,
+        int refIdxLX,
+        out MotionVector mvpLX)
+    {
+        if (validA && !validB && !validC)
+        {
+            mvLXB = mvLXA;
+            mvLXC = mvLXA;
+            refIdxLXB = refIdxLXA;
+            refIdxLXC = refIdxLXA;
+        }
+
+        if (refIdxLXA == refIdxLX ^ refIdxLXB == refIdxLX ^ refIdxLXC == refIdxLX)
+        {
+            if (refIdxLXA == refIdxLX)
+                mvpLX = mvLXA;
+            else if (refIdxLXB == refIdxLX)
+                mvpLX = mvLXB;
+            else
+                mvpLX = mvLXC;
+        }
+        else
+        {
+            mvpLX = default;
+            mvpLX.X = Util264.Median(mvLXA.X, mvLXB.X, mvLXC.X);
+            mvpLX.Y = Util264.Median(mvLXA.Y, mvLXB.Y, mvLXC.Y);
         }
     }
 

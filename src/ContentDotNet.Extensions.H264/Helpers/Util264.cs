@@ -260,4 +260,7 @@ internal static class Util264
     public static int Clip1C(int e, int bitDepthC) => Clip3(0, 1 << bitDepthC, e);
 
     public static bool MoreRbspData(BitStreamReader reader) => reader.GetState().CurrentByte < reader.Length - 1;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Median(int x, int y, int z) => Math.Max(Math.Min(x, y), Math.Min(z, Math.Max(x, y)));
 }
