@@ -54,6 +54,7 @@ public class NALTests
         bw.WriteBits(0u, 8);
         bw.WriteBits(0u, 8);
         bw.WriteBits(1u, 8);
+        bw.WriteBits(0u, 8);
 
         var nalu = new NalUnit(5, 6, false, false, null);
         nalu.Write(bw);
