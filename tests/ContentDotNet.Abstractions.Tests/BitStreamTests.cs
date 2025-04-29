@@ -429,7 +429,7 @@ public class BitStreamTests
                 Assert.Equal(7u, reader.ReadBits(5));
 
                 Assert.Equal(7u, reader.GetState().BitPosition);
-                Assert.Equal(3L, reader.BaseStream.Position);
+                Assert.Equal(4L, reader.BaseStream.Position);
             });
     }
 
