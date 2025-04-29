@@ -197,7 +197,7 @@ public struct NalUnit : IEquatable<NalUnit>
             {
                 recursionCounter.Increment();
 
-                byte current = (byte)reader.ReadBits(8);
+                byte current = (byte)reader.ReadByte();
                 if (stream != 3 && current == 0)
                 {
                     stream++;

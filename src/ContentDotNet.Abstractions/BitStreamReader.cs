@@ -123,4 +123,11 @@ public sealed class BitStreamReader(Stream input) : IDisposable
         this.GoTo(activeState);
         return b;
     }
+
+    public uint ReadByte()
+    {
+        uint b = ReadBits(8);
+        _ = ReadBit();
+        return b;
+    }
 }

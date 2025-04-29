@@ -10,6 +10,11 @@ public sealed class BitStreamWriter(Stream output) : IDisposable
     private int bitPosition = 0; // Tracks current bit position in the byte
 
     /// <summary>
+    ///   The bit position.
+    /// </summary>
+    public int BitPosition => bitPosition;
+
+    /// <summary>
     /// Writes a single bit to the bitstream.
     /// </summary>
     /// <param name="bit">The bit to write.</param>

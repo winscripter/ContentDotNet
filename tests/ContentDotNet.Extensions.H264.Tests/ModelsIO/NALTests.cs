@@ -12,9 +12,13 @@ public class NALTests
         var bw = new BitStreamWriter(ms);
 
         bw.WriteBits(0u, 8);
+        Assert.Equal(1, bw.BitPosition);
         bw.WriteBits(0u, 8);
+        Assert.Equal(1, bw.BitPosition);
         bw.WriteBits(0u, 8);
+        Assert.Equal(1, bw.BitPosition);
         bw.WriteBits(1u, 8);
+        Assert.Equal(1, bw.BitPosition);
 
         var nalu = new NalUnit(1, 6, false, false, null);
         nalu.Write(bw);
@@ -27,7 +31,7 @@ public class NALTests
         var br = new BitStreamReader(ms);
 
         NalUnit.SkipStartCode(br);
-        _ = br.ReadBits(8);
+        _ = br.ReadByte();
 
         Assert.Equal(5, br.BaseStream.Position);
         Assert.Equal(1, br.GetState().BitPosition);
