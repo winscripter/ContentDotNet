@@ -426,7 +426,7 @@ public class BitStreamTests
                 Assert.Equal(255u, reader.ReadByte());
                 Assert.Equal(23u, reader.ReadByte());
                 Assert.Equal(1u, reader.ReadBits(2));
-                Assert.Equal(7u, reader.ReadBits(7));
+                Assert.Equal(7u, reader.ReadBits(5));
 
                 Assert.Equal(7u, reader.GetState().BitPosition);
                 Assert.Equal(3L, reader.BaseStream.Position);
