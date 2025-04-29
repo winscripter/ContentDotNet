@@ -49,7 +49,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Extension_SVC()
     {
-        var nalu = new SvcNalUnitHeaderExtension(true, 20, false, 35, 40, 50, true, false, true, 3);
+        var nalu = new SvcNalUnitHeaderExtension(true, 2, false, 3, 2, 3, true, false, true, 3);
 
         UseBSWriterThenReader(
             writer =>
