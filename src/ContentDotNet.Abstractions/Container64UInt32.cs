@@ -2,6 +2,8 @@
 
 namespace ContentDotNet.Abstractions;
 
+#pragma warning disable
+
 /// <summary>
 ///   A container for 64 <see cref="uint"/>s.
 /// </summary>
