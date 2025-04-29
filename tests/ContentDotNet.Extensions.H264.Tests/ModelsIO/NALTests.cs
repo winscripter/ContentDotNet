@@ -63,7 +63,15 @@ public class NALTests
             {
                 SvcNalUnitHeaderExtension composed = SvcNalUnitHeaderExtension.Read(reader);
 
-                Assert.Equal(nalu, composed);
+                Assert.Equal(nalu.IDRFlag, composed.IDRFlag);
+                Assert.Equal(nalu.PriorityId, composed.PriorityId);
+                Assert.Equal(nalu.NoInterLayerPredFlag, composed.NoInterLayerPredFlag);
+                Assert.Equal(nalu.DependencyId, composed.DependencyId);
+                Assert.Equal(nalu.QualityId, composed.QualityId);
+                Assert.Equal(nalu.TemporalId, composed.TemporalId);
+                Assert.Equal(nalu.UseRefPicBaseFlag, composed.UseRefPicBaseFlag);
+                Assert.Equal(nalu.DiscardableFlag, composed.DiscardableFlag);
+                Assert.Equal(nalu.OutputFlag, composed.OutputFlag);
             });
     }
 
