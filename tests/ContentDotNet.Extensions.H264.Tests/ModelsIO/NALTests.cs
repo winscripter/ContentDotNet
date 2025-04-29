@@ -63,15 +63,49 @@ public class NALTests
             {
                 SvcNalUnitHeaderExtension composed = SvcNalUnitHeaderExtension.Read(reader);
 
-                Assert.Equal(nalu.IDRFlag, composed.IDRFlag);
-                Assert.Equal(nalu.PriorityId, composed.PriorityId);
-                Assert.Equal(nalu.NoInterLayerPredFlag, composed.NoInterLayerPredFlag);
-                Assert.Equal(nalu.DependencyId, composed.DependencyId);
-                Assert.Equal(nalu.QualityId, composed.QualityId);
-                Assert.Equal(nalu.TemporalId, composed.TemporalId);
-                Assert.Equal(nalu.UseRefPicBaseFlag, composed.UseRefPicBaseFlag);
-                Assert.Equal(nalu.DiscardableFlag, composed.DiscardableFlag);
-                Assert.Equal(nalu.OutputFlag, composed.OutputFlag);
+                Assert.Equal(nalu, composed);
+            });
+    }
+
+    [Fact]
+    public void Test_NALU_Extension_MVC()
+    {
+        var nalu = new MvcNalUnitHeaderExtension(true, 2, 3, 2, false, true, true);
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                MvcNalUnitHeaderExtension composed = MvcNalUnitHeaderExtension.Read(reader);
+
+                Assert.Equal(nalu, composed);
+            });
+    }
+
+    [Fact]
+    public void Test_NALU_Extension_AVC3D()
+    {
+        var nalu = new Avc3DNalUnitHeaderExtension(2, false, true, 3, true, false);
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                Avc3DNalUnitHeaderExtension composed = Avc3DNalUnitHeaderExtension.Read(reader);
+
+                Assert.Equal(nalu, composed);
             });
     }
 
