@@ -27,10 +27,11 @@ public class NALTests
         var br = new BitStreamReader(ms);
 
         NalUnit.SkipStartCode(br);
+        
+        Assert.Equal(4, br.BaseStream.Position);
 
         NalUnit newNalu = NalUnit.Read(br, 1);
 
-        Assert.Equal(4, br.BaseStream.Position);
         Assert.Equal(nalu, newNalu);
 
         try
@@ -70,9 +71,10 @@ public class NALTests
 
         NalUnit.SkipStartCode(br);
 
+        Assert.Equal(7, br.BaseStream.Position);
+
         NalUnit newNalu = NalUnit.Read(br, 1);
 
-        Assert.Equal(7, br.BaseStream.Position);
         Assert.Equal(nalu, newNalu);
 
         try
