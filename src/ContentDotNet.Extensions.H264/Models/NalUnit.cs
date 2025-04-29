@@ -209,7 +209,7 @@ public struct NalUnit : IEquatable<NalUnit>
                 }
                 else
                 {
-                    stream = 0;
+                    stream -= 1;
                 }
             }
             catch (EndOfStreamException)
