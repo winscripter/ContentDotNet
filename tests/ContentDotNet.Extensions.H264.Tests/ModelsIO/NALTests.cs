@@ -9,7 +9,7 @@ public class NALTests
     public void Nalu_Start_Code_Immediate()
     {
         var ms = new MemoryStream();
-        using var bw = new BitStreamWriter(ms);
+        var bw = new BitStreamWriter(ms);
 
         bw.WriteBits(0u, 8);
         bw.WriteBits(0u, 8);
@@ -24,10 +24,20 @@ public class NALTests
         // -----------
 
         ms.Position = 0;
-        using var br = new BitStreamReader(ms);
+        var br = new BitStreamReader(ms);
 
         NalUnit.SkipStartCode(br);
 
         Assert.Equal(4, br.BaseStream.Position);
+
+        try
+        {
+            br.Dispose();
+            bw.Dispose();
+            ms.Dispose();
+        }
+        catch
+        {
+        }
     }
 }
