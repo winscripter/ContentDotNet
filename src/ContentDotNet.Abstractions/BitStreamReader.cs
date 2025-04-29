@@ -127,7 +127,6 @@ public sealed class BitStreamReader(Stream input) : IDisposable
     public uint ReadByte()
     {
         uint b = ReadBits(8);
-        _ = ReadBit();
         return b;
     }
 }
