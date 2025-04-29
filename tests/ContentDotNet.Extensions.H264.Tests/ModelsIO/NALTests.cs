@@ -47,6 +47,69 @@ public class NALTests
     }
 
     [Fact]
+    public void Test_NALU_Data_1()
+    {
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 14, true, false, new SvcNalUnitHeaderExtension(true, 2, false, 3, 2, 3, true, false, true, 3));
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                NalUnit composed = NalUnit.Read(reader, 1);
+
+                Assert.Equal(nalu, composed);
+            });
+    }
+
+    [Fact]
+    public void Test_NALU_Data_2()
+    {
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 20, false, true, new MvcNalUnitHeaderExtension(true, 2, 3, 2, false, true, true));
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                NalUnit composed = NalUnit.Read(reader, 1);
+
+                Assert.Equal(nalu, composed);
+            });
+    }
+
+    [Fact]
+    public void Test_NALU_Data_3()
+    {
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 21, false, false, new Avc3DNalUnitHeaderExtension(2, false, true, 3, true, false));
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                NalUnit composed = NalUnit.Read(reader, 1);
+
+                Assert.Equal(nalu, composed);
+            });
+    }
+
+    [Fact]
     public void Test_NALU_Extension_SVC()
     {
         var nalu = new SvcNalUnitHeaderExtension(true, 2, false, 3, 2, 3, true, false, true, 3);
