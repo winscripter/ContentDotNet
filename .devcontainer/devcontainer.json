@@ -1,0 +1,22 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/universal:2",
+    "features": {
+    },
+    "settings": {
+      "explorer.confirmDragAndDrop": false,
+      "editor.fontFamily": "Lucida Console",
+      "editor.wordWrap": "on",
+      "files.autoSave": "off",
+      "files.associations": {
+          "*.h": "cpp",
+          "*.svg": "html",
+          "*.xml": "html"
+      },
+      "editor.fontSize": 16,
+      "workbench.iconTheme": "material-icon-theme",
+      "workbench.startupEditor": "none",
+      "editor.cursorSmoothCaretAnimation": "on",
+      "editor.formatOnType": true,
+      "update.mode": "start"
+    }
+}
