@@ -207,10 +207,12 @@ public struct NalUnit : IEquatable<NalUnit>
                 {
                     return true;
                 }
-                else
+                else if (current != 0)
                 {
-                    stream -= 1;
+                    stream = 0;
+                    continue;
                 }
+                // else { }
             }
             catch (EndOfStreamException)
             {
