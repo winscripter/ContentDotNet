@@ -28,7 +28,7 @@ public class NALTests
 
         NalUnit.SkipStartCode(br);
 
-        Assert.Equal(5, br.BaseStream.Position);
+        Assert.Equal(4, br.BaseStream.Position);
 
         try
         {
@@ -67,7 +67,7 @@ public class NALTests
 
         NalUnit.SkipStartCode(br);
 
-        Assert.Equal(8, br.BaseStream.Position);
+        Assert.Equal(7, br.BaseStream.Position);
 
         try
         {
