@@ -19,7 +19,7 @@ public class NALTests
         var nalu = new NalUnit(5, 6, false, false, null);
         nalu.Write(bw);
 
-        bw.WriteBits(0, 10);
+        bw.WriteBits(0, 32);
 
         // -----------
 
@@ -67,7 +67,7 @@ public class NALTests
         var nalu = new NalUnit(5, 6, false, false, null);
         nalu.Write(bw);
 
-        bw.WriteBits(0, 10);
+        bw.WriteBits(0, 32);
 
         // -----------
 
