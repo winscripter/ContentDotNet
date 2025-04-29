@@ -91,25 +91,21 @@ public sealed class BitStreamWriter(Stream output) : IDisposable
     /// <exception cref="ArgumentOutOfRangeException"></exception>
     public void WriteUE(uint value)
     {
-        if (value > (uint.MaxValue >> 1))
-            throw new ArgumentOutOfRangeException(nameof(value), "UE Golomb value too large.");
+        uint vMinusOne = value - 1u;
+        int numBits = (int)Math.Floor(Math.Log(vMinusOne + 1, 2));
 
-        uint leadingZeros = 0;
-        uint temp = value + 1;
-
-        while (temp > 1)
+        for (int i = 0; i < numBits; i++)
         {
-            temp >>= 1;
-            leadingZeros++;
+            WriteBit(true);
         }
 
-        for (uint i = 0; i < leadingZeros; i++)
+        for (int i = numBits - 1; i >= 0; i--)
         {
-            WriteBit(false);
+            bool bit = (vMinusOne >> i & 1) == 1;
+            WriteBit(bit);
         }
 
-        WriteBit(true);
-        WriteBits(value, leadingZeros);
+        WriteBit(false);
     }
 
     /// <summary>
@@ -138,6 +134,11 @@ public sealed class BitStreamWriter(Stream output) : IDisposable
 
         await WriteBitAsync(true);
         await WriteBitsAsync(value, leadingZeros);
+
+        while (bitPosition > 0)
+        {
+            await WriteBitAsync(false);
+        }
     }
 
     /// <summary>

@@ -57,15 +57,20 @@ public sealed class BitStreamReader(Stream input) : IDisposable
     /// <exception cref="InvalidDataException"></exception>
     public uint ReadUE()
     {
-        uint zeroCount = 0;
-        while (!ReadBit())
-            zeroCount++;
+        int leadingZeroCount = 0;
 
-        if (zeroCount > 31)
-            throw new InvalidDataException("UE Golomb code too long.");
+        while (ReadBit())
+        {
+            leadingZeroCount++;
+        }
 
-        uint result = (1u << (int)zeroCount) - 1 + (zeroCount < 1 ? 0 : ReadBits(zeroCount));
-        return result;
+        uint value = 0;
+        for (int i = 0; i < leadingZeroCount; i++)
+        {
+            value = (value << 1) | (ReadBit() ? 1u : 0);
+        }
+
+        return value + (1u << leadingZeroCount) - 1u;
     }
 
     /// <summary>
