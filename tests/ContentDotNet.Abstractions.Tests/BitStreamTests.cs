@@ -385,6 +385,28 @@ public class BitStreamTests
             },
             reader => Assert.Equal(255u, reader.ReadByte()));
 
+    [Fact]
+    public void Byte_And_Offsets_1()
+    {
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteBits(123, 8);
+                writer.WriteBits(255, 8);
+                writer.WriteBits(23, 8);
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                Assert.Equal(123u, reader.ReadByte());
+                Assert.Equal(255u, reader.ReadByte());
+                Assert.Equal(23u, reader.ReadByte());
+
+                Assert.Equal(0u, reader.GetState().BitPosition);
+                Assert.Equal(3L, reader.BaseStream.Position);
+            });
+    }
+
     private static void TestCodedInteger(uint value, uint bits)
     {
         UseBSWriterThenReader(
