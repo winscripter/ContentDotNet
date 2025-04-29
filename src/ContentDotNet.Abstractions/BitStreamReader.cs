@@ -7,7 +7,7 @@ public sealed class BitStreamReader(Stream input) : IDisposable
 {
     internal readonly Stream stream = input ?? throw new ArgumentNullException(nameof(input));
     internal int currentByte;
-    internal int bitPosition = 8; // Forces initial read
+    internal int bitPosition = 0; // Start at 0
 
     /// <summary>
     /// Reads a single bit from the bitstream.
@@ -16,17 +16,15 @@ public sealed class BitStreamReader(Stream input) : IDisposable
     /// <exception cref="EndOfStreamException"></exception>
     public bool ReadBit()
     {
-        if (bitPosition == 8)
+        if (bitPosition == 0)
         {
             currentByte = stream.ReadByte();
             if (currentByte == -1)
                 throw new EndOfStreamException();
-
-            bitPosition = 0;
         }
 
-        bool bit = (currentByte >> 7 - bitPosition & 1) == 1;
-        bitPosition++;
+        bool bit = (currentByte >> (7 - bitPosition) & 1) == 1;
+        bitPosition = (bitPosition + 1) % 8; // Reset to 0 after 8 bits
         return bit;
     }
 
