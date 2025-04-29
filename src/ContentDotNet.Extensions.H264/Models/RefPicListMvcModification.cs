@@ -381,6 +381,33 @@ public struct RefPicListMvcModification : IEquatable<RefPicListMvcModification>
     }
 
     /// <summary>
+    /// Writes the current instance to the specified <see cref="BitStreamWriter"/>.
+    /// </summary>
+    /// <param name="writer">The bitstream writer to write to.</param>
+    /// <param name="sliceType">The type of the slice being written.</param>
+    /// <param name="l0">The entries for list 0 to write.</param>
+    /// <param name="l1">The entries for list 1 to write.</param>
+    /// <exception cref="InvalidOperationException">Thrown if a required list is null.</exception>
+    public readonly async Task WriteAsync(BitStreamWriter writer, int sliceType, Memory<RefPicListMvcModificationEntry> l0, Memory<RefPicListMvcModificationEntry> l1)
+    {
+        if (sliceType % 5 != 2 && sliceType % 5 != 4)
+        {
+            if (L0 is null)
+                throw new InvalidOperationException("L0 is required");
+
+            await this.L0!.Value.WriteAsync(writer, l0);
+        }
+
+        if (sliceType % 5 == 1)
+        {
+            if (L1 is null)
+                throw new InvalidOperationException("L1 is required");
+
+            await this.L1!.Value.WriteAsync(writer, l1);
+        }
+    }
+
+    /// <summary>
     /// Determines whether two <see cref="RefPicListMvcModification"/> instances are equal.
     /// </summary>
     /// <param name="left">The first instance to compare.</param>

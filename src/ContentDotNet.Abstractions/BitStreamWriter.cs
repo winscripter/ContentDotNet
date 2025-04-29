@@ -188,5 +188,9 @@ public sealed class BitStreamWriter(Stream output) : IDisposable
         stream?.Dispose();
         GC.SuppressFinalize(this);
     }
-}
 
+    /// <summary>
+    ///   Represents a base stream where data is written to.
+    /// </summary>
+    public Stream BaseStream => stream;
+}
