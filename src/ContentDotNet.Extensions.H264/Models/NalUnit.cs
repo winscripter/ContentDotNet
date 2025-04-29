@@ -205,7 +205,6 @@ public struct NalUnit : IEquatable<NalUnit>
                 }
                 else if (stream == 3 && current == 1)
                 {
-                    _ = reader.ReadBits(8);
                     return true;
                 }
                 else
