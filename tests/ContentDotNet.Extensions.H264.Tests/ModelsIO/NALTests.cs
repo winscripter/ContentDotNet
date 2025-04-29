@@ -46,6 +46,27 @@ public class NALTests
             });
     }
 
+    [Fact]
+    public void Test_NALU_Extension_SVC()
+    {
+        var nalu = new SvcNalUnitHeaderExtension(true, 20, false, 35, 40, 50, true, false, true, 3);
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                nalu.Write(writer);
+
+                // filler data
+                writer.WriteBits(0, 16);
+            },
+            reader =>
+            {
+                SvcNalUnitHeaderExtension composed = SvcNalUnitHeaderExtension.Read(reader);
+
+                Assert.Equal(nalu, composed);
+            });
+    }
+
     private static void UseBSWriterThenReader(Action<BitStreamWriter> writer, Action<BitStreamReader> reader)
     {
         using var msWriter = new MemoryStream();
