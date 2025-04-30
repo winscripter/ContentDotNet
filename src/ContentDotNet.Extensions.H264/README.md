@@ -10,7 +10,7 @@ Note that this package does not come with SEI support by default- it does, but
 it can't represent any SEI model. To add support for parsing SEI models and
 payloads, make sure to add the `ContentDotNet.Extensions.H26x.Sei` package.
 
-### What is H.264?
+### 1. What is H.264?
 It's a video codec, essentially dictates the binary format required to represent
 video. It's usually embedded in video formats like MP4, MKV, AVI and TS, and is the
 most popular video codec in the world. Actually, 90% of all videos you see on the
@@ -20,7 +20,7 @@ H.264 was standardized in 2003 and is known for its performance and compression.
 It uses what's known as interframe compression to, simply put, incorporate chunks
 of video from the current or previous frame directly.
 
-### Quickstart
+### 2. Quickstart
 There is a documentation on this, but to get started, we'll demonstrate how
 you can read and write an H.264 file using PNGs as pictures.
 
@@ -63,9 +63,36 @@ for (int i = 0; i < reader.Metrics.PictureCount; i++)
 }
 ```
 
-# Usage &amp; Types
+# 3. Examples
 
-## LowLevelH264Writer
+## 3.1. Parsing NAL unit &amp; Skipping start code
+Example program below demonstrates how to open an H.264 file, skip NALU start code
+which is at least 3 0x00 bytes followed by 0x01, and then read the NALU, displaying
+its values.
+
+There's a structure called `NalUnit` under the `ContentDotNet.Extensions.H264.Models`
+namespace that represents a NAL Unit: it represents its values, allows reading/writing
+them, and has a method to skip start codes.
+
+```cs
+using ContentDotNet.Abstractions;
+using ContentDotNet.Extensions.H264.Models;
+
+using var fs = File.OpenRead("video.h264");
+using var br = new BitStreamReader(fs);
+
+if (!NalUnit.SkipStartCode(br))
+    throw new InvalidOperationException("Could not retrieve start code.");
+
+var nalu = NalUnit.Read(br, 1);
+
+Console.WriteLine("Type: " + nalu.NalUnitType);
+Console.WriteLine("Ref Idc: " + nalu.NalRefIdc);
+```
+
+# 4. Usage &amp; Types
+
+## 4.1. LowLevelH264Writer
 This class allows one to write specific H.264 components explicitly. It implements
 the `ILowLevelH264Writer` interface which is very likely to change in later versions.
 

@@ -425,7 +425,6 @@ public struct Avc3DNalUnitHeaderExtension : INalUnitHeaderExtension, IEquatable<
         await writer.WriteBitAsync(InterViewFlag);
     }
 
-
     /// <summary>
     /// Determines whether two <see cref="Avc3DNalUnitHeaderExtension"/> instances are equal.
     /// </summary>

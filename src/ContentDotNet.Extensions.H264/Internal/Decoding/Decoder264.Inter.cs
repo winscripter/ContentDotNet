@@ -1,5 +1,4 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
-using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Utilities;
 using System.Runtime.CompilerServices;
 using static ContentDotNet.Extensions.H264.SliceTypes;
