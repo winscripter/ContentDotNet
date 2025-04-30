@@ -901,9 +901,9 @@ public struct CabacResidual : IEquatable<CabacResidual>
 }
 
 /// <summary>
-///   Represents a residual layer.
+///   Represents a residual luma.
 /// </summary>
-public struct ResidualLayer : IEquatable<ResidualLayer>
+public struct ResidualLuma : IEquatable<ResidualLuma>
 {
     /// <summary>
     ///   Use <see cref="CabacResidualBlocks"/> (<c>true</c>) or
@@ -986,7 +986,7 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     public ContainerMatrix4x64 Level4x4;
 
     /// <summary>  
-    /// Initializes a new instance of the <see cref="ResidualLayer"/> struct.  
+    /// Initializes a new instance of the <see cref="ResidualLuma"/> struct.  
     /// </summary>  
     /// <param name="usesCabac">Indicates whether CABAC is used (<c>true</c>) or CAVLC (<c>false</c>).</param>
     /// <param name="startCabac">Initial CABAC</param>
@@ -997,13 +997,13 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     /// <param name="mbPartPredMode">The macroblock partition prediction mode.</param>
     /// <param name="entropyCodingModeFlag">The entropy coding mode flag.</param>
     /// <param name="transformSize8x8Flag">Indicates whether 8x8 transform size is used.</param>
-    /// <param name="startIndex">The start index of the residual layer.</param>
-    /// <param name="endIndex">The end index of the residual layer.</param>
+    /// <param name="startIndex">The start index of the residual luma.</param>
+    /// <param name="endIndex">The end index of the residual luma.</param>
     /// <param name="i16x16DCLevel">The original DC level that was used before processing.</param>
     /// <param name="i16x16ACLevel">The original AC level that was used before processing.</param>
     /// <param name="level8x8">The original 8x8 level that was used before processing.</param>
     /// <param name="level4x4">The original 4x4 level that was used before processing.</param>
-    public ResidualLayer(
+    public ResidualLuma(
         bool usesCabac,
         CabacResidual? startCabac,
         CavlcResidual? startCavlc,
@@ -1038,7 +1038,7 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     }
 
     /// <summary>
-    ///   Reads the residual layer.
+    ///   Reads the residual luma.
     /// </summary>
     /// <param name="reader">Bitstream to read from</param>
     /// <param name="entropyCodingMode">Taken from PPS</param>
@@ -1062,8 +1062,8 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     /// <param name="util">Macroblock utility</param>
     /// <param name="mode">Mode of the residual</param>
     /// <param name="constrainedIntraPredFlag">Taken from PPS</param>
-    /// <returns>Residual layer, parsed from <paramref name="reader"/></returns>
-    public static ResidualLayer Read(
+    /// <returns>Residual luma, parsed from <paramref name="reader"/></returns>
+    public static ResidualLuma Read(
         BitStreamReader reader,
         EntropyCodingMode entropyCodingMode,
         bool transformSize8x8Flag,
@@ -1253,7 +1253,7 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
             }
         }
 
-        return new ResidualLayer(
+        return new ResidualLuma(
             entropyCodingMode == EntropyCodingMode.Cabac,
             startCABAC,
             startCAVLC,
@@ -1272,7 +1272,7 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     }
 
     /// <summary>
-    ///   Writes the residual layer.
+    ///   Writes the residual luma.
     /// </summary>
     /// <param name="writer">Bitstream to write to</param>
     /// <param name="entropyCodingMode">Taken from PPS</param>
@@ -1488,17 +1488,17 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     /// </returns>
     public readonly override bool Equals(object? obj)
     {
-        return obj is ResidualLayer layer && Equals(layer);
+        return obj is ResidualLuma luma && Equals(luma);
     }
 
     /// <summary>
-    /// Determines whether the specified <see cref="ResidualLayer"/> is equal to the current instance.
+    /// Determines whether the specified <see cref="ResidualLuma"/> is equal to the current instance.
     /// </summary>
-    /// <param name="other">The <see cref="ResidualLayer"/> to compare with the current instance.</param>
+    /// <param name="other">The <see cref="ResidualLuma"/> to compare with the current instance.</param>
     /// <returns>
-    /// <see langword="true"/> if the specified <see cref="ResidualLayer"/> is equal to the current instance; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the specified <see cref="ResidualLuma"/> is equal to the current instance; otherwise, <see langword="false"/>.
     /// </returns>
-    public readonly bool Equals(ResidualLayer other)
+    public readonly bool Equals(ResidualLuma other)
     {
         return UsesCabac == other.UsesCabac &&
                EqualityComparer<Container16CabacResidual?>.Default.Equals(CabacResidualBlocks, other.CabacResidualBlocks) &&
@@ -1531,27 +1531,27 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     }
 
     /// <summary>
-    /// Determines whether two <see cref="ResidualLayer"/> instances are equal.
+    /// Determines whether two <see cref="ResidualLuma"/> instances are equal.
     /// </summary>
-    /// <param name="left">The first <see cref="ResidualLayer"/> instance to compare.</param>
-    /// <param name="right">The second <see cref="ResidualLayer"/> instance to compare.</param>
+    /// <param name="left">The first <see cref="ResidualLuma"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="ResidualLuma"/> instance to compare.</param>
     /// <returns>
-    /// <see langword="true"/> if the two <see cref="ResidualLayer"/> instances are equal; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the two <see cref="ResidualLuma"/> instances are equal; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool operator ==(ResidualLayer left, ResidualLayer right)
+    public static bool operator ==(ResidualLuma left, ResidualLuma right)
     {
         return left.Equals(right);
     }
 
     /// <summary>
-    /// Determines whether two <see cref="ResidualLayer"/> instances are not equal.
+    /// Determines whether two <see cref="ResidualLuma"/> instances are not equal.
     /// </summary>
-    /// <param name="left">The first <see cref="ResidualLayer"/> instance to compare.</param>
-    /// <param name="right">The second <see cref="ResidualLayer"/> instance to compare.</param>
+    /// <param name="left">The first <see cref="ResidualLuma"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="ResidualLuma"/> instance to compare.</param>
     /// <returns>
-    /// <see langword="true"/> if the two <see cref="ResidualLayer"/> instances are not equal; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the two <see cref="ResidualLuma"/> instances are not equal; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool operator !=(ResidualLayer left, ResidualLayer right)
+    public static bool operator !=(ResidualLuma left, ResidualLuma right)
     {
         return !(left == right);
     }
