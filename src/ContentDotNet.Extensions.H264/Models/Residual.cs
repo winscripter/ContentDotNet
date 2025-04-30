@@ -1272,6 +1272,214 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
     }
 
     /// <summary>
+    ///   Writes the residual layer.
+    /// </summary>
+    /// <param name="writer">Bitstream to write to</param>
+    /// <param name="entropyCodingMode">Taken from PPS</param>
+    /// <param name="transformSize8x8Flag">Taken from PPS</param>
+    /// <param name="mbType">Macroblock type</param>
+    /// <param name="codedBlockPatternLuma">Coded block pattern luma</param>
+    /// <param name="chromaArrayType">See <see cref="H264Extensions.GetChromaArrayType(SequenceParameterSet)"/></param>
+    /// <param name="sliceType">Taken from the Slice Header</param>
+    /// <param name="startIdx">Start</param>
+    /// <param name="endIdx">End</param>
+    /// <param name="nalu">NAL unit</param>
+    /// <param name="dc">Derivation info</param>
+    /// <param name="luma4x4BlkIdx"></param>
+    /// <param name="cb4x4BlkIdx"></param>
+    /// <param name="cr4x4BlkIdx"></param>
+    /// <param name="chroma4x4BlkIdx"></param>
+    /// <param name="util">Macroblock utility</param>
+    /// <param name="mode">Mode of the residual</param>
+    /// <param name="constrainedIntraPredFlag">Taken from PPS</param>
+    public readonly void Write(
+        BitStreamWriter writer,
+        EntropyCodingMode entropyCodingMode,
+        bool transformSize8x8Flag,
+        int mbType,
+        int codedBlockPatternLuma,
+        int chromaArrayType,
+        GeneralSliceType sliceType,
+        int startIdx,
+        int endIdx,
+        NalUnit nalu,
+        DerivationContext dc,
+        ref int luma4x4BlkIdx,
+        ref int cb4x4BlkIdx,
+        ref int cr4x4BlkIdx,
+        int chroma4x4BlkIdx,
+        IMacroblockUtility util,
+        ResidualMode mode,
+        bool constrainedIntraPredFlag)
+    {
+        int mbPartPredMode = Util264.MbPartPredMode(mbType, 0, transformSize8x8Flag, sliceType);
+
+        ContainerMatrix4x64 Level4x4 = this.Level4x4;
+        ContainerMatrix4x64 Level8x8 = this.Level8x8;
+        Container64UInt32 I16x16DcLevel = this.I16x16DcLevel;
+        ContainerMatrix16x16 I16x16AcLevel = this.I16x16AcLevel;
+
+        if (startIdx == 0 && mbPartPredMode == Intra_16x16)
+        {
+            if (entropyCodingMode == EntropyCodingMode.Cabac)
+            {
+                Span<uint> sp = stackalloc uint[64];
+                for (int i = 0; i < 64; i++)
+                    sp[i] = I16x16DcLevel[i];
+
+                StartResidualCabac!.Value.Write(writer, sp);
+            }
+            else
+            {
+                Span<uint> sp = stackalloc uint[64];
+                for (int i = 0; i < 64; i++)
+                    sp[i] = I16x16DcLevel[i];
+
+                // TODO: CAVLC residual writes
+                throw new InvalidOperationException("CAVLC residual writes are not supported");
+                //StartResidualCavlc!.Value.Write(writer, sp, 0, 15, 16, Cav);
+            }
+        }
+
+        int residualTop = 0;
+
+        for (int i8x8 = 0; i8x8 < 4; i8x8++)
+        {
+            if (!transformSize8x8Flag || entropyCodingMode == EntropyCodingMode.Cabac)
+            {
+                for (int i4x4 = 0; i4x4 < 4; i4x4++)
+                {
+                    if (Int32Boolean.B(codedBlockPatternLuma & (1 << i8x8)))
+                    {
+                        if (mbPartPredMode == Intra_16x16)
+                        {
+                            if (entropyCodingMode == EntropyCodingMode.Cabac)
+                            {
+                                _Core(I16x16AcLevel, CabacResidualBlocks);
+
+                                void _Core(ContainerMatrix16x16 i16x16ACLevel, Container16CabacResidual? cabacs)
+                                {
+                                    Span<uint> acLevel = stackalloc uint[64];
+
+                                    for (int i = 0; i < 16; i++)
+                                        acLevel[i] = i16x16ACLevel[i8x8 * 4 + i4x4, i];
+
+                                    cabacs!.Value[residualTop++].Write(writer, acLevel);
+                                }
+                            }
+                            else
+                            {
+                                _Core(I16x16AcLevel, CavlcResidualBlocks, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx);
+
+                                void _Core(ContainerMatrix16x16 i16x16ACLevel, Container16CavlcResidual? cavlcs, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
+                                {
+                                    Span<uint> acLevel = stackalloc uint[16];
+
+                                    for (int i = 0; i < 16; i++)
+                                        acLevel[i] = (uint)i16x16ACLevel[i8x8 * 4 + i4x4, i];
+                                    
+                                    // TODO: CAVLC residual writes
+                                    throw new InvalidOperationException("CAVLC residual writes are not supported");
+                                    //cavlcs!.Value[residualTop++].Write(
+                                    //    writer, acLevel, Math.Max(0, startIdx - 1), endIdx - 1, 15, Cav);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            if (entropyCodingMode == EntropyCodingMode.Cabac)
+                            {
+                                _Core(Level4x4, CabacResidualBlocks);
+
+                                void _Core(ContainerMatrix4x64 level4x4, Container16CabacResidual? cabacs)
+                                {
+                                    Span<uint> lvl4x4 = stackalloc uint[4];
+
+                                    for (int i = 0; i < 4; i++)
+                                        lvl4x4[i] = (uint)level4x4[i8x8 * 4 + i4x4, i];
+
+                                    cabacs!.Value[residualTop++].Write(writer, lvl4x4);
+                                }
+                            }
+                            else
+                            {
+                                _Core(Level4x4, CavlcResidualBlocks, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx);
+
+                                void _Core(ContainerMatrix4x64 level4x4, Container16CavlcResidual? cavlcs, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
+                                {
+                                    Span<uint> lvl4x4 = stackalloc uint[4];
+
+                                    for (int i = 0; i < 4; i++)
+                                        lvl4x4[i] = (uint)level4x4[i8x8 * 4 + i4x4, i];
+
+                                    // TODO: CAVLC residual writes
+                                    throw new InvalidOperationException("CAVLC residual writes are not supported");
+                                    //cavlcs!.Value[residualTop++].Write(
+                                    //    writer, lvl4x4, Math.Max(0, startIdx - 1), endIdx - 1, 15, Cav);
+                                }
+                            }
+                        }
+                    }
+                    else if (mbPartPredMode == Intra_16x16)
+                    {
+                        for (int i = 0; i < 15; i++)
+                            I16x16AcLevel[i8x8 * 4 + i4x4, i] = 0;
+                    }
+                    else
+                    {
+                        for (int i = 0; i < 16; i++)
+                            Level4x4[i8x8 * 4 + i4x4, i] = 0;
+                    }
+
+                    if (entropyCodingMode == EntropyCodingMode.Cabac && transformSize8x8Flag)
+                    {
+                        for (int i = 0; i < 16; i++)
+                            Level8x8[i8x8, 4 * i + i4x4] = (uint)Level4x4[i8x8 * 4 + i4x4, i];
+                    }
+                }
+            }
+            else if (Int32Boolean.B(codedBlockPatternLuma & (1 << i8x8)))
+            {
+                if (entropyCodingMode == EntropyCodingMode.Cabac)
+                {
+                    _Core(Level8x8, CabacResidualBlocks);
+
+                    void _Core(ContainerMatrix4x64 level8x8, Container16CabacResidual? cabacs)
+                    {
+                        Span<uint> coeffLevel = stackalloc uint[64];
+
+                        for (int i = 0; i < 64; i++)
+                            coeffLevel[i] = level8x8[i8x8, i];
+
+                        cabacs!.Value[residualTop++].Write(writer, coeffLevel);
+                    }
+                }
+                else
+                {
+                    _Core(Level8x8, CavlcResidualBlocks, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx);
+
+                    void _Core(ContainerMatrix4x64 level8x8, Container16CavlcResidual? cavlcs, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
+                    {
+                        Span<uint> coeffLevel = stackalloc uint[64];
+
+                        for (int i = 0; i < 64; i++)
+                            coeffLevel[i] = level8x8[i8x8, i];
+
+                        // TODO: CAVLC residual writes
+                        throw new InvalidOperationException("CAVLC residual writes are not supported");
+                        //cavlcs.Value![residualTop++].Write(writer, coeffLevel, 4 * startIdx, 4 * endIdx, 64, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
+                    }
+                }
+            }
+            else
+            {
+                for (int i = 0; i < 64; i++)
+                    Level8x8[i8x8, i] = 0;
+            }
+        }
+    }
+
+    /// <summary>
     /// Determines whether the specified object is equal to the current instance.
     /// </summary>
     /// <param name="obj">The object to compare with the current instance.</param>
@@ -1321,7 +1529,6 @@ public struct ResidualLayer : IEquatable<ResidualLayer>
         hash.Add(EndIndex);
         return hash.ToHashCode();
     }
-
 
     /// <summary>
     /// Determines whether two <see cref="ResidualLayer"/> instances are equal.
