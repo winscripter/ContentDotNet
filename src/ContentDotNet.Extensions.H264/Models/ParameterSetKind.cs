@@ -13,5 +13,12 @@ public enum ParameterSetKind
     /// <summary>
     /// A Picture Parameter Set (PPS) - see <see cref="PictureParameterSet"/>.
     /// </summary>
-    Picture
+    Picture,
+
+    // TODO: Update documentation for DPS when implemented
+
+    /// <summary>
+    /// A Depth Parameter Set (DPS) - not implemented.
+    /// </summary>
+    Depth
 }
