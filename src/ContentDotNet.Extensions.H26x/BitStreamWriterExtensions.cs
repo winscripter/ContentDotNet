@@ -73,4 +73,42 @@ public static class BitStreamWriterExtensions
         uint codeNum = (uint)(absoluteExpGolombValue * 2);
         await writer.WriteUEAsync(codeNum);
     }
+
+    public static void WriteTE(this BitStreamWriter writer, int value, int x)
+    {
+        if (x == 1)
+        {
+            // x == 1 - te(v) is a single bit (0 or 1).
+            writer.WriteBit(value == 1);
+        }
+        else
+        {
+            // x > 1 - te(v) is a truncated exponential Golomb code.
+            if (value < 0 || value >= x)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), $"Value must be in the range [0, {x - 1}].");
+            }
+
+            writer.WriteUE((uint)value);
+        }
+    }
+
+    public static async Task WriteTEAsync(this BitStreamWriter writer, int value, int x)
+    {
+        if (x == 1)
+        {
+            // x == 1 - te(v) is a single bit (0 or 1).
+            await writer.WriteBitAsync(value == 1);
+        }
+        else
+        {
+            // x > 1 - te(v) is a truncated exponential Golomb code.
+            if (value < 0 || value >= x)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value), $"Value must be in the range [0, {x - 1}].");
+            }
+
+            await writer.WriteUEAsync((uint)value);
+        }
+    }
 }

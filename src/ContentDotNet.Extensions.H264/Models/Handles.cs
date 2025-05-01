@@ -1110,3 +1110,82 @@ public readonly struct VuiParametersHandle : IEquatable<VuiParametersHandle>
         return !(left == right);
     }
 }
+
+/// <summary>
+/// Represents a handle for Sub Macroblock Prediction.
+/// </summary>
+public readonly struct SubMacroblockPredictionHandle : IEquatable<SubMacroblockPredictionHandle>
+{
+    /// <summary>
+    /// Gets the reader state associated with this handle.
+    /// </summary>
+    public ReaderState ReaderState { get; init; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SubMacroblockPredictionHandle"/> struct.
+    /// </summary>
+    /// <param name="readerState">The reader state.</param>
+    public SubMacroblockPredictionHandle(ReaderState readerState)
+    {
+        this.ReaderState = readerState;
+    }
+
+    /// <summary>
+    /// Retrieves the sub macroblock prediction using the specified reader.
+    /// </summary>
+    /// <param name="reader">The bit stream reader.</param>
+    /// <returns>The retrieved <see cref="SubMacroblockPrediction"/>.</returns>
+#pragma warning disable CS1573
+    public SubMacroblockPrediction Get(BitStreamReader reader, EntropyCodingMode entropyCodingMode, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, GeneralSliceType sliceType, int mbType, bool mbaffFrameFlag)
+    {
+        ReaderState prev = reader.GetState();
+        reader.GoTo(ReaderState);
+
+        var result = SubMacroblockPrediction.Read(reader, mbaffFrameFlag, sliceType, entropyCodingMode, mbType, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag);
+
+        reader.GoTo(prev);
+
+        return result;
+    }
+#pragma warning restore
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return obj is SubMacroblockPredictionHandle handle && Equals(handle);
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(SubMacroblockPredictionHandle other)
+    {
+        return ReaderState.Equals(other.ReaderState);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(ReaderState);
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="SubMacroblockPredictionHandle"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The left instance to compare.</param>
+    /// <param name="right">The right instance to compare.</param>
+    /// <returns><c>true</c> if the instances are equal; otherwise, <c>false</c>.</returns>
+    public static bool operator ==(SubMacroblockPredictionHandle left, SubMacroblockPredictionHandle right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="SubMacroblockPredictionHandle"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The left instance to compare.</param>
+    /// <param name="right">The right instance to compare.</param>
+    /// <returns><c>true</c> if the instances are not equal; otherwise, <c>false</c>.</returns>
+    public static bool operator !=(SubMacroblockPredictionHandle left, SubMacroblockPredictionHandle right)
+    {
+        return !(left == right);
+    }
+}

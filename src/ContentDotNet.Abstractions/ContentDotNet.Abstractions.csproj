@@ -12,10 +12,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Container128.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container128.tt</DependentUpon>
+    </None>
     <None Include="Container256.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container256.tt</DependentUpon>
+    </None>
+    <None Include="Container32.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container32.tt</DependentUpon>
+    </None>
+    <None Include="Container64.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container64.tt</DependentUpon>
     </None>
   </ItemGroup>
 
@@ -29,12 +44,34 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Container256.tt</DependentUpon>
     </Compile>
+    <Compile Update="Container32.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container32.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Container64.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container64.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="Container128.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container128.gen.cs</LastGenOutput>
+    </None>
     <None Update="Container256.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Container256.gen.cs</LastGenOutput>
+    </None>
+    <None Update="Container32.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container32.gen.cs</LastGenOutput>
+    </None>
+    <None Update="Container64.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container64.gen.cs</LastGenOutput>
     </None>
   </ItemGroup>
 

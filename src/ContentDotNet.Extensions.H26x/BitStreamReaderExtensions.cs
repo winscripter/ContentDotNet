@@ -44,4 +44,23 @@ public static class BitStreamReaderExtensions
 
         return absoluteValue;
     }
+
+    public static int ReadTE(this BitStreamReader reader, int x)
+    {
+        if (x == 1)
+        {
+            // x == 1 - te(v) is a single bit (0 or 1).
+            return reader.ReadBit() ? 1 : 0;
+        }
+        else
+        {
+            // x > 1 - te(v) is a truncated exponential Golomb code.
+            uint codeNum = reader.ReadUE();
+            if (codeNum >= x)
+            {
+                throw new InvalidDataException($"Invalid te(v) value: {codeNum} exceeds the range [0, {x - 1}].");
+            }
+            return (int)codeNum;
+        }
+    }
 }
