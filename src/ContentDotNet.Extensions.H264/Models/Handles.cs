@@ -1189,3 +1189,90 @@ public readonly struct SubMacroblockPredictionHandle : IEquatable<SubMacroblockP
         return !(left == right);
     }
 }
+
+/// <summary>
+/// Represents a handle for Macroblock Prediction.
+/// </summary>
+public readonly struct MacroblockPredictionHandle : IEquatable<MacroblockPredictionHandle>
+{
+    /// <summary>
+    /// Gets the reader state associated with this handle.
+    /// </summary>
+    public ReaderState ReaderState { get; init; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MacroblockPredictionHandle"/> struct.
+    /// </summary>
+    /// <param name="readerState">The reader state.</param>
+    public MacroblockPredictionHandle(ReaderState readerState)
+    {
+        this.ReaderState = readerState;
+    }
+
+    /// <summary>
+    /// Retrieves the Macroblock prediction using the specified reader.
+    /// </summary>
+    /// <param name="reader">The bit stream reader.</param>
+    /// <param name="mbType">The macroblock type.</param>
+    /// <param name="mbaffFrameFlag">Indicates if MBAFF is used in the frame.</param>
+    /// <param name="codingMode">The entropy coding mode (CAVLC or CABAC).</param>
+    /// <param name="sliceType">The general slice type.</param>
+    /// <param name="transformSize8x8Flag">Indicates if 8x8 transform size is used.</param>
+    /// <param name="numRefIdxL0ActiveMinus1">The number of active reference indices for L0 minus 1.</param>
+    /// <param name="numRefIdxL1ActiveMinus1">The number of active reference indices for L1 minus 1.</param>
+    /// <param name="mbFieldDecodingFlag">Indicates if macroblock field decoding is used.</param>
+    /// <param name="fieldPicFlag">Indicates if the picture is a field picture.</param>
+    /// <param name="chromaArrayType">The chroma array type.</param>
+    /// <returns>The retrieved <see cref="MacroblockPrediction"/>.</returns>
+    public MacroblockPrediction Get(BitStreamReader reader, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
+    {
+        ReaderState prev = reader.GetState();
+        reader.GoTo(ReaderState);
+
+        var result = MacroblockPrediction.Read(reader, mbType, mbaffFrameFlag, codingMode, sliceType, transformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
+
+        reader.GoTo(prev);
+
+        return result;
+    }
+
+    /// <inheritdoc/>
+    public override bool Equals(object? obj)
+    {
+        return obj is MacroblockPredictionHandle handle && Equals(handle);
+    }
+
+    /// <inheritdoc/>
+    public bool Equals(MacroblockPredictionHandle other)
+    {
+        return ReaderState.Equals(other.ReaderState);
+    }
+
+    /// <inheritdoc/>
+    public override int GetHashCode()
+    {
+        return HashCode.Combine(ReaderState);
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="MacroblockPredictionHandle"/> instances are equal.
+    /// </summary>
+    /// <param name="left">The left instance to compare.</param>
+    /// <param name="right">The right instance to compare.</param>
+    /// <returns><c>true</c> if the instances are equal; otherwise, <c>false</c>.</returns>
+    public static bool operator ==(MacroblockPredictionHandle left, MacroblockPredictionHandle right)
+    {
+        return left.Equals(right);
+    }
+
+    /// <summary>
+    /// Determines whether two <see cref="MacroblockPredictionHandle"/> instances are not equal.
+    /// </summary>
+    /// <param name="left">The left instance to compare.</param>
+    /// <param name="right">The right instance to compare.</param>
+    /// <returns><c>true</c> if the instances are not equal; otherwise, <c>false</c>.</returns>
+    public static bool operator !=(MacroblockPredictionHandle left, MacroblockPredictionHandle right)
+    {
+        return !(left == right);
+    }
+}
