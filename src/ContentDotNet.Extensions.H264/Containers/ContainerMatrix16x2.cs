@@ -1,6 +1,6 @@
 ﻿using ContentDotNet.Abstractions;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Extensions.H264.Containers;
 
 /// <summary>
 /// A 16x2 matrix that uses <see cref="Container32UInt32"/>.

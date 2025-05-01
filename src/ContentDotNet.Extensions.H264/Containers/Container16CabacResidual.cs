@@ -1,21 +1,21 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
 using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Extensions.H264.Containers;
 
 #pragma warning disable
 
 /// <summary>
-///   A container for 16 <see cref="CavlcResidual"/>s.
+///   A container for 16 <see cref="CabacResidual"/>s.
 /// </summary>
-public struct Container16CavlcResidual : IEquatable<Container16CavlcResidual>
+public struct Container16CabacResidual : IEquatable<Container16CabacResidual>
 {
-    private CavlcResidual _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
+    private CabacResidual _0, _1, _2, _3, _4, _5, _6, _7, _8, _9, _10, _11, _12, _13, _14, _15;
 
     /// <summary>
-    ///   Initializes a new instance of the <see cref="Container16CavlcResidual"/> structure.
+    ///   Initializes a new instance of the <see cref="Container16CabacResidual"/> structure.
     /// </summary>
-    public Container16CavlcResidual()
+    public Container16CabacResidual()
     {
         Chucknorris();
     }
@@ -46,14 +46,14 @@ public struct Container16CavlcResidual : IEquatable<Container16CavlcResidual>
     /// <param name="index">Index of the element to access.</param>
     /// <returns>An element at <paramref name="index"/>.</returns>
     /// <exception cref="IndexOutOfRangeException">Thrown when index is out of bounds.</exception>
-    public CavlcResidual this[int index]
+    public CabacResidual this[int index]
     {
         get
         {
             if ((uint)index >= 16)
                 throw new IndexOutOfRangeException();
 
-            ref CavlcResidual firstElement = ref _0;
+            ref CabacResidual firstElement = ref _0;
             return Unsafe.Add(ref firstElement, index);
         }
         set
@@ -61,7 +61,7 @@ public struct Container16CavlcResidual : IEquatable<Container16CavlcResidual>
             if ((uint)index >= 16)
                 throw new IndexOutOfRangeException();
 
-            ref CavlcResidual firstElement = ref _0;
+            ref CabacResidual firstElement = ref _0;
             Unsafe.Add(ref firstElement, index) = value;
         }
     }
@@ -73,7 +73,7 @@ public struct Container16CavlcResidual : IEquatable<Container16CavlcResidual>
     /// <returns>A boolean.</returns>
     public readonly override bool Equals(object? obj)
     {
-        return obj is Container16CavlcResidual boolean && Equals(boolean);
+        return obj is Container16CabacResidual boolean && Equals(boolean);
     }
 
     /// <summary>
@@ -81,7 +81,7 @@ public struct Container16CavlcResidual : IEquatable<Container16CavlcResidual>
     /// </summary>
     /// <param name="other">Instance to compare with.</param>
     /// <returns>A boolean.</returns>
-    public readonly bool Equals(Container16CavlcResidual other)
+    public readonly bool Equals(Container16CabacResidual other)
     {
         return _0 == other._0 &&
                _1 == other._1 &&
@@ -128,27 +128,27 @@ public struct Container16CavlcResidual : IEquatable<Container16CavlcResidual>
     }
 
     /// <summary>
-    /// Determines whether two <see cref="Container16CavlcResidual"/> instances are equal.
+    /// Determines whether two <see cref="Container16CabacResidual"/> instances are equal.
     /// </summary>
-    /// <param name="left">The first <see cref="Container16CavlcResidual"/> instance to compare.</param>
-    /// <param name="right">The second <see cref="Container16CavlcResidual"/> instance to compare.</param>
+    /// <param name="left">The first <see cref="Container16CabacResidual"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="Container16CabacResidual"/> instance to compare.</param>
     /// <returns>
-    /// <see langword="true"/> if the two <see cref="Container16CavlcResidual"/> instances are equal; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the two <see cref="Container16CabacResidual"/> instances are equal; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool operator ==(Container16CavlcResidual left, Container16CavlcResidual right)
+    public static bool operator ==(Container16CabacResidual left, Container16CabacResidual right)
     {
         return left.Equals(right);
     }
 
     /// <summary>
-    /// Determines whether two <see cref="Container16CavlcResidual"/> instances are not equal.
+    /// Determines whether two <see cref="Container16CabacResidual"/> instances are not equal.
     /// </summary>
-    /// <param name="left">The first <see cref="Container16CavlcResidual"/> instance to compare.</param>
-    /// <param name="right">The second <see cref="Container16CavlcResidual"/> instance to compare.</param>
+    /// <param name="left">The first <see cref="Container16CabacResidual"/> instance to compare.</param>
+    /// <param name="right">The second <see cref="Container16CabacResidual"/> instance to compare.</param>
     /// <returns>
-    /// <see langword="true"/> if the two <see cref="Container16CavlcResidual"/> instances are not equal; otherwise, <see langword="false"/>.
+    /// <see langword="true"/> if the two <see cref="Container16CabacResidual"/> instances are not equal; otherwise, <see langword="false"/>.
     /// </returns>
-    public static bool operator !=(Container16CavlcResidual left, Container16CavlcResidual right)
+    public static bool operator !=(Container16CabacResidual left, Container16CabacResidual right)
     {
         return !(left == right);
     }
