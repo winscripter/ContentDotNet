@@ -16,6 +16,20 @@ public static class H264Extensions
     public static bool IsIdr(this NalUnit nal) => nal.NalUnitType == 6;
 
     /// <summary>
+    ///   Is the given NAL unit an SPS NAL unit?
+    /// </summary>
+    /// <param name="nal">NAL unit</param>
+    /// <returns>A boolean that indicates whether its type is 7.</returns>
+    public static bool IsSps(this NalUnit nal) => nal.NalUnitType == 7;
+
+    /// <summary>
+    ///   Is the given NAL unit a PPS NAL unit?
+    /// </summary>
+    /// <param name="nal">NAL unit</param>
+    /// <returns>A boolean that indicates whether its type is 8.</returns>
+    public static bool IsPps(this NalUnit nal) => nal.NalUnitType == 8;
+
+    /// <summary>
     ///   Returns the Chroma Array Type from the SPS.
     /// </summary>
     /// <param name="sps">SPS</param>

@@ -127,4 +127,11 @@ public sealed class BitStreamReader(Stream input) : IDisposable
         uint b = ReadBits(8);
         return b;
     }
+
+    public void GoToStart()
+    {
+        stream.Position = 0;
+        currentByte = 0;
+        bitPosition = 0;
+    }
 }
