@@ -30,6 +30,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Abstractions.
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.H264.Tests", "tests\ContentDotNet.Extensions.H264.Tests\ContentDotNet.Extensions.H264.Tests.csproj", "{73163E69-33BD-4666-A3AA-98F2B16A88E2}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "tools", "tools", "{4E0443FC-FAD2-405D-9141-CD2AD6D47582}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dump264", "tools\Dump264\Dump264.csproj", "{2B621CAB-9865-451A-9C59-2E603E21FEF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -68,6 +72,10 @@ Global
 		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{73163E69-33BD-4666-A3AA-98F2B16A88E2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2B621CAB-9865-451A-9C59-2E603E21FEF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2B621CAB-9865-451A-9C59-2E603E21FEF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2B621CAB-9865-451A-9C59-2E603E21FEF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2B621CAB-9865-451A-9C59-2E603E21FEF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -81,5 +89,6 @@ Global
 		{96A32FA2-963D-4B04-9887-4DDC59C2BB75} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{62E5C884-72EA-4230-B41E-A93D7D5F45BA} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
 		{73163E69-33BD-4666-A3AA-98F2B16A88E2} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
+		{2B621CAB-9865-451A-9C59-2E603E21FEF8} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
 	EndGlobalSection
 EndGlobal
