@@ -12,7 +12,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\ContentDotNet.Abstractions\ContentDotNet.csproj" />
+    <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
 </Project>
