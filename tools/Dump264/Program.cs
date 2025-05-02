@@ -1,4 +1,4 @@
-﻿using ContentDotNet.Abstractions;
+﻿using ContentDotNet;
 using ContentDotNet.Extensions.H264;
 using ContentDotNet.Extensions.H264.Models;
 
