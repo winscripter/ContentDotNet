@@ -263,4 +263,7 @@ internal static class Util264
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Median(int x, int y, int z) => Math.Max(Math.Min(x, y), Math.Min(z, Math.Max(x, y)));
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool ByteAligned(BitStreamReader reader) => reader.GetState().BitPosition == 0;
 }

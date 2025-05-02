@@ -1,4 +1,5 @@
 ﻿# ContentDotNet.Extensions.H264
+**Note**: Also see the file LEGAL_NOTICE.txt in the current directory.
 
 Adds H.264 parsing, encoding and editing support for ContentDotNet.
 

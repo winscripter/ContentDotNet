@@ -1,0 +1,9 @@
+﻿This software library is authored and maintained by an individual developer. It is not affiliated with, sponsored by, or developed on behalf of any company, organization, or enterprise.
+
+The library is provided freely and openly for educational, experimental, and non-commercial purposes. It is not sold, monetized, or bundled with any commercial product or service by the author.
+
+The H.264 (MPEG-4 AVC) standard is known to be covered by patents held by various entities. This project does not grant, imply, or provide any license or coverage for those patents.
+
+If you use this software in a commercial, production, or profit-generating context, you are solely responsible for determining your legal obligations with respect to patent licensing, including obtaining any necessary licenses from the appropriate patent holders (e.g., MPEG LA, Access Advance).
+
+The author disclaims all liability for any use of this software, commercial or otherwise. Use at your own risk.
