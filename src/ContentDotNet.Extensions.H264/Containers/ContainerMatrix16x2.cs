@@ -26,8 +26,8 @@ public struct ContainerMatrix16x2
     /// <returns>Element at <paramref name="x"/>/<paramref name="y"/>.</returns>
     public uint this[int x, int y]
     {
-        readonly get => _values[x * 16 + y];
-        set => _values[x * 16 + y] = value;
+        readonly get => _values[(x + 1) * 16 + y];
+        set => _values[(x + 1) * 16 + y] = value;
     }
 
     /// <summary>  
