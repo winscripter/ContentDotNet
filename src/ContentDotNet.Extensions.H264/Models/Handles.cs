@@ -799,10 +799,10 @@ public readonly struct ResidualLumaHandle : IEquatable<ResidualLumaHandle>
         int mbType,
         int codedBlockPatternLuma,
         int chromaArrayType,
-        Container64UInt32 i16x16DCLevel,
-        ContainerMatrix16x16 i16x16ACLevel,
-        ContainerMatrix4x64 level8x8,
-        ContainerMatrix4x64 level4x4,
+        out Container64UInt32 i16x16DCLevel,
+        out ContainerMatrix16x16 i16x16ACLevel,
+        out ContainerMatrix4x64 level8x8,
+        out ContainerMatrix4x64 level4x4,
         GeneralSliceType sliceType,
         int startIdx,
         int endIdx,
@@ -819,7 +819,7 @@ public readonly struct ResidualLumaHandle : IEquatable<ResidualLumaHandle>
         ReaderState prev = reader.GetState();
         reader.GoTo(ReaderState);
 
-        var result = ResidualLuma.Read(reader, entropyCodingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, i16x16DCLevel, i16x16ACLevel, level8x8, level4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
+        var result = ResidualLuma.Read(reader, entropyCodingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out i16x16DCLevel, out i16x16ACLevel, out level8x8, out level4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
 
         reader.GoTo(prev);
 
