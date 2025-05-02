@@ -1,5 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-using ContentDotNet.Extensions.H264.Internal.Decoding;
+﻿using ContentDotNet.Extensions.H264.Internal.Decoding;
 using ContentDotNet.Extensions.H264.Models;
 
 namespace ContentDotNet.Extensions.H264;

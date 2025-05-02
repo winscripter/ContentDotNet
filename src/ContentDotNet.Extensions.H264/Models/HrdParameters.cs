@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-
-namespace ContentDotNet.Extensions.H264.Models;
+﻿namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// HRD parameters.

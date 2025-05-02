@@ -1,5 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-using System.Runtime.CompilerServices;
+﻿using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Models;
 

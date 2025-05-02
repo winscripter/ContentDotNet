@@ -9,7 +9,7 @@ public sealed class ScalingMatrixBuilder
 {
     /// <summary>
     ///   This is the number of scaling lists that will be built. This
-    ///   is automatically set when one calls the <see cref="SequenceParameterSet.WriteScalingMatrix(ContentDotNet.Abstractions.BitStreamWriter, ContentDotNet.Abstractions.BitStreamReader)"/>
+    ///   is automatically set when one calls the <see cref="SequenceParameterSet.WriteScalingMatrix(BitStreamWriter, BitStreamReader)"/>
     ///   or similar method. Value can either be 8 or 12.
     /// </summary>
     public int ListCount { get; internal set; }

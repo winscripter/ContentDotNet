@@ -1,5 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-using ContentDotNet.Extensions.H264.Containers;
+﻿using ContentDotNet.Extensions.H264.Containers;
 using System.Diagnostics.CodeAnalysis;
 
 namespace ContentDotNet.Extensions.H264.Models;

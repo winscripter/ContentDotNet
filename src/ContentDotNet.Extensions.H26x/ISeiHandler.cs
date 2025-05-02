@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-
-namespace ContentDotNet.Extensions.H26x;
+﻿namespace ContentDotNet.Extensions.H26x;
 
 /// <summary>
 ///   Handles parsing SEI models by their code.
@@ -23,5 +21,5 @@ public interface ISeiHandler
     /// </summary>
     /// <param name="reader">Reader</param>
     /// <returns>A handle.</returns>
-    static abstract ISeiModelHandle SkipData(Abstractions.BitStreamReader reader);
+    static abstract ISeiModelHandle SkipData(BitStreamReader reader);
 }

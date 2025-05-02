@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-
-namespace ContentDotNet.Extensions.H264.Internal.Decoding;
+﻿namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
 /// <summary>
 ///   Chroma subsampling and size.

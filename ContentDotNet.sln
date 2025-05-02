@@ -5,7 +5,7 @@ VisualStudioVersion = 17.12.35707.178
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{94093CAF-9AE3-44C5-A92A-3A157B5B2F96}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Abstractions", "src\ContentDotNet.Abstractions\ContentDotNet.Abstractions.csproj", "{2F562077-AFED-419C-986A-009958D62447}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet", "src\ContentDotNet\ContentDotNet.csproj", "{2F562077-AFED-419C-986A-009958D62447}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.H264", "src\ContentDotNet.Extensions.H264\ContentDotNet.Extensions.H264.csproj", "{91308A66-F214-4586-B1BD-2E3B41A26F48}"
 EndProject

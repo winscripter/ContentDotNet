@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-
-namespace ContentDotNet.Extensions.H265.Models;
+﻿namespace ContentDotNet.Extensions.H265.Models;
 
 /// <summary>
 /// Sub layer profile, from <see cref="ProfileTierLevel"/>.

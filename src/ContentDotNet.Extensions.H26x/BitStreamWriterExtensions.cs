@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-
-namespace ContentDotNet.Extensions.H26x;
+﻿namespace ContentDotNet.Extensions.H26x;
 
 public static class BitStreamWriterExtensions
 {

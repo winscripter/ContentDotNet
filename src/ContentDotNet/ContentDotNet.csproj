@@ -1,0 +1,83 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyTitle>ContentDotNet</AssemblyTitle>
+    <Description>ContentDotNet is a library for .NET and C# programs for video processing without dependencies</Description>
+    <Company>winscripter</Company>
+    <Copyright>Copyright (c) 2023-2025, winscripter</Copyright>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Container128.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container128.tt</DependentUpon>
+    </None>
+    <None Include="Container256.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container256.tt</DependentUpon>
+    </None>
+    <None Include="Container32.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container32.tt</DependentUpon>
+    </None>
+    <None Include="Container512.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container512.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Container128.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container128.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Container256.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container256.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Container32.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container32.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Container512.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container512.tt</DependentUpon>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Container128.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container128.gen.cs</LastGenOutput>
+    </None>
+    <None Update="Container256.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container256.gen.cs</LastGenOutput>
+    </None>
+    <None Update="Container32.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container32.gen.cs</LastGenOutput>
+    </None>
+    <None Update="Container512.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container512.gen.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+</Project>

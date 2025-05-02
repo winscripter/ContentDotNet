@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-
-namespace ContentDotNet.Extensions.H264.Models;
+﻿namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// Represents an entry in the reference picture list modification for MVC.
