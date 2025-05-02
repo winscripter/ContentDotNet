@@ -17,7 +17,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\ContentDotNet.Abstractions\ContentDotNet.csproj" />
+    <ProjectReference Include="..\..\src\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
