@@ -14,7 +14,34 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="Containers\CabacCavlcContainer32.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CabacCavlcContainer32.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\ContentDotNet.Extensions.H26x\ContentDotNet.Extensions.H26x.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Containers\CabacCavlcContainer32.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>CabacCavlcContainer32.gen.cs</LastGenOutput>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Containers\CabacCavlcContainer32.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CabacCavlcContainer32.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

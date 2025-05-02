@@ -1,5 +1,4 @@
-﻿using ContentDotNet.Abstractions;
-namespace ContentDotNet.Extensions.H264.Internal.Decoding;
+﻿namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
 internal sealed partial class Decoder264
 {

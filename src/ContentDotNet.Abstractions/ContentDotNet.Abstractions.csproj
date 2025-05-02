@@ -27,6 +27,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Container32.tt</DependentUpon>
     </None>
+    <None Include="Container512.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container512.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -58,6 +63,10 @@
     <None Update="Container32.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Container32.gen.cs</LastGenOutput>
+    </None>
+    <None Update="Container512.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Container512.gen.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
