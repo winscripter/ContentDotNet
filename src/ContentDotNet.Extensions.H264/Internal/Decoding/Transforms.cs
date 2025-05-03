@@ -25,6 +25,76 @@ internal static class Transforms
         { {18,23,18,23}, {23,29,23,29}, {18,23,18,23}, {23,29,23,29} },
     };
 
+    private static readonly int[,,] LevelScale8x8 = new int[6, 8, 8]
+    {
+        // QP % 6 = 0
+        {
+            {6,13,20,28,13,20,28,32},
+            {13,20,28,32,20,28,32,37},
+            {20,28,32,37,28,32,37,42},
+            {28,32,37,42,32,37,42,47},
+            {13,20,28,32,20,28,32,37},
+            {20,28,32,37,28,32,37,42},
+            {28,32,37,42,32,37,42,47},
+            {32,37,42,47,37,42,47,51}
+        },
+        // QP % 6 = 1
+        {
+            {6,13,19,26,13,19,26,30},
+            {13,19,26,30,19,26,30,34},
+            {19,26,30,34,26,30,34,38},
+            {26,30,34,38,30,34,38,42},
+            {13,19,26,30,19,26,30,34},
+            {19,26,30,34,26,30,34,38},
+            {26,30,34,38,30,34,38,42},
+            {30,34,38,42,34,38,42,46}
+        },
+        // QP % 6 = 2
+        {
+            {6,13,18,24,13,18,24,28},
+            {13,18,24,28,18,24,28,32},
+            {18,24,28,32,24,28,32,36},
+            {24,28,32,36,28,32,36,40},
+            {13,18,24,28,18,24,28,32},
+            {18,24,28,32,24,28,32,36},
+            {24,28,32,36,28,32,36,40},
+            {28,32,36,40,32,36,40,44}
+        },
+        // QP % 6 = 3
+        {
+            {6,12,17,22,12,17,22,26},
+            {12,17,22,26,17,22,26,30},
+            {17,22,26,30,22,26,30,34},
+            {22,26,30,34,26,30,34,38},
+            {12,17,22,26,17,22,26,30},
+            {17,22,26,30,22,26,30,34},
+            {22,26,30,34,26,30,34,38},
+            {26,30,34,38,30,34,38,42}
+        },
+        // QP % 6 = 4
+        {
+            {6,12,16,20,12,16,20,24},
+            {12,16,20,24,16,20,24,28},
+            {16,20,24,28,20,24,28,32},
+            {20,24,28,32,24,28,32,36},
+            {12,16,20,24,16,20,24,28},
+            {16,20,24,28,20,24,28,32},
+            {20,24,28,32,24,28,32,36},
+            {24,28,32,36,28,32,36,40}
+        },
+        // QP % 6 = 5
+        {
+            {6,12,15,19,12,15,19,22},
+            {12,15,19,22,15,19,22,26},
+            {15,19,22,26,19,22,26,30},
+            {19,22,26,30,22,26,30,34},
+            {12,15,19,22,15,19,22,26},
+            {15,19,22,26,19,22,26,30},
+            {19,22,26,30,22,26,30,34},
+            {22,26,30,34,26,30,34,38}
+        }
+    };
+
     public static void InverseScan4x4TransformCoefficients(Span<int> list, Span<ContainerMatrix4x4> c)
     {
         ContainerMatrix4x4 matrix = c[0];
@@ -310,6 +380,147 @@ internal static class Transforms
             for (int j = 0; j < 4; j++)
             {
                 r[i, j] = (h[i, j] + 32) >> 6;
+            }
+        }
+    }
+
+    public static void ScaleTransformResidual8x8Blocks(bool isLuma, int qpc, int qpy, bool transformBypassModeFlag, ContainerMatrix8x8Int32 c, out ContainerMatrix8x8Int32 r)
+    {
+        int qP = isLuma ? qpy : qpc;
+
+        if (transformBypassModeFlag)
+        {
+            r = new();
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    r[i, j] = c[i, j];
+                }
+            }
+        }
+        else
+        {
+            ScaleResidual8x8Blocks(qP, c, out var d);
+            TransformResidual8x8Blocks(d, out r);
+        }
+    }
+
+    private static void ScaleResidual8x8Blocks(int qP, ContainerMatrix8x8Int32 c, out ContainerMatrix8x8Int32 d)
+    {
+        if (qP >= 36)
+        {
+            d = new();
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    d[i, j] = (c[i, j] * LevelScale8x8[qP % 6, i, j]) << (qP / 6 - 6);
+                }
+            }
+        }
+        else
+        {
+            d = new();
+
+            for (int i = 0; i < 8; i++)
+            {
+                for (int j = 0; j < 8; j++)
+                {
+                    d[i, j] = (c[i, j] * LevelScale8x8[qP % 6, i, j]) + (int)Math.Pow(2, 5 - qP / 6) >> (6 - qP / 6);
+                }
+            }
+        }
+    }
+
+    private static void TransformResidual8x8Blocks(ContainerMatrix8x8Int32 d, out ContainerMatrix8x8Int32 r)
+    {
+        var e = new ContainerMatrix8x8Int32();
+        for (int i = 0; i < 8; i++)
+        {
+            e[i, 0] = d[i, 0] + d[i, 4];
+            e[i, 1] = -d[i, 3] + d[i, 5] - d[i, 7] - (d[i, 7] >> 1);
+            e[i, 2] = d[i, 0] - d[i, 4];
+            e[i, 3] = d[i, 1] + d[i, 7] - d[i, 3] - (d[i, 3] >> 1);
+            e[i, 4] = (d[i, 2] >> 1) - d[i, 6];
+            e[i, 5] = -d[i, 1] + d[i, 7] + d[i, 5] + (d[i, 5] >> 1);
+            e[i, 6] = d[i, 2] + (d[i, 6] >> 1);
+            e[i, 7] = d[i, 3] + d[i, 5] + d[i, 1] + (d[i, 1] >> 1);
+        }
+
+        var f = new ContainerMatrix8x8Int32();
+        for (int i = 0; i < 8; i++)
+        {
+            f[i, 0] = e[i, 0] + e[i, 6];
+            f[i, 1] = e[i, 1] + (e[i, 7] >> 2);
+            f[i, 2] = e[i, 2] + e[i, 4];
+            f[i, 3] = e[i, 3] + (e[i, 5] >> 2);
+            f[i, 4] = e[i, 2] - e[i, 4];
+            f[i, 5] = (e[i, 3] >> 2) - e[i, 5];
+            f[i, 6] = e[i, 0] - e[i, 6];
+            f[i, 7] = e[i, 7] - (e[i, 1] >> 2);
+        }
+
+        var g = new ContainerMatrix8x8Int32();
+        for (int i = 0; i < 8; i++)
+        {
+            g[i, 0] = f[i, 0] + f[i, 7];
+            g[i, 1] = f[i, 2] + f[i, 5];
+            g[i, 2] = f[i, 4] + f[i, 3];
+            g[i, 3] = f[i, 6] + f[i, 1];
+            g[i, 4] = f[i, 6] - f[i, 1];
+            g[i, 5] = f[i, 4] - f[i, 3];
+            g[i, 6] = f[i, 2] - f[i, 5];
+            g[i, 7] = f[i, 0] - f[i, 7];
+        }
+
+        var h = new ContainerMatrix8x8Int32();
+        for (int j = 0; j < 8; j++)
+        {
+            h[0, j] = g[0, j] + g[4, j];
+            h[1, j] = -g[3, j] + g[5, j] - g[7, j] - (g[7, j] >> 1);
+            h[2, j] = g[0, j] - g[4, j];
+            h[3, j] = g[1, j] + g[7, j] - g[3, j] - (g[3, j] >> 1);
+            h[4, j] = (g[2, j] >> 1) - g[6, j];
+            h[5, j] = -g[1, j] + g[7, j] + g[5, j] + (g[5, j] >> 1);
+            h[6, j] = g[2, j] + (g[6, j] >> 1);
+            h[7, j] = g[3, j] + g[5, j] + g[1, j] + (g[1, j] >> 1);
+        }
+
+        var k = new ContainerMatrix8x8Int32();
+        for (int j = 0; j < 8; j++)
+        {
+            k[0, j] = h[0, j] + h[6, j];
+            k[1, j] = h[1, j] + (h[7, j] >> 2);
+            k[2, j] = h[2, j] + h[4, j];
+            k[3, j] = h[3, j] + (h[5, j] >> 2);
+            k[4, j] = h[2, j] - h[4, j];
+            k[5, j] = (h[3, j] >> 2) - h[5, j];
+            k[6, j] = h[0, j] - h[6, j];
+            k[7, j] = h[7, j] - (h[1, j] >> 2);
+        }
+
+        var m = new ContainerMatrix8x8Int32();
+        for (int j = 0; j < 8; j++)
+        {
+            m[0, j] = k[0, j] + k[7, j];
+            m[1, j] = k[2, j] + k[5, j];
+            m[2, j] = k[4, j] + k[3, j];
+            m[3, j] = k[6, j] + k[1, j];
+            m[4, j] = k[6, j] - k[1, j];
+            m[5, j] = k[4, j] - k[3, j];
+            m[6, j] = k[2, j] - k[5, j];
+            m[7, j] = k[0, j] - k[7, j];
+        }
+
+        r = new();
+
+        for (int i = 0; i < 8; i++)
+        {
+            for (int j = 0; j < 8; j++)
+            {
+                r[i, j] = (m[i, j] + 32) >> 6;
             }
         }
     }
