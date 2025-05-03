@@ -132,6 +132,14 @@ internal static class Transforms
         }
     }
 
+    private static ReadOnlySpan<int> TransformChromaDCTransformCoeffs_T =>
+    [
+        1,  1,  1,  1,
+        1,  1, -1, -1,
+        1, -1, -1,  1,
+        1, -1,  1, -1
+    ];
+
     private static void TransformChromaDCTransformCoefficients(int chromaArrayType, ContainerMatrix4x4Int32 c, out ContainerMatrix4x4Int32 f)
     {
         f = new();
@@ -153,23 +161,15 @@ internal static class Transforms
             //     | 1 -1  1 -1 |   | c30  c31 |   | 1 -1 |
             //     \------------/   \----------/   \------/
 
-            Span<int> T =
-            [
-                1,  1,  1,  1,
-                1,  1, -1, -1,
-                1, -1, -1,  1,
-                1, -1,  1, -1
-            ];
-
             for (int i = 0; i < 4; i++)
             {
                 for (int j = 0; j < 4; j++)
                 {
                     int sum = 0;
-                    sum += T[i * 4 + 0] * c[0, j];
-                    sum += T[i * 4 + 1] * c[1, j];
-                    sum += T[i * 4 + 2] * c[2, j];
-                    sum += T[i * 4 + 3] * c[3, j];
+                    sum += TransformChromaDCTransformCoeffs_T[i * 4 + 0] * c[0, j];
+                    sum += TransformChromaDCTransformCoeffs_T[i * 4 + 1] * c[1, j];
+                    sum += TransformChromaDCTransformCoeffs_T[i * 4 + 2] * c[2, j];
+                    sum += TransformChromaDCTransformCoeffs_T[i * 4 + 3] * c[3, j];
 
                     f[i, j] = sum;
                 }
