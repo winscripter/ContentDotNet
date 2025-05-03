@@ -1,7 +1,9 @@
-﻿using static ContentDotNet.Extensions.H264.SliceTypes;
+﻿using System.ComponentModel;
+using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Internal.Macroblocks;
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 internal static class ISliceFunctions
 {
     public static int MbPartPredMode(int mbType, bool transformSize8x8Flag)
