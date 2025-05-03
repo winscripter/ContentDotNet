@@ -5,7 +5,7 @@ using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
-internal partial class Decoder264
+internal partial class BaselineDecoder
 {
     private static readonly (int x, int y) LumaLocationsA = (-1, 0);
     private static readonly (int x, int y) LumaLocationsB = (0, -1);

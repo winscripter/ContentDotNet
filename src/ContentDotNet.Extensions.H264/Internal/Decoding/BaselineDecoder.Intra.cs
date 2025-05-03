@@ -3,7 +3,7 @@ using ContentDotNet.Extensions.H264.Utilities;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
-internal partial class Decoder264
+internal partial class BaselineDecoder
 {
     private static void DeriveIntra4x4PredMode(
         int luma4x4BlkIdx,
