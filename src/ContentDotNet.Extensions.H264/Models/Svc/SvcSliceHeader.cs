@@ -1,6 +1,6 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
 
-namespace ContentDotNet.Extensions.H264.Extensions.Svc.Models;
+namespace ContentDotNet.Extensions.H264.Models.Svc;
 
 /// <summary>
 /// Represents the header of an SVC (Scalable Video Coding) slice in an H.264 bitstream.
@@ -485,18 +485,18 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
 
             modification = RefPicListModification.Read(reader, sliceType);
 
-            if ((weightedPredFlag && SliceTypes.IsEP(sliceType, nalUnitType)) || (weightedBiPredIdc == 1 && SliceTypes.IsEB(sliceType, nalUnitType)))
+            if (weightedPredFlag && SliceTypes.IsEP(sliceType, nalUnitType) || weightedBiPredIdc == 1 && SliceTypes.IsEB(sliceType, nalUnitType))
             {
                 if (!noInterLayerPredFlag)
                     basePredWeightTableFlag = reader.ReadBit();
 
                 if (noInterLayerPredFlag || !basePredWeightTableFlag)
-                    predWeightTable = H264.Models.PredWeightTable.Read(reader, (int)chromaArrayType, (int)sliceType, (int)numRefIdxL0ActiveMinus1, (int)numRefIdxL1ActiveMinus1);
+                    predWeightTable = Models.PredWeightTable.Read(reader, (int)chromaArrayType, (int)sliceType, (int)numRefIdxL0ActiveMinus1, (int)numRefIdxL1ActiveMinus1);
             }
 
             if (nalRefIdc != 0u)
             {
-                decRefPicMarking = H264.Models.DecRefPicMarking.Read(reader, idrPicFlag);
+                decRefPicMarking = Models.DecRefPicMarking.Read(reader, idrPicFlag);
                 if (!sliceHeaderRestrictionFlag)
                 {
                     storeRefBasePicFlag = reader.ReadBit();
@@ -780,7 +780,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
             Span<RefPicListModificationEntry> entries = stackalloc RefPicListModificationEntry[RefPicListModification.NumberOfElements];
             RefPicListModification.Write(writer, entries, SliceType);
 
-            if ((weightedPredFlag && SliceTypes.IsEP(SliceType, nalUnitType)) || (weightedBiPredIdc == 1 && SliceTypes.IsEB(SliceType, nalUnitType)))
+            if (weightedPredFlag && SliceTypes.IsEP(SliceType, nalUnitType) || weightedBiPredIdc == 1 && SliceTypes.IsEB(SliceType, nalUnitType))
             {
                 if (!noInterLayerPredFlag)
                     writer.WriteBit(BasePredWeightTableFlag);
@@ -790,9 +790,9 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     Span<PredWeightTableWeightOffsetEntry> lumaL0 = stackalloc PredWeightTableWeightOffsetEntry[32];
                     Span<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL0 = stackalloc (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32];
 
-                    for (int i = 0; i < this.PredWeightTable!.Value.L0.Count; i++)
+                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
                     {
-                        var (luma, chroma1, chroma2) = this.PredWeightTable!.Value.L0.GetElement(originalReader, i, (int)chromaArrayType);
+                        var (luma, chroma1, chroma2) = PredWeightTable!.Value.L0.GetElement(originalReader, i, (int)chromaArrayType);
                         lumaL0[i] = luma;
                         chromaL0[i] = (chroma1, chroma2);
                     }
@@ -800,11 +800,11 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     Span<PredWeightTableWeightOffsetEntry> lumaL1 = stackalloc PredWeightTableWeightOffsetEntry[32];
                     Span<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL1 = stackalloc (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32];
 
-                    if (this.PredWeightTable!.Value.L1 is not null)
+                    if (PredWeightTable!.Value.L1 is not null)
                     {
-                        for (int i = 0; i < this.PredWeightTable!.Value.L1!.Value.Count; i++)
+                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
                         {
-                            var (luma, chroma1, chroma2) = this.PredWeightTable!.Value.L1!.Value.GetElement(originalReader, i, (int)chromaArrayType);
+                            var (luma, chroma1, chroma2) = PredWeightTable!.Value.L1!.Value.GetElement(originalReader, i, (int)chromaArrayType);
                             lumaL0[i] = luma;
                             chromaL0[i] = (chroma1, chroma2);
                         }
@@ -813,32 +813,32 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     Span<bool> includesL0 = stackalloc bool[32];
                     Span<bool> includesL1 = stackalloc bool[32];
 
-                    for (int i = 0; i < this.PredWeightTable!.Value.L0.Count; i++)
+                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
                         includesL0[i] = true;
 
-                    if (this.PredWeightTable!.Value.L1 is not null)
-                        for (int i = 0; i < this.PredWeightTable!.Value.L1!.Value.Count; i++)
+                    if (PredWeightTable!.Value.L1 is not null)
+                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
                             includesL1[i] = true;
 
                     var l0Options = new PredWeightTableListWriteOptions(includesL0, includesL0, lumaL0, chromaL0);
                     var l1Options = new PredWeightTableListWriteOptions(includesL1, includesL1, lumaL1, chromaL1);
 
-                    this.PredWeightTable!.Value.Write(writer, (int)chromaArrayType, (int)SliceType, l0Options, l1Options);
+                    PredWeightTable!.Value.Write(writer, (int)chromaArrayType, (int)SliceType, l0Options, l1Options);
                 }
             }
 
             if (nalRefIdc != 0u)
             {
-                Span<DecRefPicMarkingEntry> entriesCnt = stackalloc DecRefPicMarkingEntry[this.DecRefPicMarking!.Value.EntryCount];
-                for (int i = 0; i < this.DecRefPicMarking!.Value.EntryCount; i++)
-                    entriesCnt[i] = this.DecRefPicMarking!.Value.GetEntry(originalReader, i);
+                Span<DecRefPicMarkingEntry> entriesCnt = stackalloc DecRefPicMarkingEntry[DecRefPicMarking!.Value.EntryCount];
+                for (int i = 0; i < DecRefPicMarking!.Value.EntryCount; i++)
+                    entriesCnt[i] = DecRefPicMarking!.Value.GetEntry(originalReader, i);
 
-                this.DecRefPicMarking.Value.Write(writer, idrPicFlag, entriesCnt);
+                DecRefPicMarking.Value.Write(writer, idrPicFlag, entriesCnt);
                 if (!sliceHeaderRestrictionFlag)
                 {
                     writer.WriteBit(StoreRefBasePicFlag);
                     if ((useRefBasePicFlag || StoreRefBasePicFlag) && !idrPicFlag)
-                        this.DecRefBasePicMarking!.Value.Write(writer, originalReader);
+                        DecRefBasePicMarking!.Value.Write(writer, originalReader);
                 }
             }
         }
@@ -1018,7 +1018,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
             Memory<RefPicListModificationEntry> entries = new(new RefPicListModificationEntry[RefPicListModification.NumberOfElements]);
             RefPicListModification.Write(writer, entries.Span, SliceType);
 
-            if ((weightedPredFlag && SliceTypes.IsEP(SliceType, nalUnitType)) || (weightedBiPredIdc == 1 && SliceTypes.IsEB(SliceType, nalUnitType)))
+            if (weightedPredFlag && SliceTypes.IsEP(SliceType, nalUnitType) || weightedBiPredIdc == 1 && SliceTypes.IsEB(SliceType, nalUnitType))
             {
                 if (!noInterLayerPredFlag)
                     await writer.WriteBitAsync(BasePredWeightTableFlag);
@@ -1028,9 +1028,9 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     Memory<PredWeightTableWeightOffsetEntry> lumaL0 = new(new PredWeightTableWeightOffsetEntry[32]);
                     Memory<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL0 = new(new (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32]);
 
-                    for (int i = 0; i < this.PredWeightTable!.Value.L0.Count; i++)
+                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
                     {
-                        var (luma, chroma1, chroma2) = this.PredWeightTable!.Value.L0.GetElement(originalReader, i, (int)chromaArrayType);
+                        var (luma, chroma1, chroma2) = PredWeightTable!.Value.L0.GetElement(originalReader, i, (int)chromaArrayType);
                         lumaL0.Span[i] = luma;
                         chromaL0.Span[i] = (chroma1, chroma2);
                     }
@@ -1038,11 +1038,11 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     Memory<PredWeightTableWeightOffsetEntry> lumaL1 = new(new PredWeightTableWeightOffsetEntry[32]);
                     Memory<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL1 = new(new (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32]);
 
-                    if (this.PredWeightTable!.Value.L1 is not null)
+                    if (PredWeightTable!.Value.L1 is not null)
                     {
-                        for (int i = 0; i < this.PredWeightTable!.Value.L1!.Value.Count; i++)
+                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
                         {
-                            var (luma, chroma1, chroma2) = this.PredWeightTable!.Value.L1!.Value.GetElement(originalReader, i, (int)chromaArrayType);
+                            var (luma, chroma1, chroma2) = PredWeightTable!.Value.L1!.Value.GetElement(originalReader, i, (int)chromaArrayType);
                             lumaL0.Span[i] = luma;
                             chromaL0.Span[i] = (chroma1, chroma2);
                         }
@@ -1051,32 +1051,32 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     Memory<bool> includesL0 = new(new bool[32]);
                     Memory<bool> includesL1 = new(new bool[32]);
 
-                    for (int i = 0; i < this.PredWeightTable!.Value.L0.Count; i++)
+                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
                         includesL0.Span[i] = true;
 
-                    if (this.PredWeightTable!.Value.L1 is not null)
-                        for (int i = 0; i < this.PredWeightTable!.Value.L1!.Value.Count; i++)
+                    if (PredWeightTable!.Value.L1 is not null)
+                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
                             includesL1.Span[i] = true;
 
                     var l0Options = new MemoryPredWeightTableListWriteOptions(includesL0, includesL0, lumaL0, chromaL0);
                     var l1Options = new MemoryPredWeightTableListWriteOptions(includesL1, includesL1, lumaL1, chromaL1);
 
-                    await this.PredWeightTable!.Value.WriteAsync(writer, (int)chromaArrayType, (int)SliceType, l0Options, l1Options);
+                    await PredWeightTable!.Value.WriteAsync(writer, (int)chromaArrayType, (int)SliceType, l0Options, l1Options);
                 }
             }
 
             if (nalRefIdc != 0u)
             {
-                Memory<DecRefPicMarkingEntry> entriesCnt = new(new DecRefPicMarkingEntry[this.DecRefPicMarking!.Value.EntryCount]);
-                for (int i = 0; i < this.DecRefPicMarking!.Value.EntryCount; i++)
-                    entriesCnt.Span[i] = this.DecRefPicMarking!.Value.GetEntry(originalReader, i);
+                Memory<DecRefPicMarkingEntry> entriesCnt = new(new DecRefPicMarkingEntry[DecRefPicMarking!.Value.EntryCount]);
+                for (int i = 0; i < DecRefPicMarking!.Value.EntryCount; i++)
+                    entriesCnt.Span[i] = DecRefPicMarking!.Value.GetEntry(originalReader, i);
 
-                await this.DecRefPicMarking.Value.WriteAsync(writer, idrPicFlag, entriesCnt);
+                await DecRefPicMarking.Value.WriteAsync(writer, idrPicFlag, entriesCnt);
                 if (!sliceHeaderRestrictionFlag)
                 {
                     await writer.WriteBitAsync(StoreRefBasePicFlag);
                     if ((useRefBasePicFlag || StoreRefBasePicFlag) && !idrPicFlag)
-                        await this.DecRefBasePicMarking!.Value.WriteAsync(writer, originalReader);
+                        await DecRefBasePicMarking!.Value.WriteAsync(writer, originalReader);
                 }
             }
         }

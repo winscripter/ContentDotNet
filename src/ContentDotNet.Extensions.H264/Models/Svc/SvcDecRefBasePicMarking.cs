@@ -1,6 +1,6 @@
 ﻿using System.Reflection.PortableExecutable;
 
-namespace ContentDotNet.Extensions.H264.Extensions.Svc.Models;
+namespace ContentDotNet.Extensions.H264.Models.Svc;
 
 /// <summary>
 /// Represents an entry for SVC Decoded Reference Base Picture Marking.

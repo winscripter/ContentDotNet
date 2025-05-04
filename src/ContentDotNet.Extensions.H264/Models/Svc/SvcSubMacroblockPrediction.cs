@@ -1,7 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Containers;
 using ContentDotNet.Extensions.H264.Models;
 
-namespace ContentDotNet.Extensions.H264.Extensions.Svc.Models;
+namespace ContentDotNet.Extensions.H264.Models.Svc;
 
 /// <summary>
 /// Represents the prediction information for a sub-macroblock in SVC (Scalable Video Coding).

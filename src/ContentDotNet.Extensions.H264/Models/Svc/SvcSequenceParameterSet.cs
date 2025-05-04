@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264.Extensions.Svc.Models;
+﻿namespace ContentDotNet.Extensions.H264.Models.Svc;
 
 /// <summary>
 /// Represents the SVC (Scalable Video Coding) sequence parameter set for H.264.
