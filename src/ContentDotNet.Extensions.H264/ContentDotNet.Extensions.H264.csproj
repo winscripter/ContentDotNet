@@ -44,4 +44,9 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Extensions\Avc3D\Models\" />
+    <Folder Include="Extensions\Mvc\Models\" />
+  </ItemGroup>
+
 </Project>

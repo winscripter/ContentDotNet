@@ -1,5 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Extensions.H264.Utilities;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264;
 
@@ -61,4 +63,13 @@ public static class H264Extensions
 
         return new Size((int)width, (int)height);
     }
+
+    /// <summary>
+    ///   Returns the picture size in map units from the SPS.
+    /// </summary>
+    /// <param name="sps">SPS to take picture size in map units of.</param>
+    /// <returns>Picture size in map units</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int GetPicSizeInMapUnits(this SequenceParameterSet sps) =>
+        (int)((sps.PicWidthInMbsMinus1 + 1) * ((2 - Int32Boolean.I32(sps.FrameMbsOnlyFlag)) * (sps.PicHeightInMapUnitsMinus1 + 1)));
 }

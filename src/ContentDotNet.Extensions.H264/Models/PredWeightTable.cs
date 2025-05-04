@@ -623,7 +623,7 @@ public struct PredWeightTable : IEquatable<PredWeightTable>
 
         if (sliceType % 5 == 1)
         {
-            PredWeightTableList.Write(writer, chromaArrayType, L0.Count, optionsL1);
+            PredWeightTableList.Write(writer, chromaArrayType, L1!.Value.Count, optionsL1);
         }
     }
 

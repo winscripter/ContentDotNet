@@ -1,6 +1,5 @@
 ﻿using ContentDotNet.Extensions.H264.Internal.Decoding;
 using ContentDotNet.Extensions.H264.Models;
-using System.Reflection.PortableExecutable;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Helpers;

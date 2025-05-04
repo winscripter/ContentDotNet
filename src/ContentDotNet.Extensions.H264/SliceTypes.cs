@@ -522,4 +522,112 @@ public static class SliceTypes
     /// <returns><c>true</c> if the slice type is an SI-slice; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsSI(uint sliceType) => sliceType is 4 or 9;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EI-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EI-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEI(int sliceType, uint nalUnitType) => IsI(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EI-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EI-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEI(uint sliceType, uint nalUnitType) => IsI(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EI-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EI-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEI(uint sliceType, int nalUnitType) => IsI(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EI-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EI-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEI(int sliceType, int nalUnitType) => IsI(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EP-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EP-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEP(int sliceType, uint nalUnitType) => IsP(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EP-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EP-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEP(uint sliceType, uint nalUnitType) => IsP(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EP-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EP-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEP(uint sliceType, int nalUnitType) => IsP(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EP-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EP-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEP(int sliceType, int nalUnitType) => IsP(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EB-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EB-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEB(int sliceType, uint nalUnitType) => IsB(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EB-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EB-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEB(uint sliceType, uint nalUnitType) => IsB(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EB-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EB-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEB(uint sliceType, int nalUnitType) => IsB(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given slice type corresponds to an EB-slice.
+    /// </summary>
+    /// <param name="sliceType">The slice type to check.</param>
+    /// <param name="nalUnitType">Type of the NAL unit.</param>
+    /// <returns><c>true</c> if the slice type is an EB-slice; otherwise, <c>false</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsEB(int sliceType, int nalUnitType) => IsB(sliceType) && nalUnitType == 14;
 }
