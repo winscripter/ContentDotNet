@@ -2,9 +2,9 @@
 using ContentDotNet.Extensions.H264.Models;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
-namespace ContentDotNet.Extensions.H264.Helpers;
+namespace ContentDotNet.Extensions.H264.Internal.Entropies;
 
-internal static class CavlcResidualHelpers
+internal static class Cavlc
 {
     // Each element is separated with the following columns:
     //

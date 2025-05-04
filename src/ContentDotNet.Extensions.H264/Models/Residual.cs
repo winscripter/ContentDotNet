@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.Extensions.H264.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
+using ContentDotNet.Extensions.H264.Internal.Entropies;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
 using static ContentDotNet.Extensions.H264.SliceTypes;
@@ -189,8 +190,8 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
         int TotalCoeff;
         int TrailingOnes;
 
-        int nC = CavlcResidualHelpers.GetNC(reader, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
-        var totalCoeffAndTrailingOnes = CavlcResidualHelpers.DecodeCoeffToken(reader, nC)
+        int nC = Cavlc.GetNC(reader, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
+        var totalCoeffAndTrailingOnes = Cavlc.DecodeCoeffToken(reader, nC)
                                         ?? throw new VideoCodecDecoderException("Could not retrieve TotalCoeff(coeff_token) and TrailingOnes(coeff_token) for CAVLC residual block");
     
         TotalCoeff = totalCoeffAndTrailingOnes.TotalCoeff;
@@ -370,7 +371,7 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
 
         writer.WriteCE(this.CoeffToken);
 
-        (byte vlc, int size) = CavlcResidualHelpers.GetVlcAndSize((int)CoeffToken, nC);
+        (byte vlc, int size) = Cavlc.GetVlcAndSize((int)CoeffToken, nC);
         writer.WriteBits(vlc, (uint)size);
 
         Container16UInt32 levelVal = new();
@@ -476,7 +477,7 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
 
         await writer.WriteCEAsync(this.CoeffToken);
 
-        (byte vlc, int size) = CavlcResidualHelpers.GetVlcAndSize((int)CoeffToken, nC);
+        (byte vlc, int size) = Cavlc.GetVlcAndSize((int)CoeffToken, nC);
         writer.WriteBits(vlc, (uint)size);
 
         Container16UInt32 levelVal = new();
