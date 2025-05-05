@@ -11,7 +11,7 @@ public enum H264Extension
     Baseline = 0,
 
     /// <summary>
-    ///   Use Scalable View Coding (SVC).
+    ///   Use Scalable Video Coding (SVC).
     /// </summary>
     ScalableVideoCoding = 1,
 
