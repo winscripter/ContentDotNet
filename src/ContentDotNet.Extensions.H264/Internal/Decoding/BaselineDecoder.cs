@@ -2,14 +2,15 @@
 
 internal sealed partial class BaselineDecoder
 {
-    private readonly DerivationContext _derivationContext;
-    private readonly IMacroblockUtility _macroblockUtility;
+    private readonly Intra _intra;
+    private readonly Inter _inter;
 
     public BaselineDecoder(DerivationContext derivationContext, IMacroblockUtility macroblockUtility)
     {
-        _derivationContext = derivationContext;
-        _macroblockUtility = macroblockUtility;
-
-        InitializeInterPrediction();
+        _intra = new Intra(macroblockUtility);
+        _inter = new Inter(derivationContext, macroblockUtility);
     }
+
+    public Intra Intra => _intra;
+    public Inter Inter => _inter;
 }
