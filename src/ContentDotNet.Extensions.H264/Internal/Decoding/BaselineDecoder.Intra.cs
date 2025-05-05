@@ -20,7 +20,7 @@ internal partial class BaselineDecoder
             Span<int> remIntra4x4PredMode,
             Span<bool> prevIntra4x4PredModeFlag)
         {
-            Derive4x4LumaBlocks(luma4x4BlkIdx, dc, out int mbAddrA, out bool mbAddrAAvailable, out int luma4x4BlkIdxA, out _, out int mbAddrB, out bool mbAddrBAvailable, out int luma4x4BlkIdxB, out _);
+            Inter.Derive4x4LumaBlocks(luma4x4BlkIdx, dc, out int mbAddrA, out bool mbAddrAAvailable, out int luma4x4BlkIdxA, out _, out int mbAddrB, out bool mbAddrBAvailable, out int luma4x4BlkIdxB, out _);
 
             bool dcPredModePredictedFlag = !mbAddrAAvailable || !mbAddrBAvailable
                                            || mbAddrAAvailable && constrainedIntraPredFlag
@@ -140,7 +140,7 @@ internal partial class BaselineDecoder
                 int xN = xO + x;
                 int yN = yO + y;
 
-                DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
+                Inter.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
                 Util264.Inverse4x4LumaScan(mbAddrN, ref xW, ref yW);
 
                 if (isAvailable)
@@ -445,7 +445,7 @@ internal partial class BaselineDecoder
             Span<bool> prevIntra8x8PredModeFlag,
             int luma8x8BlkIdx)
         {
-            Derive8x8LumaBlocks(
+            Inter.Derive8x8LumaBlocks(
                 dc,
                 luma8x8BlkIdx,
                 out int mbAddrA, out bool mbAddrAAvailable, out int luma8x8BlkIdxA, out bool luma8x8BlkIdxAAvailable,
@@ -761,7 +761,7 @@ internal partial class BaselineDecoder
                 int yN = yO + y;
 
                 int mbAddrN = 0;
-                DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool mbAddrNAvailable);
+                Inter.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool mbAddrNAvailable);
 
                 for (int yInner = -1; yInner < 8; yInner++)
                     Internal(-1, yInner, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
@@ -976,7 +976,7 @@ internal partial class BaselineDecoder
             static void Core(int x, int y, DerivationContext dc, Span<int> p, Span<int> availability, Matrix16x16 cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
             {
                 int mbAddrN = 0;
-                DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
+                Inter.DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
 
                 for (int yInner = -1; yInner < 16; yInner++) Internal(-1, yInner, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
                 for (int xInner = 0; xInner < 16; xInner++) Internal(xInner, -1, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
@@ -1251,7 +1251,7 @@ internal partial class BaselineDecoder
             static void Core(int x, int y, Span<int> availability, Span<int> p, Matrix16x16 cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
             {
                 int mbAddrN = 0;
-                DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
+                Inter.DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
 
                 bool isUnavailable = !valid ||
                                      (util.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag) ||

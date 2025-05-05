@@ -11,6 +11,6 @@ internal sealed partial class BaselineDecoder
         _inter = new Inter(derivationContext, macroblockUtility);
     }
 
-    public Intra Intra => _intra;
-    public Inter Inter => _inter;
+    public Intra IntraPredictor => _intra;
+    public Inter InterPredictor => _inter;
 }
