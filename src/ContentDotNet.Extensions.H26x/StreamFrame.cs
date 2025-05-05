@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿namespace ContentDotNet.Extensions.H26x;
 
 /// <summary>
 ///   Represents a frame that's directly bound to a stream.
@@ -20,7 +20,7 @@ public sealed class StreamFrame : IFrame
         _width = width;
         _height = height;
         _stream = stream;
-        
+
         for (int x = 0; x < _width; x++)
         {
             for (int y = 0; y < _height; y++)
@@ -43,26 +43,26 @@ public sealed class StreamFrame : IFrame
     {
         get
         {
-            long offset = (x * _width * 3) + (y * 3);
-            long prevOffset = this._stream.Position;
-            this._stream.Position = offset;
+            long offset = x * _width * 3 + y * 3;
+            long prevOffset = _stream.Position;
+            _stream.Position = offset;
 
             var yuv = new Yuv((byte)_stream.ReadByte(), (byte)_stream.ReadByte(), (byte)_stream.ReadByte());
 
-            this._stream.Position = prevOffset;
+            _stream.Position = prevOffset;
             return yuv;
         }
         set
         {
-            long offset = (x * _width * 3) + (y * 3);
-            long prevOffset = this._stream.Position;
-            this._stream.Position = offset;
+            long offset = x * _width * 3 + y * 3;
+            long prevOffset = _stream.Position;
+            _stream.Position = offset;
 
             _stream.WriteByte(value.Y);
             _stream.WriteByte(value.U);
             _stream.WriteByte(value.V);
 
-            this._stream.Position = prevOffset;
+            _stream.Position = prevOffset;
         }
     }
 
@@ -92,7 +92,7 @@ public sealed class StreamFrame : IFrame
     /// </summary>
     public void Dispose()
     {
-        this._stream.Dispose();
+        _stream.Dispose();
         GC.SuppressFinalize(this);
     }
 }

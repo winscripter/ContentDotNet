@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿namespace ContentDotNet.Extensions.H26x;
 
 /// <summary>
 ///   Represents a frame.
