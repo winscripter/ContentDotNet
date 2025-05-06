@@ -20,7 +20,7 @@ internal partial class BaselineDecoder
             Span<int> remIntra4x4PredMode,
             Span<bool> prevIntra4x4PredModeFlag)
         {
-            Inter.Derive4x4LumaBlocks(luma4x4BlkIdx, dc, out int mbAddrA, out bool mbAddrAAvailable, out int luma4x4BlkIdxA, out _, out int mbAddrB, out bool mbAddrBAvailable, out int luma4x4BlkIdxB, out _);
+            Scanning.Derive4x4LumaBlocks(luma4x4BlkIdx, dc, out int mbAddrA, out bool mbAddrAAvailable, out int luma4x4BlkIdxA, out _, out int mbAddrB, out bool mbAddrBAvailable, out int luma4x4BlkIdxB, out _);
 
             bool dcPredModePredictedFlag = !mbAddrAAvailable || !mbAddrBAvailable
                                            || mbAddrAAvailable && constrainedIntraPredFlag
@@ -128,7 +128,7 @@ internal partial class BaselineDecoder
         {
             int xO = 0;
             int yO = 0;
-            Util264.Inverse4x4LumaScan(luma4x4BlkIdx, ref xO, ref yO);
+            Scanning.Inverse4x4LumaScan(luma4x4BlkIdx, ref xO, ref yO);
 
             for (int y = -1; y < 4; y++)
             {
@@ -140,8 +140,8 @@ internal partial class BaselineDecoder
                 int xN = xO + x;
                 int yN = yO + y;
 
-                Inter.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
-                Util264.Inverse4x4LumaScan(mbAddrN, ref xW, ref yW);
+                Scanning.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
+                Scanning.Inverse4x4LumaScan(mbAddrN, ref xW, ref yW);
 
                 if (isAvailable)
                 {
@@ -149,7 +149,7 @@ internal partial class BaselineDecoder
                     int yM = 0;
                     int xTemp = 0;
                     int yTemp = 0;
-                    Util264.InverseMacroblockScan(mbAddrN, isFrame, isField, mbaffFrameFlag, pictureWidthInSamplesL, ref xTemp, ref yTemp, ref xM, ref yM);
+                    Scanning.InverseMacroblockScan(mbAddrN, isFrame, isField, mbaffFrameFlag, pictureWidthInSamplesL, ref xTemp, ref yTemp, ref xM, ref yM);
 
                     if (mbaffFrameAndMbIsField) PSet(p, x, y, cSL[xM + xW, yM + 2 * yW]);
                     else PSet(p, x, y, cSL[xM + xW, yM + yW]);
@@ -445,7 +445,7 @@ internal partial class BaselineDecoder
             Span<bool> prevIntra8x8PredModeFlag,
             int luma8x8BlkIdx)
         {
-            Inter.Derive8x8LumaBlocks(
+            Scanning.Derive8x8LumaBlocks(
                 dc,
                 luma8x8BlkIdx,
                 out int mbAddrA, out bool mbAddrAAvailable, out int luma8x8BlkIdxA, out bool luma8x8BlkIdxAAvailable,
@@ -513,7 +513,7 @@ internal partial class BaselineDecoder
         {
             int xO = 0;
             int yO = 0; // yo indeed!
-            Util264.Inverse8x8LumaScan(luma8x8BlkIdx, ref xO, ref yO);
+            Scanning.Inverse8x8LumaScan(luma8x8BlkIdx, ref xO, ref yO);
 
             Span<int> availability = stackalloc int[8 * 8];
 
@@ -761,7 +761,7 @@ internal partial class BaselineDecoder
                 int yN = yO + y;
 
                 int mbAddrN = 0;
-                Inter.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool mbAddrNAvailable);
+                Scanning.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool mbAddrNAvailable);
 
                 for (int yInner = -1; yInner < 8; yInner++)
                     Internal(-1, yInner, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
@@ -780,7 +780,7 @@ internal partial class BaselineDecoder
 
                 if (!isUnavailable)
                 {
-                    Util264.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xM, ref yM);
+                    Scanning.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xM, ref yM);
 
                     if (dc.IsMbaff && !macroblockUtility.IsFrameMacroblock(mbAddrN))
                     {
@@ -976,7 +976,7 @@ internal partial class BaselineDecoder
             static void Core(int x, int y, DerivationContext dc, Span<int> p, Span<int> availability, Matrix16x16 cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
             {
                 int mbAddrN = 0;
-                Inter.DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
+                Scanning.DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
 
                 for (int yInner = -1; yInner < 16; yInner++) Internal(-1, yInner, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
                 for (int xInner = 0; xInner < 16; xInner++) Internal(xInner, -1, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
@@ -997,7 +997,7 @@ internal partial class BaselineDecoder
 
                         int xM = 0;
                         int yM = 0;
-                        Util264.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xM, ref yM);
+                        Scanning.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xM, ref yM);
 
                         if (dc.IsMbaff && !macroblockUtility.IsFrameMacroblock(mbAddrN))
                             PSet(p, x, y, cSL[xM + xW, yM + 2 * yW]);
@@ -1044,7 +1044,7 @@ internal partial class BaselineDecoder
                 // DC
                 for (int chroma4x4BlkIdx = 0; chroma4x4BlkIdx < (1 << (chromaArrayType + 1)) - 1; chroma4x4BlkIdx++)
                 {
-                    Util264.Inverse4x4ChromaScan(chroma4x4BlkIdx, out int xO, out int yO);
+                    Scanning.Inverse4x4ChromaScan(chroma4x4BlkIdx, out int xO, out int yO);
                     if ((xO == 0 && yO == 0) || (xO > 0 && yO > 0))
                     {
                         if (SamplingUtils.AllMarkedAvailable(availability, xO, xO + 3, yO, yO + 3) &&
@@ -1251,7 +1251,7 @@ internal partial class BaselineDecoder
             static void Core(int x, int y, Span<int> availability, Span<int> p, Matrix16x16 cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
             {
                 int mbAddrN = 0;
-                Inter.DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
+                Scanning.DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
 
                 bool isUnavailable = !valid ||
                                      (util.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag) ||
@@ -1267,7 +1267,7 @@ internal partial class BaselineDecoder
 
                     int xL = 0;
                     int yL = 0;
-                    Util264.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xL, ref yL);
+                    Scanning.InverseMacroblockScan(mbAddrN, !dc.IsMbaffFieldMacroblock, dc.IsMbaffFieldMacroblock, dc.IsMbaff, dc.PictureWidthInSamplesL, ref x, ref y, ref xL, ref yL);
 
                     int xM = (xL >> 4) * sizes.Width;
                     int yM = ((yL >> 4) * sizes.Height) + (yL % 2);

@@ -134,3 +134,13 @@ Or, to write, for instance, an SPS NAL unit (you'll have to write SPS afterwards
 writer.WriteNalUnitSps(nalRefIdc: 0u);
 ```
 As you write specific components, the data will be in your `h264Stream`.
+
+### 5. What's supported?
+> **Note**: This is a preview release.
+
+1. CAVLC
+    - CABAC is being worked on, with most work already being done
+2. MBAFF
+3. I, P and B slices
+4. Extensions like 3D AVC, SVC, MVC can be parsed, though not processed
+5. Encoding
