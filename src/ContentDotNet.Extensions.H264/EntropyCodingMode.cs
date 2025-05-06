@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 /// Represents the H.264 entropy coding mode.

@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Utilities;
+using System.Drawing;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
@@ -30,12 +31,18 @@ internal partial class BaselineDecoder
         private DerivationContext _derivationContext;
         private IMacroblockUtility _macroblockUtility;
 
-        public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility)
+        private IReferencePictureListFactory factory = null!;
+        private Size frameSize = default;
+
+        public ReferencePictureList RefPicListL0 { get; private set; } = null!;
+        public ReferencePictureList? RefPicListL1 { get; private set; }
+
+        public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, IReferencePictureListFactory refPicList, Size frameSize)
         {
             _derivationContext = derivationContext;
             _macroblockUtility = macroblockUtility;
 
-            InitializeInterPrediction();
+            InitializeInterPrediction(refPicList, frameSize);
         }
 
         public DerivationContext DerivationContext
@@ -44,7 +51,7 @@ internal partial class BaselineDecoder
             set => _derivationContext = value;
         }
 
-        private void InitializeInterPrediction()
+        private void InitializeInterPrediction(IReferencePictureListFactory refPicList, Size frameSize)
         {
             sliceType = GeneralSliceType.I; // Default
             mbTypeArray = new();
@@ -59,6 +66,12 @@ internal partial class BaselineDecoder
             mvL1 = new ArrayMatrix4x4x2();
             mvCL0 = new ArrayMatrix4x4x2();
             mvCL1 = new ArrayMatrix4x4x2();
+
+            this.factory = refPicList;
+            this.frameSize = frameSize;
+
+            this.RefPicListL0 = refPicList.Create(frameSize.Width, frameSize.Height, 16);
+            this.RefPicListL1 = null; // What if it's not a B slice? Then we're wasting memory. Store factory and frameSize separately.
         }
     }
 }
