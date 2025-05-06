@@ -13,5 +13,5 @@ public enum EntropyCodingMode
     /// <summary>
     /// CABAC is used.
     /// </summary>
-    Cabac // nice palindrome lol
+    Cabac
 }
