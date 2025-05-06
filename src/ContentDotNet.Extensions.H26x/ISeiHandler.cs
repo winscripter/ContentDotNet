@@ -8,12 +8,12 @@ public interface ISeiHandler
     /// <summary>
     ///   The integer type of the SEI model that it accepts.
     /// </summary>
-    static abstract uint Code { get; }
+    uint Code { get; }
 
     /// <summary>
     ///   Type of the underlying model handle.
     /// </summary>
-    static abstract Type HandleType { get; }
+    Type HandleType { get; }
 
     /// <summary>
     ///   Given that the specified bitstream is at the location of SEI
@@ -23,5 +23,5 @@ public interface ISeiHandler
     /// <param name="payloadType">Type of the payload</param>
     /// <param name="payloadSize">Size of the payload</param>
     /// <returns>A handle.</returns>
-    static abstract ISeiModelHandle SkipData(BitStreamReader reader, uint payloadType, uint payloadSize);
+    ISeiModelHandle SkipData(BitStreamReader reader, uint payloadType, uint payloadSize);
 }

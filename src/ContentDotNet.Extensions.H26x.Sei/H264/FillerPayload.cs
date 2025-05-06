@@ -2,11 +2,11 @@
 
 public sealed class FillerPayloadHandler : ISeiHandler
 {
-    public static uint Code => 3;
+    public uint Code => 3;
 
-    public static Type HandleType => typeof(FillerPayloadModelHandle);
+    public Type HandleType => typeof(FillerPayloadModelHandle);
 
-    public static ISeiModelHandle SkipData(BitStreamReader reader, uint payloadType, uint payloadSize)
+    public ISeiModelHandle SkipData(BitStreamReader reader, uint payloadType, uint payloadSize)
     {
         var start = reader.GetState();
 
@@ -21,7 +21,7 @@ public sealed class FillerPayloadHandler : ISeiHandler
 
 public sealed class FillerPayloadModelHandle : ISeiModelHandle
 {
-    public static Type ModelType => typeof(FillerPayloadModel);
+    public Type ModelType => typeof(FillerPayloadModel);
 
     public ReaderState Start { get; }
 
