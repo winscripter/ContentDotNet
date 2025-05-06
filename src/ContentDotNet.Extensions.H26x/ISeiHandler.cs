@@ -20,6 +20,8 @@ public interface ISeiHandler
     ///   data, skips that data and creates the handle type.
     /// </summary>
     /// <param name="reader">Reader</param>
+    /// <param name="payloadType">Type of the payload</param>
+    /// <param name="payloadSize">Size of the payload</param>
     /// <returns>A handle.</returns>
-    static abstract ISeiModelHandle SkipData(BitStreamReader reader);
+    static abstract ISeiModelHandle SkipData(BitStreamReader reader, uint payloadType, uint payloadSize);
 }
