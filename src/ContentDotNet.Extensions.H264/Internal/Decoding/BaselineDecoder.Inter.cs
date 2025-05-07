@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H264.Utilities;
+﻿using ContentDotNet.Extensions.H264.Helpers;
+using ContentDotNet.Extensions.H264.Utilities;
 using System.Drawing;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
@@ -164,6 +165,43 @@ internal partial class BaselineDecoder
                     mvLXN.Y *= 2;
                     refIdxLXN /= 2;
                 }
+            }
+        }
+
+        private static void DeriveMedianLumaMotionVectorPrediction(
+            bool validA,
+            bool validB,
+            bool validC,
+            ref MotionVector mvLXA, ref MotionVector mvLXB, ref MotionVector mvLXC,
+            ref int refIdxLXA, ref int refIdxLXB, ref int refIdxLXC,
+            int refIdxLX,
+            out MotionVector mvpLX)
+        {
+            if (!validB && !validC && validA)
+            {
+                mvLXB = mvLXA;
+                mvLXC = mvLXA;
+                refIdxLXB = refIdxLXA;
+                refIdxLXC = refIdxLXA;
+            }
+
+            if (refIdxLXA == refIdxLX)
+            {
+                mvpLX = mvLXA;
+            }
+            else if (refIdxLXB == refIdxLX)
+            {
+                mvpLX = mvLXB;
+            }
+            else if (refIdxLXC == refIdxLX)
+            {
+                mvpLX = mvLXC;
+            }
+            else
+            {
+                mvpLX = (0, 0);
+                mvpLX.X = Util264.Median(mvLXA.X, mvLXB.X, mvLXC.X);
+                mvpLX.X = Util264.Median(mvLXA.Y, mvLXB.Y, mvLXC.Y);
             }
         }
     }
