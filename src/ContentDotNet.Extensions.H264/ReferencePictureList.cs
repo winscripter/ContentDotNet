@@ -1,23 +1,30 @@
-﻿using ContentDotNet.Extensions.H26x;
-
-namespace ContentDotNet.Extensions.H264;
+﻿namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 ///   Represents a reference picture list.
 /// </summary>
-public abstract class ReferencePictureList : IDisposable
+public sealed class ReferencePictureList : IDisposable
 {
     private bool _isDisposed = false;
+    private ReferencePicture[]? pics;
+
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="ReferencePictureList"/> class.
+    /// </summary>
+    public ReferencePictureList()
+    {
+        pics = new ReferencePicture[16];
+    }
 
     /// <summary>
     ///   Is this reference picture list disposed?
     /// </summary>
-    protected bool IsDisposed => _isDisposed;
+    public bool IsDisposed => _isDisposed;
 
     /// <summary>
     ///   Throws <see cref="ObjectDisposedException"/> if <see cref="IsDisposed"/> is <c>true</c>.
     /// </summary>
-    protected void ThrowIfDisposed()
+    private void ThrowIfDisposed()
     {
         ObjectDisposedException.ThrowIf(_isDisposed, this);
     }
@@ -27,7 +34,11 @@ public abstract class ReferencePictureList : IDisposable
     /// </summary>
     /// <param name="index">Frame index</param>
     /// <returns>Frame at index</returns>
-    public abstract IFrame this[int index] { get; set; }
+    public ReferencePicture this[int index]
+    {
+        get => pics![index];
+        set => pics![index] = value;
+    }
 
     /// <summary>
     ///   Number of frames.
@@ -37,12 +48,12 @@ public abstract class ReferencePictureList : IDisposable
     /// <summary>
     ///   Resets all frames to their default values.
     /// </summary>
-    public abstract void Clear();
+    public void Clear() => Array.Clear(pics!);
 
     /// <summary>
     ///   Actual disposal logic is here.
     /// </summary>
-    protected abstract void DisposeInternal();
+    private void DisposeInternal() => pics = null;
 
     /// <summary>
     ///   Releases memory.
