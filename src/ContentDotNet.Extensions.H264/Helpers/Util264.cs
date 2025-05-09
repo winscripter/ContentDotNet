@@ -140,4 +140,83 @@ internal static class Util264
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ByteAligned(BitStreamReader reader) => reader.GetState().BitPosition == 0;
+
+    public static int PicOrderCnt(SequenceParameterSet sps, PictureParameterSet pps, SliceHeader shd, int prevPicOrderCntLsb, int prevPicOrderCntMsb, uint nalRefIdc)
+    {
+        int maxPicOrderCntLsb = 1 << ((int)sps.Log2MaxPicOrderCntLsbMinus4 + 4);
+        int topFieldOrderCnt = 0;
+        int bottomFieldOrderCnt = 0;
+
+        int picOrderCntMsb;
+
+        switch (sps.PicOrderCntType)
+        {
+            case 0u:
+                {
+                    if (shd.PicOrderCntLsb < prevPicOrderCntLsb &&
+                       (prevPicOrderCntLsb - shd.PicOrderCntLsb) >= maxPicOrderCntLsb / 2)
+                    {
+                        picOrderCntMsb = prevPicOrderCntMsb + maxPicOrderCntLsb;
+                    }
+                    else if (shd.PicOrderCntLsb > prevPicOrderCntLsb &&
+                             (shd.PicOrderCntLsb - prevPicOrderCntLsb) > maxPicOrderCntLsb / 2)
+                    {
+                        picOrderCntMsb = prevPicOrderCntMsb - maxPicOrderCntLsb;
+                    }
+                    else
+                    {
+                        picOrderCntMsb = prevPicOrderCntMsb;
+                    }
+
+                    topFieldOrderCnt = picOrderCntMsb + (int)shd.PicOrderCntLsb;
+                    bottomFieldOrderCnt = topFieldOrderCnt + shd.DeltaPicOrderCntBottom;
+                }
+                break;
+
+            case 1u:
+                {
+                    int absFrameNum = (int)shd.FrameNum;
+                    if (nalRefIdc == 0 && absFrameNum > 0)
+                        absFrameNum--;
+
+                    int expectedPicOrderCnt = 0;
+                    if (absFrameNum > 0)
+                    {
+                        int picOrderCntCycleCnt = (absFrameNum - 1) / (int)sps.NumRefFramesInPicOrderCntCycle;
+                        int frameNumInCycle = (absFrameNum - 1) % (int)sps.NumRefFramesInPicOrderCntCycle;
+
+                        int expectedDeltaPerCycle = 0;
+                        for (int i = 0; i < sps.NumRefFramesInPicOrderCntCycle; i++)
+                            expectedDeltaPerCycle += (int)sps.OffsetForRefFrame[i];
+
+                        expectedPicOrderCnt = picOrderCntCycleCnt * expectedDeltaPerCycle;
+                        for (int i = 0; i <= frameNumInCycle; i++)
+                            expectedPicOrderCnt += (int)sps.OffsetForRefFrame[i];
+                    }
+
+                    if (nalRefIdc == 0)
+                        expectedPicOrderCnt += sps.OffsetForNonRefPic;
+
+                    topFieldOrderCnt = expectedPicOrderCnt + shd.DeltaPicOrderCnt.Item1;
+                    bottomFieldOrderCnt = topFieldOrderCnt + sps.OffsetForTopToBottomField + shd.DeltaPicOrderCnt.Item2;
+                }
+                break;
+
+            case 2u:
+                {
+                    int poc = 2 * (int)shd.FrameNum;
+                    if (nalRefIdc == 0)
+                        poc -= 1;
+
+                    topFieldOrderCnt = poc;
+                    bottomFieldOrderCnt = poc;
+                }
+                break;
+
+            default:
+                break;
+        }
+
+        return Math.Min(topFieldOrderCnt, bottomFieldOrderCnt);
+    }
 }

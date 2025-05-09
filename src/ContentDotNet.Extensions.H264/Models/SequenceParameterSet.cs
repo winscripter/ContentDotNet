@@ -132,6 +132,11 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     public uint NumRefFramesInPicOrderCntCycle;
 
     /// <summary>
+    ///   Offset for ref frames in POC.
+    /// </summary>
+    public Container256UInt32 OffsetForRefFrame;
+
+    /// <summary>
     ///   Maximum number of reference frames.
     /// </summary>
     public uint MaxNumRefFrames;
@@ -229,6 +234,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     /// <param name="offsetForNonRefPic">Part of the SPS</param>
     /// <param name="offsetForTopToBottomField">Part of the SPS</param>
     /// <param name="numRefFramesInPicOrderCntCycle">Part of the SPS</param>
+    /// <param name="offsetForRefFrame">Part of the SPS</param>
     /// <param name="maxNumRefFrames">Part of the SPS</param>
     /// <param name="gapsInFrameNumValueAllowedFlag">Part of the SPS</param>
     /// <param name="picWidthInMbsMinus1">Part of the SPS</param>
@@ -243,7 +249,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     /// <param name="frameCropBottomOffset">Part of the SPS</param>
     /// <param name="vuiParametersPresentFlag">Part of the SPS</param>
     /// <param name="vuiParameters">Part of the SPS</param>
-    public SequenceParameterSet(uint profileIdc, bool constraintSet0Flag, bool constraintSet1Flag, bool constraintSet2Flag, bool constraintSet3Flag, bool constraintSet4Flag, bool constraintSet5Flag, uint reservedZero2Bits, uint levelIdc, uint spsId, uint chromaFormatIdc, bool separateColourPlaneFlag, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, bool qpprimeYZeroTransformBypassFlag, bool seqScalingMatrixPresentFlag, ScalingMatrices? scalingMatrix, uint log2MaxFrameNumMinus4, uint picOrderCntType, uint log2MaxPicOrderCntLsbMinus4, bool deltaPicOrderAlwaysZeroFlag, int offsetForNonRefPic, int offsetForTopToBottomField, uint numRefFramesInPicOrderCntCycle, uint maxNumRefFrames, bool gapsInFrameNumValueAllowedFlag, uint picWidthInMbsMinus1, uint picHeightInMapUnitsMinus1, bool frameMbsOnlyFlag, bool mbAdaptiveFrameFieldFlag, bool direct8X8InferenceFlag, bool frameCroppingFlag, uint frameCropLeftOffset, uint frameCropRightOffset, uint frameCropTopOffset, uint frameCropBottomOffset, bool vuiParametersPresentFlag, VuiParameters? vuiParameters)
+    public SequenceParameterSet(uint profileIdc, bool constraintSet0Flag, bool constraintSet1Flag, bool constraintSet2Flag, bool constraintSet3Flag, bool constraintSet4Flag, bool constraintSet5Flag, uint reservedZero2Bits, uint levelIdc, uint spsId, uint chromaFormatIdc, bool separateColourPlaneFlag, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, bool qpprimeYZeroTransformBypassFlag, bool seqScalingMatrixPresentFlag, ScalingMatrices? scalingMatrix, uint log2MaxFrameNumMinus4, uint picOrderCntType, uint log2MaxPicOrderCntLsbMinus4, bool deltaPicOrderAlwaysZeroFlag, int offsetForNonRefPic, int offsetForTopToBottomField, uint numRefFramesInPicOrderCntCycle, Container256UInt32 offsetForRefFrame, uint maxNumRefFrames, bool gapsInFrameNumValueAllowedFlag, uint picWidthInMbsMinus1, uint picHeightInMapUnitsMinus1, bool frameMbsOnlyFlag, bool mbAdaptiveFrameFieldFlag, bool direct8X8InferenceFlag, bool frameCroppingFlag, uint frameCropLeftOffset, uint frameCropRightOffset, uint frameCropTopOffset, uint frameCropBottomOffset, bool vuiParametersPresentFlag, VuiParameters? vuiParameters)
     {
         ProfileIdc = profileIdc;
         ConstraintSet0Flag = constraintSet0Flag;
@@ -269,6 +275,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         OffsetForNonRefPic = offsetForNonRefPic;
         OffsetForTopToBottomField = offsetForTopToBottomField;
         NumRefFramesInPicOrderCntCycle = numRefFramesInPicOrderCntCycle;
+        OffsetForRefFrame = offsetForRefFrame;
         MaxNumRefFrames = maxNumRefFrames;
         GapsInFrameNumValueAllowedFlag = gapsInFrameNumValueAllowedFlag;
         PicWidthInMbsMinus1 = picWidthInMbsMinus1;
@@ -352,6 +359,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         int offsetForNonRefPic = 0;
         int offsetForTopToBottomField = 0;
         uint numRefFramesInPicOrderCntCycle = 0u;
+        var offsetForRefFrame = new Container256UInt32();
         if (picOrderCntType == 1u)
         {
             deltaPicOrderAlwaysZeroFlag = reader.ReadBit();
@@ -359,7 +367,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
             offsetForTopToBottomField = reader.ReadSE();
             numRefFramesInPicOrderCntCycle = reader.ReadUE();
             for (int i = 0; i < numRefFramesInPicOrderCntCycle; i++)
-                _ = reader.ReadSE(); // offset_for_ref_frame[i] = SE
+                offsetForRefFrame[i] = (uint)reader.ReadSE();
         }
         uint maxNumRefFrames = reader.ReadUE();
         bool gapsInFrameNumValueAllowedFlag = reader.ReadBit();
@@ -412,6 +420,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
             offsetForNonRefPic,
             offsetForTopToBottomField,
             numRefFramesInPicOrderCntCycle,
+            offsetForRefFrame,
             maxNumRefFrames,
             gapsInFrameNumValueAllowedFlag,
             picWidthInMbsMinus1,
@@ -434,14 +443,13 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     ///   Writes the SPS to the bitstream.
     /// </summary>
     /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames are required when <see cref="PicOrderCntType"/> is 1.</param>
     /// <param name="vuiWriteOptions">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
     /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Span<int> offsetForRefFrames, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
+    public readonly void Write(BitStreamWriter writer, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
     {
-        PrepareForWrite(builder, offsetForRefFrames);
+        PrepareForWrite(builder);
 
         writer.WriteBits(ProfileIdc, 8);
         writer.WriteBit(ConstraintSet0Flag);
@@ -504,7 +512,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
             writer.WriteSE(OffsetForTopToBottomField);
             writer.WriteUE(NumRefFramesInPicOrderCntCycle);
             for (int i = 0; i < NumRefFramesInPicOrderCntCycle; i++)
-                writer.WriteSE(offsetForRefFrames[i]);
+                writer.WriteSE((int)OffsetForRefFrame[i]);
         }
 
         writer.WriteUE(MaxNumRefFrames);
@@ -541,206 +549,13 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
     ///   Writes the SPS to the bitstream.
     /// </summary>
     /// <param name="writer">Bitstream writer.</param>
-    /// <param name="options">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
-    /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, VuiWriteOptions options, ScalingMatrixBuilder? builder)
-    {
-        if (this.PicOrderCntType == 1u)
-            throw new InvalidOperationException("PicOrderCntType is 1 but offset for ref frames isn't provided");
-
-        Span<int> span = stackalloc int[1];
-        Write(writer, span, options, builder);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames</param>
-    /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Span<int> offsetForRefFrames, ScalingMatrixBuilder? builder)
-    {
-        if (this.VuiParametersPresentFlag)
-            throw new InvalidOperationException("VUI parameters are present");
-
-        Span<uint> sp1x1 = stackalloc uint[1];
-        Span<uint> sp1x2 = stackalloc uint[1];
-        Span<bool> sp1x3 = stackalloc bool[1];
-
-        Span<uint> sp2x1 = stackalloc uint[1];
-        Span<uint> sp2x2 = stackalloc uint[1];
-        Span<bool> sp2x3 = stackalloc bool[1];
-
-        var writeOptions = new VuiWriteOptions(new HrdWriteOptions(sp1x1, sp1x2, sp1x3), new HrdWriteOptions(sp2x1, sp2x2, sp2x3), false, false);
-
-        Write(writer, offsetForRefFrames, writeOptions, builder);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames</param>
-    /// <param name="options">VUI write options.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Span<int> offsetForRefFrames, VuiWriteOptions options)
-    {
-        if (this.SeqScalingMatrixPresentFlag)
-            throw new InvalidOperationException("Scaling matrix is present but is not provided");
-
-        Write(writer, offsetForRefFrames, options, null);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Span<int> offsetForRefFrames)
-    {
-        if (this.SeqScalingMatrixPresentFlag)
-            throw new InvalidOperationException("Scaling matrix is present but is not provided");
-
-        Write(writer, offsetForRefFrames, null);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="vuiwriteOptions">VUI write options</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, VuiWriteOptions vuiwriteOptions)
-    {
-        if (this.SeqScalingMatrixPresentFlag)
-            throw new InvalidOperationException("Scaling matrix is present but is not provided");
-
-        Span<int> offsetForRefFrames = stackalloc int[1];
-        Write(writer, offsetForRefFrames, vuiwriteOptions);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="builder">Scaling matrix builder</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, ScalingMatrixBuilder builder)
-    {
-        if (this.SeqScalingMatrixPresentFlag)
-            throw new InvalidOperationException("Scaling matrix is present but is not provided");
-
-        Span<int> offsetForRefFrames = stackalloc int[1];
-        Write(writer, offsetForRefFrames, builder);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="vuiWriteOptions">Writing options for the VUI.</param>
-    /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
-    {
-        if (this.PicOrderCntType == 1u)
-            throw new InvalidOperationException("PicOrderCntType is 1 but offset for ref frames isn't provided");
-
-        VuiWriteOptions spanVuiWriteOptions = new(
-            new HrdWriteOptions(vuiWriteOptions.NalHrdWriteOptions.BitRateValueMinus1.Span, vuiWriteOptions.NalHrdWriteOptions.CpbSizeValueMinus1.Span, vuiWriteOptions.NalHrdWriteOptions.CbrFlag.Span),
-            new HrdWriteOptions(vuiWriteOptions.VclHrdWriteOptions.BitRateValueMinus1.Span, vuiWriteOptions.VclHrdWriteOptions.CpbSizeValueMinus1.Span, vuiWriteOptions.VclHrdWriteOptions.CbrFlag.Span),
-            vuiWriteOptions.IsNalPresent,
-            vuiWriteOptions.IsVclPresent);
-
-        Span<int> span = stackalloc int[1];
-        Write(writer, span, spanVuiWriteOptions, builder);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames</param>
-    /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Memory<int> offsetForRefFrames, ScalingMatrixBuilder? builder)
-    {
-        Write(writer, offsetForRefFrames.Span, builder);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames</param>
-    /// <param name="options">VUI write options.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Memory<int> offsetForRefFrames, VuiWriteOptions options)
-    {
-        Write(writer, offsetForRefFrames.Span, options, null);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, Memory<int> offsetForRefFrames)
-    {
-        if (this.SeqScalingMatrixPresentFlag)
-            throw new InvalidOperationException("Scaling matrix is present but is not provided");
-
-        Write(writer, offsetForRefFrames.Span, null);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="vuiWriteOptions">VUI write options</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly void Write(BitStreamWriter writer, MemoryVuiWriteOptions vuiWriteOptions)
-    {
-        if (this.SeqScalingMatrixPresentFlag)
-            throw new InvalidOperationException("Scaling matrix is present but is not provided");
-
-        VuiWriteOptions spanVuiWriteOptions = new(
-            new HrdWriteOptions(vuiWriteOptions.NalHrdWriteOptions.BitRateValueMinus1.Span, vuiWriteOptions.NalHrdWriteOptions.CpbSizeValueMinus1.Span, vuiWriteOptions.NalHrdWriteOptions.CbrFlag.Span),
-            new HrdWriteOptions(vuiWriteOptions.VclHrdWriteOptions.BitRateValueMinus1.Span, vuiWriteOptions.VclHrdWriteOptions.CpbSizeValueMinus1.Span, vuiWriteOptions.VclHrdWriteOptions.CbrFlag.Span),
-            vuiWriteOptions.IsNalPresent,
-            vuiWriteOptions.IsVclPresent);
-
-        Span<int> offsetForRefFrames = stackalloc int[1];
-        Write(writer, offsetForRefFrames, spanVuiWriteOptions, null);
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="offsetForRefFrames">Offset for ref frames are required when <see cref="PicOrderCntType"/> is 1.</param>
     /// <param name="vuiWriteOptions">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
     /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
     /// <exception cref="ArgumentNullException"></exception>
     /// <exception cref="InvalidOperationException"></exception>
-    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<int> offsetForRefFrames, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
+    public readonly async Task WriteAsync(BitStreamWriter writer, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
     {
-        PrepareForWrite(builder, offsetForRefFrames.Span);
+        PrepareForWrite(builder);
 
         await writer.WriteBitsAsync(ProfileIdc, 8);
         await writer.WriteBitAsync(ConstraintSet0Flag);
@@ -803,7 +618,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
             await writer.WriteSEAsync(OffsetForTopToBottomField);
             await writer.WriteUEAsync(NumRefFramesInPicOrderCntCycle);
             for (int i = 0; i < NumRefFramesInPicOrderCntCycle; i++)
-                await writer.WriteSEAsync(offsetForRefFrames.Span[i]);
+                await writer.WriteSEAsync((int)OffsetForRefFrame[i]);
         }
 
         await writer.WriteUEAsync(MaxNumRefFrames);
@@ -834,23 +649,6 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
             // cannot be null here.
             await this.VuiParameters!.Value.WriteAsync(writer, vuiWriteOptions);
         }
-    }
-
-    /// <summary>
-    ///   Writes the SPS to the bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer.</param>
-    /// <param name="vuiWriteOptions">VUI write options, if <see cref="VuiParametersPresentFlag"/> is true.</param>
-    /// <param name="builder">Builds scaling lists if scaling matrices are present.</param>
-    /// <exception cref="ArgumentNullException"></exception>
-    /// <exception cref="InvalidOperationException"></exception>
-    public readonly async Task WriteAsync(BitStreamWriter writer, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
-    {
-        if (this.PicOrderCntType == 1u)
-            throw new InvalidOperationException("PicOrderCntType is 1 but offset for ref frames isn't provided");
-
-        var span = new Memory<int>();
-        await WriteAsync(writer, span, vuiWriteOptions, builder);
     }
 
     /// <summary>
@@ -951,6 +749,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
                OffsetForNonRefPic == other.OffsetForNonRefPic &&
                OffsetForTopToBottomField == other.OffsetForTopToBottomField &&
                NumRefFramesInPicOrderCntCycle == other.NumRefFramesInPicOrderCntCycle &&
+               EqualityComparer<Container256UInt32>.Default.Equals(OffsetForRefFrame, other.OffsetForRefFrame) &&
                MaxNumRefFrames == other.MaxNumRefFrames &&
                GapsInFrameNumValueAllowedFlag == other.GapsInFrameNumValueAllowedFlag &&
                PicWidthInMbsMinus1 == other.PicWidthInMbsMinus1 &&
@@ -999,6 +798,7 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         hash.Add(OffsetForNonRefPic);
         hash.Add(OffsetForTopToBottomField);
         hash.Add(NumRefFramesInPicOrderCntCycle);
+        hash.Add(OffsetForRefFrame);
         hash.Add(MaxNumRefFrames);
         hash.Add(GapsInFrameNumValueAllowedFlag);
         hash.Add(PicWidthInMbsMinus1);
@@ -1015,7 +815,6 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         hash.Add(VuiParameters);
         return hash.ToHashCode();
     }
-
 
     /// <summary>  
     /// Determines whether two <see cref="SequenceParameterSet"/> instances are equal.  
@@ -1039,15 +838,12 @@ public struct SequenceParameterSet : IParameterSet, IEquatable<SequenceParameter
         return !(left == right);
     }
 
-    private readonly void PrepareForWrite(ScalingMatrixBuilder? builder, Span<int> offsetForRefFrames)
+    private readonly void PrepareForWrite(ScalingMatrixBuilder? builder)
     {
         if (builder is null && this.SeqScalingMatrixPresentFlag)
             throw new ArgumentNullException(nameof(builder), "Scaling matrices are present in the SPS but the scaling matrix builder is not provided");
 
         if (this.VuiParametersPresentFlag && this.VuiParameters is null)
             throw new InvalidOperationException("VuiParametersPresentFlag is true but actual VUI parameters aren't provided in the SPS");
-
-        if (PicOrderCntType == 1u && offsetForRefFrames.Length < NumRefFramesInPicOrderCntCycle)
-            throw new ArgumentOutOfRangeException(nameof(offsetForRefFrames), "Not enough offsets for ref frames; expected " + NumRefFramesInPicOrderCntCycle + ", got " + offsetForRefFrames.Length);
     }
 }
