@@ -27,10 +27,17 @@ public interface ILowLevelH264Writer : ILowLevelWriter
     ///   Writes the Scaling Parameter Set (SPS) to the output bitstream.
     /// </summary>
     /// <param name="sps">SPS to write</param>
-    /// <param name="offsetForRefFrames">Offsets for ref frames</param>
     /// <param name="vuiWriteOptions">Write options for VUI, if present.</param>
     /// <param name="builder">Builder for scaling lists, if present.</param>
-    void WriteSps(SequenceParameterSet sps, Span<int> offsetForRefFrames, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder);
+    void WriteSps(SequenceParameterSet sps, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder);
+
+    /// <summary>
+    ///   Writes the Scaling Parameter Set (SPS) to the output bitstream.
+    /// </summary>
+    /// <param name="sps">SPS to write</param>
+    /// <param name="vuiWriteOptions">Write options for VUI, if present.</param>
+    /// <param name="builder">Builder for scaling lists, if present.</param>
+    Task WriteSpsAsync(SequenceParameterSet sps, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder);
 
     /// <summary>
     ///   Writes a scaling matrix to the bitstream.

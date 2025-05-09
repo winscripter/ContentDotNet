@@ -497,15 +497,15 @@ public sealed class LowLevelH264Writer : ILowLevelH264Writer
     }
 
     /// <inheritdoc />
-    public void WriteSps(SequenceParameterSet sps, Span<int> offsetForRefFrames, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
+    public void WriteSps(SequenceParameterSet sps, VuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
     {
-        sps.Write(_bitStream, offsetForRefFrames, vuiWriteOptions, builder);
+        sps.Write(_bitStream, vuiWriteOptions, builder);
     }
 
     /// <inheritdoc />
-    public async Task WriteSpsAsync(SequenceParameterSet sps, Memory<int> offsetForRefFrames, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
+    public async Task WriteSpsAsync(SequenceParameterSet sps, MemoryVuiWriteOptions vuiWriteOptions, ScalingMatrixBuilder? builder)
     {
-        await sps.WriteAsync(_bitStream, offsetForRefFrames, vuiWriteOptions, builder);
+        await sps.WriteAsync(_bitStream, vuiWriteOptions, builder);
     }
 
     /// <inheritdoc />
