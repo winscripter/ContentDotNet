@@ -1,6 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Internal.Entropies;
+using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
 using static ContentDotNet.Extensions.H264.SliceTypes;

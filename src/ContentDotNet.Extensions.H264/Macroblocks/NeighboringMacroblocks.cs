@@ -1,6 +1,6 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Extensions.H264.Macroblocks;
 
 /// <summary>
 /// Represents the neighboring macroblocks in an H.264 video stream.
@@ -97,46 +97,46 @@ public struct NeighboringMacroblocks : IEquatable<NeighboringMacroblocks>
     {
         if (macroblockAddress % mbPerRow != 0)
         {
-            this.MbAddrA = macroblockAddress - 1;
-            this.IsMbAddrAAvailable = true;
+            MbAddrA = macroblockAddress - 1;
+            IsMbAddrAAvailable = true;
         }
         else
         {
-            this.MbAddrA = 0;
-            this.IsMbAddrAAvailable = false;
+            MbAddrA = 0;
+            IsMbAddrAAvailable = false;
         }
 
         if (macroblockAddress >= mbPerRow)
         {
-            this.MbAddrB = macroblockAddress - mbPerRow;
-            this.IsMbAddrBAvailable = true;
+            MbAddrB = macroblockAddress - mbPerRow;
+            IsMbAddrBAvailable = true;
         }
         else
         {
-            this.MbAddrB = 0;
-            this.IsMbAddrBAvailable = false;
+            MbAddrB = 0;
+            IsMbAddrBAvailable = false;
         }
 
         if (macroblockAddress % mbPerRow != 0 && macroblockAddress > mbPerRow)
         {
-            this.MbAddrC = macroblockAddress - mbPerRow - 1;
-            this.IsMbAddrCAvailable = true;
+            MbAddrC = macroblockAddress - mbPerRow - 1;
+            IsMbAddrCAvailable = true;
         }
         else
         {
-            this.MbAddrC = 0;
-            this.IsMbAddrCAvailable = false;
+            MbAddrC = 0;
+            IsMbAddrCAvailable = false;
         }
 
         if (macroblockAddress < numMbsInFrame - mbPerRow && macroblockAddress % mbPerRow != 0)
         {
-            this.MbAddrD = macroblockAddress + mbPerRow - 1;
-            this.IsMbAddrDAvailable = true;
+            MbAddrD = macroblockAddress + mbPerRow - 1;
+            IsMbAddrDAvailable = true;
         }
         else
         {
-            this.MbAddrD = 0;
-            this.IsMbAddrDAvailable = false;
+            MbAddrD = 0;
+            IsMbAddrDAvailable = false;
         }
     }
 

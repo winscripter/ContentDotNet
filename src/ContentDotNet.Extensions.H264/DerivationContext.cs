@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿using ContentDotNet.Extensions.H264.Macroblocks;
+
+namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 /// Represents the derivation context used in H.264 processing.

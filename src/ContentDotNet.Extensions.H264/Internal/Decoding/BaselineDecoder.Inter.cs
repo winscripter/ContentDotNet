@@ -1,4 +1,6 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
+using ContentDotNet.Extensions.H264.Macroblocks;
+using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
 using System.Drawing;
 
@@ -34,18 +36,21 @@ internal partial class BaselineDecoder
         private DerivationContext _derivationContext;
         private IMacroblockUtility _macroblockUtility;
 
-        private IReferencePictureListFactory factory = null!;
         private Size frameSize = default;
+
+        private ReferencePicture? CurrPic = null;
+
+        private PocContext pocCtx = default;
 
         public ReferencePictureList RefPicListL0 { get; private set; } = null!;
         public ReferencePictureList? RefPicListL1 { get; private set; }
 
-        public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, IReferencePictureListFactory refPicList, Size frameSize)
+        public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, Size frameSize)
         {
             _derivationContext = derivationContext;
             _macroblockUtility = macroblockUtility;
 
-            InitializeInterPrediction(refPicList, frameSize);
+            InitializeInterPrediction(frameSize);
         }
 
         public DerivationContext DerivationContext
@@ -54,7 +59,7 @@ internal partial class BaselineDecoder
             set => _derivationContext = value;
         }
 
-        private void InitializeInterPrediction(IReferencePictureListFactory refPicList, Size frameSize)
+        private void InitializeInterPrediction(Size frameSize)
         {
             sliceType = GeneralSliceType.I; // Default
             mbTypeArray = new();
@@ -70,10 +75,9 @@ internal partial class BaselineDecoder
             mvCL0 = new ArrayMatrix4x4x2();
             mvCL1 = new ArrayMatrix4x4x2();
 
-            this.factory = refPicList;
             this.frameSize = frameSize;
 
-            this.RefPicListL0 = refPicList.Create(frameSize.Width, frameSize.Height, 16);
+            this.RefPicListL0 = new();
             this.RefPicListL1 = null; // What if it's not a B slice? Then we're wasting memory. Store factory and frameSize separately.
         }
 
@@ -203,6 +207,27 @@ internal partial class BaselineDecoder
                 mvpLX.X = Util264.Median(mvLXA.X, mvLXB.X, mvLXC.X);
                 mvpLX.X = Util264.Median(mvLXA.Y, mvLXB.Y, mvLXC.Y);
             }
+        }
+
+        private void DeriveCoLocated4x4SubMacroblockPartitions()
+        {
+            if (IsFrameOrComplementaryFieldPair(RefPicListL1![0]))
+            {
+                var firstRefPicL1Top = RefPicListL1![0].TopBottomFields!.Value.Top;
+                var firstRefPicL1Bottom = RefPicListL1![0].TopBottomFields!.Value.Bottom;
+
+                var topAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Top, CurrPic!);
+                var bottomAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Bottom, CurrPic!);
+            }
+        }
+
+        private int DiffPicOrderCnt(ReferencePicture x, ReferencePicture y) =>
+            Util264.PicOrderCnt(x.SequenceParameterSet, x.PictureParameterSet, x.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, x.NalUnit.NalRefIdc)
+            - Util264.PicOrderCnt(y.SequenceParameterSet, y.PictureParameterSet, y.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, y.NalUnit.NalRefIdc);
+
+        private static bool IsFrameOrComplementaryFieldPair(ReferencePicture refPic)
+        {
+            return refPic.TopBottomFields is not null;
         }
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿namespace ContentDotNet.Extensions.H264.Macroblocks;
 
 /// <summary>
 ///   Represents a Macroblock size in the Chroma channel (MbHeightC/MbWidthC).
