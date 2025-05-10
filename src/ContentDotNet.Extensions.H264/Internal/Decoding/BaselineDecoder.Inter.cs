@@ -42,8 +42,8 @@ internal partial class BaselineDecoder
 
         private PocContext pocCtx = default;
 
-        public ReferencePictureList RefPicListL0 { get; private set; } = null!;
-        public ReferencePictureList? RefPicListL1 { get; private set; }
+        public Dpb RefPicListL0 { get; private set; } = null!;
+        public Dpb? RefPicListL1 { get; private set; }
 
         public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, Size frameSize)
         {
@@ -77,7 +77,7 @@ internal partial class BaselineDecoder
 
             this.frameSize = frameSize;
 
-            this.RefPicListL0 = new();
+            this.RefPicListL0 = new([], 16);
             this.RefPicListL1 = null; // What if it's not a B slice? Then we're wasting memory. Store factory and frameSize separately.
         }
 
