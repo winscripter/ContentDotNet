@@ -2,7 +2,6 @@
 using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
-using ContentDotNet.Extensions.H264.Utilities;
 using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Helpers;
@@ -15,8 +14,8 @@ internal static class Util264
         if (sps.SeparateColourPlaneFlag || sps.ChromaFormatIdc == 0)
             return MacroblockSizeChroma.Zero;
 
-        ChromaSubsamplingAndSize size = ChromaSubsamplingLookup.GetSubsamplingAndSize(sps);
-        return new MacroblockSizeChroma(16 / size.SubWidthC, 16 / size.SubHeightC);
+        ChromaFormat size = ChromaFormat.GetSubsamplingAndSize(sps);
+        return new MacroblockSizeChroma(16 / size.ChromaWidth, 16 / size.ChromaHeight);
     }
 
     public static int MbPartPredMode(int mbType, int a, bool transformSize8x8Flag, GeneralSliceType sliceType)
