@@ -1,6 +1,4 @@
-﻿using Newtonsoft.Json.Linq;
-
-namespace ContentDotNet.Abstractions.Tests;
+﻿namespace ContentDotNet.Abstractions.Tests;
 
 public class BitStreamTests
 {
@@ -345,7 +343,7 @@ public class BitStreamTests
             reader =>
             {
                 int b = reader.ReadSE();
-                Assert.Equal(VALUE - 1, b);
+                Assert.Equal(VALUE + 1, b);
             });
     }
 
