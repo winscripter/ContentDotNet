@@ -1,8 +1,8 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264.Internal.Entropies;
+namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
-internal static class Cabac
+internal static class CabacFunctions
 {
     const int na = 255;
 
@@ -1120,6 +1120,12 @@ internal static class Cabac
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetRangeTabLps(int pStateIdx, int qCodIRangeIdx)
     {
-        return RangeTabLpsLUT[(RANGE_TAB_LPS_ROW_SIZE * pStateIdx) + qCodIRangeIdx];
+        return RangeTabLpsLUT[RANGE_TAB_LPS_ROW_SIZE * pStateIdx + qCodIRangeIdx];
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int UnaryBinarize(int b) => (1 << b + 1) - 2;
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int TruncatedUnaryBinarize(int x, int cMax) => x == cMax - 1 ? (1 << x) - 1 : (1 << x + 1) - 2;
 }

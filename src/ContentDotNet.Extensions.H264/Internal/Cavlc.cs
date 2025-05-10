@@ -3,7 +3,7 @@ using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
-namespace ContentDotNet.Extensions.H264.Internal.Entropies;
+namespace ContentDotNet.Extensions.H264.Internal;
 
 internal static class Cavlc
 {
@@ -335,8 +335,8 @@ internal static class Cavlc
                 blkB.block = 128;
         }
 
-        bool availableFlagA = !(!mbAddrAAvailable || (util.IsCodedWithIntra(dc.CurrMbAddr) && constrainedIntraPredFlag && util.IsCodedWithInter(mbAddrA) && nalu.NalUnitType is 2 or 3 or 4));
-        bool availableFlagB = !(!mbAddrBAvailable || (util.IsCodedWithIntra(dc.CurrMbAddr) && constrainedIntraPredFlag && util.IsCodedWithInter(mbAddrB) && nalu.NalUnitType is 2 or 3 or 4));
+        bool availableFlagA = !(!mbAddrAAvailable || util.IsCodedWithIntra(dc.CurrMbAddr) && constrainedIntraPredFlag && util.IsCodedWithInter(mbAddrA) && nalu.NalUnitType is 2 or 3 or 4);
+        bool availableFlagB = !(!mbAddrBAvailable || util.IsCodedWithIntra(dc.CurrMbAddr) && constrainedIntraPredFlag && util.IsCodedWithInter(mbAddrB) && nalu.NalUnitType is 2 or 3 or 4);
 
         int nA = 0;
         int nB = 0;
@@ -383,9 +383,9 @@ internal static class Cavlc
             }
         }
 
-        return (availableFlagA && availableFlagB) ? nA + nB :
-               (availableFlagA && !availableFlagB) ? nA :
-               (!availableFlagA && availableFlagB) ? nB :
+        return availableFlagA && availableFlagB ? nA + nB :
+               availableFlagA && !availableFlagB ? nA :
+               !availableFlagA && availableFlagB ? nB :
                0;
     }
 }

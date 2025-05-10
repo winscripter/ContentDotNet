@@ -1,7 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Internal.Entropies.CabacInternal;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Extensions.H264.Cabac;
 
 /// <summary>
 ///   An internal structure. Do not use.
@@ -44,7 +44,7 @@ public struct CabacContext
     /// <param name="sliceQpy">Slice QPY</param>
     public CabacContext(int m, int n, int sliceQpy)
     {
-        int preCtxState = Util264.Clip3(1, 126, ((m * Util264.Clip3(0, 51, sliceQpy)) >> 4) + n);
+        int preCtxState = Util264.Clip3(1, 126, (m * Util264.Clip3(0, 51, sliceQpy) >> 4) + n);
         if (preCtxState <= 63)
         {
             PStateIdx = 63 - (uint)preCtxState;

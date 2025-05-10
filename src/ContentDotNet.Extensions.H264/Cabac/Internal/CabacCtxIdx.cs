@@ -1,7 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Utilities;
 using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264.Internal.Entropies.CabacInternal;
+namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
 internal static class CabacCtxIdx
 {

@@ -1,7 +1,7 @@
-﻿using ContentDotNet.Extensions.H264.Internal.Entropies;
+﻿using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Extensions.H264.Utilities;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Extensions.H264.Cabac;
 
 /// <summary>
 ///   Adds extensions to bitstreams for reading CABAC values.
@@ -63,8 +63,8 @@ public static class BitStreamCabacExtensions
 
     private static bool AEDecodeDecision(BitStreamReader reader, int pStateIdx, bool valMPS, ref uint codIOffset, ref uint codIRange)
     {
-        uint qCodIRangeIdx = (codIRange >> 6) & 0x03;
-        int codIRangeLPS = Cabac.GetRangeTabLps(pStateIdx, (int)qCodIRangeIdx);
+        uint qCodIRangeIdx = codIRange >> 6 & 0x03;
+        int codIRangeLPS = CabacFunctions.GetRangeTabLps(pStateIdx, (int)qCodIRangeIdx);
 
         codIRange -= (uint)codIRangeLPS;
 
