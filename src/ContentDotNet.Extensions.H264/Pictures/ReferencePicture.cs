@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H26x;
+﻿using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Extensions.H26x;
 
 namespace ContentDotNet.Extensions.H264.Pictures;
 
@@ -7,6 +8,26 @@ namespace ContentDotNet.Extensions.H264.Pictures;
 /// </summary>
 public sealed class ReferencePicture : IDisposable
 {
+    /// <summary>
+    ///   Represents the SPS associated with this reference picture.
+    /// </summary>
+    public SequenceParameterSet Sps { get; set; }
+
+    /// <summary>
+    ///   Represents the PPS associated with this reference picture.
+    /// </summary>
+    public PictureParameterSet Pps { get; set; }
+
+    /// <summary>
+    ///   Represents the Slice Header associated with this reference picture.
+    /// </summary>
+    public SliceHeader SliceHeader { get; set; }
+
+    /// <summary>
+    ///   Represents the NAL unit associated with this reference picture.
+    /// </summary>
+    public NalUnit NalUnit { get; set; }
+
     /// <summary>
     ///   The frame number.
     /// </summary>
@@ -46,7 +67,11 @@ public sealed class ReferencePicture : IDisposable
     /// <param name="pictureStructure">The structure of the picture (frame, top field, or bottom field).</param>  
     /// <param name="frame">The actual frame data associated with the reference picture.</param>  
     /// <param name="pairField">The complementary field, if applicable, for the reference picture.</param>  
-    public ReferencePicture(int frameNumber, int pictureOrderCount, PictureReferenceType? referenceType, PictureStructure pictureStructure, IFrame frame, ReferencePicture? pairField)
+    /// <param name="nalu">NAL unit associated with the reference picture</param>
+    /// <param name="pps">PPS associated with the reference picture</param>
+    /// <param name="sliceHeader">Slice header associated with the reference picture</param>
+    /// <param name="sps">SPS associated with the reference picture</param>
+    public ReferencePicture(int frameNumber, int pictureOrderCount, PictureReferenceType? referenceType, PictureStructure pictureStructure, IFrame frame, ReferencePicture? pairField, SequenceParameterSet sps, PictureParameterSet pps, SliceHeader sliceHeader, NalUnit nalu)
     {
         FrameNumber = frameNumber;
         PictureOrderCount = pictureOrderCount;
@@ -54,6 +79,8 @@ public sealed class ReferencePicture : IDisposable
         PictureStructure = pictureStructure;
         Frame = frame;
         PairField = pairField;
+        Pps = pps;
+        SliceHeader = sliceHeader;
     }
 
     /// <summary>
