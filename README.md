@@ -6,7 +6,7 @@
 >
 > However, we highly appreciate any feedback.
 >
-> Please check back later.
+> Use at your own risk—you might discover functions that do the opposite of what you'd expect!
 
 [Building instructions](BUILDING.md)
 
