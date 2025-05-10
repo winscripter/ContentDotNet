@@ -342,6 +342,11 @@ internal partial class BaselineDecoder
                 }
             }
 
+            int luma8x8BlkIdx = !sps.Direct8X8InferenceFlag ? (4 * this.mbPartIdx + this.subMbPartIdx) : 5 * this.mbPartIdx;
+
+            int x = 0, y = 0;
+            Scanning.Inverse4x4LumaScan(luma8x8BlkIdx, ref x, ref y);
+
 
         }
 

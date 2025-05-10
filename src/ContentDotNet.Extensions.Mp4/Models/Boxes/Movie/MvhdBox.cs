@@ -41,9 +41,13 @@ public struct MvhdBox
     public ulong Duration { get; set; }
 
     /// <summary>
-    ///   Represents the default playback speed
+    ///   Represents the default playback speed (default value is 1.0)
     /// </summary>
     public FixedPointHalf PreferredRate { get; set; }
+
+    /// <summary>
+    ///   Represents the default preferred volume (default value is 1.0)
+    /// </summary>
     public FixedPointHalf PreferredVolume { get; set; }
     public ulong Reserved1Part1 { get; set; }
     public ushort Reserved1Part2 { get; set; }

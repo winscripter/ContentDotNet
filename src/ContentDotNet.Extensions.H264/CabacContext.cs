@@ -1,12 +1,31 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
+using ContentDotNet.Extensions.H264.Internal.Entropies.CabacInternal;
 
 namespace ContentDotNet.Extensions.H264;
+
+/// <summary>
+///   An internal structure. Do not use.
+/// </summary>
+internal record struct PrefixAndSuffix
+{
+    public int Prefix { get; set; }
+    public int Suffix { get; set; }
+
+    public PrefixAndSuffix(int prefix, int suffix)
+    {
+        Prefix = prefix;
+        Suffix = suffix;
+    }
+}
 
 /// <summary>
 ///   Represents context for CABAC bitstream parsing.
 /// </summary>
 public struct CabacContext
 {
+    private PrefixAndSuffix maxBinIdxCtx = default;
+    private PrefixAndSuffix ctxIdxOffset = default;
+
     /// <summary>
     ///   PStateIdx
     /// </summary>
