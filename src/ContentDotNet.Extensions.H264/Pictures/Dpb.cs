@@ -53,4 +53,15 @@ public sealed class Dpb : IDisposable
         Pictures.Clear();
         GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    ///   Gets/sets a reference picture at index in the DPB.
+    /// </summary>
+    /// <param name="index">Index of the reference picture.</param>
+    /// <returns>A reference picture, indexed by <paramref name="index"/>.</returns>
+    public ReferencePicture? this[int index]
+    {
+        get => this.Pictures[index];
+        set => this.Pictures[index] = value;
+    }
 }
