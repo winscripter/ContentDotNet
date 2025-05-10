@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ContentDotNet.Extensions.H264.Pictures;
+﻿namespace ContentDotNet.Extensions.H264.Pictures;
 
 /// <summary>
 ///   Represents the Decoded Picture Buffer (DPB).
