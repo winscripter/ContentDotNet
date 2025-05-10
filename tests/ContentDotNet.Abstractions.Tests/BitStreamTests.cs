@@ -296,6 +296,78 @@ public class BitStreamTests
     }
 
     [Fact]
+    public void SEGolomb_1()
+    {
+        const int VALUE = 1;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteSE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                int b = reader.ReadSE();
+                Assert.Equal(VALUE - 1, b);
+            });
+    }
+
+    [Fact]
+    public void SEGolomb_2()
+    {
+        const int VALUE = 123;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteSE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                int b = reader.ReadSE();
+                Assert.Equal(VALUE - 1, b);
+            });
+    }
+
+    [Fact]
+    public void SEGolomb_3()
+    {
+        const int VALUE = 63631;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteSE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                int b = reader.ReadSE();
+                Assert.Equal(VALUE - 1, b);
+            });
+    }
+
+    [Fact]
+    public void SEGolomb_4()
+    {
+        const int VALUE = 7676;
+
+        UseBSWriterThenReader(
+            writer =>
+            {
+                writer.WriteSE(VALUE);
+                writer.WriteBits(uint.MaxValue, 16);
+            },
+            reader =>
+            {
+                int b = reader.ReadSE();
+                Assert.Equal(VALUE - 1, b);
+            });
+    }
+
+    [Fact]
     public void BitsInteger_1() => UseBSWriterThenReader(
             writer =>
             {
