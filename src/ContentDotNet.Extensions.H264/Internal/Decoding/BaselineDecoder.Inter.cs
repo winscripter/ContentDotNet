@@ -225,9 +225,9 @@ internal partial class BaselineDecoder
             Util264.PicOrderCnt(x.SequenceParameterSet, x.PictureParameterSet, x.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, x.NalUnit.NalRefIdc)
             - Util264.PicOrderCnt(y.SequenceParameterSet, y.PictureParameterSet, y.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, y.NalUnit.NalRefIdc);
 
-        private static bool IsFrameOrComplementaryFieldPair(ReferencePicture refPic)
+        private bool IsFrameOrComplementaryFieldPair(ReferencePicture refPic)
         {
-            return refPic.TopBottomFields is not null;
+            return !refPic.IsField || (CurrPic is not null && refPic.IsComplementaryTo(CurrPic));
         }
     }
 }
