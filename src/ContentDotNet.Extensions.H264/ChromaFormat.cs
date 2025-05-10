@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using ContentDotNet.Extensions.H264.Models;
+using System.Drawing;
 using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264;
@@ -8,20 +9,30 @@ namespace ContentDotNet.Extensions.H264;
 /// </summary>
 public struct ChromaFormat : IEquatable<ChromaFormat>
 {
-    /// <summary>
-    ///   Shared 4x4 monochrome chroma format.
-    /// </summary>
-    public static readonly ChromaFormat Monochrome4x4 = new(ChromaSubsampling.Shared400, false, 4);
+    internal static readonly Dictionary<(uint chromaFormatIdc, bool separateColorPlaneFlag), ChromaFormat> LookupTable = new()
+    {
+        { (0, false), new ChromaFormat(ChromaSubsampling.Shared400, false, 0, 0) },
+        { (1, false), new ChromaFormat(ChromaSubsampling.Shared420, false, 2, 2) },
+        { (2, false), new ChromaFormat(ChromaSubsampling.Shared422, false, 2, 1) },
+        { (3, false), new ChromaFormat(ChromaSubsampling.Shared444, false, 1, 1) },
+        { (3, false), new ChromaFormat(ChromaSubsampling.Shared444, false, 0, 0) },
+    };
+
+    internal static ChromaFormat GetSubsamplingAndSize(uint chromaFormatIdc, bool separateColourPlaneFlag) =>
+        LookupTable[(chromaFormatIdc, separateColourPlaneFlag)];
+
+    internal static ChromaFormat GetSubsamplingAndSize(SequenceParameterSet sps) =>
+        LookupTable[(sps.ChromaFormatIdc, sps.SeparateColourPlaneFlag)];
 
     /// <summary>
-    ///   Shared 8x8 monochrome chroma format.
+    ///   Shared 1x1 monochrome chroma format.
     /// </summary>
-    public static readonly ChromaFormat Monochrome8x8 = new(ChromaSubsampling.Shared400, false, 8);
+    public static readonly ChromaFormat Monochrome1x1 = new(ChromaSubsampling.Shared400, false, 1);
 
     /// <summary>
-    ///   Shared 16x16 monochrome chroma format.
+    ///   Shared 2x2 monochrome chroma format.
     /// </summary>
-    public static readonly ChromaFormat Monochrome16x16 = new(ChromaSubsampling.Shared400, false, 16);
+    public static readonly ChromaFormat Monochrome2x2 = new(ChromaSubsampling.Shared400, false, 2);
 
     /// <summary>
     ///   The subsampling.
