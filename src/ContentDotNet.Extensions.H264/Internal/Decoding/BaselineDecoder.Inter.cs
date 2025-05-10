@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Macroblocks;
+using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
 using System.Drawing;
@@ -40,10 +41,57 @@ internal partial class BaselineDecoder
 
         private ReferencePicture? CurrPic = null;
 
+        private SequenceParameterSet sps = default;
+        private PictureParameterSet pps = default;
+        private NalUnit nalu = default;
+        private SliceHeader sliceHeader = default;
+
         private PocContext pocCtx = default;
+
+        private int currMbAddr = 0;
 
         public Dpb RefPicListL0 { get; private set; } = null!;
         public Dpb? RefPicListL1 { get; private set; }
+
+        public SequenceParameterSet SequenceParameterSet
+        {
+            get => sps;
+            set => sps = value;
+        }
+
+        public PictureParameterSet PictureParameterSet
+        {
+            get => pps;
+            set => pps = value;
+        }
+
+        public NalUnit NalUnit
+        {
+            get => nalu;
+            set => nalu = value;
+        }
+
+        public SliceHeader SliceHeader
+        {
+            get => sliceHeader;
+            set => sliceHeader = value;
+        }
+
+        public int CurrMbAddr
+        {
+            get => currMbAddr;
+            set => currMbAddr = value;
+        }
+
+        public PictureCodingStruct PicCodingStruct
+        {
+            get => (sliceHeader.FieldPicFlag, sps.MbAdaptiveFrameFieldFlag) switch
+            {
+                (true, false) or (true, true) => PictureCodingStruct.Fld,
+                (false, false) => PictureCodingStruct.Frm,
+                (false, true) => PictureCodingStruct.Afrm
+            };
+        }
 
         public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, Size frameSize)
         {
@@ -209,25 +257,119 @@ internal partial class BaselineDecoder
             }
         }
 
-        private void DeriveCoLocated4x4SubMacroblockPartitions()
+        private void DeriveCoLocated4x4SubMacroblockPartitions(bool mbFieldDecodingFlag, out ReferencePicture? colPic)
         {
-            if (IsFrameOrComplementaryFieldPair(RefPicListL1![0]))
+            if (RefPicListL1 is null)
+                throw new InvalidOperationException("Cannot co-locate 4x4 sub-macroblock partitions when the L1 reference picture list isn't available");
+
+            if (RefPicListL1[0] is null)
+                throw new InvalidOperationException("First reference picture in list 1 is unavailable");
+
+            colPic = null;
+
+            if (IsFrameOrComplementaryFieldPair(RefPicListL1[0]!))
             {
-                var firstRefPicL1Top = RefPicListL1![0].TopBottomFields!.Value.Top;
-                var firstRefPicL1Bottom = RefPicListL1![0].TopBottomFields!.Value.Bottom;
+                var (firstRefPicL1Top, firstRefPicL1Bottom) = GetFields(RefPicListL1[0]!);
+
+                if (firstRefPicL1Top is null || firstRefPicL1Bottom is null)
+                    throw new InvalidOperationException("Cannot get top/bottom fields");
 
                 var topAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Top, CurrPic!);
                 var bottomAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Bottom, CurrPic!);
+
+                if (sliceHeader.FieldPicFlag)
+                {
+                    if (RefPicListL1[0]!.PictureStructure is PictureStructure.TopField or PictureStructure.BottomField)
+                    {
+                        ReferencePicture? ownerPic = null;
+                        for (int i = 0; i < this.RefPicListL1.Pictures.Count; i++)
+                        {
+                            var pic = this.RefPicListL1.Pictures[i];
+                            if (pic is null)
+                                continue;
+
+                            if (pic.PairField is null)
+                                continue;
+
+                            if (pic.PairField.FrameNumber == RefPicListL1[0]!.FrameNumber)
+                            {
+                                ownerPic = pic;
+                                break;
+                            }
+                        }
+
+                        if (ownerPic is null)
+                            throw new InvalidOperationException("Cannot find picture that owns the first one in the DPB");
+
+                        colPic = ownerPic;
+                    }
+                    else
+                    {
+                        colPic = RefPicListL1[0]!;
+                    }
+                }
+                else
+                {
+                    if (!RefPicListL1[0]!.IsField)
+                    {
+                        colPic = RefPicListL1[0]!;
+                    }
+                    else if (CurrPic is not null && RefPicListL1[0]!.IsComplementaryTo(CurrPic))
+                    {
+                        if (!mbFieldDecodingFlag)
+                        {
+                            if (topAbsDiffPoc < bottomAbsDiffPoc)
+                            {
+                                colPic = firstRefPicL1Top;
+                            }
+                            else if (topAbsDiffPoc >= bottomAbsDiffPoc)
+                            {
+                                colPic = firstRefPicL1Bottom;
+                            }
+                        }
+                        else
+                        {
+                            if ((CurrMbAddr & 1) == 0)
+                            {
+                                colPic = firstRefPicL1Top;
+                            }
+                            else
+                            {
+                                colPic = firstRefPicL1Bottom;
+                            }
+                        }
+                    }
+                }
             }
+
+
         }
 
         private int DiffPicOrderCnt(ReferencePicture x, ReferencePicture y) =>
-            Util264.PicOrderCnt(x.SequenceParameterSet, x.PictureParameterSet, x.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, x.NalUnit.NalRefIdc)
-            - Util264.PicOrderCnt(y.SequenceParameterSet, y.PictureParameterSet, y.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, y.NalUnit.NalRefIdc);
+            Util264.PicOrderCnt(x.Sps, x.Pps, x.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, x.NalUnit.NalRefIdc)
+            - Util264.PicOrderCnt(y.Sps, y.Pps, y.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, y.NalUnit.NalRefIdc);
 
         private bool IsFrameOrComplementaryFieldPair(ReferencePicture refPic)
         {
             return !refPic.IsField || (CurrPic is not null && refPic.IsComplementaryTo(CurrPic));
         }
+    }
+
+    private static (ReferencePicture? TopField, ReferencePicture? BottomField) GetFields(ReferencePicture referencePicture)
+    {
+        if (!referencePicture.IsField)
+        {
+            return (null, null);
+        }
+
+        ReferencePicture? topField = referencePicture.PictureStructure == PictureStructure.TopField
+            ? referencePicture
+            : referencePicture.PairField;
+
+        ReferencePicture? bottomField = referencePicture.PictureStructure == PictureStructure.BottomField
+            ? referencePicture
+            : referencePicture.PairField;
+
+        return (topField, bottomField);
     }
 }
