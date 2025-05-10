@@ -8,9 +8,7 @@ don't have it installed.
 Then, clone the repository:
 1. If you have Git installed, type this in the Terminal:
 ```
-> git clone https://github.com/winscripter/ContentDotNet.git
-
->
+git clone https://github.com/winscripter/ContentDotNet
 ```
 2. If you don't have Git installed, visit `https://github.com/winscripter/ContentDotNet`. Under the green `Code` button, click on it, and in the dropdown, click `Download ZIP`, then extract it.
 
