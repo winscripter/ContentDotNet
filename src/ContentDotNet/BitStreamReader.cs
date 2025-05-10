@@ -58,11 +58,8 @@ public sealed class BitStreamReader(Stream input) : IDisposable
     public uint ReadUE()
     {
         uint zeroCount = 0;
-        while (!ReadBit())
+        while (!ReadBit() && zeroCount <= 31)
             zeroCount++;
-
-        if (zeroCount > 31)
-            throw new InvalidDataException("UE Golomb code too long.");
 
         uint result = (1u << (int)zeroCount) - 1 + (zeroCount < 1 ? 0 : ReadBits(zeroCount));
         return result;
