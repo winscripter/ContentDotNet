@@ -9,6 +9,21 @@ namespace ContentDotNet.Extensions.H264.Pictures;
 public sealed class ReferencePicture : IDisposable
 {
     /// <summary>
+    ///   The sub-macroblock partition index.
+    /// </summary>
+    public int SubMbPartIdx { get; set; }
+
+    /// <summary>
+    ///   The macroblock partition index.
+    /// </summary>
+    public int MbPartIdx { get; set; }
+
+    /// <summary>
+    ///   The derivation context.
+    /// </summary>
+    public DerivationContext Context { get; set; }
+
+    /// <summary>
     ///   Represents the SPS associated with this reference picture.
     /// </summary>
     public SequenceParameterSet Sps { get; set; }
@@ -71,7 +86,10 @@ public sealed class ReferencePicture : IDisposable
     /// <param name="pps">PPS associated with the reference picture</param>
     /// <param name="sliceHeader">Slice header associated with the reference picture</param>
     /// <param name="sps">SPS associated with the reference picture</param>
-    public ReferencePicture(int frameNumber, int pictureOrderCount, PictureReferenceType? referenceType, PictureStructure pictureStructure, IFrame frame, ReferencePicture? pairField, SequenceParameterSet sps, PictureParameterSet pps, SliceHeader sliceHeader, NalUnit nalu)
+    /// <param name="dc">Derivation context associated with the reference picture</param>
+    /// <param name="mbPartIdx">mbPartIdx associated with the reference picture</param>
+    /// <param name="subMbPartIdx">subMbPartIdx associated with the reference picture</param>
+    public ReferencePicture(int frameNumber, int pictureOrderCount, PictureReferenceType? referenceType, PictureStructure pictureStructure, IFrame frame, ReferencePicture? pairField, SequenceParameterSet sps, PictureParameterSet pps, SliceHeader sliceHeader, NalUnit nalu, DerivationContext dc, int mbPartIdx, int subMbPartIdx)
     {
         FrameNumber = frameNumber;
         PictureOrderCount = pictureOrderCount;
@@ -80,7 +98,12 @@ public sealed class ReferencePicture : IDisposable
         Frame = frame;
         PairField = pairField;
         Pps = pps;
+        Sps = sps;
         SliceHeader = sliceHeader;
+        NalUnit = nalu;
+        Context = dc;
+        MbPartIdx = mbPartIdx;
+        SubMbPartIdx = subMbPartIdx;
     }
 
     /// <summary>

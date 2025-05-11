@@ -6,6 +6,13 @@
 public interface IMacroblockUtility
 {
     /// <summary>
+    /// Retrieves the sub-macroblock type for the macroblock at the specified address.
+    /// </summary>
+    /// <param name="mbAddr">The macroblock address.</param>
+    /// <returns>The sub-macroblock type as an unsigned integer.</returns>
+    uint GetSubMbType(int mbAddr);
+
+    /// <summary>
     /// Determines if the macroblock at the specified address is coded with Intra 4x4 prediction mode.
     /// </summary>
     /// <param name="mbAddr">The macroblock address.</param>

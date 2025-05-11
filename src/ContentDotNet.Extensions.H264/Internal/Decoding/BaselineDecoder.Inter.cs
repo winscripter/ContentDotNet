@@ -4,6 +4,7 @@ using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
 using System.Drawing;
+using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
@@ -33,6 +34,9 @@ internal partial class BaselineDecoder
 
         private bool predFlagL0 = false;
         private bool predFlagL1 = false;
+
+        private bool[] predFlagL0Array = new bool[16];
+        private bool[] predFlagL1Array = new bool[16];
 
         private DerivationContext _derivationContext;
         private IMacroblockUtility _macroblockUtility;
@@ -83,15 +87,9 @@ internal partial class BaselineDecoder
             set => currMbAddr = value;
         }
 
-        public PictureCodingStruct PicCodingStruct
-        {
-            get => (sliceHeader.FieldPicFlag, sps.MbAdaptiveFrameFieldFlag) switch
-            {
-                (true, false) or (true, true) => PictureCodingStruct.Fld,
-                (false, false) => PictureCodingStruct.Frm,
-                (false, true) => PictureCodingStruct.Afrm
-            };
-        }
+        public bool MbFieldDecodingFlag { get; set; } = false;
+
+        public int PicWidthInMbs => (int)(sps.PicWidthInMbsMinus1 + 1);
 
         public Inter(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, Size frameSize)
         {
@@ -261,8 +259,11 @@ internal partial class BaselineDecoder
             }
         }
 
-        private void DeriveCoLocated4x4SubMacroblockPartitions(bool mbFieldDecodingFlag, out ReferencePicture? colPic)
+        private void DeriveCoLocated4x4SubMacroblockPartitions(out ReferencePicture? colPic, out int mbAddrCol, out MotionVector mvCol, out int refIdxCol, out MotionVectorScale vertMvScale)
         {
+            mvCol = default;
+            refIdxCol = 0;
+
             if (RefPicListL1 is null)
                 throw new InvalidOperationException("Cannot co-locate 4x4 sub-macroblock partitions when the L1 reference picture list isn't available");
 
@@ -271,6 +272,9 @@ internal partial class BaselineDecoder
 
             colPic = null;
 
+            int topAbsDiffPoc = 0;
+            int bottomAbsDiffPoc = 0;
+
             if (IsFrameOrComplementaryFieldPair(RefPicListL1[0]!))
             {
                 var (firstRefPicL1Top, firstRefPicL1Bottom) = GetFields(RefPicListL1[0]!);
@@ -278,8 +282,8 @@ internal partial class BaselineDecoder
                 if (firstRefPicL1Top is null || firstRefPicL1Bottom is null)
                     throw new InvalidOperationException("Cannot get top/bottom fields");
 
-                var topAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Top, CurrPic!);
-                var bottomAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Bottom, CurrPic!);
+                topAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Top, CurrPic!);
+                bottomAbsDiffPoc = DiffPicOrderCnt(firstRefPicL1Bottom, CurrPic!);
 
                 if (sliceHeader.FieldPicFlag)
                 {
@@ -320,7 +324,7 @@ internal partial class BaselineDecoder
                     }
                     else if (CurrPic is not null && RefPicListL1[0]!.IsComplementaryTo(CurrPic))
                     {
-                        if (!mbFieldDecodingFlag)
+                        if (!this.MbFieldDecodingFlag)
                         {
                             if (topAbsDiffPoc < bottomAbsDiffPoc)
                             {
@@ -348,10 +352,203 @@ internal partial class BaselineDecoder
 
             int luma8x8BlkIdx = !sps.Direct8X8InferenceFlag ? (4 * this.mbPartIdx + this.subMbPartIdx) : 5 * this.mbPartIdx;
 
-            int x = 0, y = 0;
-            Scanning.Inverse4x4LumaScan(luma8x8BlkIdx, ref x, ref y);
+            int xCol = 0, yCol = 0;
+            Scanning.Inverse4x4LumaScan(luma8x8BlkIdx, ref xCol, ref yCol);
 
+            int mbAddrCol1 = 2 * PicWidthInMbs * (CurrMbAddr / PicWidthInMbs) + (CurrMbAddr % PicWidthInMbs) + PicWidthInMbs * (yCol / 8);
+            int mbAddrCol2 = 2 * CurrMbAddr + (yCol / 8);
+            int mbAddrCol3 = 2 * CurrMbAddr + Int32Boolean.I32(sliceHeader.BottomFieldFlag);
+            int mbAddrCol4 = PicWidthInMbs * (CurrMbAddr / (2 * PicWidthInMbs)) + (CurrMbAddr % PicWidthInMbs);
+            int mbAddrCol5 = CurrMbAddr / 2;
+            int mbAddrCol6 = 2 * (CurrMbAddr / 2) + ((topAbsDiffPoc < bottomAbsDiffPoc) ? 0 : 1);
+            int mbAddrCol7 = 2 * (CurrMbAddr / 2) + (yCol / 8);
 
+            bool fieldDecodingFlagX = this._macroblockUtility.IsFieldMacroblock(colPic!.Context.MbAddrX);
+
+            mbAddrCol = 0;
+            int yM = 0;
+            vertMvScale = default;
+
+            switch (PicCodingStruct(CurrPic!))
+            {
+                case PictureCodingStruct.Fld:
+                    {
+                        switch (PicCodingStruct(colPic!))
+                        {
+                            case PictureCodingStruct.Fld:
+                                {
+                                    mbAddrCol = CurrMbAddr;
+                                    yM = yCol;
+                                    vertMvScale = MotionVectorScale.OneToOne;
+                                    break;
+                                }
+
+                            case PictureCodingStruct.Frm:
+                                {
+                                    mbAddrCol = mbAddrCol1;
+                                    yM = (2 * yCol) % 16;
+                                    vertMvScale = MotionVectorScale.FrmToFld;
+                                    break;
+                                }
+
+                            case PictureCodingStruct.Afrm:
+                                {
+                                    if (this._derivationContext.MbAddrX == 2 * CurrMbAddr)
+                                    {
+                                        if (!fieldDecodingFlagX)
+                                        {
+                                            mbAddrCol = mbAddrCol2;
+                                            yM = (2 * yCol) % 16;
+                                            vertMvScale = MotionVectorScale.FrmToFld;
+                                        }
+                                        else
+                                        {
+                                            mbAddrCol = mbAddrCol3;
+                                            yM = yCol;
+                                            vertMvScale = MotionVectorScale.OneToOne;
+                                        }
+                                    }
+
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case PictureCodingStruct.Frm:
+                    {
+                        switch (PicCodingStruct(colPic))
+                        {
+                            case PictureCodingStruct.Fld:
+                                {
+                                    mbAddrCol = mbAddrCol4;
+                                    yM = 8 * (CurrMbAddr % 2) + 4 * (yCol / 8);
+                                    vertMvScale = MotionVectorScale.FldToFrm;
+
+                                    break;
+                                }
+
+                            case PictureCodingStruct.Frm:
+                                {
+                                    mbAddrCol = CurrMbAddr;
+                                    yM = yCol;
+                                    vertMvScale = MotionVectorScale.OneToOne;
+
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+
+                case PictureCodingStruct.Afrm:
+                    {
+                        switch (PicCodingStruct(colPic))
+                        {
+                            case PictureCodingStruct.Fld:
+                                {
+                                    mbAddrCol = mbAddrCol5;
+                                    if (!this.MbFieldDecodingFlag)
+                                    {
+                                        yM = 8 * (CurrMbAddr % 2) + 4 * (yCol / 8);
+                                        vertMvScale = MotionVectorScale.FldToFrm;
+                                    }
+                                    else
+                                    {
+                                        yM = yCol;
+                                        vertMvScale = MotionVectorScale.OneToOne;
+                                    }
+
+                                    break;
+                                }
+
+                            case PictureCodingStruct.Afrm:
+                                {
+                                    if (this._derivationContext.MbAddrX == CurrMbAddr)
+                                    {
+                                        if (!this.MbFieldDecodingFlag)
+                                        {
+                                            if (!fieldDecodingFlagX)
+                                            {
+                                                mbAddrCol = CurrMbAddr;
+                                                yM = yCol;
+                                                vertMvScale = MotionVectorScale.OneToOne;
+                                            }
+                                            else
+                                            {
+                                                mbAddrCol = mbAddrCol6;
+                                                yM = 8 * (CurrMbAddr % 2) + 4 * (yCol / 8);
+                                                vertMvScale = MotionVectorScale.FldToFrm;
+                                            }
+                                        }
+                                        else
+                                        {
+                                            if (!fieldDecodingFlagX)
+                                            {
+                                                mbAddrCol = mbAddrCol7;
+                                                yM = 2 * yCol % 16;
+                                                vertMvScale = MotionVectorScale.FrmToFld;
+                                            }
+                                            else
+                                            {
+                                                mbAddrCol = CurrMbAddr;
+                                                yM = yCol;
+                                                vertMvScale = MotionVectorScale.OneToOne;
+                                            }
+                                        }
+                                    }
+
+                                    break;
+                                }
+                        }
+
+                        break;
+                    }
+            }
+
+            int mbTypeCol = (int)this._macroblockUtility.GetMbType(mbAddrCol);
+            int subMbTypeCol = 0;
+            if (mbTypeCol is P_8x8 or P_8x8ref0 or B_8x8)
+                subMbTypeCol = (int)this._macroblockUtility.GetSubMbType(mbAddrCol);
+
+            int mbPartIdxCol = colPic!.MbPartIdx;
+            int subMbPartIdxCol = colPic!.SubMbPartIdx;
+
+            Scanning.DeriveMacroblockAndSubMacroblockPartitionIndices(
+                this.sliceType, xCol, yM, this.mbType, this.subMbTypeArray, ref mbTypeCol, ref subMbTypeCol);
+
+            if (this._macroblockUtility.IsCodedWithIntra(mbAddrCol))
+            {
+                mvCol = (0, 0);
+                refIdxCol = -1;
+            }
+            else
+            {
+                bool predFlagL0Col = this.predFlagL0Array[mbPartIdxCol];
+                bool predFlagL1Col = this.predFlagL1Array[mbPartIdxCol];
+
+                if (predFlagL0Col)
+                {
+                    mvCol = (this.mvL0[mbPartIdxCol, subMbPartIdxCol, 0], this.mvL0[mbPartIdxCol, subMbPartIdxCol, 1]);
+                    refIdxCol = this.refIdxL0[mbPartIdxCol];
+                }
+                else if (predFlagL1Col)
+                {
+                    mvCol = (this.mvL1[mbPartIdxCol, subMbPartIdxCol, 0], this.mvL1[mbPartIdxCol, subMbPartIdxCol, 1]);
+                    refIdxCol = this.refIdxL1[mbPartIdxCol];
+                }
+            }
+        }
+
+        private static PictureCodingStruct PicCodingStruct(ReferencePicture refPic)
+        {
+            return (refPic.SliceHeader.FieldPicFlag, refPic.Sps.MbAdaptiveFrameFieldFlag) switch
+            {
+                (true, false) or (true, true) => PictureCodingStruct.Fld,
+                (false, false) => PictureCodingStruct.Frm,
+                (false, true) => PictureCodingStruct.Afrm
+            };
         }
 
         private int DiffPicOrderCnt(ReferencePicture x, ReferencePicture y) =>

@@ -12,7 +12,7 @@ internal sealed class H264Codec : IVideoCodec
     private PictureParameterSet? _lastPps;
     private readonly NeighboringMacroblocks _neighboringMbs;
     private readonly BaselineDecoder? _decoder;
-    private readonly IMacroblockUtility _utility;
+    private readonly IMacroblockUtility? _utility;
     private readonly DerivationContext _derivationContext;
     private readonly VideoContext? _context;
     private readonly Dictionary<string, object> _parameters;
@@ -24,7 +24,6 @@ internal sealed class H264Codec : IVideoCodec
         _lastPps = null;
         _lastSps = null;
         _neighboringMbs = new(0, 0, 0, 0, true, true, true, true);
-        _utility = new MacroblockUtility();
         _derivationContext = new();
         _decoder = null;
         _context = null;
