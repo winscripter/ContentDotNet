@@ -617,5 +617,28 @@ internal partial class BaselineDecoder
                     validA, validB, validC, ref mvLXA, ref mvLXB, ref mvLXC, ref refIdxLXA, ref refIdxLXB, ref refIdxLXC, refIdxLX, out mvpLX);
             }
         }
+
+        private void DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSPSlices(out MotionVector mvL0, out int refIdxL0)
+        {
+            refIdxL0 = 0;
+
+            DeriveMotionDataOfNeighboringPartitions(
+                na, false,
+                out _, out _, out _,
+                out MotionVector mvL0A, out MotionVector mvL0B, out _,
+                out _, out _, out _,
+                out int refIdxL0A, out int refIdxL0B, out _,
+                out _, out _, out _,
+                out bool validA, out bool validB, out _);
+
+            if (!validA || !validB || (refIdxL0A == 0 && mvL0A == (0, 0)) || (refIdxL0B == 0 && mvL0B == (0, 0)))
+            {
+                mvL0 = (0, 0);
+            }
+            else
+            {
+                DeriveLumaMotionVectorPrediction(refIdxL0, false, na, out mvL0);
+            }
+        }
     }
 }
