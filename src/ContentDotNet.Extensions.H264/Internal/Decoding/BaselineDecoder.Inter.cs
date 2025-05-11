@@ -135,7 +135,8 @@ internal partial class BaselineDecoder
             out MotionVector mvL0A, out MotionVector mvL0B, out MotionVector mvL0C,
             out MotionVector mvL1A, out MotionVector mvL1B, out MotionVector mvL1C,
             out int refIdxL0A, out int refIdxL0B, out int refIdxL0C,
-            out int refIdxL1A, out int refIdxL1B, out int refIdxL1C)
+            out int refIdxL1A, out int refIdxL1B, out int refIdxL1C,
+            out bool validA, out bool validB, out bool validC)
         {
             mbAddrA = 0;
             mbAddrB = 0;
@@ -144,7 +145,10 @@ internal partial class BaselineDecoder
             int mbAddrD = 0;
             int mbPartIdxA = 0, mbPartIdxB = 0, mbPartIdxC = 0, mbPartIdxD = 0;
             int subMbPartIdxA = 0, subMbPartIdxB = 0, subMbPartIdxC = 0, subMbPartIdxD = 0;
-            bool validA = false, validB = false, validC = false, validD = false;
+            validA = false;
+            validB = false;
+            validC = false;
+            bool validD = false;
 
             Scanning.DeriveNeighboringPartitions(
                 sliceType,
@@ -358,23 +362,63 @@ internal partial class BaselineDecoder
         {
             return !refPic.IsField || (CurrPic is not null && refPic.IsComplementaryTo(CurrPic));
         }
-    }
 
-    private static (ReferencePicture? TopField, ReferencePicture? BottomField) GetFields(ReferencePicture referencePicture)
-    {
-        if (!referencePicture.IsField)
+        private static (ReferencePicture? TopField, ReferencePicture? BottomField) GetFields(ReferencePicture referencePicture)
         {
-            return (null, null);
+            if (!referencePicture.IsField)
+            {
+                return (null, null);
+            }
+
+            ReferencePicture? topField = referencePicture.PictureStructure == PictureStructure.TopField
+                ? referencePicture
+                : referencePicture.PairField;
+
+            ReferencePicture? bottomField = referencePicture.PictureStructure == PictureStructure.BottomField
+                ? referencePicture
+                : referencePicture.PairField;
+
+            return (topField, bottomField);
         }
 
-        ReferencePicture? topField = referencePicture.PictureStructure == PictureStructure.TopField
-            ? referencePicture
-            : referencePicture.PairField;
+        private void DeriveLumaMotionVectorPrediction(
+            int refIdxLX, bool listSuffixFlag, int currSubMbType,
+            out MotionVector mvpLX)
+        {
+            DeriveMotionDataOfNeighboringPartitions(
+                currSubMbType, listSuffixFlag,
+                out _, out _, out _,
+                out MotionVector mvL0A, out MotionVector mvL0B, out MotionVector mvL0C,
+                out MotionVector mvL1A, out MotionVector mvL1B, out MotionVector mvL1C,
+                out int refIdxL0A, out int refIdxL0B, out int refIdxL0C,
+                out int refIdxL1A, out int refIdxL1B, out int refIdxL1C,
+                out bool validA, out bool validB, out bool validC);
 
-        ReferencePicture? bottomField = referencePicture.PictureStructure == PictureStructure.BottomField
-            ? referencePicture
-            : referencePicture.PairField;
+            MotionVector mvLXA = listSuffixFlag ? mvL1A : mvL0A;
+            MotionVector mvLXB = listSuffixFlag ? mvL1B : mvL0B;
+            MotionVector mvLXC = listSuffixFlag ? mvL1C : mvL0C;
 
-        return (topField, bottomField);
+            int refIdxLXA = listSuffixFlag ? refIdxL1A : refIdxL0A;
+            int refIdxLXB = listSuffixFlag ? refIdxL1B : refIdxL0B;
+            int refIdxLXC = listSuffixFlag ? refIdxL1C : refIdxL0C;
+
+            if (Util264.MbPartWidth(this.mbType, this.sliceType) == 16 && Util264.MbPartHeight(this.mbType, this.sliceType) == 8 && this.mbPartIdx == 0 && refIdxLXB == refIdxLX)
+            {
+                mvpLX = mvLXB;
+            }
+            else if (Util264.MbPartWidth(this.mbType, this.sliceType) == 16 && Util264.MbPartHeight(this.mbType, this.sliceType) == 8 && this.mbPartIdx == 1 && refIdxLXA == refIdxLX)
+            {
+                mvpLX = mvLXA;
+            }
+            else if (Util264.MbPartWidth(this.mbType, this.sliceType) == 8 && Util264.MbPartHeight(this.mbType, this.sliceType) == 16 && this.mbPartIdx == 0 && refIdxLXA == refIdxLX)
+            {
+                mvpLX = mvLXA;
+            }
+            else
+            {
+                DeriveMedianLumaMotionVectorPrediction(
+                    validA, validB, validC, ref mvLXA, ref mvLXB, ref mvLXC, ref refIdxLXA, ref refIdxLXB, ref refIdxLXC, refIdxLX, out mvpLX);
+            }
+        }
     }
 }
