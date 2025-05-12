@@ -4,6 +4,7 @@ using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
 using System.Drawing;
+using System.Runtime.CompilerServices;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
@@ -128,7 +129,9 @@ internal partial class BaselineDecoder
         }
 
         // 8.4.1.3.2
-        private void DeriveMotionDataOfNeighboringPartitions(int currSubMbType, bool listSuffixFlag,
+        private void DeriveMotionDataOfNeighboringPartitions(
+            int mbPartIdx, int subMbPartIdx,
+            int currSubMbType, bool listSuffixFlag,
             out int mbAddrA, out int mbAddrB, out int mbAddrC,
             out MotionVector mvL0A, out MotionVector mvL0B, out MotionVector mvL0C,
             out MotionVector mvL1A, out MotionVector mvL1B, out MotionVector mvL1C,
@@ -259,7 +262,7 @@ internal partial class BaselineDecoder
             }
         }
 
-        private void DeriveCoLocated4x4SubMacroblockPartitions(out ReferencePicture? colPic, out int mbAddrCol, out MotionVector mvCol, out int refIdxCol, out MotionVectorScale vertMvScale)
+        private void DeriveCoLocated4x4SubMacroblockPartitions(int mbPartIdx, int subMbPartIdx, out ReferencePicture? colPic, out int mbAddrCol, out MotionVector mvCol, out int refIdxCol, out MotionVectorScale vertMvScale)
         {
             mvCol = default;
             refIdxCol = 0;
@@ -350,7 +353,7 @@ internal partial class BaselineDecoder
                 }
             }
 
-            int luma8x8BlkIdx = !sps.Direct8X8InferenceFlag ? (4 * this.mbPartIdx + this.subMbPartIdx) : 5 * this.mbPartIdx;
+            int luma8x8BlkIdx = !sps.Direct8X8InferenceFlag ? (4 * mbPartIdx + subMbPartIdx) : 5 * mbPartIdx;
 
             int xCol = 0, yCol = 0;
             Scanning.Inverse4x4LumaScan(luma8x8BlkIdx, ref xCol, ref yCol);
@@ -583,6 +586,7 @@ internal partial class BaselineDecoder
             out MotionVector mvpLX)
         {
             DeriveMotionDataOfNeighboringPartitions(
+                this.mbPartIdx, this.subMbPartIdx,
                 currSubMbType, listSuffixFlag,
                 out _, out _, out _,
                 out MotionVector mvL0A, out MotionVector mvL0B, out MotionVector mvL0C,
@@ -618,11 +622,287 @@ internal partial class BaselineDecoder
             }
         }
 
+        private void DeriveLumaMotionVectorsForB(int mbPartIdx, int subMbPartIdx, out int refIdxL0, out int refIdxL1, out MotionVector mvL0, out MotionVector mvL1, out int subMvCnt, out bool predFlagL0, out bool predFlagL1)
+        {
+            if (this.sliceHeader.DirectSpatialMvPredFlag)
+            {
+                DeriveSpatialDirectLumaMotionVectorAndReferenceIndexPredictionMode(
+                    this.mbPartIdx, this.subMbPartIdx,
+                    out refIdxL0, out refIdxL1, out mvL0, out mvL1, out subMvCnt, out predFlagL0, out predFlagL1);
+            }
+            else
+            {
+                DeriveTemporalDirectLumaMotionVectorAndReferenceIndexPredictionMode(
+                    mbPartIdx, subMbPartIdx,
+                    out refIdxL0, out refIdxL1, out mvL0, out mvL1, out predFlagL0, out predFlagL1);
+
+                if (subMbPartIdx == 0)
+                    subMvCnt = 2;
+                else
+                    subMvCnt = 0;
+            }
+        }
+
+        private void DeriveSpatialDirectLumaMotionVectorAndReferenceIndexPredictionMode(int mbPartIdx, int subMbPartIdx, out int refIdxL0, out int refIdxL1, out MotionVector mvL0, out MotionVector mvL1, out int subMvCnt, out bool predFlagL0, out bool predFlagL1)
+        {
+            int currSubMbType = this.subMbTypeArray[mbPartIdx];
+            DeriveMotionDataOfNeighboringPartitions(
+                0, 0, currSubMbType, false,
+                out _, out _, out _,
+                out _, out _, out _,
+                out _, out _, out _,
+                out var refIdxL0A, out var refIdxL0B, out var refIdxL0C,
+                out _, out _, out _,
+                out _, out _, out _);
+            DeriveMotionDataOfNeighboringPartitions(
+                0, 0, currSubMbType, true,
+                out _, out _, out _,
+                out _, out _, out _,
+                out _, out _, out _,
+                out _, out _, out _,
+                out var refIdxL1A, out var refIdxL1B, out var refIdxL1C,
+                out _, out _, out _);
+
+            refIdxL0 = MinPositive(refIdxL0A, MinPositive(refIdxL0B, refIdxL0C));
+            refIdxL1 = MinPositive(refIdxL1A, MinPositive(refIdxL1B, refIdxL1C));
+            bool directZeroPredictionFlag = false;
+
+            if (refIdxL0 < 0 && refIdxL1 < 0)
+            {
+                refIdxL0 = 0;
+                refIdxL1 = 0;
+                directZeroPredictionFlag = true;
+            }
+
+            DeriveCoLocated4x4SubMacroblockPartitions(mbPartIdx, subMbPartIdx, out _, out _, out var mvCol, out var refIdxCol, out _);
+
+            bool colZeroFlag =
+                (RefPicListL1 is not null && RefPicListL1[0]?.ReferenceType == PictureReferenceType.ShortTerm)
+                && refIdxCol == 0
+                && (mvCol.X is >= -1 and <= 1 && mvCol.Y is >= -1 and <= 1);
+
+            if (directZeroPredictionFlag || refIdxL0 < 0 || (refIdxL0 == 0 && colZeroFlag))
+                mvL0 = (0, 0);
+            else
+                DeriveLumaMotionVectorPrediction(refIdxL0, false, currSubMbType, out mvL0);
+
+            if (directZeroPredictionFlag || refIdxL1 < 0 || (refIdxL1 == 0 && colZeroFlag))
+                mvL1 = (0, 0);
+            else
+                DeriveLumaMotionVectorPrediction(refIdxL1, false, currSubMbType, out mvL1);
+
+            if (refIdxL0 >= 0 && refIdxL1 >= 0)
+            {
+                predFlagL0 = true;
+                predFlagL1 = true;
+            }
+            else if (refIdxL0 >= 0 && refIdxL1 < 0)
+            {
+                predFlagL0 = true;
+                predFlagL1 = false;
+            }
+            else if (refIdxL0 < 0 && refIdxL1 >= 0)
+            {
+                predFlagL0 = false;
+                predFlagL1 = true;
+            }
+            else
+            {
+                predFlagL0 = false;
+                predFlagL1 = false;
+            }
+
+            if (subMbPartIdx != 0)
+                subMvCnt = 0;
+            else
+                subMvCnt = Int32Boolean.I32(predFlagL0) + Int32Boolean.I32(predFlagL1);
+        }
+
+        private int MapColToList0(ReferencePicture refPicCol, MotionVectorScale vertMvScale)
+        {
+            if (vertMvScale == MotionVectorScale.OneToOne)
+            {
+                if (this._macroblockUtility.IsFieldMacroblock(CurrMbAddr) && !this.sliceHeader.FieldPicFlag)
+                {
+                    int refIdxL0Frm = -1;
+                    for (int i = 0; i < this.RefPicListL0.Pictures.Count; i++)
+                    {
+                        var curr = this.RefPicListL0[i];
+                        if (curr is null)
+                            continue;
+
+                        if (curr.PairField is null)
+                            continue;
+
+                        if (!curr.PairField.IsField || (curr.PairField.IsField && curr.PairField.IsComplementaryTo(refPicCol)))
+                        {
+                            refIdxL0Frm = i;
+                            break;
+                        }
+                    }
+
+                    if (refIdxL0Frm == -1)
+                        throw new InvalidOperationException("refIdxL0Frm is -1");
+
+                    // Wish I knew how to check reference picture parity.
+                    return (refIdxL0Frm << 1) + 1;
+                }
+                else
+                {
+                    int min = -1;
+                    for (int i = 0; i < this.RefPicListL0.Pictures.Count; i++)
+                    {
+                        var curr = this.RefPicListL0[i];
+                        if (curr is null)
+                            continue;
+
+                        if (curr.PairField?.FrameNumber == refPicCol.FrameNumber)
+                        {
+                            min = i;
+                            break;
+                        }
+                    }
+
+                    if (min == -1)
+                        throw new InvalidOperationException("min is -1");
+
+                    return min;
+                }
+            }
+            else if (vertMvScale == MotionVectorScale.FrmToFld)
+            {
+                if (sliceHeader.FieldPicFlag)
+                {
+                    int min = -1;
+                    for (int i = 0; i < this.RefPicListL0.Pictures.Count; i++)
+                    {
+                        var curr = this.RefPicListL0[i];
+                        if (curr is null)
+                            continue;
+
+                        if (curr.PairField?.FrameNumber == refPicCol.FrameNumber)
+                        {
+                            min = i;
+                            break;
+                        }
+                    }
+
+                    if (min == -1)
+                        throw new InvalidOperationException("min is -1");
+
+                    return min << 1;
+                }
+                else
+                {
+                    int min = -1;
+                    for (int i = 0; i < this.RefPicListL0.Pictures.Count; i++)
+                    {
+                        var curr = this.RefPicListL0[i];
+                        if (curr is null)
+                            continue;
+
+                        if (curr.PairField?.FrameNumber == refPicCol.FrameNumber)
+                        {
+                            min = i;
+                            break;
+                        }
+                    }
+
+                    if (min == -1)
+                        throw new InvalidOperationException("min is -1");
+
+                    return min << 1;
+                }
+            }
+            else
+            {
+                int min = -1;
+                for (int i = 0; i < this.RefPicListL0.Pictures.Count; i++)
+                {
+                    var curr = this.RefPicListL0[i];
+                    if (curr is null)
+                        continue;
+
+                    if (curr.PairField is null)
+                        continue;
+
+                    if (!curr.PairField.IsField || (curr.PairField.IsField && curr.PairField.IsComplementaryTo(refPicCol)))
+                    {
+                        min = i;
+                        break;
+                    }
+                }
+
+                if (min == -1)
+                    throw new InvalidOperationException("min is -1");
+
+                return min;
+            }
+        }
+
+        private void DeriveTemporalDirectLumaMotionVectorAndReferenceIndexPredictionMode(
+            int mbPartIdx, int subMbPartIdx,
+            out int refIdxL0, out int refIdxL1, out MotionVector mvL0, out MotionVector mvL1, out bool predFlagL0, out bool predFlagL1)
+        {
+            DeriveCoLocated4x4SubMacroblockPartitions(mbPartIdx, subMbPartIdx, out var colPic, out _, out var mvCol, out var refIdxCol, out var vertMvScale);
+
+            refIdxL0 = (refIdxCol < 0) ? 0 : MapColToList0(colPic!, vertMvScale);
+            refIdxL1 = 0;
+
+            if (vertMvScale == MotionVectorScale.FrmToFld)
+            {
+                mvCol.Y /= 2;
+            }
+            else if (vertMvScale == MotionVectorScale.FldToFrm)
+            {
+                mvCol.Y *= 2;
+            }
+
+            ReferencePicture currPicOrField, pic0, pic1;
+
+            if (!this.sliceHeader.FieldPicFlag && this._macroblockUtility.IsFieldMacroblock(CurrMbAddr))
+            {
+                currPicOrField = CurrPic!.PairField!;
+                pic1 = RefPicListL1![0]!;
+                pic0 = RefPicListL0![refIdxL0 / 2]!.PairField!;
+            }
+            else
+            {
+                currPicOrField = CurrPic!;
+                pic1 = RefPicListL1![0]!;
+                pic0 = RefPicListL0![0]!;
+            }
+
+            if (this.RefPicListL0[refIdxL0]!.ReferenceType == PictureReferenceType.LongTerm ||
+                DiffPicOrderCnt(pic0, pic1) == 0)
+            {
+                mvL0 = mvCol;
+                mvL1 = (0, 0);
+            }
+            else
+            {
+                var tb = Util264.Clip3(-128, 127, DiffPicOrderCnt(currPicOrField, pic0));
+                var td = Util264.Clip3(-128, 127, DiffPicOrderCnt(pic1, pic0));
+
+                var tx = (16384 + Math.Abs(td / 2)) / td;
+                var distScaleFactor = Util264.Clip3(-1024, 1023, (tb * tx + 32) >> 6);
+                mvL0 = ((distScaleFactor * mvCol.X + 128) >> 8, (distScaleFactor * mvCol.Y + 128) >> 8);
+                mvL1 = (mvL0.X - mvCol.X, mvL0.Y - mvCol.Y);
+            }
+
+            predFlagL0 = true;
+            predFlagL1 = true;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private static int MinPositive(int x, int y) => x >= 0 && y >= 0 ? Math.Min(x, y) : Math.Max(x, y);
+
         private void DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSPSlices(out MotionVector mvL0, out int refIdxL0)
         {
             refIdxL0 = 0;
 
             DeriveMotionDataOfNeighboringPartitions(
+                this.mbPartIdx, this.subMbPartIdx,
                 na, false,
                 out _, out _, out _,
                 out MotionVector mvL0A, out MotionVector mvL0B, out _,
