@@ -920,5 +920,33 @@ internal partial class BaselineDecoder
                 DeriveLumaMotionVectorPrediction(refIdxL0, false, na, out mvL0);
             }
         }
+
+        private void DeriveChromaMotionVectors(int chromaArrayType, bool l1, MotionVector mvLX, int refIdxLX, out MotionVector mvCLX)
+        {
+            mvCLX = default;
+            mvCLX.X = mvLX.X;
+
+            if (chromaArrayType != 0 || this._macroblockUtility.IsFrameMacroblock(CurrMbAddr))
+            {
+                mvCLX.Y = mvLX.Y;
+            }
+            else
+            {
+                if ((l1 ? RefPicListL1! : RefPicListL0)[refIdxLX]!.PictureStructure == PictureStructure.TopField &&
+                    CurrPic!.PictureStructure == PictureStructure.BottomField)
+                {
+                    mvCLX.Y = mvLX.Y + 2;
+                }
+                else if ((l1 ? RefPicListL1! : RefPicListL0)[refIdxLX]!.PictureStructure == PictureStructure.BottomField &&
+                         CurrPic!.PictureStructure == PictureStructure.TopField)
+                {
+                    mvCLX.Y = mvLX.Y - 2;
+                }
+                else
+                {
+                    mvCLX.Y = mvLX.Y;
+                }
+            }
+        }
     }
 }
