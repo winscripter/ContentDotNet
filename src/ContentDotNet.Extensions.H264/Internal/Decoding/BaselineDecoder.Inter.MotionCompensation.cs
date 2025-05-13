@@ -6,7 +6,7 @@ using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
-internal static partial class BaselineDecoder
+internal sealed partial class BaselineDecoder
 {
     public sealed partial class Inter
     {
