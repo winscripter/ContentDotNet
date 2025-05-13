@@ -2,7 +2,6 @@
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Utilities;
-using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
