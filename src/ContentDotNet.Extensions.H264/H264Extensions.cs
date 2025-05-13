@@ -72,4 +72,32 @@ public static class H264Extensions
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetPicSizeInMapUnits(this SequenceParameterSet sps) =>
         (int)((sps.PicWidthInMbsMinus1 + 1) * ((2 - Int32Boolean.I32(sps.FrameMbsOnlyFlag)) * (sps.PicHeightInMapUnitsMinus1 + 1)));
+
+    /// <summary>
+    ///   Returns the picture height in samples for the Luma channel.
+    /// </summary>
+    /// <param name="sps">SPS</param>
+    /// <returns>Picture height in samples for the Luma channel.</returns>
+    public static int GetPicHeightInSamplesL(this SequenceParameterSet sps)
+    {
+        int picHeightInMapUnits = (int)sps.PicHeightInMapUnitsMinus1 + 1;
+        int frameHeightInMbs = picHeightInMapUnits;
+        if (!sps.FrameMbsOnlyFlag)
+            frameHeightInMbs *= 2;
+        return frameHeightInMbs * 16;
+    }
+
+    /// <summary>
+    ///   Returns the picture width in samples for the Luma channel.
+    /// </summary>
+    /// <param name="sps">SPS</param>
+    /// <returns>Picture width in samples for the Luma channel.</returns>
+    public static int GetPicWidthInSamplesL(this SequenceParameterSet sps)
+    {
+        int picWidthInMbs = (int)sps.PicWidthInMbsMinus1 + 1;
+        int frameWidthInMbs = picWidthInMbs;
+        if (!sps.FrameMbsOnlyFlag)
+            frameWidthInMbs *= 2;
+        return frameWidthInMbs * 16;
+    }
 }

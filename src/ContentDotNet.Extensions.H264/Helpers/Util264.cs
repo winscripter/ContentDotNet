@@ -139,6 +139,9 @@ internal static class Util264
     public static int Median(int x, int y, int z) => Math.Max(Math.Min(x, y), Math.Min(z, Math.Max(x, y)));
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int Middle(int x, int y) => (x + y + 1) >> 1; // '>> 1' over '/ 2' for performance
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool ByteAligned(BitStreamReader reader) => reader.GetState().BitPosition == 0;
 
     public static int PicOrderCnt(SequenceParameterSet sps, PictureParameterSet pps, SliceHeader shd, int prevPicOrderCntLsb, int prevPicOrderCntMsb, uint nalRefIdc)

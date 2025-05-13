@@ -11,7 +11,7 @@ namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
 internal partial class BaselineDecoder
 {
-    public sealed class Inter
+    public sealed partial class Inter
     {
         private MacroblockTypeHistory mbTypeArray;
         private MacroblockTypeHistory subMbTypeArray;
