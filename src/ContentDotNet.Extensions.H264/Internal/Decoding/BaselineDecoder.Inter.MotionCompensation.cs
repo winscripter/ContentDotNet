@@ -27,6 +27,9 @@ internal static partial class BaselineDecoder
             /*out*/ Matrix16x16 predPartLXCB,
             /*out*/ Matrix16x16 predPartLXCR)
         {
+            int xAL = (mbIndexX * 16) + (subMbPartIdx * size.Width);
+            int yAL = (mbIndexY * 16) + (subMbPartIdx * size.Height);
+
         }
 
         public static void InterpolateLumaSample(
@@ -50,8 +53,14 @@ internal static partial class BaselineDecoder
             int xAL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 0);
             int yAL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + -2);
 
+            int xBL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 1);
+            int yBL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + -2);
+
             int xCL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 0);
             int yCL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + -1);
+
+            int xDL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 1);
+            int yDL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + -1);
 
             int xEL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + -2);
             int yEL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + 0);
@@ -92,11 +101,19 @@ internal static partial class BaselineDecoder
             int xRL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 0);
             int yRL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + 2);
 
+            int xSL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 1);
+            int ySL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + 2);
+
             int xTL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 0);
             int yTL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + 3);
 
+            int xUL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 1);
+            int yUL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + 3);
+
             int A = refPicLXL[xAL, yAL];
+            int B = refPicLXL[xBL, yBL];
             int C = refPicLXL[xCL, yCL];
+            int D = refPicLXL[xDL, yDL];
             int E = refPicLXL[xEL, yEL];
             int F = refPicLXL[xFL, yFL];
             int G = refPicLXL[xGL, yGL];
@@ -110,7 +127,9 @@ internal static partial class BaselineDecoder
             int P = refPicLXL[xPL, yPL];
             int Q = refPicLXL[xQL, yQL];
             int R = refPicLXL[xRL, yRL];
+            int S = refPicLXL[xSL, ySL];
             int T = refPicLXL[xTL, yTL];
+            int U = refPicLXL[xUL, yUL];
 
             int cc = Util264.Middle(E, K);
             int dd = Util264.Middle(F, L);
@@ -123,9 +142,8 @@ internal static partial class BaselineDecoder
             int b = Util264.Clip1Y((b1 + 16) >> 5, bitDepthY);
             int h = Util264.Clip1Y((h1 + 16) >> 5, bitDepthY);
 
-            // I just asked ChatGPT 💀🙏🏻
-            int m1 = Util264.Clip1Y((H - (5 * C) + (20 * G) + (20 * M) - (5 * R) + T + 16) >> 5, bitDepthY);
-            int s1 = Util264.Clip1Y((M - (5 * N) + (20 * G) + (20 * H) - (5 * I) + J + 16) >> 5, bitDepthY);
+            int m1 = K - 5 * L + 20 * M + 20 * N - 5 * P + Q;
+            int s1 = B - 5 * D + 20 * H + 20 * N - 5 * S + U;
 
             int j1 = cc - 5 * dd + 20 * h1 + 20 * m1 - 5 * ee + ff;
 
