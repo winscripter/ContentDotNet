@@ -46,7 +46,7 @@ protected SampleEntry(BoxHeader header, ushort dataReferenceIndex, ISampleEntryD
 ```
 which initializes all the three above properties with desired values.
 
-> [!INFORMATION]
+> [!NOTE]
 > The sample entries also have 6 reserved bytes, though, they're always set to
 > 0, and any read or write operations involving sample entries handle the
 > reserved 6 bytes automatically.
