@@ -1,9 +1,9 @@
-﻿namespace ContentDotNet.Extensions.H264.Utilities;
+﻿namespace ContentDotNet;
 
 /// <summary>
 /// Utilities to turn <see cref="bool"/> into <see cref="int"/>/<see cref="uint"/> and vice versa.
 /// </summary>
-internal static class Int32Boolean
+public static class Int32Boolean
 {
     /// <summary>
     /// Converts a boolean value to an integer.
