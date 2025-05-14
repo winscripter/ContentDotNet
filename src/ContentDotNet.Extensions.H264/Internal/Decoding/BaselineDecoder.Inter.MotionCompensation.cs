@@ -17,6 +17,8 @@ internal sealed partial class BaselineDecoder
             int subMbPartIdx,
             int partWidth,
             int partHeight,
+            int xL,
+            int yL,
             MotionVector mvLX,
             MotionVector mvCLX,
             int[] refPicLXL,
