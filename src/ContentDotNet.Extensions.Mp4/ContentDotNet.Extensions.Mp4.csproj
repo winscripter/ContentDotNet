@@ -15,4 +15,8 @@
     <Folder Include="Models\Boxes\ThirdParty\Sony\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
+  </ItemGroup>
+
 </Project>

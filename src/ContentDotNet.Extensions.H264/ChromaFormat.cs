@@ -174,7 +174,6 @@ public struct ChromaFormat : IEquatable<ChromaFormat>
         return HashCode.Combine(Subsampling, IsSeparateColorPlane, ChromaWidth, ChromaHeight, IsMonochrome);
     }
 
-
     /// <summary>  
     /// Determines whether two <see cref="ChromaFormat"/> instances are equal.  
     /// </summary>  

@@ -272,7 +272,6 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
         return hash.ToHashCode();
     }
 
-
     /// <summary>  
     ///   Determines whether two <see cref="TkhdBox"/> instances are equal.  
     /// </summary>  
