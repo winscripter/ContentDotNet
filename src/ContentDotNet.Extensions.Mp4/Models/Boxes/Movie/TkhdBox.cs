@@ -148,7 +148,7 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
     public static TkhdBox Read(BinaryReader br)
     {
         byte version = br.ReadByte();
-        uint flags = (uint)((br.ReadByte() << 16) | (br.ReadByte() << 8) | br.ReadByte());
+        uint flags = (uint)(br.ReadByte() << 16 | br.ReadByte() << 8 | br.ReadByte());
 
         ulong creationTime = version == 1 ? br.ReadUInt64() : br.ReadUInt32();
         ulong modificationTime = version == 1 ? br.ReadUInt64() : br.ReadUInt32();
@@ -204,7 +204,7 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
         bw.Write(Reserved2);
         bw.Write(Layer);
 
-        this.Volume.Write(bw);
+        Volume.Write(bw);
 
         for (int i = 0; i < 36; i++)
             bw.Write(i);
