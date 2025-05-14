@@ -3,7 +3,7 @@
 /// <summary>
 ///   Represents an MP4 TKHD (Track Header) box.
 /// </summary>
-public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
+public sealed class TkhdBox : IBoxData, IEquatable<TkhdBox>
 {
     /// <summary>
     ///   This represents the version of the Track Header. If it's 0,
@@ -177,7 +177,7 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
     ///   Writes the current <see cref="TkhdBox"/> instance to the specified <see cref="BinaryWriter"/>.
     /// </summary>
     /// <param name="bw">The <see cref="BinaryWriter"/> to write to.</param>
-    public readonly void Write(BinaryWriter bw)
+    public void Write(BinaryWriter bw)
     {
         bw.Write(Version);
         bw.Write((byte)((Flags & 0xFF0000) >> 16));
@@ -220,7 +220,7 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
     /// <returns>
     ///   <c>true</c> if the specified object is equal to the current instance; otherwise, <c>false</c>.
     /// </returns>
-    public readonly override bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         return obj is TkhdBox box && Equals(box);
     }
@@ -232,9 +232,10 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
     /// <returns>
     ///   <c>true</c> if the specified <see cref="TkhdBox"/> is equal to the current instance; otherwise, <c>false</c>.
     /// </returns>
-    public readonly bool Equals(TkhdBox other)
+    public bool Equals(TkhdBox? other)
     {
-        return Version == other.Version &&
+        return other is not null &&
+               Version == other.Version &&
                Flags == other.Flags &&
                CreationTime == other.CreationTime &&
                ModificationTime == other.ModificationTime &&
@@ -253,7 +254,7 @@ public struct TkhdBox : IBoxData, IEquatable<TkhdBox>
     ///   Returns a hash code for the current instance.
     /// </summary>
     /// <returns>A hash code for the current instance.</returns>
-    public readonly override int GetHashCode()
+    public override int GetHashCode()
     {
         var hash = new HashCode();
         hash.Add(Version);

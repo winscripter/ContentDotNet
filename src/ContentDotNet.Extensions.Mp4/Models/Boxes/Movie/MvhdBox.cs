@@ -3,7 +3,7 @@
 /// <summary>
 ///   Represents an MP4 MVHD (Movie Header) box.
 /// </summary>
-public struct MvhdBox
+public sealed class MvhdBox
 {
     /// <summary>
     ///   A single byte that represents the Movie Header Version. If the value is 0, certain fields (like
