@@ -1,7 +1,7 @@
 # Sample Entries and Sample Entry Handlers
 > [!IMPORTANT]
 > This document assumes that you're already aware of sample entries in an MP4 video file, and what they are. If you're
-> not aware of much (including sample entries) in the MP4 video file and just want to read/write the videos themselves, check out our guide on using ContentDotNet
+> not aware of much (including sample entries) in the MP4 video file and just need to read/write the videos themselves, check out our guide on using ContentDotNet
 > for video editing and creating videos, which also describes working with MP4 files without getting in depth.
 
 ContentDotNet allows you to work with MP4 file sample entries, those used in boxes, like `stsd`.
