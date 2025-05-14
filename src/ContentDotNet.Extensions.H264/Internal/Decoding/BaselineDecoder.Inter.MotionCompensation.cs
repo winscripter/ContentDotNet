@@ -28,13 +28,13 @@ internal sealed partial class BaselineDecoder
         {
             int xAL = (mbIndexX * 16) + (subMbPartIdx * size.Width);
             int yAL = (mbIndexY * 16) + (subMbPartIdx * size.Height);
-
         }
 
         public static void InterpolateLumaSample(
             Matrix6x6 refPicLXL,
             SequenceParameterSet sps,
             bool mbaffFrameFlag,
+            bool mbFieldDecodingFlag,
             int xIntL,
             int yIntL,
             int xFracL,
@@ -47,7 +47,7 @@ internal sealed partial class BaselineDecoder
             int PicHeightInSamplesL = sps.GetPicHeightInSamplesL();
             int PicWidthInSamplesL = sps.GetPicHeightInSamplesL();
 
-            int refPicHeightEffectiveL = mbaffFrameFlag ? PicHeightInSamplesL / 2 : PicHeightInSamplesL;
+            int refPicHeightEffectiveL = !mbaffFrameFlag || !mbFieldDecodingFlag ? PicHeightInSamplesL / 2 : PicHeightInSamplesL;
 
             int xAL = Util264.Clip3(0, PicWidthInSamplesL - 1, xIntL + 0);
             int yAL = Util264.Clip3(0, refPicHeightEffectiveL - 1, yIntL + -2);
@@ -185,6 +185,43 @@ internal sealed partial class BaselineDecoder
                 (3, 3) => r,
                 _ => throw new InvalidOperationException("xFracL and yFracL may only range from 0 to 3")
             };
+        }
+
+        public static void InterpolateChromaSample(
+            Matrix6x6 refPicLXC,
+            SequenceParameterSet sps,
+            bool mbaffFrameFlag,
+            bool mbFieldDecodingFlag,
+            int xIntC,
+            int yIntC,
+            int xFracC,
+            int yFracC,
+            int xC,
+            int yC,
+            Matrix16x16 predPartLXC)
+        {
+            int PicWidthInSamplesC = sps.GetPicWidthInSamplesC();
+
+            int refPicHeightEffectiveC = !mbaffFrameFlag || !mbFieldDecodingFlag
+                ? sps.GetPicHeightInSamplesC()
+                : sps.GetPicHeightInSamplesC() / 2;
+
+            int xAC = Util264.Clip3(0, PicWidthInSamplesC - 1, xIntC);
+            int xBC = Util264.Clip3(0, PicWidthInSamplesC - 1, xIntC + 1);
+            int xCC = Util264.Clip3(0, PicWidthInSamplesC - 1, xIntC);
+            int xDC = Util264.Clip3(0, PicWidthInSamplesC - 1, xIntC + 1);
+
+            int yAC = Util264.Clip3(0, refPicHeightEffectiveC - 1, yIntC);
+            int yBC = Util264.Clip3(0, refPicHeightEffectiveC - 1, yIntC);
+            int yCC = Util264.Clip3(0, refPicHeightEffectiveC - 1, yIntC + 1);
+            int yDC = Util264.Clip3(0, refPicHeightEffectiveC - 1, yIntC + 1);
+
+            int A = refPicLXC[xAC, yAC];
+            int B = refPicLXC[xBC, yBC];
+            int C = refPicLXC[xCC, yCC];
+            int D = refPicLXC[xDC, yDC];
+
+            predPartLXC[xC, yC] = ((8 - xFracC) * (8 - yFracC) * A + xFracC * (8 - yFracC) * B + (8 - xFracC) * yFracC * C + xFracC * yFracC * D + 32) >> 6;
         }
     }
 }

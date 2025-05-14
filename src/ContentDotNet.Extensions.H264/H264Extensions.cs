@@ -100,4 +100,36 @@ public static class H264Extensions
             frameWidthInMbs *= 2;
         return frameWidthInMbs * 16;
     }
+
+    /// <summary>
+    ///   Returns the picture width in samples for the Chroma channel.
+    /// </summary>
+    /// <param name="sps">SPS</param>
+    /// <returns>Picture width in samples for the Chroma channel.</returns>
+    public static int GetPicWidthInSamplesC(this SequenceParameterSet sps)
+    {
+        if (sps.ChromaFormatIdc == 0)
+            return 0;
+
+        if (sps.ChromaFormatIdc == 3)
+            return sps.GetPicWidthInSamplesL() * (2 - Int32Boolean.I32(sps.FrameMbsOnlyFlag));
+
+        return (sps.GetPicWidthInSamplesL() / 2) * (2 - Int32Boolean.I32(sps.FrameMbsOnlyFlag));
+    }
+
+    /// <summary>
+    ///   Returns the picture height in samples for the Chroma channel.
+    /// </summary>
+    /// <param name="sps">SPS</param>
+    /// <returns>Picture height in samples for the Chroma channel.</returns>
+    public static int GetPicHeightInSamplesC(this SequenceParameterSet sps)
+    {
+        if (sps.ChromaFormatIdc == 0)
+            return 0;
+
+        if (sps.ChromaFormatIdc == 3)
+            return sps.GetPicHeightInSamplesL(); // no subsampling in height
+
+        return sps.GetPicHeightInSamplesL() / 2; // 4:2:0 or 4:2:2
+    }
 }
