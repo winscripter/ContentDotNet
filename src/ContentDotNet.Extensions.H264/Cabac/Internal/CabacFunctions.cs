@@ -3,6 +3,20 @@ using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
+internal readonly struct MbTypeOrSubMbTypeArithmeticElement
+{
+    public readonly int Category;
+    public readonly int Index;
+    public readonly BitString BitString;
+
+    public MbTypeOrSubMbTypeArithmeticElement(int category, int index, BitString bitString)
+    {
+        Category = category;
+        Index = index;
+        BitString = bitString;
+    }
+}
+
 internal static class CabacFunctions
 {
     const int na = 255;
@@ -1197,4 +1211,145 @@ internal static class CabacFunctions
 
         return result;
     }
+
+    const int MBTYPE_COL_I   = 0;
+    const int MBTYPE_COL_PSP = 1;
+    const int MBTYPE_COL_B   = 2;
+    const int MBTYPE_COL_B_INTRA_PREFIXONLY = 4;
+    const int MBTYPE_COL_PSP_INTRA_PREFIXONLY = 5;
+    const int SUBMBTYPE_COL_PSP = 6;
+    const int SUBMBTYPE_COL_B = 7;
+
+    public static readonly MbTypeOrSubMbTypeArithmeticElement[] MbTypeOrSubMbTypeArithmeticLUT =
+    [
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 0, new BitString(0b0, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 1, new BitString(0b100000, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 2, new BitString(0b100001, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 3, new BitString(0b100010, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 4, new BitString(0b100011, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 5, new BitString(0b1001000, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 6, new BitString(0b1001001, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 7, new BitString(0b1001010, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 8, new BitString(0b1001011, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 9, new BitString(0b1001100, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 10, new BitString(0b1001101, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 11, new BitString(0b1001110, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 12, new BitString(0b1001111, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 13, new BitString(0b101000, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 14, new BitString(0b101001, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 15, new BitString(0b101010, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 16, new BitString(0b101011, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 17, new BitString(0b1011000, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 18, new BitString(0b1011001, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 19, new BitString(0b1011010, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 20, new BitString(0b1011011, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 21, new BitString(0b1011100, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 22, new BitString(0b1011101, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 23, new BitString(0b1011110, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 24, new BitString(0b1011111, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 25, new BitString(0b11, 2)),
+
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 0, new BitString(0b0, 2)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 1, new BitString(0b100, 4)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 2, new BitString(0b101, 4)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 3, new BitString(0b110000, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 4, new BitString(0b110001, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 5, new BitString(0b110010, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 6, new BitString(0b110011, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 7, new BitString(0b110100, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 8, new BitString(0b110101, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 9, new BitString(0b110110, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 10, new BitString(0b110111, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 11, new BitString(0b111110, 7)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 12, new BitString(0b1110000, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 13, new BitString(0b1110001, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 14, new BitString(0b1110010, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 15, new BitString(0b1110011, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 16, new BitString(0b1110100, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 17, new BitString(0b1110101, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 18, new BitString(0b1110110, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 19, new BitString(0b1110111, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 20, new BitString(0b1111000, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 21, new BitString(0b1111001, 8)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 22, new BitString(0b111111, 6)),
+
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 23, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 24, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 25, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 26, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 27, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 28, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 29, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 30, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 31, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 32, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 33, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 34, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 35, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 36, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 37, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 38, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 39, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 40, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 41, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 42, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 43, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 44, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 45, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 46, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 47, new BitString(0b111101, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 48, new BitString(0b111101, 6)),
+
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 0, new BitString(0b000, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 1, new BitString(0b011, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 2, new BitString(0b010, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 3, new BitString(0b001, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 4, new BitString(0, 0)),
+
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 5, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 6, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 7, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 8, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 9, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 10, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 11, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 12, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 13, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 14, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 15, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 16, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 17, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 18, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 19, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 20, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 21, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 22, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 23, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 24, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 25, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 26, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 27, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 28, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 29, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 30, new BitString(0b1, 1)),
+
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 0, new BitString(0b1, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 1, new BitString(0b00, 2)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 2, new BitString(0b011, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 3, new BitString(0b010, 3)),
+
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 0, new BitString(0b0, 1)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 1, new BitString(0b100, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 2, new BitString(0b101, 3)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 3, new BitString(0b11000, 5)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 4, new BitString(0b11001, 5)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 5, new BitString(0b11010, 5)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 6, new BitString(0b11011, 5)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 7, new BitString(0b111000, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 8, new BitString(0b111001, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 9, new BitString(0b111010, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 10, new BitString(0b111011, 6)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 11, new BitString(0b11110, 5)),
+        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 12, new BitString(0b11111, 5)),
+    ];
 }
