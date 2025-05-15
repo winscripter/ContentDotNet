@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using ContentDotNet.Extensions.H264.Utilities;
+using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
@@ -1128,4 +1129,56 @@ internal static class CabacFunctions
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int TruncatedUnaryBinarize(int x, int cMax) => x == cMax - 1 ? (1 << x) - 1 : (1 << x + 1) - 2;
+
+    public static int UegkBinarize(bool signedValFlag, int k, int uCoff, int synElVal, int bitString)
+    {
+        int prefix = TruncatedUnaryBinarize(Math.Min(uCoff, Math.Abs(synElVal)), uCoff);
+
+        if ((!signedValFlag && Intrinsic.BitLengthFast(prefix) != Intrinsic.BitLengthFast(uCoff) && (!Intrinsic.IsContiguousOnes(bitString) || !Intrinsic.IsContiguousOnes(prefix))) ||
+            (signedValFlag && prefix == 0 == (bitString == 0)))
+        {
+            return prefix;
+        }
+        else
+        {
+            int building = 0;
+            if (Math.Abs(synElVal) >= uCoff)
+            {
+                int sufS = Math.Abs(synElVal) - uCoff;
+                bool stopLoop = false;
+                do
+                {
+                    if (sufS >= (1 << k))
+                    {
+                        building = (building << 1) | 0x1;
+                        sufS -= 1 << k;
+                        k++;
+                    }
+                    else
+                    {
+                        building <<= 1;
+                        while (Int32Boolean.B(k--))
+                        {
+                            if (Int32Boolean.B((sufS >> k) & 0x1))
+                                building = (building << 1) | 0x1;
+                            else
+                                building <<= 1;
+                        }
+                        stopLoop = true;
+                    }
+                }
+                while (!stopLoop);
+            }
+
+            if (signedValFlag && synElVal != 0)
+            {
+                if (synElVal > 0)
+                    building <<= 1;
+                else
+                    building = (building << 1) | 0x1;
+            }
+
+            return building;
+        }
+    }
 }
