@@ -1181,4 +1181,20 @@ internal static class CabacFunctions
             return building;
         }
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static int FixedLengthBinarize(int value, int length)
+    {
+        int result = 0;
+
+        for (int i = 0; i < length; i++)
+        {
+            if ((value & (1 << i)) != 0)
+            {
+                result |= 1 << i;
+            }
+        }
+
+        return result;
+    }
 }

@@ -21,6 +21,9 @@ internal static class Intrinsic
 #if PERF
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static uint CeilLog2(uint value) => (uint)(BitOperations.Log2(value) + (BitOperations.IsPow2(value) ? 0 : 1));
+#else
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static uint CeilLog2(uint value) => (uint)Math.Ceiling(Math.Log2(value));
 #endif
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
