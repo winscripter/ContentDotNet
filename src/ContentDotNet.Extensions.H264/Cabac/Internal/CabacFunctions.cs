@@ -1478,4 +1478,42 @@ internal static class CabacFunctions
             return default;
         }
     }
+
+    private static BitString BinarizeCodedBlockPattern(int chromaArrayType, int codedBlockPattern)
+    {
+        BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(codedBlockPattern, 15));
+
+        if (chromaArrayType is not 0 and not 3)
+        {
+            BitString bsSuffix = BitString.From(TruncatedUnaryBinarize(codedBlockPattern, 2));
+
+            BitString bsResult = bsPrefix + bsSuffix;
+
+            return bsResult;
+        }
+        else
+        {
+            return bsPrefix;
+        }
+    }
+
+    public static BitString BinarizeMbQpDelta(int mbQpDelta)
+    {
+        return BitString.From(UnaryBinarize(CodeNumToSignedExpGolombCode(mbQpDelta)));
+    }
+
+    private static int CodeNumToSignedExpGolombCode(int codeNum)
+    {
+        return codeNum switch
+        {
+            0 => 0,
+            1 => 1,
+            2 => -1,
+            3 => 2,
+            4 => -2,
+            5 => 3,
+            6 => -3,
+            _ => codeNum
+        };
+    }
 }

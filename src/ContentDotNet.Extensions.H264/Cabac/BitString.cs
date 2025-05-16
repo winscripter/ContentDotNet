@@ -13,6 +13,28 @@ internal struct BitString
         _length = length;
     }
 
+    public static BitString From(int value)
+    {
+        const int bits = 32;
+        for (int i = 0; i < bits; i++)
+        {
+            if ((value & (1 << i)) != 0)
+                return new BitString(value, i + 1);
+        }
+        return new BitString(value, 0);
+    }
+
+    public static BitString From(uint value)
+    {
+        const int bits = 32;
+        for (int i = 0; i < bits; i++)
+        {
+            if ((value & (1 << i)) != 0)
+                return new BitString((int)value, i + 1);
+        }
+        return new BitString((int)value, 0);
+    }
+
     public bool this[int index]
     {
         readonly get => (_value & (1 << index)) != 0;
