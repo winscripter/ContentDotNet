@@ -1352,4 +1352,130 @@ internal static class CabacFunctions
         new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 11, new BitString(0b11110, 5)),
         new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 12, new BitString(0b11111, 5)),
     ];
+
+    public static BitString BinarizeMacroblockOrSubMacroblockType(bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType, int mbType)
+    {
+        if (isSISlice)
+        {
+            var b0 = new BitString(isSISlice ? 0 : 1, 1);
+            if (b0.Value == 0)
+            {
+                return b0;
+            }
+            else
+            {
+                var b1 = LookUpISlice(mbType);
+                return new BitString((1 << b1.Length) | b1.Value, b1.Length + 1);
+            }
+        }
+        else
+        {
+            if (isPorSPSlice && (mbType is >= 5 and <= 30))
+            {
+                var b1 = LookUpISlice(mbType - 5);
+                return new BitString((1 << b1.Length) | b1.Value, b1.Length + 1);
+            }
+            else if (isBSlice && (mbType is >= 23 and <= 48))
+            {
+                var b0 = LookUpBSlice(mbType);
+                var b1 = LookUpISlice(mbType - 23);
+                return b0 + b1;
+            }
+            else if (isBSlice && isSubMbType)
+            {
+                return LookUpSubBlice(mbType);
+            }
+            else if (isPorSPSlice && isSubMbType)
+            {
+                return LookUpSubPSPSlice(mbType);
+            }
+            else if (isBSlice && !isSubMbType)
+            {
+                return LookUpBSlice(mbType);
+            }
+            else if (isPorSPSlice && !isSubMbType)
+            {
+                return LookUpPSPSlice(mbType);
+            }
+            else
+            {
+                throw new InvalidOperationException("Invalid CABAC mb_type/sub_mb_type[] binarization");
+            }
+        }
+
+        static BitString LookUpISlice(int value)
+        {
+            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            {
+                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
+                if (curr.Category != MBTYPE_COL_I)
+                    continue;
+
+                if (curr.Index == value)
+                    return curr.BitString;
+            }
+
+            return default;
+        }
+
+        static BitString LookUpBSlice(int value)
+        {
+            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            {
+                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
+                if (curr.Category != MBTYPE_COL_B && curr.Category != MBTYPE_COL_B_INTRA_PREFIXONLY)
+                    continue;
+
+                if (curr.Index == value)
+                    return curr.BitString;
+            }
+
+            return default;
+        }
+
+        static BitString LookUpPSPSlice(int value)
+        {
+            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            {
+                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
+                if (curr.Category != MBTYPE_COL_PSP_INTRA_PREFIXONLY && curr.Category != MBTYPE_COL_PSP)
+                    continue;
+
+                if (curr.Index == value)
+                    return curr.BitString;
+            }
+
+            return default;
+        }
+
+        static BitString LookUpSubPSPSlice(int value)
+        {
+            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            {
+                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
+                if (curr.Category != SUBMBTYPE_COL_PSP)
+                    continue;
+
+                if (curr.Index == value)
+                    return curr.BitString;
+            }
+
+            return default;
+        }
+
+        static BitString LookUpSubBlice(int value)
+        {
+            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            {
+                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
+                if (curr.Category != SUBMBTYPE_COL_B)
+                    continue;
+
+                if (curr.Index == value)
+                    return curr.BitString;
+            }
+
+            return default;
+        }
+    }
 }

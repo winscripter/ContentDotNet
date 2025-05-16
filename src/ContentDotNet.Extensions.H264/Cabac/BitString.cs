@@ -25,6 +25,8 @@ internal struct BitString
         }
     }
 
+    public readonly int Value => _value;
+
     public int Length
     {
         readonly get => _length;
@@ -32,4 +34,9 @@ internal struct BitString
     }
 
     public readonly bool IsContiguousOnes => Intrinsic.IsContiguousOnes(_value);
+
+    public static BitString operator +(BitString left, BitString right)
+    {
+        return new BitString((left.Value << right.Length) | right.Value, left.Length + right.Length);
+    }
 }
