@@ -1642,6 +1642,6 @@ internal static class CabacFunctions
         if (mb.MbQpDelta == 0)
             return 0;
 
-        return 1;
+        return 1; 
     }
 }
