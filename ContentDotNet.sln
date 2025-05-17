@@ -37,6 +37,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Dump264", "tools\Dump264\Du
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NalCount264", "tools\NalCount264\NalCount264.csproj", "{B95E8737-7106-4927-ABEB-FEB60C0ACD7A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.G711", "src\ContentDotNet.Extensions.G711\ContentDotNet.Extensions.G711.csproj", "{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -83,6 +85,10 @@ Global
 		{B95E8737-7106-4927-ABEB-FEB60C0ACD7A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B95E8737-7106-4927-ABEB-FEB60C0ACD7A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B95E8737-7106-4927-ABEB-FEB60C0ACD7A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -98,5 +104,9 @@ Global
 		{73163E69-33BD-4666-A3AA-98F2B16A88E2} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
 		{2B621CAB-9865-451A-9C59-2E603E21FEF8} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
 		{B95E8737-7106-4927-ABEB-FEB60C0ACD7A} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
+		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}
 	EndGlobalSection
 EndGlobal
