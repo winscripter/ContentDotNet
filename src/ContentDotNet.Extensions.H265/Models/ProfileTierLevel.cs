@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H265.Models;
+﻿using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.H265.Models;
 
 /// <summary>
 ///   Represents H.265 Profile, Tier and Level.

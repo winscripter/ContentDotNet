@@ -1,9 +1,9 @@
-﻿using ContentDotNet.Extensions.H264.Containers;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Containers;
+using ContentDotNet.Extensions.H264.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
-using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
-using System.Data;
-using System.Numerics;
+using ContentDotNet.Primitives;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Models;

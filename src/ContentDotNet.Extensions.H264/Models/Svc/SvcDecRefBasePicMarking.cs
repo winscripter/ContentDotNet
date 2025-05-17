@@ -1,4 +1,5 @@
-﻿using System.Reflection.PortableExecutable;
+﻿using ContentDotNet.BitStream;
+using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264.Models.Svc;
 

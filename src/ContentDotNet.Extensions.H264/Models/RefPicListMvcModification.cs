@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// Represents an entry in the reference picture list modification for MVC.

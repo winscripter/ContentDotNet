@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Abstractions.Tests;
+﻿using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Abstractions.Tests;
 
 public class FourCCTests
 {

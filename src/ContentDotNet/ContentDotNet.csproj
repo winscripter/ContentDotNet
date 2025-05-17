@@ -12,22 +12,22 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Container128.gen.cs">
+    <None Include="Containers\Container128.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container128.tt</DependentUpon>
     </None>
-    <None Include="Container256.gen.cs">
+    <None Include="Containers\Container256.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container256.tt</DependentUpon>
     </None>
-    <None Include="Container32.gen.cs">
+    <None Include="Containers\Container32.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container32.tt</DependentUpon>
     </None>
-    <None Include="Container512.gen.cs">
+    <None Include="Containers\Container512.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container512.tt</DependentUpon>
@@ -39,22 +39,22 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Container128.gen.cs">
+    <Compile Update="Containers\Container128.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container128.tt</DependentUpon>
     </Compile>
-    <Compile Update="Container256.gen.cs">
+    <Compile Update="Containers\Container256.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container256.tt</DependentUpon>
     </Compile>
-    <Compile Update="Container32.gen.cs">
+    <Compile Update="Containers\Container32.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container32.tt</DependentUpon>
     </Compile>
-    <Compile Update="Container512.gen.cs">
+    <Compile Update="Containers\Container512.gen.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Container512.tt</DependentUpon>
@@ -62,19 +62,19 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Container128.tt">
+    <None Update="Containers\Container128.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Container128.gen.cs</LastGenOutput>
     </None>
-    <None Update="Container256.tt">
+    <None Update="Containers\Container256.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Container256.gen.cs</LastGenOutput>
     </None>
-    <None Update="Container32.tt">
+    <None Update="Containers\Container32.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Container32.gen.cs</LastGenOutput>
     </None>
-    <None Update="Container512.tt">
+    <None Update="Containers\Container512.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Container512.gen.cs</LastGenOutput>
     </None>

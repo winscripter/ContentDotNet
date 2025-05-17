@@ -1,4 +1,7 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Containers;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// Represents a Sequence Parameter Set (SPS) model. This structure contains raw data.

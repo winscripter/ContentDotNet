@@ -1,4 +1,6 @@
-﻿using ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264;
 

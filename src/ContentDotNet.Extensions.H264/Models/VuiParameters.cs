@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// Video Usability Information parameters.

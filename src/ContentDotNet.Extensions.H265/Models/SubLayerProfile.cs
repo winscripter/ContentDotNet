@@ -1,4 +1,7 @@
-﻿namespace ContentDotNet.Extensions.H265.Models;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.H265.Models;
 
 /// <summary>
 /// Sub layer profile, from <see cref="ProfileTierLevel"/>.

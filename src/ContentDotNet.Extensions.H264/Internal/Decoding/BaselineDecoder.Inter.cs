@@ -3,6 +3,7 @@ using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
+using ContentDotNet.Primitives;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 using static ContentDotNet.Extensions.H264.SliceTypes;

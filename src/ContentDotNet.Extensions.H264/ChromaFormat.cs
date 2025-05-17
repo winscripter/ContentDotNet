@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Primitives;
 using System.Drawing;
 using System.Runtime.CompilerServices;
 

@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Containers;
+﻿using ContentDotNet.Containers;
+
+namespace ContentDotNet.Extensions.H264.Containers;
 
 /// <summary>
 /// Represents a 4x16x2 container matrix backed by a <see cref="Container32UInt32"/>.

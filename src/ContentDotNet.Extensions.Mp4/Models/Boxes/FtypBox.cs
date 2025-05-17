@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.Mp4.Models.Boxes;
+﻿using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.Mp4.Models.Boxes;
 
 /// <summary>
 ///   Represents an MP4 FTYP (File Type) box.

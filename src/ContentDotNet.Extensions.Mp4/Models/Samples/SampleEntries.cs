@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.Mp4.Models.Samples;
+﻿using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.Mp4.Models.Samples;
 
 /// <summary>
 ///   Represents a collection of sample entries that handle reading

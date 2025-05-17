@@ -1,4 +1,6 @@
-﻿using System.Runtime.CompilerServices;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Primitives;
+using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Models;
 

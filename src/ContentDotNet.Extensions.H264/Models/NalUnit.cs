@@ -1,4 +1,7 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 ///   This is a marker interface that can represent one of the following types:

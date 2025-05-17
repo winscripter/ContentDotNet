@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H26x;
+﻿using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.H26x;
 
 /// <summary>
 ///   Represents a frame allocated on the heap.

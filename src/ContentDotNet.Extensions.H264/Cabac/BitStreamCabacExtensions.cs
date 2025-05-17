@@ -1,5 +1,7 @@
-﻿using ContentDotNet.Extensions.H264.Cabac.Internal;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Extensions.H264.Utilities;
+using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264.Cabac;
 

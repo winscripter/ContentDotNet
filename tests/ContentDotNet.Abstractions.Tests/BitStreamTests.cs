@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Abstractions.Tests;
+﻿using ContentDotNet.BitStream;
+
+namespace ContentDotNet.Abstractions.Tests;
 
 public class BitStreamTests
 {

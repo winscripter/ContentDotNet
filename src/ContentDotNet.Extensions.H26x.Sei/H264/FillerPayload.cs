@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H26x.Sei.H264;
+﻿using ContentDotNet.BitStream;
+
+namespace ContentDotNet.Extensions.H26x.Sei.H264;
 
 public sealed class FillerPayloadHandler : ISeiHandler
 {

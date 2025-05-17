@@ -1,4 +1,7 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Primitives;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// HRD parameters.

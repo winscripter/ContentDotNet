@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H26x;
+﻿using ContentDotNet.BitStream;
+
+namespace ContentDotNet.Extensions.H26x;
 
 /// <summary>
 ///   Bit stream reader extensions

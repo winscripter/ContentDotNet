@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+
+namespace ContentDotNet.Extensions.H264.Models;
 
 /// <summary>
 /// Represents the header of a slice in an H.264 bitstream.
