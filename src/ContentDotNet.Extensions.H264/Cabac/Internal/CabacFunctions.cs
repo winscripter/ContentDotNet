@@ -1,5 +1,10 @@
-﻿using ContentDotNet.Extensions.H264.Utilities;
+﻿using ContentDotNet.Extensions.H264.Helpers;
+using ContentDotNet.Extensions.H264.Internal.Decoding;
+using ContentDotNet.Extensions.H264.Macroblocks;
+using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Extensions.H264.Utilities;
 using System.Runtime.CompilerServices;
+using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
@@ -1515,5 +1520,128 @@ internal static class CabacFunctions
             6 => -3,
             _ => codeNum
         };
+    }
+
+    public static int DeriveCtxIdxIncForMbSkipFlag(IMacroblockUtility mbUtil, DerivationContext dc, int PicWidthInMbs, bool mbaffFrameFlag, bool mbFieldDecodingFlagNotYetDecodedForThisPair, out bool applyInference)
+    {
+        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, PicWidthInMbs, mbaffFrameFlag, out var neighboringMBs);
+
+        applyInference = mbaffFrameFlag && mbFieldDecodingFlagNotYetDecodedForThisPair;
+
+        bool condTermFlagA = !(!neighboringMBs.IsMbAddrAAvailable || mbUtil.IsMbSkipFlagForMacroblock(neighboringMBs.MbAddrA));
+        bool condTermFlagB = !(!neighboringMBs.IsMbAddrBAvailable || mbUtil.IsMbSkipFlagForMacroblock(neighboringMBs.MbAddrB));
+
+        return Int32Boolean.I32(condTermFlagA) + Int32Boolean.I32(condTermFlagB);
+    }
+
+    public static int DeriveCtxIdxIncForMbFieldDecodingFlag(IMacroblockUtility mbUtil, int picWidthInMbs, DerivationContext dc, out bool applyInference)
+    {
+        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddressesMbaff(dc.CurrMbAddr, picWidthInMbs, out var neighboringMacroblocks);
+        applyInference = (
+            (
+                neighboringMacroblocks.IsMbAddrAAvailable && (
+                    (
+                        neighboringMacroblocks.MbAddrA is P_Skip or B_Skip
+                    ) || (
+                        neighboringMacroblocks.MbAddrA + 1 is P_Skip or B_Skip
+                    )
+                )
+            )
+            ||
+            (
+                neighboringMacroblocks.IsMbAddrBAvailable && (
+                    (
+                        neighboringMacroblocks.MbAddrB is P_Skip or B_Skip
+                    ) || (
+                        neighboringMacroblocks.MbAddrB + 1 is P_Skip or B_Skip
+                    )
+                )
+            )
+        );
+
+        bool condTermFlagA = !(!neighboringMacroblocks.IsMbAddrAAvailable || mbUtil.IsFrameMacroblock(neighboringMacroblocks.MbAddrA));
+        bool condTermFlagB = !(!neighboringMacroblocks.IsMbAddrBAvailable || mbUtil.IsFrameMacroblock(neighboringMacroblocks.MbAddrB));
+
+        return Int32Boolean.I32(condTermFlagA) + Int32Boolean.I32(condTermFlagB);
+    }
+
+    public static int DeriveCtxIdxIncForMbType(int ctxIdxOffset, int picWidthInMbs, IMacroblockUtility mbUtil, DerivationContext dc, int mbType)
+    {
+        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var macroblocks);
+
+        bool condTermFlagA = !(macroblocks.IsMbAddrAAvailable || (ctxIdxOffset == 0 && IsSI(mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType)) || (ctxIdxOffset == 3 && mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType is B_Skip or B_Direct_16x16));
+        bool condTermFlagB = !(macroblocks.IsMbAddrBAvailable || (ctxIdxOffset == 0 && IsSI(mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType)) || (ctxIdxOffset == 3 && mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType is B_Skip or B_Direct_16x16));
+
+        return Int32Boolean.I32(condTermFlagA) + Int32Boolean.I32(condTermFlagB);
+    }
+
+    public static int DeriveCtxIdxIncForCodedBlockPattern(int ctxIdxOffset, int binIdx, int picWidthInMbs, DerivationContext dc, IMacroblockUtility util)
+    {
+        if (ctxIdxOffset == 73)
+        {
+            BaselineDecoder.Scanning.Derive8x8LumaBlocks(dc, binIdx,
+                out int mbAddrA, out bool mbAddrAAvailable, out int luma8x8BlkIdxA, out bool luma8x8BlkIdxAAvailable,
+                out int mbAddrB, out bool mbAddrBAvailable, out int luma8x8BlkIdxB, out bool luma8x8BlkIdxBAvailable
+            );
+
+            bool condTermFlagA = !(!mbAddrAAvailable || util.GetMacroblock(mbAddrA).MbType == I_PCM || (mbAddrA != dc.CurrMbAddr && util.GetMacroblock(mbAddrA).MbType is not P_Skip and not B_Skip) || (((util.GetMacroblock(mbAddrA).CodedBlockPattern % 16) >> luma8x8BlkIdxA) & 1) != 0);
+            bool condTermFlagB = !(!mbAddrBAvailable || util.GetMacroblock(mbAddrB).MbType == I_PCM || (mbAddrB != dc.CurrMbAddr && util.GetMacroblock(mbAddrB).MbType is not P_Skip and not B_Skip) || (((util.GetMacroblock(mbAddrB).CodedBlockPattern % 16) >> luma8x8BlkIdxB) & 1) != 0);
+
+            return Int32Boolean.I32(condTermFlagA) + 2 * Int32Boolean.I32(condTermFlagB);
+        }
+        else
+        {
+            BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
+                dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var neighboringMacroblocks);
+
+            bool condTermFlagA, condTermFlagB;
+
+            if (neighboringMacroblocks.IsMbAddrAAvailable && util.GetMbType(neighboringMacroblocks.MbAddrA) == I_PCM)
+                condTermFlagA = true;
+            else
+                if ((!neighboringMacroblocks.IsMbAddrAAvailable || util.GetMbType(neighboringMacroblocks.MbAddrA) is P_Skip or B_Skip)
+                    || (binIdx == 0 && util.GetMacroblock(neighboringMacroblocks.MbAddrA).CodedBlockPattern / 16 == 0)
+                    || (binIdx == 1 && util.GetMacroblock(neighboringMacroblocks.MbAddrA).CodedBlockPattern / 16 == 2))
+                    condTermFlagA = false;
+                else
+                    condTermFlagA = true;
+
+            if (neighboringMacroblocks.IsMbAddrBAvailable && util.GetMbType(neighboringMacroblocks.MbAddrB) == I_PCM)
+                condTermFlagB = true;
+            else
+                if ((!neighboringMacroblocks.IsMbAddrBAvailable || util.GetMbType(neighboringMacroblocks.MbAddrB) is P_Skip or B_Skip)
+                    || (binIdx == 0 && util.GetMacroblock(neighboringMacroblocks.MbAddrB).CodedBlockPattern / 16 == 0)
+                    || (binIdx == 1 && util.GetMacroblock(neighboringMacroblocks.MbAddrB).CodedBlockPattern / 16 == 2))
+                condTermFlagB = false;
+            else
+                condTermFlagB = true;
+
+            return Int32Boolean.I32(condTermFlagA) + 2 * Int32Boolean.I32(condTermFlagB) + (binIdx == 1 ? 4 : 0);
+        }
+    }
+
+    public static int DeriveCtxIdxIncForMbQpDelta(IMacroblockUtility mbUtil, DerivationContext dc, bool transformSize8x8Flag, GeneralSliceType sliceType)
+    {
+        int? prevMbAddr = Util264.PrevMbAddress(dc.CurrMbAddr);
+
+        if (prevMbAddr is null)
+            return 0;
+
+        MacroblockLayer mb = mbUtil.GetMacroblock(prevMbAddr.Value);
+        if (mb.MbType is P_Skip or B_Skip)
+            return 0;
+
+        if (mb.MbType is I_PCM)
+            return 0;
+
+        if (Util264.MbPartPredMode((int)mb.MbType, 0, transformSize8x8Flag, sliceType) == Intra_16x16 &&
+            mb.CodedBlockPattern / 16 == 0 &&
+            mb.CodedBlockPattern % 16 == 0)
+            return 0;
+
+        if (mb.MbQpDelta == 0)
+            return 0;
+
+        return 1;
     }
 }

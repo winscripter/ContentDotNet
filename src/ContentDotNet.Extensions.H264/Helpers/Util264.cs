@@ -222,4 +222,6 @@ internal static class Util264
 
         return Math.Min(topFieldOrderCnt, bottomFieldOrderCnt);
     }
+
+    public static int? PrevMbAddress(int mbAddr) => mbAddr == 0 ? null : (mbAddr - 1);
 }
