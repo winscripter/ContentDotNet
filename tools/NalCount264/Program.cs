@@ -1,4 +1,4 @@
-﻿using ContentDotNet;
+﻿using ContentDotNet.BitStream;
 using ContentDotNet.Extensions.H264.Models;
 using System.Diagnostics;
 
