@@ -16,7 +16,7 @@ public struct ChromaFormat : IEquatable<ChromaFormat>
         { (1, false), new ChromaFormat(ChromaSubsampling.Shared420, false, 2, 2) },
         { (2, false), new ChromaFormat(ChromaSubsampling.Shared422, false, 2, 1) },
         { (3, false), new ChromaFormat(ChromaSubsampling.Shared444, false, 1, 1) },
-        { (3, false), new ChromaFormat(ChromaSubsampling.Shared444, false, 0, 0) },
+        { (3, true), new ChromaFormat(ChromaSubsampling.Shared444, false, 0, 0) },
     };
 
     internal static ChromaFormat GetSubsamplingAndSize(uint chromaFormatIdc, bool separateColourPlaneFlag) =>
