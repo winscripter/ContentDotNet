@@ -205,11 +205,11 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
     private static void EnsureSampleLengths(int channel1Length, int channel2Length, int channel3Length, int length, string channel1Param, string channel2Param, string channel3Param)
     {
         if (channel1Length < length)
-            throw new ArgumentOutOfRangeException(nameof(channel1Param), "There must be at least length number of parameters");
+            throw new ArgumentOutOfRangeException(channel1Param, "There must be at least length number of parameters");
         if (channel2Length < length)
-            throw new ArgumentOutOfRangeException(nameof(channel2Param), "There must be at least length number of parameters");
+            throw new ArgumentOutOfRangeException(channel2Param, "There must be at least length number of parameters");
         if (channel3Length < length)
-            throw new ArgumentOutOfRangeException(nameof(channel3Param), "There must be at least length number of parameters");
+            throw new ArgumentOutOfRangeException(channel3Param, "There must be at least length number of parameters");
     }
 
     private void WriteSample(short value)
