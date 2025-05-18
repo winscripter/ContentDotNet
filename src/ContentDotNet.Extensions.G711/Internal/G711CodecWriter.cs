@@ -168,7 +168,7 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
 
         for (int i = 0; i < length; i++)
         {
-            await ConditionalWriteSampleAsync(channel1.Span[i], channel2.Span[i], channel3.Span[i], cancellationToken);
+            await ConditionalWriteSampleAsync(channel1.Span[i], channel2.Span[i], channel3.Span[i]);
         }
     }
 
@@ -178,7 +178,7 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
 
         for (int i = 0; i < length; i++)
         {
-            await ConditionalWriteSampleAsync(channel1.Span[i], channel2.Span[i], channel3.Span[i], cancellationToken);
+            await ConditionalWriteSampleAsync(channel1.Span[i], channel2.Span[i], channel3.Span[i]);
         }
     }
 
@@ -192,15 +192,12 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
             WriteSample(c);
     }
 
-    private async Task ConditionalWriteSampleAsync(short a, short b, short c, CancellationToken cancellationToken)
+    private async Task ConditionalWriteSampleAsync(short a, short b, short c)
     {
-        cancellationToken.ThrowIfCancellationRequested();
         if (ChannelCount >= 1)
             await WriteSampleAsync(a);
-        cancellationToken.ThrowIfCancellationRequested();
         if (ChannelCount >= 2)
             await WriteSampleAsync(b);
-        cancellationToken.ThrowIfCancellationRequested();
         if (ChannelCount >= 3)
             await WriteSampleAsync(c);
     }
