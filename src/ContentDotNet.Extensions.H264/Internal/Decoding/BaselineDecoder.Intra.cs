@@ -70,14 +70,14 @@ internal partial class BaselineDecoder
                 intra4x4PredMode[luma4x4BlkIdx] = remIntra4x4PredMode[luma4x4BlkIdx] + 1;
         }
 
-        private static void PSet(Span<int> p, int x, int y, int value)
+        public static void PSet(IntraPredictionSamples p, int x, int y, int value)
         {
-            p[x == -1 ? y + 1 : x + 5] = value;
+            p.SetP(x, y, value);
         }
 
-        private static int PGet(Span<int> p, int x, int y)
+        public static int PGet(IntraPredictionSamples p, int x, int y)
         {
-            return p[x == -1 ? y + 1 : x + 5];
+            return p.GetP(x, y);
         }
 
         public static void Intra4x4SamplePredict(
@@ -86,10 +86,10 @@ internal partial class BaselineDecoder
             bool available,
             int mbAddrN,
             bool constrainedInterPredFlag,
-            Span<int> p,
+            IntraPredictionSamples p,
             Matrix16x16 cSL,
             Matrix4x4 predL,
-            Span<int> availableForIntraPred,
+            IntraPredictionSamples availableForIntraPred,
             Span<int> intra4x4PredMode,
             IMacroblockUtility util) =>
             Intra4x4SamplePredict(
@@ -122,10 +122,10 @@ internal partial class BaselineDecoder
             bool isFrame,
             bool isField,
             int bitDepthY,
-            Span<int> p,
+            IntraPredictionSamples p,
             Matrix16x16 cSL,
             Matrix4x4 predL,
-            Span<int> availableForIntraPred,
+            IntraPredictionSamples availableForIntraPred,
             Span<int> intra4x4PredMode)
         {
             int xO = 0;
@@ -510,14 +510,17 @@ internal partial class BaselineDecoder
             Matrix8x8 predL,
             bool constrainedIntraPredFlag,
             Span<int> intra8x8PredMode,
-            Span<int> p,
+            IntraPredictionSamples p,
             DerivationContext dc)
         {
             int xO = 0;
             int yO = 0; // yo indeed!
             Scanning.Inverse8x8LumaScan(luma8x8BlkIdx, ref xO, ref yO);
 
-            Span<int> availability = stackalloc int[8 * 8];
+            Span<int> availabilityTop = stackalloc int[8];
+            Span<int> availabilityLeft = stackalloc int[8];
+            Span<int> availabilityP = stackalloc int[8 * 8];
+            IntraPredictionSamples availability = new(availabilityP, availabilityLeft, availabilityTop, 0);
 
             for (int y = -1; y < 8; y++)
                 Core(-1, y, cSL, p, availability);
@@ -525,7 +528,10 @@ internal partial class BaselineDecoder
             for (int x = 0; x < 16; x++)
                 Core(x, -1, cSL, p, availability);
 
-            Span<int> pB = stackalloc int[8 * 8];
+            Span<int> pBLeft = stackalloc int[8];
+            Span<int> pBTop = stackalloc int[8];
+            Span<int> pBP = stackalloc int[8 * 8];
+            IntraPredictionSamples pB = new(pBP, pBLeft, pBTop, 0);
 
             for (int y = -1; y < 8; y++)
                 Intra8x8SamplePredictionReferenceSampleFilter(-1, y, p, availability, pB);
@@ -757,7 +763,7 @@ internal partial class BaselineDecoder
                 }
             }
 
-            void Core(int x, int y, Matrix16x16 cSL, Span<int> p, Span<int> availability)
+            void Core(int x, int y, Matrix16x16 cSL, IntraPredictionSamples p, IntraPredictionSamples availability)
             {
                 int xN = xO + x;
                 int yN = yO + y;
@@ -772,7 +778,7 @@ internal partial class BaselineDecoder
                     Internal(xInner, -1, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
             }
 
-            static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, Span<int> availability, Matrix16x16 cSL, Span<int> p, int mbAddrN, bool available)
+            static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, IntraPredictionSamples availability, Matrix16x16 cSL, IntraPredictionSamples p, int mbAddrN, bool available)
             {
                 bool isUnavailable = !available || (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag);
                 PSet(availability, x, y, isUnavailable ? 0 : 1);
@@ -796,7 +802,7 @@ internal partial class BaselineDecoder
             }
         }
 
-        private static void Intra8x8SamplePredictionReferenceSampleFilter(int x, int y, Span<int> p, Span<int> availability, Span<int> pB /*p`, e.g. pB<acktick>*/)
+        private static void Intra8x8SamplePredictionReferenceSampleFilter(int x, int y, IntraPredictionSamples p, IntraPredictionSamples availability, IntraPredictionSamples pB /*p`, e.g. pB<acktick>*/)
         {
             if (SamplingUtils.XAllMarkedAvailable(availability, 0, 16))
             {
@@ -858,10 +864,13 @@ internal partial class BaselineDecoder
             Matrix16x16 predL,
             bool constrainedIntraPredFlag,
             int intra16x16PredMode,
-            Span<int> p,
+            IntraPredictionSamples p,
             DerivationContext dc)
         {
-            Span<int> availability = stackalloc int[16];
+            Span<int> availabilityTop = stackalloc int[16];
+            Span<int> availabilityLeft = stackalloc int[16];
+            Span<int> availabilityP = stackalloc int[16 * 16];
+            IntraPredictionSamples availability = new(availabilityP, availabilityLeft, availabilityTop, 0);
 
             for (int y = -1; y < 16; y++) Core(-1, y, dc, p, availability, cSL, constrainedIntraPredFlag, _macroblockUtility);
             for (int x = 0; x < 16; x++) Core(x, -1, dc, p, availability, cSL, constrainedIntraPredFlag, _macroblockUtility);
@@ -975,7 +984,7 @@ internal partial class BaselineDecoder
                 }
             }
 
-            static void Core(int x, int y, DerivationContext dc, Span<int> p, Span<int> availability, Matrix16x16 cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
+            static void Core(int x, int y, DerivationContext dc, IntraPredictionSamples p, IntraPredictionSamples availability, Matrix16x16 cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
             {
                 int mbAddrN = 0;
                 Scanning.DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
@@ -983,7 +992,7 @@ internal partial class BaselineDecoder
                 for (int yInner = -1; yInner < 16; yInner++) Internal(-1, yInner, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
                 for (int xInner = 0; xInner < 16; xInner++) Internal(xInner, -1, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
 
-                static void Internal(int x, int y, int xW, int yW, Span<int> p, Matrix16x16 cSL, bool mbAddrValid, IMacroblockUtility macroblockUtility, int mbAddrN, DerivationContext dc, bool constrainedIntraPredFlag, Span<int> availability)
+                static void Internal(int x, int y, int xW, int yW, IntraPredictionSamples p, Matrix16x16 cSL, bool mbAddrValid, IMacroblockUtility macroblockUtility, int mbAddrN, DerivationContext dc, bool constrainedIntraPredFlag, IntraPredictionSamples availability)
                 {
                     bool isUnavailable = !mbAddrValid ||
                                          (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag) ||
@@ -1014,7 +1023,7 @@ internal partial class BaselineDecoder
             Matrix16x16 cSC,
             Matrix16x16 predC,
             MacroblockSizeChroma sizes,
-            Span<int> p,
+            IntraPredictionSamples p,
             DerivationContext dc,
             bool constrainedIntraPredFlag,
             int intraChromaPredMode,
@@ -1026,8 +1035,11 @@ internal partial class BaselineDecoder
                 return;
             }
 
-            Span<int> availability = stackalloc int[16 * 16];
-            availability.Fill(1);
+            Span<int> availabilityTop = stackalloc int[16];
+            Span<int> availabilityLeft = stackalloc int[16];
+            Span<int> availabilityP = stackalloc int[16 * 16];
+            IntraPredictionSamples availability = new(availabilityP, availabilityLeft, availabilityTop, 0);
+            availability.FillP(1);
 
             bool isSI = _macroblockUtility.IsMacroblockOfTypeSi(dc.CurrMbAddr);
 
@@ -1250,7 +1262,7 @@ internal partial class BaselineDecoder
                 }
             }
 
-            static void Core(int x, int y, Span<int> availability, Span<int> p, Matrix16x16 cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
+            static void Core(int x, int y, IntraPredictionSamples availability, IntraPredictionSamples p, Matrix16x16 cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
             {
                 int mbAddrN = 0;
                 Scanning.DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
@@ -1287,7 +1299,7 @@ internal partial class BaselineDecoder
             Matrix16x16 predC,
             IMacroblockUtility util,
             DerivationContext dc,
-            Span<int> p,
+            IntraPredictionSamples p,
             int chromaArrayType)
         {
             _ = cSC;

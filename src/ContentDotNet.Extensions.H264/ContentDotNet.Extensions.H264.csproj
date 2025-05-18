@@ -13,6 +13,14 @@
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
   </PropertyGroup>
 
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
+    <DefineConstants>$(DefineConstants);SUPPRESS_CHECKS_THAT_COULD_SLOW_THINGS_DOWN</DefineConstants>
+  </PropertyGroup>
+
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+    <DefineConstants>$(DefineConstants);SUPPRESS_CHECKS_THAT_COULD_SLOW_THINGS_DOWN</DefineConstants>
+  </PropertyGroup>
+
   <ItemGroup>
     <None Include="Containers\CabacCavlcContainer32.gen.cs">
       <DesignTime>True</DesignTime>
