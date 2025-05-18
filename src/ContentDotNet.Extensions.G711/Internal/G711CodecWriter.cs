@@ -169,6 +169,7 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
         for (int i = 0; i < length; i++)
         {
             await ConditionalWriteSampleAsync(channel1.Span[i], channel2.Span[i], channel3.Span[i]);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
@@ -179,6 +180,7 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
         for (int i = 0; i < length; i++)
         {
             await ConditionalWriteSampleAsync(channel1.Span[i], channel2.Span[i], channel3.Span[i]);
+            cancellationToken.ThrowIfCancellationRequested();
         }
     }
 
