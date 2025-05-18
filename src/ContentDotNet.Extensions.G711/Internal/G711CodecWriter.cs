@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.Abstractions;
 using ContentDotNet.BitStream;
+using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.G711.Internal;
 
@@ -216,11 +217,17 @@ internal sealed class G711CodecWriter : IPcmAudioCodecWriter
 
     private void WriteSample(short value)
     {
-        this.Stream.WriteBits(this.Law == G711Law.A ? G711Lookups.PcmToA[value] : G711Lookups.PcmToMu[value], 8);
+        this.Stream.WriteBits(GetPcmSample(value), 8);
     }
 
     private async Task WriteSampleAsync(short value)
     {
-        await this.Stream.WriteBitsAsync(this.Law == G711Law.A ? G711Lookups.PcmToA[value] : G711Lookups.PcmToMu[value], 8);
+        await this.Stream.WriteBitsAsync(GetPcmSample(value), 8);
+    }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    private byte GetPcmSample(short value)
+    {
+        return this.Law == G711Law.A ? G711Lookups.PcmToA[value] : G711Lookups.PcmToMu[value];
     }
 }
