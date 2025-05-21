@@ -3,7 +3,7 @@
 /// <summary>
 /// Reads data at bit level
 /// </summary>
-public sealed class BitStreamReader(Stream input) : IDisposable
+public class BitStreamReader(Stream input) : IDisposable
 {
     internal readonly Stream stream = input ?? throw new ArgumentNullException(nameof(input));
     internal int currentByte;

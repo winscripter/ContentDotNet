@@ -3,7 +3,7 @@
 /// <summary>
 /// Writes data at bit level
 /// </summary>
-public sealed class BitStreamWriter(Stream output) : IDisposable
+public class BitStreamWriter(Stream output) : IDisposable
 {
     private readonly Stream stream = output ?? throw new ArgumentNullException(nameof(output));
     private int currentByte = 0;
