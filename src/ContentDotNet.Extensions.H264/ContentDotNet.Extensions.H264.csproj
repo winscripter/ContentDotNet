@@ -52,4 +52,8 @@
     </Compile>
   </ItemGroup>
 
+  <ItemGroup>
+    <InternalsVisibleTo Include="ContentDotNet.Extensions.H264.Tests" />
+  </ItemGroup>
+
 </Project>
