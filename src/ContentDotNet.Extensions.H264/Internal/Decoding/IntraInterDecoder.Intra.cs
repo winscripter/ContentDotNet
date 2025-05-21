@@ -5,7 +5,7 @@ using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
-internal partial class BaselineDecoder
+internal partial class IntraInterDecoder
 {
     public sealed class Intra
     {

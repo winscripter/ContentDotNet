@@ -14,7 +14,7 @@ internal sealed class H264Codec : IVideoCodec
     private SequenceParameterSet? _lastSps;
     private PictureParameterSet? _lastPps;
     private readonly NeighboringMacroblocks _neighboringMbs;
-    private readonly BaselineDecoder? _decoder;
+    private readonly IntraInterDecoder? _decoder;
     private readonly IMacroblockUtility? _utility;
     private readonly DerivationContext _derivationContext;
     private readonly VideoContext? _context;

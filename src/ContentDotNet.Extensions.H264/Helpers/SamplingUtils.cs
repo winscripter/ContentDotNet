@@ -6,7 +6,7 @@ internal static class SamplingUtils
 {
     private static int PGet(IntraPredictionSamples p, int x, int y)
     {
-        return BaselineDecoder.Intra.PGet(p, x, y);
+        return IntraInterDecoder.Intra.PGet(p, x, y);
     }
 
     public static bool AnyMarkedAvailable(IntraPredictionSamples availability, int xStart, int yStart, int xEnd, int yEnd)

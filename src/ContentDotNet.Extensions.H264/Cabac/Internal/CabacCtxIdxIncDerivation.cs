@@ -18,7 +18,7 @@ internal static class CabacCtxIdxIncDerivation
 {
     public static int DeriveCtxIdxIncForMbSkipFlag(IMacroblockUtility mbUtil, DerivationContext dc, int PicWidthInMbs, bool mbaffFrameFlag, bool mbFieldDecodingFlagNotYetDecodedForThisPair, out bool applyInference)
     {
-        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, PicWidthInMbs, mbaffFrameFlag, out var neighboringMBs);
+        IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, PicWidthInMbs, mbaffFrameFlag, out var neighboringMBs);
 
         applyInference = mbaffFrameFlag && mbFieldDecodingFlagNotYetDecodedForThisPair;
 
@@ -30,7 +30,7 @@ internal static class CabacCtxIdxIncDerivation
 
     public static int DeriveCtxIdxIncForMbFieldDecodingFlag(IMacroblockUtility mbUtil, int picWidthInMbs, DerivationContext dc, out bool applyInference)
     {
-        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddressesMbaff(dc.CurrMbAddr, picWidthInMbs, out var neighboringMacroblocks);
+        IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddressesMbaff(dc.CurrMbAddr, picWidthInMbs, out var neighboringMacroblocks);
         applyInference = (
             (
                 neighboringMacroblocks.IsMbAddrAAvailable && (
@@ -61,7 +61,7 @@ internal static class CabacCtxIdxIncDerivation
 
     public static int DeriveCtxIdxIncForMbType(int ctxIdxOffset, int picWidthInMbs, IMacroblockUtility mbUtil, DerivationContext dc, int mbType)
     {
-        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var macroblocks);
+        IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var macroblocks);
 
         bool condTermFlagA = !(macroblocks.IsMbAddrAAvailable || (ctxIdxOffset == 0 && IsSI(mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType)) || (ctxIdxOffset == 3 && mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType is B_Skip or B_Direct_16x16));
         bool condTermFlagB = !(macroblocks.IsMbAddrBAvailable || (ctxIdxOffset == 0 && IsSI(mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType)) || (ctxIdxOffset == 3 && mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType is B_Skip or B_Direct_16x16));
@@ -73,7 +73,7 @@ internal static class CabacCtxIdxIncDerivation
     {
         if (ctxIdxOffset == 73)
         {
-            BaselineDecoder.Scanning.Derive8x8LumaBlocks(dc, binIdx,
+            IntraInterDecoder.Scanning.Derive8x8LumaBlocks(dc, binIdx,
                 out int mbAddrA, out bool mbAddrAAvailable, out int luma8x8BlkIdxA, out bool luma8x8BlkIdxAAvailable,
                 out int mbAddrB, out bool mbAddrBAvailable, out int luma8x8BlkIdxB, out bool luma8x8BlkIdxBAvailable
             );
@@ -85,7 +85,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else
         {
-            BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
+            IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
                 dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var neighboringMacroblocks);
 
             bool condTermFlagA, condTermFlagB;
@@ -151,7 +151,7 @@ internal static class CabacCtxIdxIncDerivation
         int mbAddrD = 0, mbPartIdxD = 0, subMbPartIdxD = 0;
         bool validA = false, validB = false, validC = false, validD = false;
 
-        BaselineDecoder.Scanning.DeriveNeighboringPartitions(
+        IntraInterDecoder.Scanning.DeriveNeighboringPartitions(
             sliceType: sliceType,
             dc: dc,
             mbPartIdx: mbPartIdx,
@@ -281,7 +281,7 @@ internal static class CabacCtxIdxIncDerivation
         int mbAddrD = 0, mbPartIdxD = 0, subMbPartIdxD = 0;
         bool validA = false, validB = false, validC = false, validD = false;
 
-        BaselineDecoder.Scanning.DeriveNeighboringPartitions(
+        IntraInterDecoder.Scanning.DeriveNeighboringPartitions(
             sliceType: sliceType,
             dc: dc,
             mbPartIdx: mbPartIdx,
@@ -474,7 +474,7 @@ internal static class CabacCtxIdxIncDerivation
 
     public static int DeriveCtxIdxIncForIntraChromaPredMode(DerivationContext dc, IMacroblockUtility mbUtil, int picWidthInMbs)
     {
-        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
+        IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
             dc.CurrMbAddr,
             picWidthInMbs,
             dc.IsMbaff,
@@ -518,7 +518,7 @@ internal static class CabacCtxIdxIncDerivation
 
         if (ctxBlockCat is 0 or 6 or 10)
         {
-            BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
+            IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
                 dc.CurrMbAddr,
                 picWidthInMbs,
                 dc.IsMbaff,
@@ -565,7 +565,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat is 1 or 2)
         {
-            BaselineDecoder.Scanning.Derive4x4LumaBlocks(
+            IntraInterDecoder.Scanning.Derive4x4LumaBlocks(
                 parameter1,
                 dc,
                 out mbAddrA, out mbAddrAAvailable, out int luma4x4BlkIdxA, out _,
@@ -611,7 +611,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat == 3)
         {
-            BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
+            IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
                 dc.CurrMbAddr,
                 picWidthInMbs,
                 dc.IsMbaff,
@@ -654,7 +654,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat == 4)
         {
-            BaselineDecoder.Scanning.Derive4x4ChromaBlocks(
+            IntraInterDecoder.Scanning.Derive4x4ChromaBlocks(
                 dc,
                 parameter1,
                 out mbAddrA, out mbAddrAAvailable, out _, out _,
@@ -689,7 +689,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat == 5)
         {
-            BaselineDecoder.Scanning.Derive8x8LumaBlocks(
+            IntraInterDecoder.Scanning.Derive8x8LumaBlocks(
                 dc,
                 parameter1,
                 out mbAddrA, out mbAddrAAvailable, out _, out _,
@@ -724,7 +724,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat is 7 or 8)
         {
-            BaselineDecoder.Scanning.Derive4x4CbBlocks(
+            IntraInterDecoder.Scanning.Derive4x4CbBlocks(
                 parameter1,
                 dc,
                 out mbAddrA, out mbAddrAAvailable, out int cb4x4BlkIdxA, out _,
@@ -764,7 +764,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat == 9)
         {
-            BaselineDecoder.Scanning.Derive8x8CbBlocks(
+            IntraInterDecoder.Scanning.Derive8x8CbBlocks(
                 dc,
                 parameter1,
                 out mbAddrA, out mbAddrAAvailable, out int cb8x8BlkIdxA, out _,
@@ -804,7 +804,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else if (ctxBlockCat is 11 or 12)
         {
-            BaselineDecoder.Scanning.Derive4x4CrBlocks(
+            IntraInterDecoder.Scanning.Derive4x4CrBlocks(
                 parameter1,
                 dc,
                 out mbAddrA, out mbAddrAAvailable, out int cr4x4BlkIdxA, out _,
@@ -844,7 +844,7 @@ internal static class CabacCtxIdxIncDerivation
         }
         else
         {
-            BaselineDecoder.Scanning.Derive8x8CrBlocks(
+            IntraInterDecoder.Scanning.Derive8x8CrBlocks(
                 dc,
                 parameter1,
                 out mbAddrA, out mbAddrAAvailable, out int cr8x8BlkIdxA, out _,
@@ -908,7 +908,7 @@ internal static class CabacCtxIdxIncDerivation
 
     public static int DeriveCtxIdxIncForTransformSize8x8Flag(DerivationContext dc, IMacroblockUtility mbUtil, int picWidthInMbs)
     {
-        BaselineDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
+        IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(
             dc.CurrMbAddr,
             picWidthInMbs,
             dc.IsMbaff,

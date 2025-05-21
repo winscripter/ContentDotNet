@@ -30,7 +30,7 @@ internal static class DeblockingFilter
         int dy = 1 + Int32Boolean.I32(fieldModeInFrameFilteringFlag);
 
         int x = 0, y = 0, xI = 0, yI = 0;
-        BaselineDecoder.Scanning.InverseMacroblockScan(CurrMbAddr, isFrame, isField, mbaffFrameFlag, pictureWidthInSamplesL, ref x, ref y, ref xI, ref yI);
+        IntraInterDecoder.Scanning.InverseMacroblockScan(CurrMbAddr, isFrame, isField, mbaffFrameFlag, pictureWidthInSamplesL, ref x, ref y, ref xI, ref yI);
 
         int xP = !chromaEdgeFlag ? xI : xI / chromaFormat.ChromaWidth;
         int yP = !chromaEdgeFlag ? xI : (yI + chromaFormat.ChromaHeight - 1) / chromaFormat.ChromaHeight;

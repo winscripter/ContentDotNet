@@ -230,7 +230,7 @@ internal static class Cavlc
 
         if (mode is ResidualMode.Intra16x16DcLevel or ResidualMode.Intra16x16AcLevel or ResidualMode.LumaLevel4x4)
         {
-            BaselineDecoder.Scanning.Derive4x4LumaBlocks(luma4x4BlkIdx, dc,
+            IntraInterDecoder.Scanning.Derive4x4LumaBlocks(luma4x4BlkIdx, dc,
                 out mbAddrA, out mbAddrAAvailable, out int luma4x4BlkIdxA, out bool luma4x4BlkIdxAAvailable,
                 out mbAddrB, out mbAddrBAvailable, out int luma4x4BlkIdxB, out bool luma4x4BlkIdxBAvailable);
 
@@ -256,7 +256,7 @@ internal static class Cavlc
         }
         else if (mode is ResidualMode.CbIntra16x16DcLevel or ResidualMode.CbIntra16x16AcLevel or ResidualMode.CbLevel4x4)
         {
-            BaselineDecoder.Scanning.Derive4x4LumaBlocks(
+            IntraInterDecoder.Scanning.Derive4x4LumaBlocks(
                 cb4x4BlkIdx, dc,
                 out mbAddrA, out mbAddrAAvailable, out int cb4x4BlkIdxA, out bool cb4x4BlkIdxAAvailable,
                 out mbAddrB, out mbAddrBAvailable, out int cb4x4BlkIdxB, out bool cb4x4BlkIdxBAvailable);
@@ -283,7 +283,7 @@ internal static class Cavlc
         }
         else if (mode is ResidualMode.CrIntra16x16DcLevel or ResidualMode.CrIntra16x16AcLevel or ResidualMode.CrLevel4x4)
         {
-            BaselineDecoder.Scanning.Derive4x4LumaBlocks(
+            IntraInterDecoder.Scanning.Derive4x4LumaBlocks(
                 cr4x4BlkIdx, dc,
                 out mbAddrA, out mbAddrAAvailable, out int cr4x4BlkIdxA, out bool cr4x4BlkIdxAAvailable,
                 out mbAddrB, out mbAddrBAvailable, out int cr4x4BlkIdxB, out bool cr4x4BlkIdxBAvailable);
@@ -310,7 +310,7 @@ internal static class Cavlc
         }
         else
         {
-            BaselineDecoder.Scanning.Derive4x4ChromaBlocks(dc, chroma4x4BlkIdx,
+            IntraInterDecoder.Scanning.Derive4x4ChromaBlocks(dc, chroma4x4BlkIdx,
                 out mbAddrA, out mbAddrAAvailable, out int chroma4x4BlkIdxA, out bool chroma4x4BlkIdxAAvailable,
                 out mbAddrB, out mbAddrBAvailable, out int chroma4x4BlkIdxB, out bool chroma4x4BlkIdxBAvailable
             );

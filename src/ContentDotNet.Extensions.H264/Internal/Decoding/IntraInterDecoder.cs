@@ -3,12 +3,12 @@ using System.Drawing;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
-internal sealed partial class BaselineDecoder
+internal sealed partial class IntraInterDecoder
 {
     private readonly Intra _intra;
     private readonly Inter _inter;
 
-    public BaselineDecoder(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, Size frameSize)
+    public IntraInterDecoder(DerivationContext derivationContext, IMacroblockUtility macroblockUtility, Size frameSize)
     {
         _intra = new Intra(macroblockUtility);
         _inter = new Inter(derivationContext, macroblockUtility, frameSize);
