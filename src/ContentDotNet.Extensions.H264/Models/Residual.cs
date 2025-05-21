@@ -4,12 +4,87 @@ using ContentDotNet.Extensions.H264.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Internal;
 using ContentDotNet.Extensions.H264.Macroblocks;
-using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
 using ContentDotNet.Primitives;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Models;
+
+/// <summary>
+///   Specifies the type of residual block in H.264 video coding.
+/// </summary>
+public enum ResidualBlockType
+{
+    /// <summary>
+    ///   DC coefficients of the Intra 16x16 luma block.
+    /// </summary>
+    Intra16x16DCLevel,
+
+    /// <summary>
+    ///   AC coefficients of the Intra 16x16 luma block.
+    /// </summary>
+    Intra16x16ACLevel,
+
+    /// <summary>
+    ///   Luma coefficients in 4x4 transform blocks.
+    /// </summary>
+    LumaLevel4x4,
+
+    /// <summary>
+    ///   Luma coefficients in 8x8 transform blocks.
+    /// </summary>
+    LumaLevel8x8,
+
+    /// <summary>
+    ///   DC coefficients of the chroma blue (Cb) 16x16 block.
+    /// </summary>
+    Cb16x16DCLevel,
+
+    /// <summary>
+    ///   AC coefficients of the chroma blue (Cb) 16x16 block.
+    /// </summary>
+    Cb16x16ACLevel,
+
+    /// <summary>
+    ///   Chroma blue (Cb) coefficients in 4x4 transform blocks.
+    /// </summary>
+    CbLevel4x4,
+
+    /// <summary>
+    ///   Chroma blue (Cb) coefficients in 8x8 transform blocks.
+    /// </summary>
+    CbLevel8x8,
+
+    /// <summary>
+    ///   DC coefficients of the chroma red (Cr) 16x16 block.
+    /// </summary>
+    Cr16x16DCLevel,
+
+    /// <summary>
+    ///   AC coefficients of the chroma red (Cr) 16x16 block.
+    /// </summary>
+    Cr16x16ACLevel,
+
+    /// <summary>
+    ///   Chroma red (Cr) coefficients in 4x4 transform blocks.
+    /// </summary>
+    CrLevel4x4,
+
+    /// <summary>
+    ///   Chroma red (Cr) coefficients in 8x8 transform blocks.
+    /// </summary>
+    CrLevel8x8,
+
+    /// <summary>
+    ///   DC coefficients of the chroma block.
+    /// </summary>
+    ChromaDCLevel,
+
+    /// <summary>
+    ///   AC coefficients of the chroma block.
+    /// </summary>
+    ChromaACLevel,
+}
 
 /// <summary>
 ///   Residual Mode can be used to specify the current operation in the residual.
@@ -197,7 +272,7 @@ public struct CavlcResidual : IEquatable<CavlcResidual>
         int nC = Cavlc.GetNC(reader, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
         var totalCoeffAndTrailingOnes = Cavlc.DecodeCoeffToken(reader, nC)
                                         ?? throw new VideoCodecDecoderException("Could not retrieve TotalCoeff(coeff_token) and TrailingOnes(coeff_token) for CAVLC residual block");
-    
+
         TotalCoeff = totalCoeffAndTrailingOnes.TotalCoeff;
         TrailingOnes = totalCoeffAndTrailingOnes.TrailingOnes;
 
@@ -730,7 +805,7 @@ public struct CabacResidual : IEquatable<CabacResidual>
                     coeffAbsLevelMinus1[i] = (uint)reader.ReadAE();
                     coeffSignFlag[i] = Int32Boolean.B(reader.ReadAE());
                     coeffLevel[i] = (coeffAbsLevelMinus1[i] + 1) *
-                                    (1 - 2 * Int32Boolean.U32(coeffSignFlag[i])); 
+                                    (1 - 2 * Int32Boolean.U32(coeffSignFlag[i]));
                 }
             }
         }
@@ -1165,7 +1240,7 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
 
                                     cavlcs[residualTop++] = CavlcResidual.Read(
                                         reader, lvl4x4, Math.Max(0, startIdx - 1), endIdx - 1, 15, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
-                                
+
                                     for (int i = 0; i < 4; i++)
                                         level4x4[i8x8 * 4 + i4x4, i] = lvl4x4[i];
                                 }
@@ -1351,7 +1426,7 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
 
                                     for (int i = 0; i < 16; i++)
                                         acLevel[i] = (uint)i16x16ACLevel[i8x8 * 4 + i4x4, i];
-                                    
+
                                     // TODO: CAVLC residual writes
                                     throw new InvalidOperationException("CAVLC residual writes are not supported");
                                     //cavlcs!.Value[residualTop++].Write(
@@ -1582,6 +1657,66 @@ public struct Residual : IEquatable<Residual>
     public bool PreferCabac;
 
     /// <summary>
+    ///   Container for the DC coefficients of the Intra 16x16 luma block.
+    /// </summary>
+    public Container64UInt32 Intra16x16DCLevel;
+
+    /// <summary>
+    ///   Container for the AC coefficients of the Intra 16x16 luma block.
+    /// </summary>
+    public ContainerMatrix16x16 Intra16x16ACLevel;
+
+    /// <summary>
+    ///   Container for the luma coefficients in 8x8 transform blocks.
+    /// </summary>
+    public ContainerMatrix4x64 Level8x8;
+
+    /// <summary>
+    ///   Container for the luma coefficients in 4x4 transform blocks.
+    /// </summary>
+    public ContainerMatrix4x64 Level4x4;
+
+    /// <summary>
+    ///   Container for the DC coefficients of the chroma blue (Cb) 16x16 block.
+    /// </summary>
+    public Container64UInt32 Cb16x16DCLevel;
+
+    /// <summary>
+    ///   Container for the AC coefficients of the chroma blue (Cb) 16x16 block.
+    /// </summary>
+    public ContainerMatrix16x16 Cb16x16ACLevel;
+
+    /// <summary>
+    ///   Container for the chroma blue (Cb) coefficients in 8x8 transform blocks.
+    /// </summary>
+    public ContainerMatrix4x64 CbLevel8x8;
+
+    /// <summary>
+    ///   Container for the chroma blue (Cb) coefficients in 4x4 transform blocks.
+    /// </summary>
+    public ContainerMatrix4x64 CbLevel4x4;
+
+    /// <summary>
+    ///   Container for the DC coefficients of the chroma red (Cr) 16x16 block.
+    /// </summary>
+    public Container64UInt32 Cr16x16DCLevel;
+
+    /// <summary>
+    ///   Container for the AC coefficients of the chroma red (Cr) 16x16 block.
+    /// </summary>
+    public ContainerMatrix16x16 Cr16x16ACLevel;
+
+    /// <summary>
+    ///   Container for the chroma red (Cr) coefficients in 8x8 transform blocks.
+    /// </summary>
+    public ContainerMatrix4x64 CrLevel8x8;
+
+    /// <summary>
+    ///   Container for the chroma red (Cr) coefficients in 4x4 transform blocks.
+    /// </summary>
+    public ContainerMatrix4x64 CrLevel4x4;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="Residual"/> struct.
     /// </summary>
     /// <param name="firstLumaResidual">The first luma residual.</param>
@@ -1593,6 +1728,18 @@ public struct Residual : IEquatable<Residual>
     /// <param name="yuv444Cr">Residual luma for YUV 4:4:4 chroma red channel.</param>
     /// <param name="isChromaArrayType3">Indicates whether the chroma array type is 3.</param>
     /// <param name="preferCabac">Indicates whether CABAC is preferred over CAVLC.</param>
+    /// <param name="intra16x16DCLevel">Container for the DC coefficients of the Intra 16x16 luma block.</param>
+    /// <param name="intra16x16ACLevel">Container for the AC coefficients of the Intra 16x16 luma block.</param>
+    /// <param name="level8x8">Container for the luma coefficients in 8x8 transform blocks.</param>
+    /// <param name="level4x4">Container for the luma coefficients in 4x4 transform blocks.</param>
+    /// <param name="cb16x16DCLevel">Container for the DC coefficients of the Chroma 16x16 luma block.</param>
+    /// <param name="cb16x16ACLevel">Container for the AC coefficients of the Chroma 16x16 luma block.</param>
+    /// <param name="cbLevel8x8">Container for the chroma coefficients in 8x8 transform blocks.</param>
+    /// <param name="cbLevel4x4">Container for the chroma coefficients in 4x4 transform blocks.</param>
+    /// <param name="cr16x16DCLevel">Container for the DC coefficients of the Chroma 16x16 luma block.</param>
+    /// <param name="cr16x16ACLevel">Container for the AC coefficients of the Chroma 16x16 luma block.</param>
+    /// <param name="crLevel8x8">Container for the chroma coefficients in 8x8 transform blocks.</param>
+    /// <param name="crLevel4x4">Container for the chroma coefficients in 4x4 transform blocks.</param>
     public Residual(
         ResidualLuma firstLumaResidual,
         (CabacResidual First, CabacResidual Second)? cabacCbCr,
@@ -1602,7 +1749,19 @@ public struct Residual : IEquatable<Residual>
         ResidualLuma? yuv444Cb,
         ResidualLuma? yuv444Cr,
         bool isChromaArrayType3,
-        bool preferCabac)
+        bool preferCabac,
+        Container64UInt32 intra16x16DCLevel,
+        ContainerMatrix16x16 intra16x16ACLevel,
+        ContainerMatrix4x64 level8x8,
+        ContainerMatrix4x64 level4x4,
+        Container64UInt32 cb16x16DCLevel,
+        ContainerMatrix16x16 cb16x16ACLevel,
+        ContainerMatrix4x64 cbLevel8x8,
+        ContainerMatrix4x64 cbLevel4x4,
+        Container64UInt32 cr16x16DCLevel,
+        ContainerMatrix16x16 cr16x16ACLevel,
+        ContainerMatrix4x64 crLevel8x8,
+        ContainerMatrix4x64 crLevel4x4)
     {
         FirstLumaResidual = firstLumaResidual;
         CabacCbCr = cabacCbCr;
@@ -1613,6 +1772,18 @@ public struct Residual : IEquatable<Residual>
         Yuv444Cr = yuv444Cr;
         IsChromaArrayType3 = isChromaArrayType3;
         PreferCabac = preferCabac;
+        Intra16x16DCLevel = intra16x16DCLevel;
+        Intra16x16ACLevel = intra16x16ACLevel;
+        Level8x8 = level8x8;
+        Level4x4 = level4x4;
+        Cb16x16DCLevel = cb16x16DCLevel;
+        Cb16x16ACLevel = cb16x16ACLevel;
+        CbLevel8x8 = cbLevel8x8;
+        CbLevel4x4 = cbLevel4x4;
+        Cr16x16DCLevel = cr16x16DCLevel;
+        Cr16x16ACLevel = cr16x16ACLevel;
+        CrLevel8x8 = crLevel8x8;
+        CrLevel4x4 = crLevel4x4;
     }
 
 #pragma warning disable
@@ -1646,6 +1817,16 @@ public struct Residual : IEquatable<Residual>
         ContainerMatrix16x16 Intra16x16ACLevel = i16x16ACLevel;
         ContainerMatrix4x64 LumaLevel8x8 = level8x8;
         ContainerMatrix4x64 LumaLevel4x4 = level4x4;
+
+        Container64UInt32 Cb16x16DCLevel = default;
+        ContainerMatrix16x16 Cb16x16ACLevel = default;
+        ContainerMatrix4x64 CbLevel8x8 = default;
+        ContainerMatrix4x64 CbLevel4x4 = default;
+
+        Container64UInt32 Cr16x16DCLevel = default;
+        ContainerMatrix16x16 Cr16x16ACLevel = default;
+        ContainerMatrix4x64 CrLevel8x8 = default;
+        ContainerMatrix4x64 CrLevel4x4 = default;
 
         ContainerMatrix16x16 Chroma16x16DCLevel = new();
         ContainerMatrix2x16x16 Chroma16x16ACLevel = new();
@@ -1795,11 +1976,16 @@ public struct Residual : IEquatable<Residual>
         }
         else if (chromaArrayType == 3)
         {
-            yuv444Cb = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out _, out _, out _, out _, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
-            yuv444Cr = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out _, out _, out _, out _, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
+            yuv444Cb = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out Cb16x16DCLevel, out Cb16x16ACLevel, out CbLevel8x8, out CbLevel4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
+            yuv444Cr = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out Cr16x16DCLevel, out Cr16x16ACLevel, out CrLevel8x8, out CrLevel4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
         }
 
-        return new Residual(firstResidualLuma, cabacCbCr, cavlcCbCr, cabacs, cavlcs, yuv444Cb, yuv444Cr, chromaArrayType == 3, codingMode == EntropyCodingMode.Cabac);
+        return new Residual(
+            firstResidualLuma, cabacCbCr, cavlcCbCr, cabacs, cavlcs, yuv444Cb, yuv444Cr, chromaArrayType == 3, codingMode == EntropyCodingMode.Cabac,
+            Intra16x16DCLevel, Intra16x16ACLevel, level8x8, level4x4,
+            Cb16x16DCLevel, Cb16x16ACLevel, CbLevel8x8, CbLevel4x4,
+            Cr16x16DCLevel, Cr16x16ACLevel, CrLevel8x8, CrLevel4x4
+        );
     }
 
     /// <inheritdoc/>
@@ -1825,7 +2011,19 @@ public struct Residual : IEquatable<Residual>
                EqualityComparer<ResidualLuma?>.Default.Equals(Yuv444Cb, other.Yuv444Cb) &&
                EqualityComparer<ResidualLuma?>.Default.Equals(Yuv444Cr, other.Yuv444Cr) &&
                IsChromaArrayType3 == other.IsChromaArrayType3 &&
-               PreferCabac == other.PreferCabac;
+               PreferCabac == other.PreferCabac &&
+               EqualityComparer<Container64UInt32>.Default.Equals(Intra16x16DCLevel, other.Intra16x16DCLevel) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(Intra16x16ACLevel, other.Intra16x16ACLevel) &&
+               EqualityComparer<ContainerMatrix4x64>.Default.Equals(Level8x8, other.Level8x8) &&
+               EqualityComparer<ContainerMatrix4x64>.Default.Equals(Level4x4, other.Level4x4) &&
+               EqualityComparer<Container64UInt32>.Default.Equals(Cb16x16DCLevel, other.Cb16x16DCLevel) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(Cb16x16ACLevel, other.Cb16x16ACLevel) &&
+               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CbLevel8x8, other.CbLevel8x8) &&
+               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CbLevel4x4, other.CbLevel4x4) &&
+               EqualityComparer<Container64UInt32>.Default.Equals(Cr16x16DCLevel, other.Cr16x16DCLevel) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(Cr16x16ACLevel, other.Cr16x16ACLevel) &&
+               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CrLevel8x8, other.CrLevel8x8) &&
+               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CrLevel4x4, other.CrLevel4x4);
     }
 
     /// <inheritdoc/>
@@ -1841,6 +2039,18 @@ public struct Residual : IEquatable<Residual>
         hash.Add(Yuv444Cr);
         hash.Add(IsChromaArrayType3);
         hash.Add(PreferCabac);
+        hash.Add(Intra16x16ACLevel);
+        hash.Add(Intra16x16DCLevel);
+        hash.Add(Level8x8);
+        hash.Add(Level4x4);
+        hash.Add(Cb16x16ACLevel);
+        hash.Add(Cb16x16DCLevel);
+        hash.Add(CbLevel8x8);
+        hash.Add(CbLevel4x4);
+        hash.Add(Cr16x16ACLevel);
+        hash.Add(Cr16x16DCLevel);
+        hash.Add(CrLevel8x8);
+        hash.Add(CrLevel4x4);
         return hash.ToHashCode();
     }
 

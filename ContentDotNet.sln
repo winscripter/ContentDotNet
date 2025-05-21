@@ -39,6 +39,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NalCount264", "tools\NalCou
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.G711", "src\ContentDotNet.Extensions.G711\ContentDotNet.Extensions.G711.csproj", "{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.G722", "src\ContentDotNet.Extensions.G722\ContentDotNet.Extensions.G722.csproj", "{7A5168EA-2D2A-4AD3-9550-089A9A995FE1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -89,6 +91,10 @@ Global
 		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7A5168EA-2D2A-4AD3-9550-089A9A995FE1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7A5168EA-2D2A-4AD3-9550-089A9A995FE1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7A5168EA-2D2A-4AD3-9550-089A9A995FE1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7A5168EA-2D2A-4AD3-9550-089A9A995FE1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -105,6 +111,7 @@ Global
 		{2B621CAB-9865-451A-9C59-2E603E21FEF8} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
 		{B95E8737-7106-4927-ABEB-FEB60C0ACD7A} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
 		{EAE9C318-7B3F-41BA-BD49-56B37C1AAA0D} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
+		{7A5168EA-2D2A-4AD3-9550-089A9A995FE1} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

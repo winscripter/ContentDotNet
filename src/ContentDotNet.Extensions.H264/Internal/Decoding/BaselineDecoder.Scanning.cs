@@ -161,6 +161,22 @@ internal partial class BaselineDecoder
             }
         }
 
+        public static void Derive4x4CbBlocks(
+            int cb4x4BlkIdx,
+            DerivationContext dc,
+            out int mbAddrA, out bool mbAddrAAvailable, out int cb4x4BlkIdxA, out bool cb4x4BlkIdxAAvailable,
+            out int mbAddrB, out bool mbAddrBAvailable, out int cb4x4BlkIdxB, out bool cb4x4BlkIdxBAvailable)
+            => Derive4x4LumaBlocks(cb4x4BlkIdx, dc, out mbAddrA, out mbAddrAAvailable, out cb4x4BlkIdxA, out cb4x4BlkIdxAAvailable,
+                                                    out mbAddrB, out mbAddrBAvailable, out cb4x4BlkIdxB, out cb4x4BlkIdxBAvailable);
+
+        public static void Derive4x4CrBlocks(
+            int cr4x4BlkIdx,
+            DerivationContext dc,
+            out int mbAddrA, out bool mbAddrAAvailable, out int cr4x4BlkIdxA, out bool cr4x4BlkIdxAAvailable,
+            out int mbAddrB, out bool mbAddrBAvailable, out int cr4x4BlkIdxB, out bool cr4x4BlkIdxBAvailable)
+            => Derive4x4LumaBlocks(cr4x4BlkIdx, dc, out mbAddrA, out mbAddrAAvailable, out cr4x4BlkIdxA, out cr4x4BlkIdxAAvailable,
+                                                    out mbAddrB, out mbAddrBAvailable, out cr4x4BlkIdxB, out cr4x4BlkIdxBAvailable);
+
         public static void Derive4x4ChromaBlocks(
             DerivationContext dc,
             int chroma4x4BlkIdx,
@@ -268,6 +284,22 @@ internal partial class BaselineDecoder
                              + xP % 8 / Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
             }
         }
+
+        public static void Derive8x8CrBlocks(
+            DerivationContext dc,
+            int cr8x8BlkIdx,
+            out int mbAddrA, out bool mbAddrAAvailable, out int cr8x8BlkIdxA, out bool cr8x8BlkIdxAAvailable,
+            out int mbAddrB, out bool mbAddrBAvailable, out int cr8x8BlkIdxB, out bool cr8x8BlkIdxBAvailable)
+            => Derive8x8LumaBlocks(dc, cr8x8BlkIdx, out mbAddrA, out mbAddrAAvailable, out cr8x8BlkIdxA, out cr8x8BlkIdxAAvailable,
+                                                    out mbAddrB, out mbAddrBAvailable, out cr8x8BlkIdxB, out cr8x8BlkIdxBAvailable);
+
+        public static void Derive8x8CbBlocks(
+            DerivationContext dc,
+            int cb8x8BlkIdx,
+            out int mbAddrA, out bool mbAddrAAvailable, out int cb8x8BlkIdxA, out bool cb8x8BlkIdxAAvailable,
+            out int mbAddrB, out bool mbAddrBAvailable, out int cb8x8BlkIdxB, out bool cb8x8BlkIdxBAvailable)
+            => Derive8x8LumaBlocks(dc, cb8x8BlkIdx, out mbAddrA, out mbAddrAAvailable, out cb8x8BlkIdxA, out cb8x8BlkIdxAAvailable,
+                                                    out mbAddrB, out mbAddrBAvailable, out cb8x8BlkIdxB, out cb8x8BlkIdxBAvailable);
 
         public static void DeriveNeighboringPartitions(
             GeneralSliceType sliceType,

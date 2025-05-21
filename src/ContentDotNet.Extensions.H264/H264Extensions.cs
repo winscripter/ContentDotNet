@@ -1,5 +1,4 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
-using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Primitives;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -132,5 +131,67 @@ public static class H264Extensions
             return sps.GetPicHeightInSamplesL(); // no subsampling in height
 
         return sps.GetPicHeightInSamplesL() / 2; // 4:2:0 or 4:2:2
+    }
+
+    /// <summary>
+    ///   Gets the coded block pattern for the luma component of the macroblock.
+    /// </summary>
+    /// <param name="mbLayer">The macroblock layer.</param>
+    /// <returns>The coded block pattern for luma (0-15).</returns>
+    public static int GetCodedBlockPatternLuma(this MacroblockLayer mbLayer) => mbLayer.CodedBlockPattern % 16;
+
+    /// <summary>
+    ///   Gets the coded block pattern for the chroma component of the macroblock.
+    /// </summary>
+    /// <param name="mbLayer">The macroblock layer.</param>
+    /// <returns>The coded block pattern for chroma (0-3).</returns>
+    public static int GetCodedBlockPatternChroma(this MacroblockLayer mbLayer) => mbLayer.CodedBlockPattern / 16;
+
+    /// <summary>
+    ///   Returns the residual block for the given chroma component (see <see cref="Residual.CabacCbCr"/>).
+    ///   <paramref name="iCbCr"/> must be 0 or 1.
+    /// </summary>
+    /// <param name="residual">Input residual.</param>
+    /// <param name="iCbCr">0 if Cb; 1 if Cr.</param>
+    /// <returns>
+    /// A CABAC residual indexed from <see cref="Residual.CabacCbCr"/>, or <see langword="null"/> if
+    /// the <see cref="Residual.CabacCbCr"/> property is <see langword="null"/>, which is under one
+    /// of the following cases:
+    /// <list type="number">
+    ///   <item>The <see cref="Residual.PreferCabac"/> property is <see langword="false"/>,</item>
+    ///   <item>The <c>ChromaArrayType</c> wasn't 1 and wasn't 2.</item>
+    /// </list>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="iCbCr"/> is neither 0 nor 1</exception>
+    public static CabacResidual? GetCbCrResidualBlockCabac(this Residual residual, int iCbCr)
+    {
+        if (iCbCr is not 0 or 1)
+            throw new ArgumentOutOfRangeException(nameof(iCbCr), "iCbCr must be 0 or 1.");
+
+        return iCbCr == 0 ? residual.CabacCbCr?.First : residual.CabacCbCr?.Second;
+    }
+
+    /// <summary>
+    ///   Returns the residual block for the given chroma component (see <see cref="Residual.CavlcCbCr"/>).
+    ///   <paramref name="iCbCr"/> must be 0 or 1.
+    /// </summary>
+    /// <param name="residual">Input residual.</param>
+    /// <param name="iCbCr">0 if Cb; 1 if Cr.</param>
+    /// <returns>
+    /// A CAVLC residual indexed from <see cref="Residual.CavlcCbCr"/>, or <see langword="null"/> if
+    /// the <see cref="Residual.CavlcCbCr"/> property is <see langword="null"/>, which is under one
+    /// of the following cases:
+    /// <list type="number">
+    ///   <item>The <see cref="Residual.PreferCabac"/> property is <see langword="true"/>,</item>
+    ///   <item>The <c>ChromaArrayType</c> wasn't 1 and wasn't 2.</item>
+    /// </list>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="iCbCr"/> is neither 0 nor 1</exception>
+    public static CavlcResidual? GetCbCrResidualBlockCavlc(this Residual residual, int iCbCr)
+    {
+        if (iCbCr is not 0 or 1)
+            throw new ArgumentOutOfRangeException(nameof(iCbCr), "iCbCr must be 0 or 1.");
+
+        return iCbCr == 0 ? residual.CavlcCbCr?.First : residual.CavlcCbCr?.Second;
     }
 }

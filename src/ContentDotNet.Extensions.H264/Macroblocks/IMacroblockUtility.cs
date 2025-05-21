@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.Extensions.H264.Containers;
+using ContentDotNet.Extensions.H264.Models;
 
 namespace ContentDotNet.Extensions.H264.Macroblocks;
 
@@ -165,4 +166,25 @@ public interface IMacroblockUtility
     /// <param name="mbAddr">Address of the macroblock to compute value of <c>mb_skip_flag</c> for.</param>
     /// <returns><c>mb_skip_flag</c> for macroblock at address <paramref name="mbAddr"/>.</returns>
     bool IsMbSkipFlagForMacroblock(int mbAddr);
+
+    /// <summary>
+    /// Retrieves the 4x4 luma block at the specified luma 4x4 block index.
+    /// </summary>
+    /// <param name="luma4x4BlkIdx">The index of the luma 4x4 block.</param>
+    /// <param name="output">The output container for the 4x4 luma block values.</param>
+    void Get4x4LumaBlock(int luma4x4BlkIdx, ContainerMatrix4x4 output);
+
+    /// <summary>
+    /// Retrieves the 8x8 luma block at the specified luma 8x8 block index.
+    /// </summary>
+    /// <param name="luma8x8BlkIdx">The index of the luma 8x8 block.</param>
+    /// <param name="output">The output container for the 8x8 luma block values.</param>
+    void Get8x8LumaBlock(int luma8x8BlkIdx, ContainerMatrix8x8 output);
+
+    /// <summary>
+    /// Retrieves the 16x16 luma block at the specified luma 16x16 block index.
+    /// </summary>
+    /// <param name="luma16x16BlkIdx">The index of the luma 16x16 block.</param>
+    /// <param name="output">The output container for the 16x16 luma block values.</param>
+    void Get16x16LumaBlock(int luma16x16BlkIdx, ContainerMatrix16x16 output);
 }

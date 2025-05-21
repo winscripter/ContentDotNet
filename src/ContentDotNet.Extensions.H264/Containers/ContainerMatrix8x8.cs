@@ -3,17 +3,17 @@
 namespace ContentDotNet.Extensions.H264.Containers;
 
 /// <summary>
-/// A 16x16 matrix that uses <see cref="Container256UInt32"/>.
+/// An 8x8 matrix that uses <see cref="Container64UInt32"/>.
 /// </summary>
-public struct ContainerMatrix4x4
+public struct ContainerMatrix8x8
 {
-    private Container16UInt32 _values;
+    private Container64UInt32 _values;
 
     /// <summary>  
-    /// Initializes a new instance of the <see cref="ContainerMatrix4x4"/> struct.  
+    /// Initializes a new instance of the <see cref="ContainerMatrix8x8"/> struct.  
     /// </summary>  
-    /// <param name="values">The initial values for the matrix, represented as a <see cref="Container16UInt32"/>.</param>  
-    public ContainerMatrix4x4(Container16UInt32 values)
+    /// <param name="values">The initial values for the matrix, represented as a <see cref="Container64UInt32"/>.</param>  
+    public ContainerMatrix8x8(Container64UInt32 values)
     {
         _values = values;
     }
@@ -26,8 +26,8 @@ public struct ContainerMatrix4x4
     /// <returns>Element at <paramref name="x"/>/<paramref name="y"/>.</returns>
     public uint this[int x, int y]
     {
-        readonly get => _values[x * 4 + y];
-        set => _values[x * 4 + y] = value;
+        readonly get => _values[x * 8 + y];
+        set => _values[x * 8 + y] = value;
     }
 
     /// <summary>  
@@ -35,7 +35,7 @@ public struct ContainerMatrix4x4
     /// </summary>  
     public void Clear()
     {
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < 64; i++)
             _values[i] = 0u;
     }
 }
