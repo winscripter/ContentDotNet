@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H264.Internal.Decoding;
+﻿using ContentDotNet.Extensions.H264.Internal;
+using ContentDotNet.Extensions.H264.Internal.Decoding;
 
 namespace ContentDotNet.Extensions.H264.Helpers;
 

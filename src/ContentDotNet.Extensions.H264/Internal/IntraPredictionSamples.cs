@@ -1,7 +1,7 @@
 ﻿using System.Drawing;
 using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H264.Internal.Decoding;
+namespace ContentDotNet.Extensions.H264.Internal;
 
 internal ref struct IntraPredictionSamples
 {
@@ -46,7 +46,7 @@ internal ref struct IntraPredictionSamples
         if (y == -1)
             return Top[x];
 
-        return this.P[x * 4 + y];
+        return P[x * 4 + y];
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
