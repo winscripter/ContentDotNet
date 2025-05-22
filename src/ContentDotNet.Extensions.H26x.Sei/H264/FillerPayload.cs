@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H26x.Sei.H264.Parameters;
 
 namespace ContentDotNet.Extensions.H26x.Sei.H264;
 
@@ -44,4 +45,27 @@ public sealed class FillerPayloadModelHandle : ISeiModelHandle
 // It's just filler data.
 public sealed class FillerPayloadModel : ISeiModel
 {
+    public void Write(BitStreamWriter writer, SeiModelParameterList? parameterList)
+    {
+        SeiHelpers.RequireParameterList(parameterList, nameof(parameterList));
+
+        FillerPayloadParameters? parameters = parameterList!.TryGet<FillerPayloadParameters>()
+            ?? throw new ArgumentException("Missing parameter of type FillerPayloadParameters", nameof(parameterList));
+
+        for (int i = 0; i < parameters.BitsToWrite; i++)
+            writer.WriteBit(parameters.UseOneBits);
+    }
+
+    public async Task WriteAsync(BitStreamWriter writer, SeiModelParameterList? parameterList)
+    {
+        SeiHelpers.RequireParameterList(parameterList, nameof(parameterList));
+
+        FillerPayloadParameters? parameters = parameterList!.TryGet<FillerPayloadParameters>()
+            ?? throw new ArgumentException("Missing parameter of type FillerPayloadParameters", nameof(parameterList));
+
+        for (int i = 0; i < parameters.BitsToWrite; i++)
+            await writer.WriteBitAsync(parameters.UseOneBits);
+    }
+
+    public bool RequiresParametersForWrite => true;
 }
