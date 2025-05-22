@@ -22,6 +22,7 @@ public sealed class H264EncodingOptions : INotifyPropertyChanged
     private bool _enforceAllMacroblocksAsIntra = false;
     private bool _allowSubMacroblocks = true;
     private bool _noBFrames = false;
+    private int _maxRefPics = 4;
 
     /// <summary>
     ///   Event invoked when a property changes.
@@ -172,6 +173,22 @@ public sealed class H264EncodingOptions : INotifyPropertyChanged
             if (_noBFrames != value)
             {
                 _noBFrames = value;
+                RaisePropertyChanged();
+            }
+        }
+    }
+
+    /// <summary>
+    ///   Maximum number of reference pictures. Default: 4.
+    /// </summary>
+    public int MaxReferencePictures
+    {
+        get => _maxRefPics;
+        set
+        {
+            if (_maxRefPics != value)
+            {
+                _maxRefPics = value;
                 RaisePropertyChanged();
             }
         }
