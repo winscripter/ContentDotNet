@@ -6,7 +6,7 @@ namespace ContentDotNet.Extensions.H264;
 /// <summary>
 ///   Encoding options for H.264.
 /// </summary>
-public sealed class H264EncodingOptions : INotifyPropertyChanged
+internal sealed class H264EncodingOptions : INotifyPropertyChanged
 {
     // Prefer CABAC as the default entropy coding mode due to its popularity and compression efficiency
     private EntropyCodingMode _entropyCodingMode = EntropyCodingMode.Cabac;

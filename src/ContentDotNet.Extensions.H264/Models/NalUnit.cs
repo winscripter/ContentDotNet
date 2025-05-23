@@ -29,7 +29,7 @@ public interface INalUnitHeaderExtension
 /// <summary>
 /// Represents a Network Abstraction Layer (NAL) unit.
 /// </summary>
-public struct NalUnit : IEquatable<NalUnit>
+public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
 {
     private static readonly int StartCodeFindingRecursionLimit = DataSize.Megabytes(1);
 
@@ -59,6 +59,11 @@ public struct NalUnit : IEquatable<NalUnit>
     public INalUnitHeaderExtension? Extension;
 
     /// <summary>
+    /// The RBSP.
+    /// </summary>
+    public BitStreamReader Rbsp;
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="NalUnit"/> struct.
     /// </summary>
     /// <param name="nalRefIdc">The NAL reference IDC.</param>
@@ -66,13 +71,15 @@ public struct NalUnit : IEquatable<NalUnit>
     /// <param name="svcExtensionFlag">Indicates if the SVC extension is present.</param>
     /// <param name="avc3DExtensionFlag">Indicates if the AVC 3D extension is present.</param>
     /// <param name="extension">The optional NAL unit header extension.</param>
-    public NalUnit(uint nalRefIdc, uint nalUnitType, bool svcExtensionFlag, bool avc3DExtensionFlag, INalUnitHeaderExtension? extension)
+    /// <param name="rbsp">The RBSP</param>
+    public NalUnit(uint nalRefIdc, uint nalUnitType, bool svcExtensionFlag, bool avc3DExtensionFlag, INalUnitHeaderExtension? extension, BitStreamReader rbsp)
     {
         NalRefIdc = nalRefIdc;
         NalUnitType = nalUnitType;
         SvcExtensionFlag = svcExtensionFlag;
         Avc3DExtensionFlag = avc3DExtensionFlag;
         Extension = extension;
+        Rbsp = rbsp;
     }
 
     /// <summary>
@@ -115,12 +122,14 @@ public struct NalUnit : IEquatable<NalUnit>
             }
         }
 
+        var rbsp = new MemoryStream();
+
         for (int i = nuhBytes; i < numOfBytesInNalUnit; i++)
         {
             if (i + 2 < numOfBytesInNalUnit && reader.PeekBits(24) == 0x000003)
             {
-                _ = reader.ReadBits(8);
-                _ = reader.ReadBits(8);
+                rbsp.WriteByte((byte)reader.ReadBits(8));
+                rbsp.WriteByte((byte)reader.ReadBits(8));
                 i += 2;
                 uint ep3b = reader.ReadBits(8);
                 if (ep3b != 0x03)
@@ -128,7 +137,7 @@ public struct NalUnit : IEquatable<NalUnit>
             }
             else
             {
-                _ = reader.ReadBits(8);
+                rbsp.WriteByte((byte)reader.ReadBits(8));
             }
         }
 
@@ -137,7 +146,8 @@ public struct NalUnit : IEquatable<NalUnit>
             nalUnitType,
             svcExtensionFlag,
             avc3DExtensionFlag,
-            nuhExt
+            nuhExt,
+            new BitStreamReader(rbsp)
         );
     }
 
@@ -145,7 +155,7 @@ public struct NalUnit : IEquatable<NalUnit>
     /// Writes this NAL unit to a <see cref="BitStreamWriter"/>.
     /// </summary>
     /// <param name="writer">The writer to use.</param>
-    public readonly void Write(BitStreamWriter writer)
+    public void Write(BitStreamWriter writer)
     {
         writer.WriteBit(false); // forbidden_zero_bit
         writer.WriteBits(NalRefIdc, 2);
@@ -164,7 +174,7 @@ public struct NalUnit : IEquatable<NalUnit>
     /// Asynchronously writes this NAL unit to a <see cref="BitStreamWriter"/>.
     /// </summary>
     /// <param name="writer">The writer to use.</param>
-    public readonly async Task WriteAsync(BitStreamWriter writer)
+    public async Task WriteAsync(BitStreamWriter writer)
     {
         await writer.WriteBitAsync(false); // forbidden_zero_bit
         await writer.WriteBitsAsync(NalRefIdc, 2);
@@ -231,9 +241,10 @@ public struct NalUnit : IEquatable<NalUnit>
     /// </summary>
     /// <param name="other">The other <see cref="NalUnit"/> to compare to.</param>
     /// <returns><see langword="true"/> if the instances are equal; otherwise, <see langword="false"/>.</returns>
-    public readonly bool Equals(NalUnit other)
+    public bool Equals(NalUnit? other)
     {
-        return NalRefIdc == other.NalRefIdc &&
+        return other is not null &&
+               NalRefIdc == other.NalRefIdc &&
                NalUnitType == other.NalUnitType &&
                SvcExtensionFlag == other.SvcExtensionFlag &&
                Avc3DExtensionFlag == other.Avc3DExtensionFlag &&
@@ -245,7 +256,7 @@ public struct NalUnit : IEquatable<NalUnit>
     /// </summary>
     /// <param name="obj">The object to compare to.</param>
     /// <returns><see langword="true"/> if the instances are equal; otherwise, <see langword="false"/>.</returns>
-    public readonly override bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         return obj is NalUnit unit && Equals(unit);
     }
@@ -254,9 +265,18 @@ public struct NalUnit : IEquatable<NalUnit>
     /// Gets the hash code for this instance.
     /// </summary>
     /// <returns>The hash code.</returns>
-    public readonly override int GetHashCode()
+    public override int GetHashCode()
     {
         return HashCode.Combine(NalRefIdc, NalUnitType, SvcExtensionFlag, Avc3DExtensionFlag, Extension);
+    }
+
+    /// <summary>
+    ///   Releases memory.
+    /// </summary>
+    public void Dispose()
+    {
+        this.Rbsp.Dispose();
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>

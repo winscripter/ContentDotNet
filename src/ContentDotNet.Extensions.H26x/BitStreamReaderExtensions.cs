@@ -34,15 +34,7 @@ public static class BitStreamReaderExtensions
 
     public static int ReadAE(this BitStreamReader reader)
     {
-        uint codeNum = reader.ReadUE();
-        int absoluteValue = (int)(codeNum / 2);
-
-        if ((codeNum & 1) == 0)
-        {
-            return -absoluteValue;
-        }
-
-        return absoluteValue;
+        throw new NotImplementedException("Reading CABAC values is not yet supported");
     }
 
     public static int ReadTE(this BitStreamReader reader, int x)

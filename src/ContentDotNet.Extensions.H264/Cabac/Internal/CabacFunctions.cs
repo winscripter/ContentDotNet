@@ -1486,7 +1486,7 @@ internal static class CabacFunctions
         }
     }
 
-    private static BitString BinarizeCodedBlockPattern(int chromaArrayType, int codedBlockPattern)
+    public static BitString BinarizeCodedBlockPattern(int chromaArrayType, int codedBlockPattern)
     {
         BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(codedBlockPattern, 15));
 

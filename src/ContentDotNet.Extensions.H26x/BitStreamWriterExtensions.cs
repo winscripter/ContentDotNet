@@ -64,14 +64,13 @@ public static class BitStreamWriterExtensions
 
     public static void WriteAE(this BitStreamWriter writer, int absoluteExpGolombValue)
     {
-        uint codeNum = (uint)(absoluteExpGolombValue * 2);
-        writer.WriteUE(codeNum);
+        throw new NotImplementedException("Writing CABAC values isn't yet supported");
     }
 
     public static async Task WriteAEAsync(this BitStreamWriter writer, int absoluteExpGolombValue)
     {
-        uint codeNum = (uint)(absoluteExpGolombValue * 2);
-        await writer.WriteUEAsync(codeNum);
+        await Task.CompletedTask;
+        throw new NotImplementedException("Writing CABAC values isn't yet supported");
     }
 
     public static void WriteTE(this BitStreamWriter writer, int value, int x)

@@ -35,11 +35,15 @@ H.264:
   - Baseline, Main, High and High10 profiles (pretty much what about 90% of H.264 videos are coded with)
   - All chroma subsampling types
   - NAL units, parameter sets, slice header/data, macroblocks, and residuals (both luma and chroma)
-  - Encoding and decoding
   - Accessing internal data (e.g. macroblocks, residuals, slice header/data, parameter sets and NALs) with raw values directly provided
   - Low allocation, focusing on high performance while still being platform independent (e.g. no unsafe code or filesystem operations)
   - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
-  - Accessing and modifying all SEI models
+  - Accessing all SEI models
+
+> [!NOTE]
+> Encoding isn't yet supported because the H.264 specification only provides decoding. However,
+> this is an alpha release and the stable one is expected to have encoding support (it's on the TODO list).
+> Writing raw H.264 structures is supported, except for CABAC.
 
 MP4:
   - Sample entries
