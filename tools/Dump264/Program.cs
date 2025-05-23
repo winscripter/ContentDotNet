@@ -29,6 +29,24 @@ if (!sps.IsSps())
 SequenceParameterSet spsValue = SequenceParameterSet.Read(sps.Rbsp);
 SpsDump(spsValue);
 
+if (!NalUnit.SkipStartCode(br))
+    throw new Exception("Cannot skip start code");
+
+pos = br.GetState();
+_ = NalUnit.SkipStartCode(br);
+
+newPos = br.GetState();
+
+length = newPos.ByteOffset - pos.ByteOffset;
+br.GoTo(pos);
+
+NalUnit pps = NalUnit.Read(br, (int)length);
+if (!pps.IsPps())
+    throw new Exception("Not PPS, but rather " + pps.NalUnitType);
+
+var ppsValue = PictureParameterSet.Read(pps.Rbsp, spsValue);
+PpsDump(ppsValue);
+
 static void SpsDump(SequenceParameterSet sps)
 {
     Console.WriteLine("profile_idc: " + sps.ProfileIdc);
@@ -64,4 +82,30 @@ static void SpsDump(SequenceParameterSet sps)
     Console.WriteLine("frame_crop_top_offset: " + sps.FrameCropTopOffset);
     Console.WriteLine("frame_crop_bottom_offset: " + sps.FrameCropBottomOffset);
     Console.WriteLine("vui_parameters_present_flag: " + sps.VuiParametersPresentFlag);
+}
+
+static void PpsDump(PictureParameterSet pps)
+{
+    Console.WriteLine("sps_id: " + pps.SpsId);
+    Console.WriteLine("pps_id: " + pps.PpsId);
+    Console.WriteLine("entropy_coding_mode_flag: " + pps.EntropyCodingModeFlag);
+    Console.WriteLine("bottom_field_pic_order_in_frame_present: " + pps.BottomFieldPicOrderInFramePresentFlag);
+    Console.WriteLine("num_slice_groups_minus1: " + pps.NumSliceGroupsMinus1);
+    Console.WriteLine("slice_group_change_direction_flag: " + pps.SliceGroupChangeDirectionFlag);
+    Console.WriteLine("slice_group_change_rate_minus1: " + pps.SliceGroupChangeRateMinus1);
+    Console.WriteLine("slice_group_map_type: " + pps.SliceGroupMapType);
+    Console.WriteLine("pic_size_in_map_units_minus1: " + pps.PicSizeInMapUnitsMinus1);
+    Console.WriteLine("num_ref_idx_l0_default_active_minus1: " + pps.NumRefIdxL0DefaultActiveMinus1);
+    Console.WriteLine("num_ref_idx_l1_default_active_minus1: " + pps.NumRefIdxL1DefaultActiveMinus1);
+    Console.WriteLine("weighted_pred_flag: " + pps.WeightedPredFlag);
+    Console.WriteLine("weighted_bipred_idc: " + pps.WeightedBiPredIdc);
+    Console.WriteLine("pic_init_qp_minus26: " + pps.PicInitQpMinus26);
+    Console.WriteLine("pic_init_qs_minus26: " + pps.PicInitQsMinus26);
+    Console.WriteLine("chroma_qp_index_offset: " + pps.ChromaQpIndexOffset);
+    Console.WriteLine("deblocking_filter_control_present_flag: " + pps.DeblockingFilterControlPresentFlag);
+    Console.WriteLine("constrained_intra_pred_flag: " + pps.ConstrainedIntraPredFlag);
+    Console.WriteLine("redundant_pic_cnt_present_flag: " + pps.RedundantPicCntPresentFlag);
+    Console.WriteLine("transform_8x8_mode_flag: " + pps.Transform8x8ModeFlag);
+    Console.WriteLine("pic_scaling_matrix_present_flag: " + pps.PicScalingMatrixPresentFlag);
+    Console.WriteLine("second_chroma_qp_index_offset: " + pps.SecondChromaQpIndexOffset);
 }

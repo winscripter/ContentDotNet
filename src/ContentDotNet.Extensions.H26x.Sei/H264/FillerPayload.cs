@@ -22,7 +22,7 @@ public sealed class FillerPayloadHandler : ISeiHandler
     }
 }
 
-public sealed class FillerPayloadModelHandle : ISeiModelHandle
+public sealed record FillerPayloadModelHandle : ISeiModelHandle
 {
     public Type ModelType => typeof(FillerPayloadModel);
 
@@ -43,7 +43,7 @@ public sealed class FillerPayloadModelHandle : ISeiModelHandle
 }
 
 // It's just filler data.
-public sealed class FillerPayloadModel : ISeiModel
+public sealed record FillerPayloadModel : ISeiModel
 {
     public void Write(BitStreamWriter writer, SeiModelParameterList? parameterList)
     {
