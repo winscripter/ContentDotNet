@@ -91,51 +91,7 @@ Console.WriteLine("Type: " + nalu.NalUnitType);
 Console.WriteLine("Ref Idc: " + nalu.NalRefIdc);
 ```
 
-# 4. Usage &amp; Types
-
-## 4.1. LowLevelH264Writer
-This class allows one to write specific H.264 components explicitly. It implements
-the `ILowLevelH264Writer` interface which is very likely to change in later versions.
-
-This type does not let one write actual frames - f.e. an image - to the bitstream.
-Use `IH264Encoder` instead.
-
-To create it, you have to specify the stream where output data is written. This could
-be any stream you want - it might be, a `MemoryStream`, `FileStream`, or even a
-direct `ContentDotNet.BitStreamWriter`. Example:
-```cs
-using ContentDotNet;
-using ContentDotNet.Extensions.H264;
-using System;
-using System.IO;
-
-using var h264Stream = new FileStream("output.264", FileMode.Write);
-using var writer = new LowLevelH264Writer(h264Stream, leaveOpen: true);
-```
-Now, you can utilize methods to directly write specific H.264 parts, such as
-`WriteSps` to write a Sequence Parameter Set (SPS) or `WriteNalUnit` to write
-a Network Abstraction Layer Unit (NAL unit; NALU):
-```cs
-SequenceParameterSet sps = ...;
-writer.WriteSps(sps);
-```
-That example omits `offset_for_ref_frames`, scaling matrices and VUI parameters. If
-either `PicOrderCntType` is 1, scaling matrices are present, or VUI parameters are present,
-that will throw an `InvalidOperationException`. So, to write all that:
-```cs
-SequenceParameterSet sps = ...;
-VuiWriteOptions vuiOptions = ...;
-Span<int> offsetForRefFrames = []; // Memory<int> also acceptable
-ScalingMatrixBuilder builder = ...;
-writer.WriteSps(sps, vuiOptions, offsetForRefFrames, builder);
-```
-Or, to write, for instance, an SPS NAL unit (you'll have to write SPS afterwards):
-```cs
-writer.WriteNalUnitSps(nalRefIdc: 0u);
-```
-As you write specific components, the data will be in your `h264Stream`.
-
-### 5. What's supported?
+### 4. What's supported?
 > **Note**: This is a preview release.
 
 1. CAVLC

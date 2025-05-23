@@ -141,6 +141,8 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
             }
         }
 
+        rbsp.Position = 0;
+
         return new NalUnit(
             nalRefIdc,
             nalUnitType,

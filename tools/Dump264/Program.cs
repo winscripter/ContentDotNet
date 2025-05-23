@@ -14,11 +14,19 @@ _ = NalUnit.Read(br, 1);
 if (!NalUnit.SkipStartCode(br))
     throw new Exception("Cannot skip start code");
 
-NalUnit sps = NalUnit.Read(br, 1);
+ReaderState pos = br.GetState();
+_ = NalUnit.SkipStartCode(br);
+
+ReaderState newPos = br.GetState();
+
+long length = newPos.ByteOffset - pos.ByteOffset;
+br.GoTo(pos);
+
+NalUnit sps = NalUnit.Read(br, (int)length);
 if (!sps.IsSps())
     throw new Exception("Not SPS");
 
-SequenceParameterSet spsValue = SequenceParameterSet.Read(br);
+SequenceParameterSet spsValue = SequenceParameterSet.Read(sps.Rbsp);
 SpsDump(spsValue);
 
 static void SpsDump(SequenceParameterSet sps)
