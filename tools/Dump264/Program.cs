@@ -5,47 +5,25 @@ using ContentDotNet.Extensions.H264.Models;
 using var fs = File.OpenRead("output.h264");
 using var br = new BitStreamReader(fs);
 
-// My H.264 has one AUD followed by SPS
-if (!NalUnit.SkipStartCode(br))
-    throw new Exception("Cannot skip start code");
+for (int i = 0; i < 25; i++)
+    DumpNalu();
 
-_ = NalUnit.Read(br, 1);
+void DumpNalu()
+{
+    if (!NalUnit.SkipStartCode(br))
+        throw new Exception("Cannot skip start code");
 
-if (!NalUnit.SkipStartCode(br))
-    throw new Exception("Cannot skip start code");
+    ReaderState pos = br.GetState();
+    _ = NalUnit.SkipStartCode(br);
 
-ReaderState pos = br.GetState();
-_ = NalUnit.SkipStartCode(br);
+    ReaderState newPos = br.GetState();
 
-ReaderState newPos = br.GetState();
+    long length = newPos.ByteOffset - pos.ByteOffset;
+    br.GoTo(pos);
 
-long length = newPos.ByteOffset - pos.ByteOffset;
-br.GoTo(pos);
-
-NalUnit sps = NalUnit.Read(br, (int)length);
-if (!sps.IsSps())
-    throw new Exception("Not SPS");
-
-SequenceParameterSet spsValue = SequenceParameterSet.Read(sps.Rbsp);
-SpsDump(spsValue);
-
-if (!NalUnit.SkipStartCode(br))
-    throw new Exception("Cannot skip start code");
-
-pos = br.GetState();
-_ = NalUnit.SkipStartCode(br);
-
-newPos = br.GetState();
-
-length = newPos.ByteOffset - pos.ByteOffset;
-br.GoTo(pos);
-
-NalUnit pps = NalUnit.Read(br, (int)length);
-if (!pps.IsPps())
-    throw new Exception("Not PPS, but rather " + pps.NalUnitType);
-
-var ppsValue = PictureParameterSet.Read(pps.Rbsp, spsValue);
-PpsDump(ppsValue);
+    var unit = NalUnit.Read(br, 1);
+    Console.WriteLine("type: " + unit.NalUnitType);
+}
 
 static void SpsDump(SequenceParameterSet sps)
 {
