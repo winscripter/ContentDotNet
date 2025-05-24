@@ -3,21 +3,20 @@
 /// <summary>
 ///   A single MP4 box.
 /// </summary>
-public readonly struct Box
+public abstract class Box
 {
     /// <summary>
-    ///   Box header.
+    ///   Size of the box.
     /// </summary>
-    public readonly BoxHeader Header;
+    public uint Size { get; set; }
 
     /// <summary>
-    ///   Data of the MP4 box.
+    ///   Type of the box (a fourCC).
     /// </summary>
-    public readonly IBoxData Data;
+    public uint Type { get; set; }
 
-    public Box(BoxHeader header, IBoxData data)
+    public static (uint size, uint type) Parse(BinaryReader reader)
     {
-        Header = header;
-        Data = data;
+        return (reader.ReadUInt32(), reader.ReadUInt32());
     }
 }
