@@ -59,7 +59,7 @@ internal static class CabacCtxIdxIncDerivation
         return Int32Boolean.I32(condTermFlagA) + Int32Boolean.I32(condTermFlagB);
     }
 
-    public static int DeriveCtxIdxIncForMbType(int ctxIdxOffset, int picWidthInMbs, IMacroblockUtility mbUtil, DerivationContext dc, int mbType)
+    public static int DeriveCtxIdxIncForMbType(int ctxIdxOffset, int picWidthInMbs, IMacroblockUtility mbUtil, DerivationContext dc)
     {
         IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var macroblocks);
 
