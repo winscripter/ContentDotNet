@@ -28,7 +28,7 @@ public class NALTests
     [Fact]
     public void Test_Start_Codes_And_Data()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6u, false, false, null);
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6u, false, false, null, new BitStreamReader(Stream.Null));
 
         UseBSWriterThenReader(
             writer =>
@@ -55,7 +55,7 @@ public class NALTests
     [Fact]
     public void Test_Start_Codes_And_Data_With_Bigger_Start_Codes()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6u, false, false, null);
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6u, false, false, null, new BitStreamReader(Stream.Null));
 
         UseBSWriterThenReader(
             writer =>
@@ -82,7 +82,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Data()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6, false, false, null);
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 6, false, false, null, new BitStreamReader(Stream.Null));
 
         UseBSWriterThenReader(
             writer =>
@@ -103,7 +103,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Data_1()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 14, true, false, new SvcNalUnitHeaderExtension(true, 2, false, 3, 2, 3, true, false, true, 3));
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 14, true, false, new SvcNalUnitHeaderExtension(true, 2, false, 3, 2, 3, true, false, true, 3), new BitStreamReader(Stream.Null));
 
         UseBSWriterThenReader(
             writer =>
@@ -124,7 +124,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Data_2()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 20, false, false, new MvcNalUnitHeaderExtension(true, 2, 3, 2, false, true, true));
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 20, false, false, new MvcNalUnitHeaderExtension(true, 2, 3, 2, false, true, true), new BitStreamReader(Stream.Null));
 
         UseBSWriterThenReader(
             writer =>
@@ -145,7 +145,7 @@ public class NALTests
     [Fact]
     public void Test_NALU_Data_3()
     {
-        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 21, false, true, new Avc3DNalUnitHeaderExtension(2, false, true, 3, true, false));
+        var nalu = new NalUnit(nalRefIdc: 1u, nalUnitType: 21, false, true, new Avc3DNalUnitHeaderExtension(2, false, true, 3, true, false), new BitStreamReader(Stream.Null));
 
         UseBSWriterThenReader(
             writer =>
