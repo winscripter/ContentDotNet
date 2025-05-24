@@ -1,5 +1,5 @@
 # Copyright (c) 2023-2025, winscripter
-# Created: 5/21/2025, last edited: 5/21/2025
+# Created: 5/21/2025, last edited: 5/24/2025
 #
 # Note: You should run this python script with the
 # working directory being the root of the repository.
@@ -41,7 +41,7 @@ def process_document() -> None:
             sorted_gen_elements = sorted(gen_elems, key= lambda x: x.index)
             for e in sorted_gen_elements:
                 output.write(f"    case {e.index}:\n")
-                output.write(f"        ctxIdxInc = (mode == 1) ?(isFrame ? {e.data[0]} : {e.data[1]}) : {e.data[2]};\n")
+                output.write(f"        ctxIdxInc = (mode == 1) ? (isFrame ? {e.data[0]} : {e.data[1]}) : {e.data[2]};\n")
                 output.write(f"        break;\n")
                 output.write("\n")
         
