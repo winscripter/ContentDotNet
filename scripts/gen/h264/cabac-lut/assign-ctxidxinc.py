@@ -41,13 +41,7 @@ def process_document() -> None:
             sorted_gen_elements = sorted(gen_elems, key= lambda x: x.index)
             for e in sorted_gen_elements:
                 output.write(f"    case {e.index}:\n")
-                output.write(f"        if (mode == 1)\n")
-                output.write(f"            if (isFrame)\n")
-                output.write(f"                ctxIdxInc = {e.data[0]};\n")
-                output.write(f"            else\n")
-                output.write(f"                ctxIdxInc = {e.data[1]};\n")
-                output.write(f"        else\n")
-                output.write(f"            ctxIdxInc = {e.data[2]};\n")
+                output.write(f"        ctxIdxInc = (mode == 1) ?(isFrame ? {e.data[0]} : {e.data[1]}) : {e.data[2]};\n")
                 output.write(f"        break;\n")
                 output.write("\n")
         

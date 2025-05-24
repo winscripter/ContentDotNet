@@ -1,640 +1,256 @@
     case 0:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 0;
-            else
-                ctxIdxInc = 0;
-        else
-            ctxIdxInc = 0;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 0 : 0) : 0;
         break;
 
     case 1:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 1;
-            else
-                ctxIdxInc = 1;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 1 : 1) : 1;
         break;
 
     case 2:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 2;
-            else
-                ctxIdxInc = 1;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 2 : 1) : 1;
         break;
 
     case 3:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 3;
-            else
-                ctxIdxInc = 2;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 3 : 2) : 1;
         break;
 
     case 4:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 2;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 2) : 1;
         break;
 
     case 5:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 5;
-            else
-                ctxIdxInc = 3;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 5 : 3) : 1;
         break;
 
     case 6:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 5;
-            else
-                ctxIdxInc = 3;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 5 : 3) : 1;
         break;
 
     case 7:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 4;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 4) : 1;
         break;
 
     case 8:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 5;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 5) : 1;
         break;
 
     case 9:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 3;
-            else
-                ctxIdxInc = 6;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 3 : 6) : 1;
         break;
 
     case 10:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 3;
-            else
-                ctxIdxInc = 7;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 3 : 7) : 1;
         break;
 
     case 11:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 7;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 7) : 1;
         break;
 
     case 12:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 7;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 7) : 1;
         break;
 
     case 13:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 8;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 8) : 1;
         break;
 
     case 14:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 5;
-            else
-                ctxIdxInc = 4;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 5 : 4) : 1;
         break;
 
     case 15:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 5;
-            else
-                ctxIdxInc = 5;
-        else
-            ctxIdxInc = 1;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 5 : 5) : 1;
         break;
 
     case 16:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 6;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 6) : 2;
         break;
 
     case 17:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 9) : 2;
         break;
 
     case 18:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 10) : 2;
         break;
 
     case 19:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 4;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 4 : 10) : 2;
         break;
 
     case 20:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 3;
-            else
-                ctxIdxInc = 8;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 3 : 8) : 2;
         break;
 
     case 21:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 3;
-            else
-                ctxIdxInc = 11;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 3 : 11) : 2;
         break;
 
     case 22:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 6;
-            else
-                ctxIdxInc = 12;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 6 : 12) : 2;
         break;
 
     case 23:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 7;
-            else
-                ctxIdxInc = 11;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 7 : 11) : 2;
         break;
 
     case 24:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 7;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 7 : 9) : 2;
         break;
 
     case 25:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 7;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 7 : 9) : 2;
         break;
 
     case 26:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 8;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 8 : 10) : 2;
         break;
 
     case 27:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 9;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 9 : 10) : 2;
         break;
 
     case 28:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 10;
-            else
-                ctxIdxInc = 8;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 10 : 8) : 2;
         break;
 
     case 29:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 9;
-            else
-                ctxIdxInc = 11;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 9 : 11) : 2;
         break;
 
     case 30:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 8;
-            else
-                ctxIdxInc = 12;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 8 : 12) : 2;
         break;
 
     case 31:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 7;
-            else
-                ctxIdxInc = 11;
-        else
-            ctxIdxInc = 2;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 7 : 11) : 2;
         break;
 
     case 32:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 7;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 7 : 9) : 3;
         break;
 
     case 33:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 6;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 6 : 9) : 3;
         break;
 
     case 34:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 11;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 11 : 10) : 3;
         break;
 
     case 35:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 12;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 12 : 10) : 3;
         break;
 
     case 36:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 13;
-            else
-                ctxIdxInc = 8;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 13 : 8) : 3;
         break;
 
     case 37:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 11;
-            else
-                ctxIdxInc = 11;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 11 : 11) : 3;
         break;
 
     case 38:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 6;
-            else
-                ctxIdxInc = 12;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 6 : 12) : 3;
         break;
 
     case 39:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 7;
-            else
-                ctxIdxInc = 11;
-        else
-            ctxIdxInc = 3;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 7 : 11) : 3;
         break;
 
     case 40:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 8;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 8 : 9) : 4;
         break;
 
     case 41:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 9;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 9 : 9) : 4;
         break;
 
     case 42:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 14;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 14 : 10) : 4;
         break;
 
     case 43:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 10;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 10 : 10) : 4;
         break;
 
     case 44:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 9;
-            else
-                ctxIdxInc = 8;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 9 : 8) : 4;
         break;
 
     case 45:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 8;
-            else
-                ctxIdxInc = 13;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 8 : 13) : 4;
         break;
 
     case 46:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 6;
-            else
-                ctxIdxInc = 13;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 6 : 13) : 4;
         break;
 
     case 47:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 11;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 4;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 11 : 9) : 4;
         break;
 
     case 48:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 12;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 5;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 12 : 9) : 5;
         break;
 
     case 49:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 13;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 5;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 13 : 10) : 5;
         break;
 
     case 50:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 11;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 5;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 11 : 10) : 5;
         break;
 
     case 51:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 6;
-            else
-                ctxIdxInc = 8;
-        else
-            ctxIdxInc = 5;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 6 : 8) : 5;
         break;
 
     case 52:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 9;
-            else
-                ctxIdxInc = 13;
-        else
-            ctxIdxInc = 6;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 9 : 13) : 6;
         break;
 
     case 53:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 14;
-            else
-                ctxIdxInc = 13;
-        else
-            ctxIdxInc = 6;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 14 : 13) : 6;
         break;
 
     case 54:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 10;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 6;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 10 : 9) : 6;
         break;
 
     case 55:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 9;
-            else
-                ctxIdxInc = 9;
-        else
-            ctxIdxInc = 6;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 9 : 9) : 6;
         break;
 
     case 56:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 11;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 7;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 11 : 10) : 7;
         break;
 
     case 57:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 12;
-            else
-                ctxIdxInc = 10;
-        else
-            ctxIdxInc = 7;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 12 : 10) : 7;
         break;
 
     case 58:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 13;
-            else
-                ctxIdxInc = 14;
-        else
-            ctxIdxInc = 7;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 13 : 14) : 7;
         break;
 
     case 59:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 11;
-            else
-                ctxIdxInc = 14;
-        else
-            ctxIdxInc = 7;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 11 : 14) : 7;
         break;
 
     case 60:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 14;
-            else
-                ctxIdxInc = 14;
-        else
-            ctxIdxInc = 8;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 14 : 14) : 8;
         break;
 
     case 61:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 10;
-            else
-                ctxIdxInc = 14;
-        else
-            ctxIdxInc = 8;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 10 : 14) : 8;
         break;
 
     case 62:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 12;
-            else
-                ctxIdxInc = 14;
-        else
-            ctxIdxInc = 8;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 12 : 14) : 8;
         break;
 
     case 63:
-        if (mode == 1)
-            if (isFrame)
-                ctxIdxInc = 0;
-            else
-                ctxIdxInc = 0;
-        else
-            ctxIdxInc = 0;
+        ctxIdxInc = (mode == 1) ?(isFrame ? 0 : 0) : 0;
         break;
 
