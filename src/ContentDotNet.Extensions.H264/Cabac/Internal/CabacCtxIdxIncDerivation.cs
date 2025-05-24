@@ -11,7 +11,7 @@ using static ContentDotNet.Extensions.H264.SliceTypes;
 namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
 // NOTE: I would've normally put this code into CabacFunctions, but had to move it because
-//       there was over 2000+ lines of code, which meant that the memory usage and CPU usage
+//       there were over 2000+ lines of code, which meant that the memory usage and CPU usage
 //       went nuts every time I pressed a key. (This ServiceHub.Host.dotnet.x64.exe program is using
 //                                              up to 1GB RAM! That's insane!)
 internal static class CabacCtxIdxIncDerivation
