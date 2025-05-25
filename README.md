@@ -1,4 +1,6 @@
-﻿![Logo](resources/logo/ContentDotNet-logo.png)
+﻿<p align="center">
+  <img src="resources/logo/ContentDotNet-logo.png" alt="Logo" />
+</p>
 
 > [!CAUTION]
 > This library **is in development** 🚧. No releases, including alpha, beta, rc, or preview releases were made.
