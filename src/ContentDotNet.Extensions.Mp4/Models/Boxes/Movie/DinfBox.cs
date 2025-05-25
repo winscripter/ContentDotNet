@@ -6,4 +6,5 @@ public sealed class DinfBox
     private readonly MinfBox? _minf;
     
     public UrlBox? Url { get; set; }
+
 }

@@ -1,4 +1,4 @@
-﻿# ContentDotNet
+﻿![Logo](resources/logo/ContentDotNet-logo.png)
 
 > [!CAUTION]
 > This library **is in development** 🚧. No releases, including alpha, beta, rc, or preview releases were made.
