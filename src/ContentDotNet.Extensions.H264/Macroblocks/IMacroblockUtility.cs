@@ -187,4 +187,86 @@ public interface IMacroblockUtility
     /// <param name="luma16x16BlkIdx">The index of the luma 16x16 block.</param>
     /// <param name="output">The output container for the 16x16 luma block values.</param>
     void Get16x16LumaBlock(int luma16x16BlkIdx, ContainerMatrix16x16 output);
+
+    /// <summary>
+    ///   Does the given macroblock by address <paramref name="mbAddr"/> contain computed
+    ///   pixels?
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>A boolean indicating whether computed pixels were dispensed for a macroblock by address <paramref name="mbAddr"/>.</returns>
+    bool HasPixels(int mbAddr);
+
+    /// <summary>
+    ///   Does the given macroblock by address <paramref name="mbAddr"/> contain computed
+    ///   pixels?
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>A boolean indicating whether computed pixels were dispensed for a macroblock by address <paramref name="mbAddr"/>.</returns>
+    bool HasPixelsToLeft(int mbAddr);
+
+    /// <summary>
+    ///   Does the given macroblock by address <paramref name="mbAddr"/> contain computed
+    ///   pixels?
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>A boolean indicating whether computed pixels were dispensed for a macroblock by address <paramref name="mbAddr"/>.</returns>
+    bool HasPixelsToRight(int mbAddr);
+
+    /// <summary>
+    ///   Does the given macroblock by address <paramref name="mbAddr"/> contain computed
+    ///   pixels?
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>A boolean indicating whether computed pixels were dispensed for a macroblock by address <paramref name="mbAddr"/>.</returns>
+    bool HasPixelsToTop(int mbAddr);
+
+    /// <summary>
+    ///   Does the given macroblock by address <paramref name="mbAddr"/> contain computed
+    ///   pixels?
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>A boolean indicating whether computed pixels were dispensed for a macroblock by address <paramref name="mbAddr"/>.</returns>
+    bool HasPixelsToBottom(int mbAddr);
+
+    /// <summary>
+    ///   Returns computed pixels for macroblock of address <paramref name="mbAddr"/>.
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>Computed pixels for given macroblock addressed <paramref name="mbAddr"/>, or <see langword="default"/> if computed pixels weren't yet provided.</returns>
+    ContainerMatrix16x16 GetPixels(int mbAddr);
+
+    /// <summary>
+    ///   Returns computed pixels for macroblock of address <paramref name="mbAddr"/>.
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>Computed pixels for given macroblock addressed <paramref name="mbAddr"/>, or <see langword="null"/> if computed pixels weren't yet provided.</returns>
+    ContainerMatrix16x16? GetPixelsToLeft(int mbAddr);
+
+    /// <summary>
+    ///   Returns computed pixels for macroblock of address <paramref name="mbAddr"/>.
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>Computed pixels for given macroblock addressed <paramref name="mbAddr"/>, or <see langword="null"/> if computed pixels weren't yet provided.</returns>
+    ContainerMatrix16x16? GetPixelsToRight(int mbAddr);
+
+    /// <summary>
+    ///   Returns computed pixels for macroblock of address <paramref name="mbAddr"/>.
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>Computed pixels for given macroblock addressed <paramref name="mbAddr"/>, or <see langword="null"/> if computed pixels weren't yet provided.</returns>
+    ContainerMatrix16x16? GetPixelsToTop(int mbAddr);
+
+    /// <summary>
+    ///   Returns computed pixels for macroblock of address <paramref name="mbAddr"/>.
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <returns>Computed pixels for given macroblock addressed <paramref name="mbAddr"/>, or <see langword="null"/> if computed pixels weren't yet provided.</returns>
+    ContainerMatrix16x16? GetPixelsToBottom(int mbAddr);
+
+    /// <summary>
+    ///   Sets computed pixels for macroblock of address <paramref name="mbAddr"/>.
+    /// </summary>
+    /// <param name="mbAddr">Macroblock address</param>
+    /// <param name="pixels">Computed pixels of the macroblock</param>
+    void SetPixels(int mbAddr, ContainerMatrix16x16 pixels);
 }

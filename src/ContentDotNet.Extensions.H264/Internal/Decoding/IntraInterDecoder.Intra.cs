@@ -859,8 +859,7 @@ internal partial class IntraInterDecoder
         }
 
         public void Intra16x16SamplePredict(
-            int luma8x8BlkIdx,
-            Matrix16x16 cSL,
+            Matrix cSL,
             Matrix16x16 predL,
             bool constrainedIntraPredFlag,
             int intra16x16PredMode,
@@ -984,7 +983,7 @@ internal partial class IntraInterDecoder
                 }
             }
 
-            static void Core(int x, int y, DerivationContext dc, IntraPredictionSamples p, IntraPredictionSamples availability, Matrix16x16 cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
+            static void Core(int x, int y, DerivationContext dc, IntraPredictionSamples p, IntraPredictionSamples availability, Matrix cSL, bool constrainedIntraPredFlag, IMacroblockUtility macroblockUtility)
             {
                 int mbAddrN = 0;
                 Scanning.DeriveNeighboringLocations(dc, true, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
@@ -992,7 +991,7 @@ internal partial class IntraInterDecoder
                 for (int yInner = -1; yInner < 16; yInner++) Internal(-1, yInner, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
                 for (int xInner = 0; xInner < 16; xInner++) Internal(xInner, -1, xW, yW, p, cSL, valid, macroblockUtility, mbAddrN, dc, constrainedIntraPredFlag, availability);
 
-                static void Internal(int x, int y, int xW, int yW, IntraPredictionSamples p, Matrix16x16 cSL, bool mbAddrValid, IMacroblockUtility macroblockUtility, int mbAddrN, DerivationContext dc, bool constrainedIntraPredFlag, IntraPredictionSamples availability)
+                static void Internal(int x, int y, int xW, int yW, IntraPredictionSamples p, Matrix cSL, bool mbAddrValid, IMacroblockUtility macroblockUtility, int mbAddrN, DerivationContext dc, bool constrainedIntraPredFlag, IntraPredictionSamples availability)
                 {
                     bool isUnavailable = !mbAddrValid ||
                                          (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag) ||

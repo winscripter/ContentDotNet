@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.Extensions.H264.Containers;
+using ContentDotNet.Extensions.H264.Internal.Decoding;
 using ContentDotNet.Extensions.H264.Models;
 
 namespace ContentDotNet.Extensions.H264;
@@ -28,5 +29,11 @@ public static class ResidualComputation
         }
 
         return residual;
+    }
+
+    public static ComputedResidual ComputeResidual(Residual residual, MacroblockLayer layer, SequenceParameterSet sps, GeneralSliceType sliceType, QuantizationParameters quantizationParameters)
+    {
+        NYI.ImplementLater();
+        throw new InvalidOperationException();
     }
 }

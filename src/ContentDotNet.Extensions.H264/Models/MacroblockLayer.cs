@@ -159,7 +159,7 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
             {
                 mbQpDelta = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : reader.ReadAE();
                 int z = 0;
-                residual = Models.Residual.Read(reader, codingMode, chromaArrayType, transformSize8x8Flag, (int)mbType, CodedBlockPatternLuma, sliceType, 0, 15, nalu, dc, ref z, ref z, ref z, 0, util, mode, constrainedIntraPredFlag, subWidthC, subHeightC, CodedBlockPatternChroma);
+                residual = Residual.Read(reader, codingMode, chromaArrayType, transformSize8x8Flag, (int)mbType, CodedBlockPatternLuma, sliceType, 0, 15, nalu, dc, ref z, ref z, ref z, 0, util, mode, constrainedIntraPredFlag, subWidthC, subHeightC, CodedBlockPatternChroma);
             }
         }
 
