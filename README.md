@@ -26,7 +26,8 @@ ContentDotNet yet supports H.264 for video codecs and MP4 for video formats. Thi
 the stable one is expected to have more codecs and formats supported. Adding your own
 codecs and formats is straightforward and is documented.
 
-Besides, it also supports G.711, G.722 and G.726 for audio codecs.
+Besides, it also supports G.711, G.722 and G.726 for audio codecs; PNG and BMP for image formats; and TTF
+for font formats.
 
 H.264:
   - CAVLC and CABAC
@@ -40,7 +41,7 @@ H.264:
   - Accessing internal data (e.g. macroblocks, residuals, slice header/data, parameter sets and NALs) with raw values directly provided
   - Low allocation, focusing on high performance while still being platform independent (e.g. no unsafe code or filesystem operations)
   - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
-  - Accessing all SEI models
+  - Comprehensive SEI support
 
 > [!NOTE]
 > Encoding isn't yet supported because the H.264 specification only provides decoding. However,
@@ -53,12 +54,43 @@ MP4:
   - Loading direct H.264/audio streams
   - Editing options in a simple way (e.g. FPS, duration, etc.)
 
+PNG:
+  - Support for decoding/encoding
+  - Direct access to raw PNG chunks (+editing)
+  - Interlace (null/Adam7) support
+  - ICC metadata
+  - RGB, RGBA, and Grayscale pixel formats
+  - Editing
+
+BMP:
+  - No platform dependency (just like with all other supported formats)
+  - All structures predating to OS/2
+  - All compression types
+  - RGB, BGR, BGRA, RGBA, Grayscale pixel formats
+  - Encoding and decoding
+
+G.711:
+  - Async support
+  - Zero allocation (stack-only) for both decode/encode operations (except for async methods)
+  - Encoding and decoding
+  - Writing either a single sample or multiple at once
+  - Interleaving
+  - Support for either a single channel, or up to three channels, either interleaved or not
+  - Clean API design
+  - Blazing fast speed, without any initialization overhead
+
+G.722:
+  - Everything that the G.711 encoder/decoder supports
+
+G.726:
+  - Everything that the G.711 encoder/decoder supports
+
 ## Licensing
 The library is free and open-source and licensed under the [MIT License](LICENSE.md).
-You can use it for free, even in commercial projects.
+You can use ContentDotNet for free, even in commercial projects.
 
 > [!WARNING]
-> Some codecs and formats provided by this library are patented and/or licensed (f.e. H.264) by the company/companies that owns/own them.
+> Some codecs and formats implemented by this library are patented and/or licensed (f.e. H.264) by the company/companies that owns/own them.
 > In commercial, enterprise, or profit-generating context, you'll have to obtain the license and pay royalties to the company owning those patents yourself.
 
 ## Other
