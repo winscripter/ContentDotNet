@@ -6,4 +6,13 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Chunks\Ancillary\" />
+    <Folder Include="Transparency\" />
+  </ItemGroup>
+
 </Project>
