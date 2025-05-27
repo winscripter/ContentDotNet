@@ -506,8 +506,8 @@ internal partial class IntraInterDecoder
 
         public void Intra8x8SamplePredict(
             int luma8x8BlkIdx,
-            Matrix16x16 cSL,
-            Matrix8x8 predL,
+            Matrix cSL,
+            ref Matrix8x8 predL,
             bool constrainedIntraPredFlag,
             Span<int> intra8x8PredMode,
             IntraPredictionSamples p,
@@ -763,7 +763,7 @@ internal partial class IntraInterDecoder
                 }
             }
 
-            void Core(int x, int y, Matrix16x16 cSL, IntraPredictionSamples p, IntraPredictionSamples availability)
+            void Core(int x, int y, Matrix cSL, IntraPredictionSamples p, IntraPredictionSamples availability)
             {
                 int xN = xO + x;
                 int yN = yO + y;
@@ -778,7 +778,7 @@ internal partial class IntraInterDecoder
                     Internal(xInner, -1, xW, yW, dc, _macroblockUtility, constrainedIntraPredFlag, availability, cSL, p, mbAddrN, mbAddrNAvailable);
             }
 
-            static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, IntraPredictionSamples availability, Matrix16x16 cSL, IntraPredictionSamples p, int mbAddrN, bool available)
+            static void Internal(int x, int y, int xW, int yW, DerivationContext dc, IMacroblockUtility macroblockUtility, bool constrainedIntraPredFlag, IntraPredictionSamples availability, Matrix cSL, IntraPredictionSamples p, int mbAddrN, bool available)
             {
                 bool isUnavailable = !available || (macroblockUtility.IsCodedWithInter(mbAddrN) && constrainedIntraPredFlag);
                 PSet(availability, x, y, isUnavailable ? 0 : 1);
@@ -860,7 +860,7 @@ internal partial class IntraInterDecoder
 
         public void Intra16x16SamplePredict(
             Matrix cSL,
-            Matrix16x16 predL,
+            ref Matrix16x16 predL,
             bool constrainedIntraPredFlag,
             int intra16x16PredMode,
             IntraPredictionSamples p,
@@ -1019,8 +1019,8 @@ internal partial class IntraInterDecoder
         }
 
         public void IntraChromaSamplePredict(
-            Matrix16x16 cSC,
-            Matrix16x16 predC,
+            Matrix cSC,
+            ref Matrix16x16 predC,
             MacroblockSizeChroma sizes,
             IntraPredictionSamples p,
             DerivationContext dc,
@@ -1261,7 +1261,7 @@ internal partial class IntraInterDecoder
                 }
             }
 
-            static void Core(int x, int y, IntraPredictionSamples availability, IntraPredictionSamples p, Matrix16x16 cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
+            static void Core(int x, int y, IntraPredictionSamples availability, IntraPredictionSamples p, Matrix cSC, DerivationContext dc, MacroblockSizeChroma sizes, IMacroblockUtility util, bool constrainedIntraPredFlag, bool isSiMb)
             {
                 int mbAddrN = 0;
                 Scanning.DeriveNeighboringLocations(dc, false, x, y, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool valid);
@@ -1294,7 +1294,7 @@ internal partial class IntraInterDecoder
         }
 
         public static void IntraChromaSamplePredictChromaArrayType3(
-            Matrix16x16 cSC,
+            Matrix cSC,
             Matrix16x16 predC,
             IMacroblockUtility util,
             DerivationContext dc,

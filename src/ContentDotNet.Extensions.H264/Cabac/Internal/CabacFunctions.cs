@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H264.Utilities;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Primitives;
 using System.Runtime.CompilerServices;
 
@@ -1219,190 +1220,51 @@ internal static class CabacFunctions
         return result;
     }
 
-    const int MBTYPE_COL_I   = 0;
-    const int MBTYPE_COL_PSP = 1;
-    const int MBTYPE_COL_B   = 2;
-    const int MBTYPE_COL_B_INTRA_PREFIXONLY = 4;
-    const int MBTYPE_COL_PSP_INTRA_PREFIXONLY = 5;
-    const int SUBMBTYPE_COL_PSP = 6;
-    const int SUBMBTYPE_COL_B = 7;
-
-    public static readonly MbTypeOrSubMbTypeArithmeticElement[] MbTypeOrSubMbTypeArithmeticLUT =
-    [
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 0, new BitString(0b0, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 1, new BitString(0b100000, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 2, new BitString(0b100001, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 3, new BitString(0b100010, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 4, new BitString(0b100011, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 5, new BitString(0b1001000, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 6, new BitString(0b1001001, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 7, new BitString(0b1001010, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 8, new BitString(0b1001011, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 9, new BitString(0b1001100, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 10, new BitString(0b1001101, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 11, new BitString(0b1001110, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 12, new BitString(0b1001111, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 13, new BitString(0b101000, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 14, new BitString(0b101001, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 15, new BitString(0b101010, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 16, new BitString(0b101011, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 17, new BitString(0b1011000, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 18, new BitString(0b1011001, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 19, new BitString(0b1011010, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 20, new BitString(0b1011011, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 21, new BitString(0b1011100, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 22, new BitString(0b1011101, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 23, new BitString(0b1011110, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 24, new BitString(0b1011111, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_I, 25, new BitString(0b11, 2)),
-
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 0, new BitString(0b0, 2)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 1, new BitString(0b100, 4)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 2, new BitString(0b101, 4)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 3, new BitString(0b110000, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 4, new BitString(0b110001, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 5, new BitString(0b110010, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 6, new BitString(0b110011, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 7, new BitString(0b110100, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 8, new BitString(0b110101, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 9, new BitString(0b110110, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 10, new BitString(0b110111, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 11, new BitString(0b111110, 7)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 12, new BitString(0b1110000, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 13, new BitString(0b1110001, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 14, new BitString(0b1110010, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 15, new BitString(0b1110011, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 16, new BitString(0b1110100, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 17, new BitString(0b1110101, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 18, new BitString(0b1110110, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 19, new BitString(0b1110111, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 20, new BitString(0b1111000, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 21, new BitString(0b1111001, 8)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B, 22, new BitString(0b111111, 6)),
-
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 23, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 24, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 25, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 26, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 27, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 28, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 29, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 30, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 31, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 32, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 33, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 34, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 35, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 36, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 37, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 38, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 39, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 40, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 41, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 42, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 43, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 44, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 45, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 46, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 47, new BitString(0b111101, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_B_INTRA_PREFIXONLY, 48, new BitString(0b111101, 6)),
-
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 0, new BitString(0b000, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 1, new BitString(0b011, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 2, new BitString(0b010, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 3, new BitString(0b001, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP, 4, new BitString(0, 0)),
-
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 5, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 6, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 7, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 8, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 9, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 10, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 11, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 12, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 13, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 14, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 15, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 16, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 17, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 18, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 19, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 20, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 21, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 22, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 23, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 24, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 25, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 26, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 27, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 28, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 29, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(MBTYPE_COL_PSP_INTRA_PREFIXONLY, 30, new BitString(0b1, 1)),
-
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 0, new BitString(0b1, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 1, new BitString(0b00, 2)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 2, new BitString(0b011, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_PSP, 3, new BitString(0b010, 3)),
-
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 0, new BitString(0b0, 1)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 1, new BitString(0b100, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 2, new BitString(0b101, 3)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 3, new BitString(0b11000, 5)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 4, new BitString(0b11001, 5)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 5, new BitString(0b11010, 5)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 6, new BitString(0b11011, 5)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 7, new BitString(0b111000, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 8, new BitString(0b111001, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 9, new BitString(0b111010, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 10, new BitString(0b111011, 6)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 11, new BitString(0b11110, 5)),
-        new MbTypeOrSubMbTypeArithmeticElement(SUBMBTYPE_COL_B, 12, new BitString(0b11111, 5)),
-    ];
-
-    public static BitString BinarizeMacroblockOrSubMacroblockType(bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType, int mbType)
+    public static int BinarizeMacroblockOrSubMacroblockType(BitStreamReader reader, bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
     {
         if (isSISlice)
         {
-            var b0 = new BitString(isSISlice ? 0 : 1, 1);
-            if (b0.Value == 0)
+            if ((isSISlice ? 0 : 1) == 0)
             {
-                return b0;
+                return 0;
             }
             else
             {
-                var b1 = LookUpISlice(mbType);
-                return new BitString((1 << b1.Length) | b1.Value, b1.Length + 1);
+                int b1 = LookUpISlice();
+                return b1;
             }
         }
         else
         {
-            if (isPorSPSlice && (mbType is >= 5 and <= 30))
+            if (isPorSPSlice)
             {
-                var b1 = LookUpISlice(mbType - 5);
-                return new BitString((1 << b1.Length) | b1.Value, b1.Length + 1);
+                int mbType = LookUpISlice();
+                if (mbType is >= 5 and <= 30)
+                    mbType -= 5;
+                return mbType;
             }
-            else if (isBSlice && (mbType is >= 23 and <= 48))
+            else if (isBSlice)
             {
-                var b0 = LookUpBSlice(mbType);
-                var b1 = LookUpISlice(mbType - 23);
-                return b0 + b1;
+                int mbType = LookUpBSlice();
+                if (mbType is >= 23 and <= 48)
+                    mbType -= 23;
+                return mbType;
             }
             else if (isBSlice && isSubMbType)
             {
-                return LookUpSubBlice(mbType);
+                return LookUpSubBSlice();
             }
             else if (isPorSPSlice && isSubMbType)
             {
-                return LookUpSubPSPSlice(mbType);
+                return LookUpSubPSPSlice();
             }
             else if (isBSlice && !isSubMbType)
             {
-                return LookUpBSlice(mbType);
+                return LookUpBSlice();
             }
             else if (isPorSPSlice && !isSubMbType)
             {
-                return LookUpPSPSlice(mbType);
+                return LookUpPSPSlice();
             }
             else
             {
@@ -1410,79 +1272,671 @@ internal static class CabacFunctions
             }
         }
 
-        static BitString LookUpISlice(int value)
+        int LookUpISlice()
         {
-            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            if (!reader.ReadBit())  // first bit == 0
             {
-                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
-                if (curr.Category != MBTYPE_COL_I)
-                    continue;
-
-                if (curr.Index == value)
-                    return curr.BitString;
+                // code "0" → symbol 0 (I_NxN)
+                return 0;
             }
+            else
+            {
+                // first bit == 1
 
-            return default;
+                if (reader.ReadBit())  // second bit == 1
+                {
+                    // code "11" → symbol 25 (I_PCM)
+                    return 25;
+                }
+                else
+                {
+                    // second bit == 0
+
+                    if (!reader.ReadBit())  // third bit == 0
+                    {
+                        // third bit == 0
+
+                        if (!reader.ReadBit())  // fourth bit == 0
+                        {
+                            // fourth bit == 0
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                // fifth bit == 0
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 0 0 0 0 0" → symbol 1
+                                    return 1;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+                                    // code "1 0 0 0 0 1" → symbol 2
+                                    return 2;
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 0 0 0 1 0" → symbol 3
+                                    return 3;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+                                    // code "1 0 0 0 1 1" → symbol 4
+                                    return 4;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // fourth bit == 1
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 0 1 0 0 0" → symbol 5
+                                        return 5;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 0 1 0 0 1" → symbol 6
+                                        return 6;
+                                    }
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 0 1 0 1 0" → symbol 7
+                                        return 7;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 0 1 0 1 1" → symbol 8
+                                        return 8;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 0 1 1 0 0" → symbol 9
+                                        return 9;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 0 1 1 0 1" → symbol 10
+                                        return 10;
+                                    }
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 0 1 1 1 0" → symbol 11
+                                        return 11;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 0 1 1 1 1" → symbol 12
+                                        return 12;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // third bit == 1
+
+                        if (!reader.ReadBit())  // fourth bit == 0
+                        {
+                            // fourth bit == 0
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                // code "1 0 1 0 0 0" → symbol 13
+                                return 13;
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 0 1 0 0 1" → symbol 14
+                                    return 14;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+                                    // code "1 0 1 0 1 0" → symbol 15
+                                    return 15;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // fourth bit == 1
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 1 1 0 0 0" → symbol 17
+                                        return 17;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 1 1 0 0 1" → symbol 18
+                                        return 18;
+                                    }
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 1 1 0 1 0" → symbol 19
+                                        return 19;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 1 1 0 1 1" → symbol 20
+                                        return 20;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 1 1 1 0 0" → symbol 21
+                                        return 21;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 1 1 1 0 1" → symbol 22
+                                        return 22;
+                                    }
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 0 1 1 1 1 0" → symbol 23
+                                        return 23;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+                                        // code "1 0 1 1 1 1 1" → symbol 24
+                                        return 24;
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        static BitString LookUpBSlice(int value)
+        int LookUpBSlice()
         {
-            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            if (!reader.ReadBit())  // first bit == 0
             {
-                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
-                if (curr.Category != MBTYPE_COL_B && curr.Category != MBTYPE_COL_B_INTRA_PREFIXONLY)
-                    continue;
-
-                if (curr.Index == value)
-                    return curr.BitString;
+                // code "0" → symbol 0 (B_Direct_16x16)
+                return 0;
             }
+            else
+            {
+                // first bit == 1
 
-            return default;
+                if (!reader.ReadBit())  // second bit == 0
+                {
+                    // second bit == 0
+
+                    if (!reader.ReadBit())  // third bit == 0
+                    {
+                        // code "1 0 0" → symbol 1 (B_L0_16x16)
+                        return 1;
+                    }
+                    else
+                    {
+                        // third bit == 1
+
+                        // code "1 0 1" → symbol 2 (B_L1_16x16)
+                        return 2;
+                    }
+                }
+                else
+                {
+                    // second bit == 1
+
+                    if (!reader.ReadBit())  // third bit == 0
+                    {
+                        // third bit == 0
+
+                        if (!reader.ReadBit())  // fourth bit == 0
+                        {
+                            // fourth bit == 0
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                // fifth bit == 0
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 1 0 0 0 0" → symbol 3 (B_Bi_16x16)
+                                    return 3;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    // code "1 1 0 0 0 1" → symbol 4 (B_L0_L0_16x8)
+                                    return 4;
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 1 0 0 1 0" → symbol 5 (B_L0_L0_8x16)
+                                    return 5;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    // code "1 1 0 0 1 1" → symbol 6 (B_L1_L1_16x8)
+                                    return 6;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // fourth bit == 1
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 1 0 1 0 0" → symbol 7 (B_L1_L1_8x16)
+                                    return 7;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    // code "1 1 0 1 0 1" → symbol 8 (B_L0_L1_16x8)
+                                    return 8;
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 1 0 1 1 0" → symbol 9 (B_L0_L1_8x16)
+                                    return 9;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    // code "1 1 0 1 1 1" → symbol 10 (B_L1_L0_16x8)
+                                    return 10;
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // third bit == 1
+
+                        if (!reader.ReadBit())  // fourth bit == 1
+                        {
+                            // code starts with "1 1 1 0"
+
+                            if (!reader.ReadBit())  // fifth bit == 0
+                            {
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 1 1 0 0 0 0" → symbol 12 (B_L0_Bi_16x8)
+                                        return 12;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+
+                                        // code "1 1 1 0 0 0 1" → symbol 13 (B_L0_Bi_8x16)
+                                        return 13;
+                                    }
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 1 1 0 0 1 0" → symbol 14 (B_L1_Bi_16x8)
+                                        return 14;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+
+                                        // code "1 1 1 0 0 1 1" → symbol 15 (B_L1_Bi_8x16)
+                                        return 15;
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 1 1 0 1 0 0" → symbol 16 (B_Bi_L0_16x8)
+                                        return 16;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+
+                                        // code "1 1 1 0 1 0 1" → symbol 17 (B_Bi_L0_8x16)
+                                        return 17;
+                                    }
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+
+                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    {
+                                        // code "1 1 1 0 1 1 0" → symbol 18 (B_Bi_L1_16x8)
+                                        return 18;
+                                    }
+                                    else
+                                    {
+                                        // seventh bit == 1
+
+                                        // code "1 1 1 0 1 1 1" → symbol 19 (B_Bi_L1_8x16)
+                                        return 19;
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // fourth bit == 1
+
+                            if (!reader.ReadBit())  // fifth bit == 1
+                            {
+                                if (!reader.ReadBit())  // sixth bit == 0
+                                {
+                                    // code "1 1 1 1 0 0 0" → symbol 20 (B_Bi_Bi_16x8)
+                                    return 20;
+                                }
+                                else
+                                {
+                                    // code "1 1 1 1 0 0 1" → symbol 21 (B_Bi_Bi_8x16)
+                                    return 21;
+                                }
+                            }
+                            else
+                            {
+                                // code "1 1 1 1 1 1" → symbol 22 (B_8x8)
+                                // Only 6 bits here, so we read only 6 bits total for this one
+
+                                if (!reader.ReadBit())  // sixth bit == 1
+                                {
+                                    // code mismatch or error
+                                    return -1;
+                                }
+
+                                return 22;
+                            }
+                        }
+                    }
+                }
+            }
         }
 
-        static BitString LookUpPSPSlice(int value)
+        int LookUpPSPSlice()
         {
-            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            if (!reader.ReadBit())  // first bit == 0
             {
-                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
-                if (curr.Category != MBTYPE_COL_PSP_INTRA_PREFIXONLY && curr.Category != MBTYPE_COL_PSP)
-                    continue;
-
-                if (curr.Index == value)
-                    return curr.BitString;
+                if (!reader.ReadBit())  // second bit == 0
+                {
+                    if (!reader.ReadBit())  // third bit == 0
+                    {
+                        // 0 0 0 → symbol 0 (P_L0_16x16)
+                        return 0;
+                    }
+                    else
+                    {
+                        // 0 0 1 → symbol 3 (P_8x8)
+                        return 3;
+                    }
+                }
+                else
+                {
+                    // second bit == 1
+                    if (!reader.ReadBit())  // third bit == 0
+                    {
+                        // 0 1 0 → symbol 2 (P_L0_L0_8x16)
+                        return 2;
+                    }
+                    else
+                    {
+                        // 0 1 1 → symbol 1 (P_L0_L0_16x8)
+                        return 1;
+                    }
+                }
             }
-
-            return default;
+            else
+            {
+                // First bit == 1 → invalid for this table or error
+                return -1;
+            }
         }
 
-        static BitString LookUpSubPSPSlice(int value)
+        int LookUpSubPSPSlice()
         {
-            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            if (reader.ReadBit()) // first bit == 1
             {
-                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
-                if (curr.Category != SUBMBTYPE_COL_PSP)
-                    continue;
-
-                if (curr.Index == value)
-                    return curr.BitString;
+                // code "1" → symbol 0 (P_L0_8x8)
+                return 0;
             }
+            else
+            {
+                // first bit == 0
 
-            return default;
+                if (!reader.ReadBit()) // second bit == 0
+                {
+                    // code "0 0" → symbol 1 (P_L0_8x4)
+                    return 1;
+                }
+                else
+                {
+                    // second bit == 1
+
+                    if (reader.ReadBit()) // third bit == 1
+                    {
+                        // code "0 1 1" → symbol 2 (P_L0_4x8)
+                        return 2;
+                    }
+                    else
+                    {
+                        // third bit == 0
+
+                        // code "0 1 0" → symbol 3 (P_L0_4x4)
+                        return 3;
+                    }
+                }
+            }
         }
 
-        static BitString LookUpSubBlice(int value)
+        int LookUpSubBSlice()
         {
-            for (int i = 0; i < MbTypeOrSubMbTypeArithmeticLUT.Length; i++)
+            if (!reader.ReadBit()) // first bit == 0
             {
-                MbTypeOrSubMbTypeArithmeticElement curr = MbTypeOrSubMbTypeArithmeticLUT[i];
-                if (curr.Category != SUBMBTYPE_COL_B)
-                    continue;
-
-                if (curr.Index == value)
-                    return curr.BitString;
+                // code "0" → symbol 0 (B_Direct_8x8)
+                return 0;
             }
+            else
+            {
+                // first bit == 1
 
-            return default;
+                if (!reader.ReadBit()) // second bit == 0
+                {
+                    if (!reader.ReadBit()) // third bit == 0
+                    {
+                        // code "1 0 0" → symbol 1 (B_L0_8x8)
+                        return 1;
+                    }
+                    else
+                    {
+                        // third bit == 1
+                        // code "1 0 1" → symbol 2 (B_L1_8x8)
+                        return 2;
+                    }
+                }
+                else
+                {
+                    // second bit == 1
+
+                    if (!reader.ReadBit()) // third bit == 0
+                    {
+                        if (!reader.ReadBit()) // fourth bit == 0
+                        {
+                            if (!reader.ReadBit()) // fifth bit == 0
+                            {
+                                // code "1 1 0 0 0" → symbol 3 (B_Bi_8x8)
+                                return 3;
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+                                // code "1 1 0 0 1" → symbol 4 (B_L0_8x4)
+                                return 4;
+                            }
+                        }
+                        else
+                        {
+                            // fourth bit == 1
+
+                            if (!reader.ReadBit()) // fifth bit == 0
+                            {
+                                // code "1 1 0 1 0" → symbol 5 (B_L0_4x8)
+                                return 5;
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+                                // code "1 1 0 1 1" → symbol 6 (B_L1_8x4)
+                                return 6;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // third bit == 1
+
+                        if (!reader.ReadBit()) // fourth bit == 0
+                        {
+                            if (!reader.ReadBit()) // fifth bit == 0
+                            {
+                                if (!reader.ReadBit()) // sixth bit == 0
+                                {
+                                    // code "1 1 1 0 0 0" → symbol 7 (B_L1_4x8)
+                                    return 7;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+                                    // code "1 1 1 0 0 1" → symbol 8 (B_Bi_8x4)
+                                    return 8;
+                                }
+                            }
+                            else
+                            {
+                                // fifth bit == 1
+
+                                if (!reader.ReadBit()) // sixth bit == 0
+                                {
+                                    // code "1 1 1 0 1 0" → symbol 9 (B_Bi_4x8)
+                                    return 9;
+                                }
+                                else
+                                {
+                                    // sixth bit == 1
+                                    // code "1 1 1 0 1 1" → symbol 10 (B_L0_4x4)
+                                    return 10;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // fourth bit == 1
+
+                            if (!reader.ReadBit()) // fifth bit == 0
+                            {
+                                // code "1 1 1 1 0" → symbol 11 (B_L1_4x4)
+                                return 11;
+                            }
+                            else
+                            {
+                                // code "1 1 1 1 1" → symbol 12 (B_Bi_4x4)
+                                return 12;
+                            }
+                        }
+                    }
+                }
+            }
         }
     }
 
