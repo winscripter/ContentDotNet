@@ -1,6 +1,4 @@
-﻿using ContentDotNet.BitStream;
-using ContentDotNet.Extensions.H264.Utilities;
-using ContentDotNet.Primitives;
+﻿using ContentDotNet.Extensions.H264.Models;
 using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Cabac.Internal;
@@ -1146,835 +1144,87 @@ internal static class CabacFunctions
         return RangeTabLpsLUT[RANGE_TAB_LPS_ROW_SIZE * pStateIdx + qCodIRangeIdx];
     }
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int UnaryBinarize(int b) => (1 << b + 1) - 2;
-
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int TruncatedUnaryBinarize(int x, int cMax) => x == cMax - 1 ? (1 << x) - 1 : (1 << x + 1) - 2;
-
-    public static int UegkBinarize(bool signedValFlag, int k, int uCoff, int synElVal, int bitString)
+    public static (int maxNumCoeff, int ctxBlockCat) DeriveCtxBlockCatAndMaxNumCoeff(ResidualBlockType blkType, int NumC8x8)
     {
-        int prefix = TruncatedUnaryBinarize(Math.Min(uCoff, Math.Abs(synElVal)), uCoff);
+        int maxNumCoeff;
+        int ctxBlockCat;
 
-        if ((!signedValFlag && Intrinsic.BitLengthFast(prefix) != Intrinsic.BitLengthFast(uCoff) && (!Intrinsic.IsContiguousOnes(bitString) || !Intrinsic.IsContiguousOnes(prefix))) ||
-            (signedValFlag && prefix == 0 == (bitString == 0)))
+        switch (blkType)
         {
-            return prefix;
-        }
-        else
-        {
-            int building = 0;
-            if (Math.Abs(synElVal) >= uCoff)
-            {
-                int sufS = Math.Abs(synElVal) - uCoff;
-                bool stopLoop = false;
-                do
-                {
-                    if (sufS >= (1 << k))
-                    {
-                        building = (building << 1) | 0x1;
-                        sufS -= 1 << k;
-                        k++;
-                    }
-                    else
-                    {
-                        building <<= 1;
-                        while (Int32Boolean.B(k--))
-                        {
-                            if (Int32Boolean.B((sufS >> k) & 0x1))
-                                building = (building << 1) | 0x1;
-                            else
-                                building <<= 1;
-                        }
-                        stopLoop = true;
-                    }
-                }
-                while (!stopLoop);
-            }
+            case ResidualBlockType.Intra16x16DCLevel:
+                maxNumCoeff = 16;
+                ctxBlockCat = 0;
+                break;
 
-            if (signedValFlag && synElVal != 0)
-            {
-                if (synElVal > 0)
-                    building <<= 1;
-                else
-                    building = (building << 1) | 0x1;
-            }
+            case ResidualBlockType.Intra16x16ACLevel:
+                maxNumCoeff = 15;
+                ctxBlockCat = 1;
+                break;
 
-            return building;
-        }
-    }
+            case ResidualBlockType.LumaLevel4x4:
+                maxNumCoeff = 16;
+                ctxBlockCat = 2;
+                break;
 
-    [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int FixedLengthBinarize(int value, int length)
-    {
-        int result = 0;
+            case ResidualBlockType.ChromaDCLevel:
+                maxNumCoeff = 4 * NumC8x8;
+                ctxBlockCat = 3;
+                break;
 
-        for (int i = 0; i < length; i++)
-        {
-            if ((value & (1 << i)) != 0)
-            {
-                result |= 1 << i;
-            }
-        }
+            case ResidualBlockType.ChromaACLevel:
+                maxNumCoeff = 15;
+                ctxBlockCat = 4;
+                break;
 
-        return result;
-    }
+            case ResidualBlockType.LumaLevel8x8:
+                maxNumCoeff = 64;
+                ctxBlockCat = 5;
+                break;
 
-    public static int BinarizeMacroblockOrSubMacroblockType(BitStreamReader reader, bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
-    {
-        if (isSISlice)
-        {
-            if ((isSISlice ? 0 : 1) == 0)
-            {
-                return 0;
-            }
-            else
-            {
-                int b1 = LookUpISlice();
-                return b1;
-            }
-        }
-        else
-        {
-            if (isPorSPSlice)
-            {
-                int mbType = LookUpISlice();
-                if (mbType is >= 5 and <= 30)
-                    mbType -= 5;
-                return mbType;
-            }
-            else if (isBSlice)
-            {
-                int mbType = LookUpBSlice();
-                if (mbType is >= 23 and <= 48)
-                    mbType -= 23;
-                return mbType;
-            }
-            else if (isBSlice && isSubMbType)
-            {
-                return LookUpSubBSlice();
-            }
-            else if (isPorSPSlice && isSubMbType)
-            {
-                return LookUpSubPSPSlice();
-            }
-            else if (isBSlice && !isSubMbType)
-            {
-                return LookUpBSlice();
-            }
-            else if (isPorSPSlice && !isSubMbType)
-            {
-                return LookUpPSPSlice();
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid CABAC mb_type/sub_mb_type[] binarization");
-            }
+            case ResidualBlockType.Cb16x16DCLevel:
+                maxNumCoeff = 16;
+                ctxBlockCat = 6;
+                break;
+
+            case ResidualBlockType.Cb16x16ACLevel:
+                maxNumCoeff = 15;
+                ctxBlockCat = 7;
+                break;
+
+            case ResidualBlockType.CbLevel4x4:
+                maxNumCoeff = 16;
+                ctxBlockCat = 8;
+                break;
+
+            case ResidualBlockType.CbLevel8x8:
+                maxNumCoeff = 64;
+                ctxBlockCat = 9;
+                break;
+
+            case ResidualBlockType.Cr16x16DCLevel:
+                maxNumCoeff = 16;
+                ctxBlockCat = 10;
+                break;
+
+            case ResidualBlockType.Cr16x16ACLevel:
+                maxNumCoeff = 15;
+                ctxBlockCat = 11;
+                break;
+
+            case ResidualBlockType.CrLevel4x4:
+                maxNumCoeff = 16;
+                ctxBlockCat = 12;
+                break;
+
+            case ResidualBlockType.CrLevel8x8:
+                maxNumCoeff = 64;
+                ctxBlockCat = 13;
+                break;
+
+            default:
+                throw new NotImplementedException($"ResidualBlockType {blkType} is not implemented.");
         }
 
-        int LookUpISlice()
-        {
-            if (!reader.ReadBit())  // first bit == 0
-            {
-                // code "0" → symbol 0 (I_NxN)
-                return 0;
-            }
-            else
-            {
-                // first bit == 1
-
-                if (reader.ReadBit())  // second bit == 1
-                {
-                    // code "11" → symbol 25 (I_PCM)
-                    return 25;
-                }
-                else
-                {
-                    // second bit == 0
-
-                    if (!reader.ReadBit())  // third bit == 0
-                    {
-                        // third bit == 0
-
-                        if (!reader.ReadBit())  // fourth bit == 0
-                        {
-                            // fourth bit == 0
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                // fifth bit == 0
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 0 0 0 0 0" → symbol 1
-                                    return 1;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-                                    // code "1 0 0 0 0 1" → symbol 2
-                                    return 2;
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 0 0 0 1 0" → symbol 3
-                                    return 3;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-                                    // code "1 0 0 0 1 1" → symbol 4
-                                    return 4;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // fourth bit == 1
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 0 1 0 0 0" → symbol 5
-                                        return 5;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 0 1 0 0 1" → symbol 6
-                                        return 6;
-                                    }
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 0 1 0 1 0" → symbol 7
-                                        return 7;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 0 1 0 1 1" → symbol 8
-                                        return 8;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 0 1 1 0 0" → symbol 9
-                                        return 9;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 0 1 1 0 1" → symbol 10
-                                        return 10;
-                                    }
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 0 1 1 1 0" → symbol 11
-                                        return 11;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 0 1 1 1 1" → symbol 12
-                                        return 12;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // third bit == 1
-
-                        if (!reader.ReadBit())  // fourth bit == 0
-                        {
-                            // fourth bit == 0
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                // code "1 0 1 0 0 0" → symbol 13
-                                return 13;
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 0 1 0 0 1" → symbol 14
-                                    return 14;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-                                    // code "1 0 1 0 1 0" → symbol 15
-                                    return 15;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // fourth bit == 1
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 1 1 0 0 0" → symbol 17
-                                        return 17;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 1 1 0 0 1" → symbol 18
-                                        return 18;
-                                    }
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 1 1 0 1 0" → symbol 19
-                                        return 19;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 1 1 0 1 1" → symbol 20
-                                        return 20;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 1 1 1 0 0" → symbol 21
-                                        return 21;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 1 1 1 0 1" → symbol 22
-                                        return 22;
-                                    }
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 0 1 1 1 1 0" → symbol 23
-                                        return 23;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-                                        // code "1 0 1 1 1 1 1" → symbol 24
-                                        return 24;
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        int LookUpBSlice()
-        {
-            if (!reader.ReadBit())  // first bit == 0
-            {
-                // code "0" → symbol 0 (B_Direct_16x16)
-                return 0;
-            }
-            else
-            {
-                // first bit == 1
-
-                if (!reader.ReadBit())  // second bit == 0
-                {
-                    // second bit == 0
-
-                    if (!reader.ReadBit())  // third bit == 0
-                    {
-                        // code "1 0 0" → symbol 1 (B_L0_16x16)
-                        return 1;
-                    }
-                    else
-                    {
-                        // third bit == 1
-
-                        // code "1 0 1" → symbol 2 (B_L1_16x16)
-                        return 2;
-                    }
-                }
-                else
-                {
-                    // second bit == 1
-
-                    if (!reader.ReadBit())  // third bit == 0
-                    {
-                        // third bit == 0
-
-                        if (!reader.ReadBit())  // fourth bit == 0
-                        {
-                            // fourth bit == 0
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                // fifth bit == 0
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 1 0 0 0 0" → symbol 3 (B_Bi_16x16)
-                                    return 3;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    // code "1 1 0 0 0 1" → symbol 4 (B_L0_L0_16x8)
-                                    return 4;
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 1 0 0 1 0" → symbol 5 (B_L0_L0_8x16)
-                                    return 5;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    // code "1 1 0 0 1 1" → symbol 6 (B_L1_L1_16x8)
-                                    return 6;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // fourth bit == 1
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 1 0 1 0 0" → symbol 7 (B_L1_L1_8x16)
-                                    return 7;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    // code "1 1 0 1 0 1" → symbol 8 (B_L0_L1_16x8)
-                                    return 8;
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 1 0 1 1 0" → symbol 9 (B_L0_L1_8x16)
-                                    return 9;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    // code "1 1 0 1 1 1" → symbol 10 (B_L1_L0_16x8)
-                                    return 10;
-                                }
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // third bit == 1
-
-                        if (!reader.ReadBit())  // fourth bit == 1
-                        {
-                            // code starts with "1 1 1 0"
-
-                            if (!reader.ReadBit())  // fifth bit == 0
-                            {
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 1 1 0 0 0 0" → symbol 12 (B_L0_Bi_16x8)
-                                        return 12;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-
-                                        // code "1 1 1 0 0 0 1" → symbol 13 (B_L0_Bi_8x16)
-                                        return 13;
-                                    }
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 1 1 0 0 1 0" → symbol 14 (B_L1_Bi_16x8)
-                                        return 14;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-
-                                        // code "1 1 1 0 0 1 1" → symbol 15 (B_L1_Bi_8x16)
-                                        return 15;
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 1 1 0 1 0 0" → symbol 16 (B_Bi_L0_16x8)
-                                        return 16;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-
-                                        // code "1 1 1 0 1 0 1" → symbol 17 (B_Bi_L0_8x16)
-                                        return 17;
-                                    }
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-
-                                    if (!reader.ReadBit())  // seventh bit == 0
-                                    {
-                                        // code "1 1 1 0 1 1 0" → symbol 18 (B_Bi_L1_16x8)
-                                        return 18;
-                                    }
-                                    else
-                                    {
-                                        // seventh bit == 1
-
-                                        // code "1 1 1 0 1 1 1" → symbol 19 (B_Bi_L1_8x16)
-                                        return 19;
-                                    }
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // fourth bit == 1
-
-                            if (!reader.ReadBit())  // fifth bit == 1
-                            {
-                                if (!reader.ReadBit())  // sixth bit == 0
-                                {
-                                    // code "1 1 1 1 0 0 0" → symbol 20 (B_Bi_Bi_16x8)
-                                    return 20;
-                                }
-                                else
-                                {
-                                    // code "1 1 1 1 0 0 1" → symbol 21 (B_Bi_Bi_8x16)
-                                    return 21;
-                                }
-                            }
-                            else
-                            {
-                                // code "1 1 1 1 1 1" → symbol 22 (B_8x8)
-                                // Only 6 bits here, so we read only 6 bits total for this one
-
-                                if (!reader.ReadBit())  // sixth bit == 1
-                                {
-                                    // code mismatch or error
-                                    return -1;
-                                }
-
-                                return 22;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-        int LookUpPSPSlice()
-        {
-            if (!reader.ReadBit())  // first bit == 0
-            {
-                if (!reader.ReadBit())  // second bit == 0
-                {
-                    if (!reader.ReadBit())  // third bit == 0
-                    {
-                        // 0 0 0 → symbol 0 (P_L0_16x16)
-                        return 0;
-                    }
-                    else
-                    {
-                        // 0 0 1 → symbol 3 (P_8x8)
-                        return 3;
-                    }
-                }
-                else
-                {
-                    // second bit == 1
-                    if (!reader.ReadBit())  // third bit == 0
-                    {
-                        // 0 1 0 → symbol 2 (P_L0_L0_8x16)
-                        return 2;
-                    }
-                    else
-                    {
-                        // 0 1 1 → symbol 1 (P_L0_L0_16x8)
-                        return 1;
-                    }
-                }
-            }
-            else
-            {
-                // First bit == 1 → invalid for this table or error
-                return -1;
-            }
-        }
-
-        int LookUpSubPSPSlice()
-        {
-            if (reader.ReadBit()) // first bit == 1
-            {
-                // code "1" → symbol 0 (P_L0_8x8)
-                return 0;
-            }
-            else
-            {
-                // first bit == 0
-
-                if (!reader.ReadBit()) // second bit == 0
-                {
-                    // code "0 0" → symbol 1 (P_L0_8x4)
-                    return 1;
-                }
-                else
-                {
-                    // second bit == 1
-
-                    if (reader.ReadBit()) // third bit == 1
-                    {
-                        // code "0 1 1" → symbol 2 (P_L0_4x8)
-                        return 2;
-                    }
-                    else
-                    {
-                        // third bit == 0
-
-                        // code "0 1 0" → symbol 3 (P_L0_4x4)
-                        return 3;
-                    }
-                }
-            }
-        }
-
-        int LookUpSubBSlice()
-        {
-            if (!reader.ReadBit()) // first bit == 0
-            {
-                // code "0" → symbol 0 (B_Direct_8x8)
-                return 0;
-            }
-            else
-            {
-                // first bit == 1
-
-                if (!reader.ReadBit()) // second bit == 0
-                {
-                    if (!reader.ReadBit()) // third bit == 0
-                    {
-                        // code "1 0 0" → symbol 1 (B_L0_8x8)
-                        return 1;
-                    }
-                    else
-                    {
-                        // third bit == 1
-                        // code "1 0 1" → symbol 2 (B_L1_8x8)
-                        return 2;
-                    }
-                }
-                else
-                {
-                    // second bit == 1
-
-                    if (!reader.ReadBit()) // third bit == 0
-                    {
-                        if (!reader.ReadBit()) // fourth bit == 0
-                        {
-                            if (!reader.ReadBit()) // fifth bit == 0
-                            {
-                                // code "1 1 0 0 0" → symbol 3 (B_Bi_8x8)
-                                return 3;
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-                                // code "1 1 0 0 1" → symbol 4 (B_L0_8x4)
-                                return 4;
-                            }
-                        }
-                        else
-                        {
-                            // fourth bit == 1
-
-                            if (!reader.ReadBit()) // fifth bit == 0
-                            {
-                                // code "1 1 0 1 0" → symbol 5 (B_L0_4x8)
-                                return 5;
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-                                // code "1 1 0 1 1" → symbol 6 (B_L1_8x4)
-                                return 6;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        // third bit == 1
-
-                        if (!reader.ReadBit()) // fourth bit == 0
-                        {
-                            if (!reader.ReadBit()) // fifth bit == 0
-                            {
-                                if (!reader.ReadBit()) // sixth bit == 0
-                                {
-                                    // code "1 1 1 0 0 0" → symbol 7 (B_L1_4x8)
-                                    return 7;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-                                    // code "1 1 1 0 0 1" → symbol 8 (B_Bi_8x4)
-                                    return 8;
-                                }
-                            }
-                            else
-                            {
-                                // fifth bit == 1
-
-                                if (!reader.ReadBit()) // sixth bit == 0
-                                {
-                                    // code "1 1 1 0 1 0" → symbol 9 (B_Bi_4x8)
-                                    return 9;
-                                }
-                                else
-                                {
-                                    // sixth bit == 1
-                                    // code "1 1 1 0 1 1" → symbol 10 (B_L0_4x4)
-                                    return 10;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // fourth bit == 1
-
-                            if (!reader.ReadBit()) // fifth bit == 0
-                            {
-                                // code "1 1 1 1 0" → symbol 11 (B_L1_4x4)
-                                return 11;
-                            }
-                            else
-                            {
-                                // code "1 1 1 1 1" → symbol 12 (B_Bi_4x4)
-                                return 12;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    }
-
-    public static BitString BinarizeCodedBlockPattern(int chromaArrayType, int codedBlockPattern)
-    {
-        BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(codedBlockPattern, 15));
-
-        if (chromaArrayType is not 0 and not 3)
-        {
-            BitString bsSuffix = BitString.From(TruncatedUnaryBinarize(codedBlockPattern, 2));
-
-            BitString bsResult = bsPrefix + bsSuffix;
-
-            return bsResult;
-        }
-        else
-        {
-            return bsPrefix;
-        }
-    }
-
-    public static BitString BinarizeMbQpDelta(int mbQpDelta)
-    {
-        return BitString.From(UnaryBinarize(CodeNumToSignedExpGolombCode(mbQpDelta)));
-    }
-
-    private static int CodeNumToSignedExpGolombCode(int codeNum)
-    {
-        return codeNum switch
-        {
-            0 => 0,
-            1 => 1,
-            2 => -1,
-            3 => 2,
-            4 => -2,
-            5 => 3,
-            6 => -3,
-            _ => codeNum
-        };
+        return (maxNumCoeff, ctxBlockCat);
     }
 }

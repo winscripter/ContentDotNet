@@ -1,7 +1,7 @@
 ﻿using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Containers;
 
-namespace ContentDotNet.Extensions.H264;
+namespace ContentDotNet.Extensions.H264.Residuals;
 
 /// <summary>
 ///   Represents raw values of residuals per channel (luma/cb/cr).

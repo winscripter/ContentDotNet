@@ -41,4 +41,13 @@ internal static class Intrinsic
 
         return x == expected;
     }
+
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool AllBitsSetToOne(int value, int bitStart, int bitEnd)
+    {
+        for (int x = bitStart; x < bitEnd; x++)
+            if ((value & (1 << x)) == 0)
+                return false;
+        return true;
+    }
 }

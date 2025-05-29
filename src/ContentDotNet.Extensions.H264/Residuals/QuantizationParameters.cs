@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿namespace ContentDotNet.Extensions.H264.Residuals;
 
 /// <summary>
 ///   Represents H.264 Quantization Parameters.

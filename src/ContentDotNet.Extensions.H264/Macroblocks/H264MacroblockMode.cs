@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.H264;
+﻿namespace ContentDotNet.Extensions.H264.Macroblocks;
 
 /// <summary>
 ///   Represents the macroblock mode for H.264.

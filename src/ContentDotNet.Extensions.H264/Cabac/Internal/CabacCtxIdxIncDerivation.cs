@@ -948,7 +948,7 @@ internal static class CabacCtxIdxIncDerivation
     /// <remarks>
     ///   <c>mode</c> is 1 for significant_coeff_flag, 2 for last_significant_coeff_flag, and 3 for coeff_abs_level_minus1.
     /// </remarks>
-    public static int AssignCtxIdxIncForCoeffFlagsAndAbsLevel(int ctxIdxOffset, int binIdx, int NumC8x8, int levelListIdx, ResidualBlockType blkType, int mode, bool isFrame, int numDecodAbsLevelEq1, int numDecodAbsLevelGt1)
+    public static int AssignCtxIdxIncForCoeffFlagsAndAbsLevel(int binIdx, int NumC8x8, int levelListIdx, ResidualBlockType blkType, int mode, bool isFrame, int numDecodAbsLevelEq1, int numDecodAbsLevelGt1)
     {
         int maxNumCoeff = 0;
         int ctxBlockCat = 0;

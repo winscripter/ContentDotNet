@@ -2,6 +2,7 @@
 using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Models;
+using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Cabac;
 
