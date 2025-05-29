@@ -853,23 +853,6 @@ internal static class Binarization
         return UnaryBinarize(reader);
     }
 
-    private static int CodeNumToSignedExpGolombCode(int codeNum)
-    {
-        return codeNum switch
-        {
-            0 => 0,
-            1 => 1,
-            2 => -1,
-            3 => 2,
-            4 => -2,
-            5 => 3,
-            6 => -3,
-            _ => codeNum
-        };
-    }
-
-
-
     // I might be wrong, so I'll include this method so that if I'm wrong, I can change it later.
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int AssociateWithPrefixSuffix(int prefix, int suffix) => prefix;
