@@ -34,7 +34,7 @@ public class BitStreamReader(Stream input) : IDisposable
     /// <param name="count">Number of bits to read.</param>
     /// <returns>A 32-bit unsigned integer representing bits read.</returns>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-    public uint ReadBits(uint count)
+    public virtual uint ReadBits(uint count)
     {
         ArgumentOutOfRangeException.ThrowIfLessThan(count, 1u);
 
@@ -55,7 +55,7 @@ public class BitStreamReader(Stream input) : IDisposable
     /// </summary>
     /// <returns>Unsigned Exponential Golomb.</returns>
     /// <exception cref="InvalidDataException"></exception>
-    public uint ReadUE()
+    public virtual uint ReadUE()
     {
         uint zeroCount = 0;
         while (!ReadBit() && zeroCount <= 31)
@@ -70,7 +70,7 @@ public class BitStreamReader(Stream input) : IDisposable
     /// </summary>
     /// <returns>Signed Exponential Golomb.</returns>
     /// <exception cref="InvalidDataException"></exception>
-    public int ReadSE()
+    public virtual int ReadSE()
     {
         uint codeNum = ReadUE();
         int val = (int)(codeNum + 1 >> 1);
@@ -119,7 +119,7 @@ public class BitStreamReader(Stream input) : IDisposable
         return b;
     }
 
-    public uint ReadByte()
+    public virtual uint ReadByte()
     {
         uint b = ReadBits(8);
         return b;

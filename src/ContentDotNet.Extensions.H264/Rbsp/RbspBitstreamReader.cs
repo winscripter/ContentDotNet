@@ -71,4 +71,54 @@ public sealed class RbspBitstreamReader : BitStreamReader
         Update();
         return result;
     }
+
+    /// <inheritdoc cref="BitStreamReader.ReadBits(uint)" />
+    public override uint ReadBits(uint count)
+    {
+        ArgumentOutOfRangeException.ThrowIfLessThan(count, 1u);
+
+        uint result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result <<= 1;
+            if (ReadBit())
+            {
+                result |= 1;
+            }
+        }
+        return result;
+    }
+
+    /// <inheritdoc cref="BitStreamReader.ReadByte" />
+    public override uint ReadByte()
+    {
+        return ReadBits(8);
+    }
+
+    /// <summary>
+    /// Reads an Unsigned Exponential Golomb.
+    /// </summary>
+    /// <returns>Unsigned Exponential Golomb.</returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public override uint ReadUE()
+    {
+        uint zeroCount = 0;
+        while (!ReadBit() && zeroCount <= 31)
+            zeroCount++;
+
+        uint result = (1u << (int)zeroCount) - 1 + (zeroCount < 1 ? 0 : ReadBits(zeroCount));
+        return result;
+    }
+
+    /// <summary>
+    /// Reads an Signed Exponential Golomb.
+    /// </summary>
+    /// <returns>Signed Exponential Golomb.</returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public override int ReadSE()
+    {
+        uint codeNum = ReadUE();
+        int val = (int)(codeNum + 1 >> 1);
+        return (codeNum & 1) == 0 ? -val : val;
+    }
 }
