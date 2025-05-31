@@ -167,7 +167,7 @@ public class ReaderGolombTests
             });
     }
 
-    private static void UseBSWriterThenReader(Action<BitStreamWriter> writer, Action<RbspBitstreamReader> reader)
+    private static void UseBSWriterThenReader(Action<BitStreamWriter> writer, Action<RbspBitStreamReader> reader)
     {
         using var msWriter = new MemoryStream();
         using var bw = new BitStreamWriter(msWriter);
@@ -175,6 +175,6 @@ public class ReaderGolombTests
 
         using var msReader = new MemoryStream(msWriter.ToArray());
         using var br = new BitStreamReader(msReader);
-        reader(new RbspBitstreamReader(br));
+        reader(new RbspBitStreamReader(br));
     }
 }

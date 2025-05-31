@@ -1,22 +1,20 @@
 ﻿using ContentDotNet.BitStream;
 
-namespace ContentDotNet.Extensions.H264.Rbsp;
+namespace ContentDotNet.Extensions.H264;
 
 /// <summary>
 ///   Reads the bitstream from a Raw Byte Sequence Payload (RBSP).
 /// </summary>
-public sealed class RbspBitstreamReader : BitStreamReader
+public sealed class RbspBitStreamReader : BitStreamReader
 {
-    private const int TargetBitPositionBeforeUpdate = 8;
-
     private int _prevByte1 = -1;
     private int _prevByte2 = -1;
 
     /// <summary>
-    ///   Initializes a new instance of the <see cref="RbspBitstreamReader"/> class.
+    ///   Initializes a new instance of the <see cref="RbspBitStreamReader"/> class.
     /// </summary>
     /// <param name="baseReader">Bit Stream Reader that this RBSP Bit Stream Reader depends on.</param>
-    public RbspBitstreamReader(BitStreamReader baseReader) : base(baseReader.BaseStream)
+    public RbspBitStreamReader(BitStreamReader baseReader) : base(baseReader.BaseStream)
     {
     }
 
