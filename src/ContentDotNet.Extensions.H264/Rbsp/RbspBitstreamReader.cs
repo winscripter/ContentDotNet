@@ -9,8 +9,8 @@ public sealed class RbspBitstreamReader : BitStreamReader
 {
     private const int TargetBitPositionBeforeUpdate = 8;
 
-    // Holds the next EP3B (Emulation Prevention 3 Byte) offset.
-    private long _nextEP3BOffset = long.MaxValue; // For now
+    private int _prevByte1 = -1;
+    private int _prevByte2 = -1;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="RbspBitstreamReader"/> class.
@@ -21,49 +21,43 @@ public sealed class RbspBitstreamReader : BitStreamReader
     }
 
     /// <summary>
-    ///   Stores the offset for the next EP3B (Emulation Prevention 3 Byte) so that it can later be skipped.
-    /// </summary>
-    public void Update()
-    {
-        if (BaseStream.Length - BaseStream.Position >= 3)
-        {
-            if (this.GetState().BitPosition == TargetBitPositionBeforeUpdate)
-            {
-                if (this.PeekBits(24) == 0x000001)
-                {
-                    _nextEP3BOffset = this.GetState().ByteOffset + 3;
-                }
-                else
-                {
-                    _nextEP3BOffset = long.MaxValue;
-                }
-            }
-        }
-    }
-
-    /// <summary>
     ///   Reads a bit.
     /// </summary>
     /// <returns>The bit.</returns>
     /// <exception cref="InvalidDataException"></exception>
     public override bool ReadBit()
     {
-        bool result = base.ReadBit();
-        if (this.GetState().BitPosition == TargetBitPositionBeforeUpdate &&
-            this.BaseStream.Position == _nextEP3BOffset)
+        if (BitPosition == 0)
         {
-            int ep3b = this.BaseStream.ReadByte();
-            if (ep3b != -1)
-            {
-                if (ep3b != 0x03)
-                    throw new InvalidDataException("Expected EP3B byte (0x03) but found: " + ep3b);
+            int nextByte;
 
-                base.CurrentByte = (byte)ep3b;
-                base.BitPosition = 0;
+            while (true)
+            {
+                nextByte = BaseStream.ReadByte();
+
+                if (nextByte == -1)
+                    throw new EndOfStreamException();
+
+                if (_prevByte2 == 0x00 && _prevByte1 == 0x00 && nextByte == 0x03)
+                {
+                    _prevByte2 = _prevByte1;
+                    _prevByte1 = nextByte;
+                    continue;
+                }
+
+                break;
             }
+
+            CurrentByte = nextByte;
+            BitPosition = 0;
+
+            _prevByte2 = _prevByte1;
+            _prevByte1 = nextByte;
         }
-        Update();
-        return result;
+
+        bool bit = (CurrentByte >> (7 - BitPosition) & 1) == 1;
+        BitPosition = (BitPosition + 1) % 8;
+        return bit;
     }
 
     /// <inheritdoc cref="BitStreamReader.ReadBits(uint)" />
