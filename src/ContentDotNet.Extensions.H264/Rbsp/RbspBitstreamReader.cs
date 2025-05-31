@@ -31,7 +31,7 @@ public sealed class RbspBitstreamReader : BitStreamReader
     {
         if (BaseStream.Length - BaseStream.Position >= 3)
         {
-            if (BaseReader.GetState().BitPosition == 0)
+            if (BaseReader.GetState().BitPosition == 8)
             {
                 if (BaseReader.PeekBits(24) == 0x000001)
                 {
