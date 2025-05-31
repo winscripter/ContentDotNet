@@ -93,4 +93,63 @@ internal static class DeblockingFilter
     {
         throw new Exception();
     }
+
+    public static int DeriveLumaContentDependentBoundaryFilteringStrength(
+        bool pIsFrame,
+        bool qIsFrame,
+        int pMbPartPredMode,
+        int qMbPartPredMode,
+        GeneralSliceType pSliceType,
+        GeneralSliceType qSliceType,
+        bool pqAreInDifferentMacroblockPairs,
+        bool verticalEdgeFlag,
+        bool mbaffFrameFlag,
+        bool fieldPicFlag,
+        bool blockEdgeIsMacroblockEdge,
+        bool pTransformSize8x8Flag,
+        bool qTransformSize8x8Flag,
+        bool p8x8LumaHasNonzeroCoeffs,
+        bool p4x4LumaHasNonzeroCoeffs,
+        bool q8x8LumaHasNonzeroCoeffs,
+        bool q4x4LumaHasNonzeroCoeffs)
+    {
+        bool mixedModeEdgeFlag = mbaffFrameFlag && pqAreInDifferentMacroblockPairs;
+
+        int bS;
+        if (blockEdgeIsMacroblockEdge &&
+            (pIsFrame && qIsFrame && (SliceTypes.IsIntra(pMbPartPredMode) && SliceTypes.IsIntra(qMbPartPredMode))) ||
+            (pSliceType is GeneralSliceType.SI or GeneralSliceType.SP && qSliceType is GeneralSliceType.SI or GeneralSliceType.SP) ||
+            ((mbaffFrameFlag || fieldPicFlag) && verticalEdgeFlag && (SliceTypes.IsIntra(pMbPartPredMode) && SliceTypes.IsIntra(qMbPartPredMode))) ||
+            ((mbaffFrameFlag || fieldPicFlag) && verticalEdgeFlag && pSliceType is GeneralSliceType.SI or GeneralSliceType.SP && qSliceType is GeneralSliceType.SI or GeneralSliceType.SP))
+        {
+            bS = 4;
+        }
+        else if ((!mixedModeEdgeFlag && (SliceTypes.IsIntra(pMbPartPredMode) || SliceTypes.IsI(qMbPartPredMode))) ||
+                 (!mixedModeEdgeFlag && (pSliceType is GeneralSliceType.SI or GeneralSliceType.SP || qSliceType is GeneralSliceType.SI or GeneralSliceType.SP)) ||
+                 (mixedModeEdgeFlag && !verticalEdgeFlag && (SliceTypes.IsIntra(pMbPartPredMode) || SliceTypes.IsIntra(qMbPartPredMode))) ||
+                 (mixedModeEdgeFlag && !verticalEdgeFlag && (pSliceType is GeneralSliceType.SI or GeneralSliceType.SP || qSliceType is GeneralSliceType.SI or GeneralSliceType.SP)))
+        {
+            bS = 3;
+        }
+        else if ((pTransformSize8x8Flag && p8x8LumaHasNonzeroCoeffs) ||
+                 (!pTransformSize8x8Flag && p4x4LumaHasNonzeroCoeffs) ||
+                 (qTransformSize8x8Flag && q8x8LumaHasNonzeroCoeffs) ||
+                 (!qTransformSize8x8Flag && q4x4LumaHasNonzeroCoeffs))
+        {
+            bS = 2;
+        }
+        else
+        {
+            if (mixedModeEdgeFlag)
+            {
+                bS = 1;
+            }
+            else
+            {
+                throw new NotImplementedException("DeriveLumaContentDependentBoundaryFilteringStrength: Unsupported case where bS needs to be set to 1 but mixedModeEdgeFlag is 0.");
+            }
+        }
+
+        return bS;
+    }
 }

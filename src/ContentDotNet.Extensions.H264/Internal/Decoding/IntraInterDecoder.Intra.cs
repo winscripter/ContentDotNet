@@ -13,7 +13,7 @@ internal partial class IntraInterDecoder
 
         public Intra(IMacroblockUtility macroblockUtility) => _macroblockUtility = macroblockUtility;
 
-        private static void DeriveIntra4x4PredMode(
+        public static void DeriveIntra4x4PredMode(
             int luma4x4BlkIdx,
             DerivationContext dc,
             bool constrainedIntraPredFlag,
@@ -83,22 +83,17 @@ internal partial class IntraInterDecoder
         public static void Intra4x4SamplePredict(
             DerivationContext dc,
             int luma4x4BlkIdx,
-            bool available,
-            int mbAddrN,
             bool constrainedInterPredFlag,
             IntraPredictionSamples p,
-            Matrix16x16 cSL,
+            Matrix cSL,
             Matrix4x4 predL,
             IntraPredictionSamples availableForIntraPred,
-            Span<int> intra4x4PredMode,
-            IMacroblockUtility util) =>
+            Span<int> intra4x4PredMode) =>
             Intra4x4SamplePredict(
                 dc,
                 luma4x4BlkIdx,
-                available,
                 constrainedInterPredFlag,
-                dc.IsMbaff && util.IsFieldMacroblock(mbAddrN),
-                mbAddrN,
+                dc.IsMbaff && dc.IsMbaffFieldMacroblock,
                 dc.IsMbaff,
                 dc.PictureWidthInSamplesL,
                 dc.IsMbaffFieldMacroblock,
@@ -113,17 +108,15 @@ internal partial class IntraInterDecoder
         public static void Intra4x4SamplePredict(
             DerivationContext dc,
             int luma4x4BlkIdx,
-            bool mbAddrNAvailable,
             bool constrainedInterPredFlag,
             bool mbaffFrameAndMbIsField,
-            int mbAddrN,
             bool mbaffFrameFlag,
             int pictureWidthInSamplesL,
             bool isFrame,
             bool isField,
             int bitDepthY,
             IntraPredictionSamples p,
-            Matrix16x16 cSL,
+            Matrix cSL,
             Matrix4x4 predL,
             IntraPredictionSamples availableForIntraPred,
             Span<int> intra4x4PredMode)
@@ -135,15 +128,17 @@ internal partial class IntraInterDecoder
             for (int y = -1; y < 4; y++)
             {
                 int x = -1;
-                bool isAvailable = !(mbAddrNAvailable ||
-                                     constrainedInterPredFlag ||
-                                     x > 3 && luma4x4BlkIdx is 3 or 11);
 
                 int xN = xO + x;
                 int yN = yO + y;
 
-                Scanning.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out _);
+                int mbAddrN = 0;
+                Scanning.DeriveNeighboringLocations(dc, true, xN, yN, out int xW, out int yW, ref dc.MbAddrX, ref mbAddrN, out bool mbAddrNAvailable);
                 Scanning.Inverse4x4LumaScan(mbAddrN, ref xW, ref yW);
+
+                bool isAvailable = !(mbAddrNAvailable ||
+                                     constrainedInterPredFlag ||
+                                     x > 3 && luma4x4BlkIdx is 3 or 11);
 
                 if (isAvailable)
                 {

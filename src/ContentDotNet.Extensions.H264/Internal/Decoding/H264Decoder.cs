@@ -2,6 +2,7 @@
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Extensions.H264.PredictionMode;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Primitives;
 
@@ -60,6 +61,7 @@ internal sealed class H264Decoder
         bool constrainedIntraPredFlag,
         DerivationContext dc,
         MacroblockSizeChroma sizes,
+        int totalMbsInFrame,
         int chromaArrayType,
         /*output*/ Matrix cSL,
         /*output*/ Matrix cSCb,
@@ -144,108 +146,238 @@ internal sealed class H264Decoder
                         break;
                     }
 
-                //case SliceTypes.Intra_8x8:
-                //    {
-                //        // This is a 16x16 macroblock that consists of 4 8x8 blocks.
+                case SliceTypes.Intra_8x8:
+                    {
+                        // This is a 16x16 macroblock that consists of 4 8x8 blocks.
 
-                //        if (mbLayer.SubMacroblockPrediction is not SubMacroblockPrediction subMbPred)
-                //            throw new InvalidOperationException("Sub-macroblock prediction isn't present");
+                        if (mbLayer.SubMacroblockPrediction is not SubMacroblockPrediction subMbPred)
+                            throw new InvalidOperationException("Sub-macroblock prediction isn't present");
 
-                //        if (mbLayer.Prediction is not MacroblockPrediction mbPred)
-                //            throw new InvalidOperationException("Macroblock prediction isn't present");
+                        if (mbLayer.Prediction is not MacroblockPrediction mbPred)
+                            throw new InvalidOperationException("Macroblock prediction isn't present");
 
-                //        Span<int> predBufferBackingL = stackalloc int[16 * 16];
-                //        var predBufferL = new Matrix16x16(predBufferBackingL);
-                //        Span<int> predBufferBackingCb = stackalloc int[16 * 16];
-                //        var predBufferCb = new Matrix16x16(predBufferBackingCb);
-                //        Span<int> predBufferBackingCr = stackalloc int[16 * 16];
-                //        var predBufferCr = new Matrix16x16(predBufferBackingCr);
+                        Span<int> predBufferBackingL = stackalloc int[16 * 16];
+                        var predBufferL = new Matrix16x16(predBufferBackingL);
+                        Span<int> predBufferBackingCb = stackalloc int[16 * 16];
+                        var predBufferCb = new Matrix16x16(predBufferBackingCb);
+                        Span<int> predBufferBackingCr = stackalloc int[16 * 16];
+                        var predBufferCr = new Matrix16x16(predBufferBackingCr);
 
-                //        Span<int> leftL = stackalloc int[16];
-                //        Span<int> topL = stackalloc int[16];
-                //        Span<int> leftCb = stackalloc int[16];
-                //        Span<int> topCb = stackalloc int[16];
-                //        Span<int> leftCr = stackalloc int[16];
-                //        Span<int> topCr = stackalloc int[16];
+                        Span<int> leftL = stackalloc int[16];
+                        Span<int> topL = stackalloc int[16];
+                        Span<int> leftCb = stackalloc int[16];
+                        Span<int> topCb = stackalloc int[16];
+                        Span<int> leftCr = stackalloc int[16];
+                        Span<int> topCr = stackalloc int[16];
 
-                //        FetchSamples(leftL, topL, leftCb, topCb, leftCr, topCr, out int leftTop);
+                        FetchSamples(leftL, topL, leftCb, topCb, leftCr, topCr, out int leftTop);
 
-                //        Span<int> pL = stackalloc int[16 * 16];
-                //        var pLSamples = new IntraPredictionSamples(pL, leftL, topL, YuvBinary.GetY(leftTop));
-                //        Span<int> pCb = stackalloc int[16 * 16];
-                //        var pCbSamples = new IntraPredictionSamples(pCb, leftCb, topCb, YuvBinary.GetCb(leftTop));
-                //        Span<int> pCr = stackalloc int[16 * 16];
-                //        var pCrSamples = new IntraPredictionSamples(pCr, leftCr, topCr, YuvBinary.GetCr(leftTop));
+                        Span<int> pL = stackalloc int[16 * 16];
+                        var pLSamples = new IntraPredictionSamples(pL, leftL, topL, YuvBinary.GetY(leftTop));
+                        Span<int> pCb = stackalloc int[16 * 16];
+                        var pCbSamples = new IntraPredictionSamples(pCb, leftCb, topCb, YuvBinary.GetCb(leftTop));
+                        Span<int> pCr = stackalloc int[16 * 16];
+                        var pCrSamples = new IntraPredictionSamples(pCr, leftCr, topCr, YuvBinary.GetCr(leftTop));
 
-                //        int intra16x16PredMode = DeriveIntra16x16PredictionMode((int)mbLayer.MbType);
+                        int intra16x16PredMode = DeriveIntra16x16PredictionMode((int)mbLayer.MbType);
 
-                //        Span<int> intra8x8PredMode = stackalloc int[4];
-                //        var leftMB = util.GetMacroblockToTheLeft(currMbAddr);
-                //        var topMB = util.GetMacroblockToTheTop(currMbAddr);
-                        
-                //        for (int i = 0; i < 4; i++)
-                //        {
-                //            if (leftMB is not null && topMB is not null && leftMB.Value.Prediction is not null && topMB.Value.Prediction is not null &&
-                //                mbLayer.Prediction.Value.PrevIntra8x8PredModeFlag[i])
-                //            {
-                //                int result = Math.Min((int)leftMB.Value.Prediction.Value.RemIntra8x8PredMode[i], (int)topMB.Value.Prediction.Value.RemIntra8x8PredMode[i]);
-                //                intra8x8PredMode[i] = result;
-                //            }
-                //            else
-                //            {
-                //                intra8x8PredMode[i] = (int)mbPred.RemIntra8x8PredMode[i];
-                //            }
-                //        }
+                        Span<int> intra8x8PredMode = stackalloc int[4];
 
-                //        for (int x = 0; x < 2; x++)
-                //        {
-                //            for (int y = 0; y < 2; y++)
-                //            {
-                //                int luma8x8BlkIdx = x * 2 + y;
+                        for (int i = 0; i < 4; i++)
+                        {
+                            intra8x8PredMode[i] = H264IntraDecisionFlow.Get8x8MacroblockType(
+                                mbLayer,
+                                sliceType,
+                                picWidthInMbs,
+                                totalMbsInFrame,
+                                currMbAddr,
+                                i,
+                                util);
+                        }
 
-                //                void _Core(Span<int> intra8x8PredMode, IntraPredictionSamples pL, IntraPredictionSamples pCb, IntraPredictionSamples pCr)
-                //                {
-                //                    Span<int> predLBacking = stackalloc int[8 * 8];
-                //                    var predL = new Matrix8x8(predLBacking);
+                        for (int x = 0; x < 2; x++)
+                        {
+                            for (int y = 0; y < 2; y++)
+                            {
+                                int luma8x8BlkIdx = x * 2 + y;
 
-                //                    Span<int> predCbBacking = stackalloc int[8 * 8];
-                //                    var predCb = new Matrix8x8(predCbBacking);
-                //                    Span<int> predCrBacking = stackalloc int[8 * 8];
-                //                    var predCr = new Matrix8x8(predCrBacking);
+                                _Core(intra8x8PredMode, pLSamples, pCbSamples, pCrSamples);
 
-                //                    intraInter.IntraPredictor.Intra8x8SamplePredict(
-                //                        luma8x8BlkIdx,
-                //                        cSL,
-                //                        ref predL,
-                //                        constrainedIntraPredFlag,
-                //                        intra8x8PredMode,
-                //                        pL,
-                //                        dc
-                //                    );
+                                void _Core(Span<int> intra8x8PredMode, IntraPredictionSamples pL, IntraPredictionSamples pCb, IntraPredictionSamples pCr)
+                                {
+                                    Span<int> predLBacking = stackalloc int[8 * 8];
+                                    var predL = new Matrix8x8(predLBacking);
 
-                //                    intraInter.IntraPredictor.Intra8x8SamplePredict(
-                //                        luma8x8BlkIdx,
-                //                        cSCb,
-                //                        ref predCb,
-                //                        constrainedIntraPredFlag,
-                //                        intra8x8PredMode,
-                //                        pCb,
-                //                        dc
-                //                    );
+                                    Span<int> predCbBacking = stackalloc int[16 * 16];
+                                    var predCb = new Matrix16x16(predCbBacking);
+                                    Span<int> predCrBacking = stackalloc int[16 * 16];
+                                    var predCr = new Matrix16x16(predCrBacking);
 
-                //                    intraInter.IntraPredictor.Intra8x8SamplePredict(
-                //                        luma8x8BlkIdx,
-                //                        cSCr,
-                //                        ref predCr,
-                //                        constrainedIntraPredFlag,
-                //                        intra8x8PredMode,
-                //                        pCr,
-                //                        dc
-                //                    );
-                //                }
-                //            }
-                //        }
-                //    }
+                                    intraInter.IntraPredictor.Intra8x8SamplePredict(
+                                        luma8x8BlkIdx,
+                                        cSL,
+                                        ref predL,
+                                        constrainedIntraPredFlag,
+                                        intra8x8PredMode,
+                                        pL,
+                                        dc
+                                    );
+
+                                    intraInter.IntraPredictor.IntraChromaSamplePredict(
+                                        cSCb,
+                                        ref predCb,
+                                        sizes,
+                                        pCb,
+                                        dc,
+                                        constrainedIntraPredFlag,
+                                        (int)mbPred.IntraChromaPredMode,
+                                        chromaArrayType
+                                    );
+
+                                    intraInter.IntraPredictor.IntraChromaSamplePredict(
+                                        cSCr,
+                                        ref predCr,
+                                        sizes,
+                                        pCr,
+                                        dc,
+                                        constrainedIntraPredFlag,
+                                        (int)mbPred.IntraChromaPredMode,
+                                        chromaArrayType
+                                    );
+                                }
+                            }
+                        }
+
+                        break;
+                    }
+
+                case SliceTypes.Intra_4x4:
+                    {
+                        // This is a 16x16 macroblock that consists of 16 4x4 blocks.
+
+                        if (mbLayer.SubMacroblockPrediction is not SubMacroblockPrediction subMbPred)
+                            throw new InvalidOperationException("Sub-macroblock prediction isn't present");
+
+                        if (mbLayer.Prediction is not MacroblockPrediction mbPred)
+                            throw new InvalidOperationException("Macroblock prediction isn't present");
+
+                        Span<int> predBufferBackingL = stackalloc int[16 * 16];
+                        var predBufferL = new Matrix16x16(predBufferBackingL);
+                        Span<int> predBufferBackingCb = stackalloc int[16 * 16];
+                        var predBufferCb = new Matrix16x16(predBufferBackingCb);
+                        Span<int> predBufferBackingCr = stackalloc int[16 * 16];
+                        var predBufferCr = new Matrix16x16(predBufferBackingCr);
+
+                        Span<int> leftL = stackalloc int[16];
+                        Span<int> topL = stackalloc int[16];
+                        Span<int> leftCb = stackalloc int[16];
+                        Span<int> topCb = stackalloc int[16];
+                        Span<int> leftCr = stackalloc int[16];
+                        Span<int> topCr = stackalloc int[16];
+
+                        FetchSamples(leftL, topL, leftCb, topCb, leftCr, topCr, out int leftTop);
+
+                        Span<int> pL = stackalloc int[16 * 16];
+                        var pLSamples = new IntraPredictionSamples(pL, leftL, topL, YuvBinary.GetY(leftTop));
+                        Span<int> pCb = stackalloc int[16 * 16];
+                        var pCbSamples = new IntraPredictionSamples(pCb, leftCb, topCb, YuvBinary.GetCb(leftTop));
+                        Span<int> pCr = stackalloc int[16 * 16];
+                        var pCrSamples = new IntraPredictionSamples(pCr, leftCr, topCr, YuvBinary.GetCr(leftTop));
+
+                        int intra16x16PredMode = DeriveIntra16x16PredictionMode((int)mbLayer.MbType);
+
+                        Span<int> intra8x8PredMode = stackalloc int[4];
+
+                        for (int i = 0; i < 4; i++)
+                        {
+                            intra8x8PredMode[i] = H264IntraDecisionFlow.Get8x8MacroblockType(
+                                mbLayer,
+                                sliceType,
+                                picWidthInMbs,
+                                totalMbsInFrame,
+                                currMbAddr,
+                                i,
+                                util);
+                        }
+
+                        Span<int> remIntra4x4PredMode = stackalloc int[16];
+                        Span<bool> prevIntra4x4PredModeFlag = stackalloc bool[16];
+
+                        for (int i = 0; i < 16; i++)
+                        {
+                            remIntra4x4PredMode[i] = (int)mbPred.RemIntra4x4PredMode[i];
+                            prevIntra4x4PredModeFlag[i] = mbPred.PrevIntra4x4PredModeFlag[i];
+                        }
+
+                        Span<int> intra4x4PredMode = stackalloc int[16];
+
+                        for (int i = 0; i < 16; i++)
+                            IntraInterDecoder.Intra.DeriveIntra4x4PredMode(i, dc, constrainedIntraPredFlag, intra4x4PredMode, intra8x8PredMode, remIntra4x4PredMode, prevIntra4x4PredModeFlag);
+
+                        for (int x = 0; x < 4; x++)
+                        {
+                            for (int y = 0; y < 4; y++)
+                            {
+                                int luma4x4BlkIdx = x * 4 + y;
+
+                                _Core(intra4x4PredMode, pLSamples, pCbSamples, pCrSamples);
+
+                                void _Core(Span<int> intra4x4PredMode, IntraPredictionSamples pL, IntraPredictionSamples pCb, IntraPredictionSamples pCr)
+                                {
+                                    Span<int> predLBacking = stackalloc int[4 * 4];
+                                    var predL = new Matrix4x4(predLBacking);
+
+                                    Span<int> predCbBacking = stackalloc int[16 * 16];
+                                    var predCb = new Matrix16x16(predCbBacking);
+                                    Span<int> predCrBacking = stackalloc int[16 * 16];
+                                    var predCr = new Matrix16x16(predCrBacking);
+
+                                    Span<int> availableForIntraPredLBackingLeft = stackalloc int[16];
+                                    Span<int> availableForIntraPredLBackingTop = stackalloc int[16];
+                                    Span<int> availableForIntraPredLBackingP = stackalloc int[16 * 16];
+                                    availableForIntraPredLBackingLeft.Fill(1);
+                                    availableForIntraPredLBackingTop.Fill(1);
+                                    availableForIntraPredLBackingP.Fill(1);
+                                    var pLAvailable = new IntraPredictionSamples(availableForIntraPredLBackingP, availableForIntraPredLBackingLeft, availableForIntraPredLBackingTop, 1);
+
+                                    IntraInterDecoder.Intra.Intra4x4SamplePredict(
+                                        dc,
+                                        luma4x4BlkIdx,
+                                        constrainedIntraPredFlag,
+                                        pL,
+                                        cSL,
+                                        predL,
+                                        pLAvailable,
+                                        intra4x4PredMode
+                                    );
+
+                                    intraInter.IntraPredictor.IntraChromaSamplePredict(
+                                        cSCb,
+                                        ref predCb,
+                                        sizes,
+                                        pCb,
+                                        dc,
+                                        constrainedIntraPredFlag,
+                                        (int)mbPred.IntraChromaPredMode,
+                                        chromaArrayType
+                                    );
+
+                                    intraInter.IntraPredictor.IntraChromaSamplePredict(
+                                        cSCr,
+                                        ref predCr,
+                                        sizes,
+                                        pCr,
+                                        dc,
+                                        constrainedIntraPredFlag,
+                                        (int)mbPred.IntraChromaPredMode,
+                                        chromaArrayType
+                                    );
+                                }
+                            }
+                        }
+
+                        break;
+                    }
             }
         }
 
@@ -275,13 +407,6 @@ internal sealed class H264Decoder
             leftTop = (int)util.GetPixels(new AddressFlow(currMbAddr, picWidthInMbs, mbsInFrame).Up().Left().Value)[15, 15];
 
             var predSamples = new IntraPredictionSamples(p, left, top, leftTop);
-
-            Span<int> predBufferBackingL = stackalloc int[16 * 16];
-            var predBufferL = new Matrix16x16(predBufferBackingL);
-            Span<int> predBufferBackingCb = stackalloc int[16 * 16];
-            var predBufferCb = new Matrix16x16(predBufferBackingCb);
-            Span<int> predBufferBackingCr = stackalloc int[16 * 16];
-            var predBufferCr = new Matrix16x16(predBufferBackingCr);
 
             for (int i = 0; i < 16; i++)
             {

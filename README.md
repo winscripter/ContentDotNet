@@ -41,8 +41,8 @@ H.264:
   - Accessing internal data (e.g. macroblocks, residuals, slice header/data, parameter sets and NALs) with raw values directly provided
   - Low allocation, focusing on high performance while still being platform independent (e.g. no unsafe code or filesystem operations)
   - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
-  - Comprehensive SEI support
-
+  - VUI parameters
+  
 > [!NOTE]
 > Encoding isn't yet supported because the H.264 specification only provides decoding. However,
 > this is an alpha release and the stable one is expected to have encoding support (it's on the TODO list).

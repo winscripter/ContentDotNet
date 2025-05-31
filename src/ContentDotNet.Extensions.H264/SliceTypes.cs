@@ -630,4 +630,12 @@ public static class SliceTypes
     /// <returns><c>true</c> if the slice type is an EB-slice; otherwise, <c>false</c>.</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool IsEB(int sliceType, int nalUnitType) => IsB(sliceType) && nalUnitType == 14;
+
+    /// <summary>
+    /// Determines if the given macroblock type corresponds to an intra macroblock type.
+    /// </summary>
+    /// <param name="mbType">The macroblock type to check.</param>
+    /// <returns><c>true</c> if the macroblock type corresponds to <c>Intra_16x16</c>, <c>Intra_8x8</c> or <c>Intra_4x4</c>.</returns>
+    [MethodImpl(MethodImplOptions.AggressiveInlining)]
+    public static bool IsIntra(int mbType) => mbType is Intra_16x16 or Intra_8x8 or Intra_4x4;
 }
