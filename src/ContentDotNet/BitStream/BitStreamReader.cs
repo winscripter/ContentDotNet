@@ -5,9 +5,9 @@
 /// </summary>
 public class BitStreamReader(Stream input) : IDisposable
 {
-    protected readonly Stream Stream = input ?? throw new ArgumentNullException(nameof(input));
-    protected int CurrentByte;
-    protected int BitPosition = 0; // Start at 0
+    protected internal readonly Stream Stream = input ?? throw new ArgumentNullException(nameof(input));
+    protected internal int CurrentByte;
+    protected internal int BitPosition = 0; // Start at 0
 
     /// <summary>
     /// Reads a single bit from the bitstream.
