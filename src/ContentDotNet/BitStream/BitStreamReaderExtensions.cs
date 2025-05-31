@@ -12,7 +12,7 @@ public static class BitStreamReaderExtensions
     /// <param name="value">Position to go to.</param>
     public static void GoTo(this BitStreamReader reader, ReaderState value)
     {
-        reader.stream.Position = value.ByteOffset;
+        reader.Stream.Position = value.ByteOffset;
         reader.BitPosition = value.BitPosition;
         reader.CurrentByte = value.CurrentByte;
     }
@@ -26,7 +26,7 @@ public static class BitStreamReaderExtensions
     public static ReaderState GetState(this BitStreamReader reader)
     {
         return new ReaderState(
-            reader.stream.Position,
+            reader.Stream.Position,
             (byte)reader.BitPosition,
             (byte)reader.CurrentByte
         );
