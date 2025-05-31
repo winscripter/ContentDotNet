@@ -7,6 +7,8 @@ namespace ContentDotNet.Extensions.H264.Rbsp;
 /// </summary>
 public sealed class RbspBitstreamReader : BitStreamReader
 {
+    private const int TargetBitPositionBeforeUpdate = 1;
+
     // Holds the next EP3B (Emulation Prevention 3 Byte) offset.
     private long _nextEP3BOffset = long.MaxValue; // For now
 
@@ -31,7 +33,7 @@ public sealed class RbspBitstreamReader : BitStreamReader
     {
         if (BaseStream.Length - BaseStream.Position >= 3)
         {
-            if (BaseReader.GetState().BitPosition == 8)
+            if (BaseReader.GetState().BitPosition == TargetBitPositionBeforeUpdate)
             {
                 if (BaseReader.PeekBits(24) == 0x000001)
                 {
@@ -53,7 +55,7 @@ public sealed class RbspBitstreamReader : BitStreamReader
     public override bool ReadBit()
     {
         bool result = base.ReadBit();
-        if (BaseReader.GetState().BitPosition == 8 &&
+        if (BaseReader.GetState().BitPosition == TargetBitPositionBeforeUpdate &&
             BaseReader.BaseStream.Position == _nextEP3BOffset)
         {
             int ep3b = BaseReader.BaseStream.ReadByte();
