@@ -7,7 +7,7 @@ namespace ContentDotNet.Extensions.H264.Rbsp;
 /// </summary>
 public sealed class RbspBitstreamReader : BitStreamReader
 {
-    private const int TargetBitPositionBeforeUpdate = 1;
+    private const int TargetBitPositionBeforeUpdate = 8;
 
     // Holds the next EP3B (Emulation Prevention 3 Byte) offset.
     private long _nextEP3BOffset = long.MaxValue; // For now
