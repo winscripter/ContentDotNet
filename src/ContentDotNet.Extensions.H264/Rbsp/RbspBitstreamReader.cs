@@ -13,17 +13,11 @@ public sealed class RbspBitstreamReader : BitStreamReader
     private long _nextEP3BOffset = long.MaxValue; // For now
 
     /// <summary>
-    ///   The Bit Stream Reader that the RBSP Bit Stream Reader depends on.
-    /// </summary>
-    public BitStreamReader BaseReader { get; set; }
-
-    /// <summary>
     ///   Initializes a new instance of the <see cref="RbspBitstreamReader"/> class.
     /// </summary>
     /// <param name="baseReader">Bit Stream Reader that this RBSP Bit Stream Reader depends on.</param>
     public RbspBitstreamReader(BitStreamReader baseReader) : base(baseReader.BaseStream)
     {
-        BaseReader = baseReader;
     }
 
     /// <summary>
@@ -33,11 +27,11 @@ public sealed class RbspBitstreamReader : BitStreamReader
     {
         if (BaseStream.Length - BaseStream.Position >= 3)
         {
-            if (BaseReader.GetState().BitPosition == TargetBitPositionBeforeUpdate)
+            if (this.GetState().BitPosition == TargetBitPositionBeforeUpdate)
             {
-                if (BaseReader.PeekBits(24) == 0x000001)
+                if (this.PeekBits(24) == 0x000001)
                 {
-                    _nextEP3BOffset = BaseReader.GetState().ByteOffset + 3; // 3 bytes for the EP3B
+                    _nextEP3BOffset = this.GetState().ByteOffset + 3;
                 }
                 else
                 {
@@ -55,10 +49,10 @@ public sealed class RbspBitstreamReader : BitStreamReader
     public override bool ReadBit()
     {
         bool result = base.ReadBit();
-        if (BaseReader.GetState().BitPosition == TargetBitPositionBeforeUpdate &&
-            BaseReader.BaseStream.Position == _nextEP3BOffset)
+        if (this.GetState().BitPosition == TargetBitPositionBeforeUpdate &&
+            this.BaseStream.Position == _nextEP3BOffset)
         {
-            int ep3b = BaseReader.BaseStream.ReadByte();
+            int ep3b = this.BaseStream.ReadByte();
             if (ep3b != -1)
             {
                 if (ep3b != 0x03)
