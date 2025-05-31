@@ -65,7 +65,7 @@ public sealed class RbspBitstreamReader : BitStreamReader
                 {
                     BaseReader.BaseStream.Position = prevPos; // Reset to previous position
                     base.CurrentByte = r;
-                    base.BitPosition = 0;
+                    base.BitPosition = 1;
                 }
             }
         }
