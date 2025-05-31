@@ -2,6 +2,7 @@
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Utilities;
+using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
 
@@ -17,24 +18,155 @@ internal sealed partial class IntraInterDecoder
             int subMbPartIdx,
             int partWidth,
             int partHeight,
-            int xL,
-            int yL,
-            MotionVector mvLX,
-            MotionVector mvCLX,
-            int[] refPicLXL,
-            int[]? refPicLXCB,
-            int[]? refPicLXCR,
-            /*out*/ Matrix16x16 predPartLXL,
-            /*out*/ Matrix16x16 predPartLXCB,
-            /*out*/ Matrix16x16 predPartLXCR)
+            int partWidthC,
+            int partHeightC,
+            in MotionVector mvLX,
+            in MotionVector mvCLX,
+            Matrix refPicLXL,
+            Matrix refPicLXCB,
+            Matrix refPicLXCR,
+            in SequenceParameterSet sps,
+            bool mbaffFrameFlag,
+            bool mbFieldDecodingFlag,
+            int bitDepthY,
+            in ChromaFormat chromaFormat,
+            int chromaArrayType,
+            /*out*/ Matrix predPartLXL,
+            /*out*/ Matrix predPartLXCB,
+            /*out*/ Matrix predPartLXCR)
         {
             int xAL = (mbIndexX * 16) + (subMbPartIdx * size.Width);
             int yAL = (mbIndexY * 16) + (subMbPartIdx * size.Height);
+
+            int xFracL = mvLX.X & 0x3;
+            int yFracL = mvLX.Y & 0x3;
+
+            for (int xL = 0; xL < partWidth; xL++)
+            {
+                for (int yL = 0; yL < partHeight; yL++)
+                {
+                    int xIntL = xAL + (mvLX.X >> 2) + xL;
+                    int yIntL = yAL + (mvLX.Y >> 2) + yL;
+
+                    InterpolateLumaSample(
+                        refPicLXL,
+                        in sps,
+                        mbaffFrameFlag,
+                        mbFieldDecodingFlag,
+                        xIntL,
+                        yIntL,
+                        xFracL,
+                        yFracL,
+                        xL,
+                        yL,
+                        bitDepthY,
+                        predPartLXL);
+                }
+            }
+
+            if (chromaArrayType != 0)
+            {
+                // I capture these into variables to apply loop unrolling later.
+                // Can result in BIG performance improvements!
+                bool isChromaArrayType1 = chromaArrayType == 1;
+                bool isChromaArrayType2 = chromaArrayType == 2;
+                int xIntCBase;
+                int yIntCBase;
+                int xFracC;
+                int yFracC;
+                if (isChromaArrayType1)
+                {
+                    xIntCBase = (xAL / chromaFormat.ChromaWidth) + (mvCLX.X >> 3);
+                    yIntCBase = (yAL / chromaFormat.ChromaHeight) + (mvCLX.Y >> 3);
+                    xFracC = mvCLX.X & 0x7;
+                    yFracC = mvCLX.Y & 0x7;
+                }
+                else if (isChromaArrayType2)
+                {
+                    xIntCBase = (xAL / chromaFormat.ChromaWidth) + (mvCLX.X >> 3);
+                    yIntCBase = (yAL / chromaFormat.ChromaHeight) + (mvCLX.Y >> 2); // Only change here
+                    xFracC = mvCLX.X & 0x7;
+                    yFracC = (mvCLX.Y & 0x3) << 1;
+                }
+                else
+                {
+                    xIntCBase = xAL + (mvCLX.X >> 2);
+                    yIntCBase = yAL + (mvCLX.Y >> 2);
+                    xFracC = mvCLX.X & 0x3;
+                    yFracC = mvCLX.Y & 0x3;
+                }
+
+                for (int xC = 0; xC < partWidthC; xC++)
+                {
+                    for (int yC = 0; yC < partHeightC; yC++)
+                    {
+                        int xIntC = xIntCBase + xC;
+                        int yIntC = yIntCBase + yC;
+
+                        if (chromaArrayType != 3)
+                        {
+                            InterpolateChromaSample(
+                                refPicLXCB,
+                                in sps,
+                                mbaffFrameFlag,
+                                mbFieldDecodingFlag,
+                                xIntC,
+                                yIntC,
+                                xFracC,
+                                yFracC,
+                                xC,
+                                yC,
+                                predPartLXCB);
+                            InterpolateChromaSample(
+                                refPicLXCR,
+                                in sps,
+                                mbaffFrameFlag,
+                                mbFieldDecodingFlag,
+                                xIntC,
+                                yIntC,
+                                xFracC,
+                                yFracC,
+                                xC,
+                                yC,
+                                predPartLXCR);
+                        }
+                        else
+                        {
+                            InterpolateLumaSample(
+                                refPicLXCB,
+                                in sps,
+                                mbaffFrameFlag,
+                                mbFieldDecodingFlag,
+                                xIntC,
+                                yIntC,
+                                xFracC,
+                                yFracC,
+                                xC,
+                                yC,
+                                bitDepthY,
+                                predPartLXCB);
+                            InterpolateLumaSample(
+                                refPicLXCR,
+                                in sps,
+                                mbaffFrameFlag,
+                                mbFieldDecodingFlag,
+                                xIntC,
+                                yIntC,
+                                xFracC,
+                                yFracC,
+                                xC,
+                                yC,
+                                bitDepthY,
+                                predPartLXCR);
+                        }
+                    }
+                }
+            }
         }
 
         public static void InterpolateLumaSample(
-            Matrix6x6 refPicLXL,
-            SequenceParameterSet sps,
+            Matrix refPicLXL,
+            in SequenceParameterSet sps,
             bool mbaffFrameFlag,
             bool mbFieldDecodingFlag,
             int xIntL,
@@ -44,7 +176,7 @@ internal sealed partial class IntraInterDecoder
             int xL,
             int yL,
             int bitDepthY,
-            Matrix16x16 predPartLXL)
+            Matrix predPartLXL)
         {
             int PicHeightInSamplesL = sps.GetPicHeightInSamplesL();
             int PicWidthInSamplesL = sps.GetPicHeightInSamplesL();
@@ -190,8 +322,8 @@ internal sealed partial class IntraInterDecoder
         }
 
         public static void InterpolateChromaSample(
-            Matrix6x6 refPicLXC,
-            SequenceParameterSet sps,
+            Matrix refPicLXC,
+            in SequenceParameterSet sps,
             bool mbaffFrameFlag,
             bool mbFieldDecodingFlag,
             int xIntC,
@@ -200,7 +332,7 @@ internal sealed partial class IntraInterDecoder
             int yFracC,
             int xC,
             int yC,
-            Matrix16x16 predPartLXC)
+            Matrix predPartLXC)
         {
             int PicWidthInSamplesC = sps.GetPicWidthInSamplesC();
 
