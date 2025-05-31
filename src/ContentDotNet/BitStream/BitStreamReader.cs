@@ -5,26 +5,26 @@
 /// </summary>
 public class BitStreamReader(Stream input) : IDisposable
 {
-    internal readonly Stream stream = input ?? throw new ArgumentNullException(nameof(input));
-    internal int currentByte;
-    internal int bitPosition = 0; // Start at 0
+    protected readonly Stream Stream = input ?? throw new ArgumentNullException(nameof(input));
+    protected int CurrentByte;
+    protected int BitPosition = 0; // Start at 0
 
     /// <summary>
     /// Reads a single bit from the bitstream.
     /// </summary>
     /// <returns>Bit from the bitstream.</returns>
     /// <exception cref="EndOfStreamException"></exception>
-    public bool ReadBit()
+    public virtual bool ReadBit()
     {
-        if (bitPosition == 0)
+        if (BitPosition == 0)
         {
-            currentByte = stream.ReadByte();
-            if (currentByte == -1)
+            CurrentByte = Stream.ReadByte();
+            if (CurrentByte == -1)
                 throw new EndOfStreamException();
         }
 
-        bool bit = (currentByte >> 7 - bitPosition & 1) == 1;
-        bitPosition = (bitPosition + 1) % 8; // Reset to 0 after 8 bits
+        bool bit = (CurrentByte >> 7 - BitPosition & 1) == 1;
+        BitPosition = (BitPosition + 1) % 8; // Reset to 0 after 8 bits
         return bit;
     }
 
@@ -82,19 +82,19 @@ public class BitStreamReader(Stream input) : IDisposable
     /// </summary>
     public void Dispose()
     {
-        stream?.Dispose();
+        Stream?.Dispose();
         GC.SuppressFinalize(this);
     }
 
     /// <summary>
     /// Represents the backing stream of this bitstream reader.
     /// </summary>
-    public Stream BaseStream => stream;
+    public Stream BaseStream => Stream;
 
     /// <summary>
     /// Length, in bytes, in the entire stream.
     /// </summary>
-    public long Length => stream.Length;
+    public long Length => Stream.Length;
 
     /// <summary>
     ///   Returns the next number of bits without advancing in the bitstream.
@@ -127,8 +127,8 @@ public class BitStreamReader(Stream input) : IDisposable
 
     public void GoToStart()
     {
-        stream.Position = 0;
-        currentByte = 0;
-        bitPosition = 0;
+        Stream.Position = 0;
+        CurrentByte = 0;
+        BitPosition = 0;
     }
 }
