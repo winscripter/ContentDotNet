@@ -15,4 +15,17 @@ public sealed class RbspReaderTests
         Assert.Equal(5u, rbsp.ReadByte());
         Assert.Equal(0x30u, rbsp.ReadByte());
     }
+
+    [Fact]
+    public void RbspBitStreamReader_SkipsEmulationPrevention3Bytes()
+    {
+        byte[] stream = [0x01, 0x00, 0x00, 0x03, 0x42];
+        var rbsp = new RbspBitstreamReader(new BitStreamReader(new MemoryStream(stream)));
+        rbsp.Update(); // Initialize the next EP3B offset
+
+        Assert.Equal(1u, rbsp.ReadByte());
+        Assert.Equal(0u, rbsp.ReadByte());
+        Assert.Equal(0u, rbsp.ReadByte()); // Should skip EP3B afterwards
+        Assert.Equal(0x42u, rbsp.ReadByte());
+    }
 }
