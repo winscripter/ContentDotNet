@@ -29,15 +29,18 @@ public sealed class RbspBitstreamReader : BitStreamReader
     /// </summary>
     public void Update()
     {
-        if (BaseReader.GetState().BitPosition == 0)
+        if (BaseStream.Length - BaseStream.Position >= 3)
         {
-            if (BaseReader.PeekBits(24) == 0x000001)
+            if (BaseReader.GetState().BitPosition == 0)
             {
-                _nextEP3BOffset = BaseReader.GetState().ByteOffset + 3; // 3 bytes for the EP3B
-            }
-            else
-            {
-                _nextEP3BOffset = long.MaxValue;
+                if (BaseReader.PeekBits(24) == 0x000001)
+                {
+                    _nextEP3BOffset = BaseReader.GetState().ByteOffset + 3; // 3 bytes for the EP3B
+                }
+                else
+                {
+                    _nextEP3BOffset = long.MaxValue;
+                }
             }
         }
     }
