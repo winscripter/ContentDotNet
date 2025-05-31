@@ -53,7 +53,7 @@ public sealed class RbspBitstreamReader : BitStreamReader
     public override bool ReadBit()
     {
         bool result = base.ReadBit();
-        if (BaseReader.GetState().BitPosition == 0 &&
+        if (BaseReader.GetState().BitPosition == 8 &&
             BaseReader.BaseStream.Position == _nextEP3BOffset)
         {
             int ep3b = BaseReader.BaseStream.ReadByte();
