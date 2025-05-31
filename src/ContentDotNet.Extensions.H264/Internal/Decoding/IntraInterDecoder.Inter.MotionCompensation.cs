@@ -13,7 +13,6 @@ internal sealed partial class IntraInterDecoder
             int mbIndexX,
             int mbIndexY,
             MacroblockSizeChroma size,
-            int mbPartIdx,
             int subMbPartIdx,
             int partWidth,
             int partHeight,
