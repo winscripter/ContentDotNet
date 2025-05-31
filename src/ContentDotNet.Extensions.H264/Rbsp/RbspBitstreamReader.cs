@@ -53,15 +53,21 @@ public sealed class RbspBitstreamReader : BitStreamReader
         if (BaseReader.GetState().BitPosition == 0 &&
             BaseReader.BaseStream.Position == _nextEP3BOffset)
         {
-            byte ep3b = (byte)BaseReader.BaseStream.ReadByte();
-            if (ep3b != 0x03)
-                throw new InvalidDataException("Expected EP3B byte (0x03) but found: " + ep3b);
+            int ep3b = BaseReader.BaseStream.ReadByte();
+            if (ep3b != -1)
+            {
+                if (ep3b != 0x03)
+                    throw new InvalidDataException("Expected EP3B byte (0x03) but found: " + ep3b);
 
-            long prevPos = BaseReader.BaseStream.Position;
-            byte r = (byte)BaseReader.BaseStream.ReadByte();
-            BaseReader.BaseStream.Position = prevPos; // Reset to previous position
-            base.CurrentByte = r;
-            base.BitPosition = 0;
+                long prevPos = BaseReader.BaseStream.Position;
+                int r = BaseReader.BaseStream.ReadByte();
+                if (r != -1)
+                {
+                    BaseReader.BaseStream.Position = prevPos; // Reset to previous position
+                    base.CurrentByte = r;
+                    base.BitPosition = 0;
+                }
+            }
         }
         Update();
         return result;
