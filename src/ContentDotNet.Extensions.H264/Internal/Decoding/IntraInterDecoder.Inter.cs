@@ -950,5 +950,51 @@ internal partial class IntraInterDecoder
                 }
             }
         }
+
+        private void DeriveMotionVectorComponentsAndReferenceIndices(
+            int mbPartIdx, int subMbPartIdx, int mbType,
+            out MotionVector mvL0, out MotionVector mvL1,
+            out MotionVector mvCL0, out MotionVector mvCL1,
+            out int refIdxL0, out int refIdxL1,
+            out bool predFlagL0, out bool predFlagL1,
+            out int subMvCnt)
+        {
+            if (mbType == P_Skip)
+            {
+
+            }
+        }
+
+        public void Decode(int mbPartIdx, int subMbPartIdx, int mbType, GeneralSliceType sliceType, int chromaArrayType, ChromaFormat chromaFormat, Span<int> subMbType)
+        {
+            int partWidth = 0;
+            int partHeight = 0;
+            if (mbType is not P_8x8 and not P_8x8ref0 and not B_Skip and not B_Direct_16x16 and not B_8x8)
+            {
+                partWidth = Util264.MbPartWidth(mbType, sliceType);
+                partHeight = Util264.MbPartHeight(mbType, sliceType);
+            }
+            else if (mbType is not P_8x8 and not P_8x8ref0 || (mbType == B_8x8 && subMbTypeArray[mbPartIdx] != B_Direct_8x8))
+            {
+                partWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
+                partHeight = Util264.SubMbPartHeight(subMbType[mbPartIdx], sliceType);
+            }
+            else
+            {
+                partWidth = 4;
+                partHeight = 4;
+            }
+
+            int partWidthC = 0;
+            int partHeightC = 0;
+            if (chromaArrayType != 0)
+            {
+                partWidthC = partWidth / chromaFormat.ChromaWidth;
+                partHeightC = partHeight / chromaFormat.ChromaHeight;
+            }
+
+            int MvCnt = 0;
+            DeriveMotionVectorComponentsAndReferenceIndices()
+        }
     }
 }

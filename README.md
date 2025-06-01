@@ -93,6 +93,9 @@ You can use ContentDotNet for free, even in commercial projects.
 > Some codecs and formats implemented by this library are patented and/or licensed (f.e. H.264) by the company/companies that owns/own them.
 > In commercial, enterprise, or profit-generating context, you'll have to obtain the license and pay royalties to the company owning those patents yourself.
 
+## Efficiency
+Each codec describes recommended and maximum possible memory usage in its README.
+
 ## Other
 
 [Building instructions](BUILDING.md)
