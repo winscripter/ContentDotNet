@@ -98,7 +98,10 @@ Each codec describes recommended and maximum possible memory usage in its README
 
 However, ContentDotNet is highly memory efficient. Even if your system has 4GB RAM (which is extremely low in 2025),
 you can play around and experiment with different codecs and formats supported by ContentDotNet. Potential memory
-constraints are likely to be reached on devices with low memory (f.e. IoT) starting with the 2K video/image resolution.
+constraints are likely to be reached on devices with low memory (f.e. IoT) starting with the 1440p video/image resolution.
+
+So yeah, if you want video editing without putting stress on your PC, you might try to do so with ContentDotNet on any IoT
+device you have, like a Raspberry Pi, just sitting next to your computer processing video editing with just 1GB-8GB RAM!
 
 ContentDotNet also doesn't load the user's system aggressively, since it doesn't yet support multithreading,
 hardware acceleration, or SIMD vectorization.
