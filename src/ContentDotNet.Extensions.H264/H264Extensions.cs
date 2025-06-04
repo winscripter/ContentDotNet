@@ -1,4 +1,5 @@
-﻿using ContentDotNet.Extensions.H264.Models;
+﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Primitives;
 using System.Drawing;
@@ -211,5 +212,28 @@ public static class H264Extensions
         }
 
         return PictureStructure.Frame;
+    }
+
+    /// <summary>
+    ///   Returns the length of the NAL unit, assuming that the start code was skipped but the NAL unit
+    ///   wasn't yet parsed.
+    /// </summary>
+    /// <param name="reader">Bitstream reader</param>
+    /// <returns>Length of the NAL unit, both the NAL unit itself and the RBSP.</returns>
+    public static long GetNalLength(BitStreamReader reader)
+    {
+        ReaderState originalState = reader.GetState();
+        if (!NalUnit.SkipStartCode(reader))
+        {
+            reader.GoTo(originalState);
+            return reader.BaseStream.Length - reader.BaseStream.Position;
+        }
+
+        ReaderState activeState = reader.GetState();
+        long result = activeState.ByteOffset - originalState.ByteOffset;
+
+        reader.GoTo(originalState);
+
+        return result;
     }
 }
