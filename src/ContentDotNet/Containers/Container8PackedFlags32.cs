@@ -1,7 +1,7 @@
 ﻿using ContentDotNet.Primitives;
 using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H265.Containers;
+namespace ContentDotNet.Containers;
 
 /// <summary>
 ///   A container for 8 <see cref="PackedFlags32"/>s.

@@ -787,45 +787,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     writer.WriteBit(BasePredWeightTableFlag);
 
                 if (noInterLayerPredFlag || !BasePredWeightTableFlag)
-                {
-                    Span<PredWeightTableWeightOffsetEntry> lumaL0 = stackalloc PredWeightTableWeightOffsetEntry[32];
-                    Span<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL0 = stackalloc (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32];
-
-                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
-                    {
-                        var (luma, chroma1, chroma2) = PredWeightTable!.Value.L0.GetElement(originalReader, i, (int)chromaArrayType);
-                        lumaL0[i] = luma;
-                        chromaL0[i] = (chroma1, chroma2);
-                    }
-
-                    Span<PredWeightTableWeightOffsetEntry> lumaL1 = stackalloc PredWeightTableWeightOffsetEntry[32];
-                    Span<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL1 = stackalloc (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32];
-
-                    if (PredWeightTable!.Value.L1 is not null)
-                    {
-                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
-                        {
-                            var (luma, chroma1, chroma2) = PredWeightTable!.Value.L1!.Value.GetElement(originalReader, i, (int)chromaArrayType);
-                            lumaL0[i] = luma;
-                            chromaL0[i] = (chroma1, chroma2);
-                        }
-                    }
-
-                    Span<bool> includesL0 = stackalloc bool[32];
-                    Span<bool> includesL1 = stackalloc bool[32];
-
-                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
-                        includesL0[i] = true;
-
-                    if (PredWeightTable!.Value.L1 is not null)
-                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
-                            includesL1[i] = true;
-
-                    var l0Options = new PredWeightTableListWriteOptions(includesL0, includesL0, lumaL0, chromaL0);
-                    var l1Options = new PredWeightTableListWriteOptions(includesL1, includesL1, lumaL1, chromaL1);
-
-                    PredWeightTable!.Value.Write(writer, (int)chromaArrayType, (int)SliceType, l0Options, l1Options);
-                }
+                    PredWeightTable!.Value.Write(writer, (int)chromaArrayType, (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
             }
 
             if (nalRefIdc != 0u)
@@ -1025,45 +987,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                     await writer.WriteBitAsync(BasePredWeightTableFlag);
 
                 if (noInterLayerPredFlag || !BasePredWeightTableFlag)
-                {
-                    Memory<PredWeightTableWeightOffsetEntry> lumaL0 = new(new PredWeightTableWeightOffsetEntry[32]);
-                    Memory<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL0 = new(new (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32]);
-
-                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
-                    {
-                        var (luma, chroma1, chroma2) = PredWeightTable!.Value.L0.GetElement(originalReader, i, (int)chromaArrayType);
-                        lumaL0.Span[i] = luma;
-                        chromaL0.Span[i] = (chroma1, chroma2);
-                    }
-
-                    Memory<PredWeightTableWeightOffsetEntry> lumaL1 = new(new PredWeightTableWeightOffsetEntry[32]);
-                    Memory<(PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)> chromaL1 = new(new (PredWeightTableWeightOffsetEntry, PredWeightTableWeightOffsetEntry)[32]);
-
-                    if (PredWeightTable!.Value.L1 is not null)
-                    {
-                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
-                        {
-                            var (luma, chroma1, chroma2) = PredWeightTable!.Value.L1!.Value.GetElement(originalReader, i, (int)chromaArrayType);
-                            lumaL0.Span[i] = luma;
-                            chromaL0.Span[i] = (chroma1, chroma2);
-                        }
-                    }
-
-                    Memory<bool> includesL0 = new(new bool[32]);
-                    Memory<bool> includesL1 = new(new bool[32]);
-
-                    for (int i = 0; i < PredWeightTable!.Value.L0.Count; i++)
-                        includesL0.Span[i] = true;
-
-                    if (PredWeightTable!.Value.L1 is not null)
-                        for (int i = 0; i < PredWeightTable!.Value.L1!.Value.Count; i++)
-                            includesL1.Span[i] = true;
-
-                    var l0Options = new MemoryPredWeightTableListWriteOptions(includesL0, includesL0, lumaL0, chromaL0);
-                    var l1Options = new MemoryPredWeightTableListWriteOptions(includesL1, includesL1, lumaL1, chromaL1);
-
-                    await PredWeightTable!.Value.WriteAsync(writer, (int)chromaArrayType, (int)SliceType, l0Options, l1Options);
-                }
+                    await PredWeightTable!.Value.WriteAsync(writer, (int)chromaArrayType, (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
             }
 
             if (nalRefIdc != 0u)

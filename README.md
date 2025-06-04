@@ -29,6 +29,8 @@ codecs and formats is straightforward and is documented.
 Besides, it also supports G.711, G.722 and G.726 for audio codecs; PNG and BMP for image formats; and TTF
 for font formats.
 
+It also supports the RTSP protocol.
+
 H.264:
   - CAVLC and CABAC
   - MBAFF
@@ -42,6 +44,7 @@ H.264:
   - Low allocation, focusing on high performance while still being platform independent (e.g. no unsafe code or filesystem operations)
   - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
   - VUI parameters
+  - Weighted Prediction
   
 > [!NOTE]
 > Encoding isn't yet supported because the H.264 specification only provides decoding. However,
@@ -84,6 +87,20 @@ G.722:
 
 G.726:
   - Everything that the G.711 encoder/decoder supports
+
+RTSP:
+  - SDP
+    - Parsing packets
+    - Accessing packets
+    - Sending/receiving packets
+    - Async support
+    - Memory efficient
+    - Clean API
+  - RTP
+  - RTCP
+  - Async support
+  - Can utilize any network stream - local, TCP, UDP, or even a custom one
+  - Secure authentication
 
 ## Licensing
 The library is free and open-source and licensed under the [MIT License](LICENSE.md).

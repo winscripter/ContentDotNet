@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Containers;
-
-namespace ContentDotNet.Extensions.H264.Containers;
+﻿namespace ContentDotNet.Containers;
 
 /// <summary>
 /// An 8x8 matrix that uses <see cref="Container64UInt32"/>.

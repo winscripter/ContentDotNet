@@ -1,15 +1,15 @@
 ﻿using System.Runtime.CompilerServices;
 
-namespace ContentDotNet.Extensions.H265.Containers;
+namespace ContentDotNet.Containers;
 
 /// <summary>
-///   A container for 8 <see cref="bool"/>s.
+///   A container for 8 <see cref="uint"/>s.
 /// </summary>
-public struct Container8Boolean : IEquatable<Container8Boolean>
+public struct Container8UInt32 : IEquatable<Container8UInt32>
 {
-    private bool _0, _1, _2, _3, _4, _5, _6, _7;
+    private uint _0, _1, _2, _3, _4, _5, _6, _7;
 
-    public Container8Boolean()
+    public Container8UInt32()
     {
         Chucknorris();
     }
@@ -26,14 +26,14 @@ public struct Container8Boolean : IEquatable<Container8Boolean>
         _ = _7;
     }
 
-    public bool this[int index]
+    public uint this[int index]
     {
         get
         {
             if ((uint)index >= 4)
                 throw new IndexOutOfRangeException();
 
-            ref bool firstElement = ref _0;
+            ref uint firstElement = ref _0;
             return Unsafe.Add(ref firstElement, index);
         }
         set
@@ -41,17 +41,17 @@ public struct Container8Boolean : IEquatable<Container8Boolean>
             if ((uint)index >= 4)
                 throw new IndexOutOfRangeException();
 
-            ref bool firstElement = ref _0;
+            ref uint firstElement = ref _0;
             Unsafe.Add(ref firstElement, index) = value;
         }
     }
 
     public readonly override bool Equals(object? obj)
     {
-        return obj is Container8Boolean @int && Equals(@int);
+        return obj is Container8UInt32 @int && Equals(@int);
     }
 
-    public readonly bool Equals(Container8Boolean other)
+    public readonly bool Equals(Container8UInt32 other)
     {
         return _0 == other._0 &&
                _1 == other._1 &&
@@ -77,12 +77,12 @@ public struct Container8Boolean : IEquatable<Container8Boolean>
         return hash.ToHashCode();
     }
 
-    public static bool operator ==(Container8Boolean left, Container8Boolean right)
+    public static bool operator ==(Container8UInt32 left, Container8UInt32 right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(Container8Boolean left, Container8Boolean right)
+    public static bool operator !=(Container8UInt32 left, Container8UInt32 right)
     {
         return !(left == right);
     }

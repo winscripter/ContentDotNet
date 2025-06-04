@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
@@ -42,7 +43,7 @@ internal partial class IntraInterDecoder
         private bool[] predFlagL1Array = new bool[16];
 
         private DerivationContext _derivationContext;
-        private IMacroblockUtility _macroblockUtility;
+        private readonly IMacroblockUtility _macroblockUtility;
 
         private Size frameSize = default;
 
@@ -556,7 +557,7 @@ internal partial class IntraInterDecoder
             };
         }
 
-        private int DiffPicOrderCnt(ReferencePicture x, ReferencePicture y) =>
+        public int DiffPicOrderCnt(ReferencePicture x, ReferencePicture y) =>
             Util264.PicOrderCnt(x.Sps, x.Pps, x.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, x.NalUnit.NalRefIdc)
             - Util264.PicOrderCnt(y.Sps, y.Pps, y.SliceHeader, pocCtx.PrevPicOrderCntLsb, pocCtx.PrevPicOrderCntMsb, y.NalUnit.NalRefIdc);
 
@@ -952,20 +953,86 @@ internal partial class IntraInterDecoder
         }
 
         private void DeriveMotionVectorComponentsAndReferenceIndices(
-            int mbPartIdx, int subMbPartIdx, int mbType,
+            int mbPartIdx, int subMbPartIdx, int mbType, GeneralSliceType sliceType, bool transformSize8x8Flag,
+            ContainerMatrix4x4x2 mvdL0, ContainerMatrix4x4x2 mvdL1, int chromaArrayType,
             out MotionVector mvL0, out MotionVector mvL1,
             out MotionVector mvCL0, out MotionVector mvCL1,
             out int refIdxL0, out int refIdxL1,
             out bool predFlagL0, out bool predFlagL1,
             out int subMvCnt)
         {
+            mvL0 = default;
+            mvL1 = default;
+            mvCL0 = default;
+            mvCL1 = default;
+
             if (mbType == P_Skip)
             {
+                DeriveLumaMotionVectorsForSkippedMacroblocksInPAndSPSlices(out mvL0, out refIdxL0);
+                predFlagL0 = true;
 
+                predFlagL1 = true;
+                mvL1 = default;
+                refIdxL1 = 0;
+
+                subMvCnt = 1;
+            }
+            else if (mbType is B_Skip or B_Direct_16x16 || this.subMbTypeArray[mbPartIdx] == B_Direct_8x8)
+            {
+                DeriveLumaMotionVectorsForB(mbPartIdx, subMbPartIdx, out refIdxL0, out refIdxL1, out mvL0, out mvL1, out subMvCnt, out predFlagL0, out predFlagL1);
+            }
+            else
+            {
+                if (Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType) is Pred_L0 or Pred_L1 or BiPred ||
+                    Util264.SubMbPredMode(this.subMbTypeArray[mbPartIdx], sliceType) is Pred_L0 or Pred_L1 or BiPred)
+                {
+                    refIdxL0 = this.refIdxL0[mbPartIdx];
+                    refIdxL1 = this.refIdxL1[mbPartIdx];
+                    predFlagL0 = true;
+                    predFlagL1 = true;
+                }
+                else
+                {
+                    refIdxL0 = -1;
+                    refIdxL1 = -1;
+                    predFlagL0 = false;
+                    predFlagL1 = false;
+                }
+
+                subMvCnt = Int32Boolean.I32(predFlagL0) + Int32Boolean.I32(predFlagL1);
+
+                int currSubMbType = mbType == B_8x8 ? this.subMbTypeArray[mbPartIdx] : na;
+
+                if (predFlagL0)
+                {
+                    DeriveLumaMotionVectorPrediction(refIdxL0, false, currSubMbType, out var mvpL0);
+                    mvL0.X = mvpL0.X + mvdL0[mbPartIdx, subMbPartIdx, 0];
+                    mvL0.Y = mvpL0.Y + mvdL0[mbPartIdx, subMbPartIdx, 1];
+                }
+
+                if (predFlagL1)
+                {
+                    DeriveLumaMotionVectorPrediction(refIdxL1, false, currSubMbType, out var mvpL1);
+                    mvL1.X = mvpL1.X + mvdL1[mbPartIdx, subMbPartIdx, 0];
+                    mvL1.Y = mvpL1.Y + mvdL1[mbPartIdx, subMbPartIdx, 1];
+                }
+            }
+
+            if (chromaArrayType != 0)
+            {
+                if (predFlagL0)
+                {
+                    DeriveChromaMotionVectors(chromaArrayType, false, mvL0, refIdxL0, out mvCL0);
+                }
+
+                if (predFlagL1)
+                {
+                    DeriveChromaMotionVectors(chromaArrayType, false, mvL1, refIdxL1, out mvCL1);
+                }
             }
         }
 
-        public void Decode(int mbPartIdx, int subMbPartIdx, int mbType, GeneralSliceType sliceType, int chromaArrayType, ChromaFormat chromaFormat, Span<int> subMbType)
+        public void Decode(int mbPartIdx, int subMbPartIdx, int mbType, GeneralSliceType sliceType, int chromaArrayType, ChromaFormat chromaFormat, Span<int> subMbType, bool transformSize8x8Flag, ContainerMatrix4x4x2 mvdL0, ContainerMatrix4x4x2 mvdL1, bool weightedPredFlag, uint weightedBiPredIdc, uint sliceTypeNum)
         {
             int partWidth = 0;
             int partHeight = 0;
@@ -994,7 +1061,30 @@ internal partial class IntraInterDecoder
             }
 
             int MvCnt = 0;
-            DeriveMotionVectorComponentsAndReferenceIndices()
+
+            DeriveMotionVectorComponentsAndReferenceIndices(
+                mbPartIdx,
+                subMbPartIdx,
+                mbType,
+                sliceType,
+                transformSize8x8Flag,
+                mvdL0,
+                mvdL1,
+                chromaArrayType,
+                out var mvL0,
+                out var mvL1,
+                out var mvCL0,
+                out var mvCL1,
+                out var refIdxL0,
+                out var refIdxL1,
+                out var predFlagL0,
+                out var predFlagL1,
+                out var subMvCnt
+            );
+
+            MvCnt += subMvCnt;
+
+
         }
     }
 }

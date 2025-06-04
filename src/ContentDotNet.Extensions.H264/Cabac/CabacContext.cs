@@ -2,6 +2,7 @@
 using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264.Cabac;
 
@@ -73,5 +74,89 @@ public struct CabacContext
 
         if (CodIOffset is 510 or 511)
             throw new CabacArithmeticException("CodIOffset must be less than 510 or 511, but was " + CodIOffset + ".");
+    }
+
+    /// <summary>
+    ///   Reads a CABAC bin.
+    /// </summary>
+    /// <param name="reader">Reader</param>
+    /// <param name="ctxIdx">ctxIdx</param>
+    /// <param name="bypassFlag">Bypass flag</param>
+    /// <returns>The bin.</returns>
+    public bool ReadBin(BitStreamReader reader, int ctxIdx, bool bypassFlag)
+    {
+        return ReadAEBinaryDecision(reader, PStateIdx, ValMps, ctxIdx, bypassFlag, ref CodIRange, ref CodIOffset);
+    }
+
+    internal static bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
+    {
+        if (bypassFlag)
+            return AEDecodeBypass(reader, ref codIOffset, codIRange);
+        if (ctxIdx == 276)
+            return AEDecodeTerminate(reader, ref codIOffset, ref codIRange);
+        return AEDecodeDecision(pStateIdx, valMPS, ref codIOffset, ref codIRange);
+    }
+
+    private static bool AEDecodeBypass(BitStreamReader reader, ref uint codIOffset, uint codIRange)
+    {
+        codIOffset *= 2;
+        codIOffset |= Int32Boolean.U32(reader.ReadBit());
+
+        if (codIOffset >= codIRange)
+        {
+            codIOffset -= codIRange;
+            return true;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    private static bool AEDecodeTerminate(BitStreamReader reader, ref uint codIOffset, ref uint codIRange)
+    {
+        codIRange -= 2;
+        if (codIOffset >= codIRange)
+        {
+            codIOffset |= 1;
+            return true;
+        }
+        else
+        {
+            Renormalize(ref codIOffset, ref codIRange);
+            return false;
+        }
+
+        void Renormalize(ref uint codIOffset, ref uint codIRange)
+        {
+            if (codIRange < 256)
+            {
+                while (codIRange < 256)
+                {
+                    codIRange <<= 1;
+                    codIOffset <<= 1;
+                    codIOffset |= Int32Boolean.U32(reader.ReadBit());
+                }
+            }
+        }
+    }
+
+    private static bool AEDecodeDecision(int pStateIdx, bool valMPS, ref uint codIOffset, ref uint codIRange)
+    {
+        uint qCodIRangeIdx = codIRange >> 6 & 0x03;
+        int codIRangeLPS = CabacFunctions.GetRangeTabLps(pStateIdx, (int)qCodIRangeIdx);
+
+        codIRange -= (uint)codIRangeLPS;
+
+        if (codIOffset >= codIRange)
+        {
+            codIOffset -= codIRange;
+            codIRange = (uint)codIRangeLPS;
+            return Int32Boolean.B(1 - Int32Boolean.U32(valMPS));
+        }
+        else
+        {
+            return valMPS;
+        }
     }
 }

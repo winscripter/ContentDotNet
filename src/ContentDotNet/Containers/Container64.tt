@@ -24,8 +24,6 @@ namespace ContentDotNet.Containers;
 
 <#
     var typeNames = new Dictionary<string, string>() {
-        { "UInt32", "uint" },
-        { "Boolean", "bool" },
         { "Int32", "int" }
     };
 
@@ -33,17 +31,17 @@ namespace ContentDotNet.Containers;
         string typeName = kvp.Key;
         string systemName = kvp.Value;
 
-        string fields = string.Join(", ", Enumerable.Range(0, 32).Select(e => $"_{e}"));
+        string fields = string.Join(", ", Enumerable.Range(0, 64).Select(e => $"_{e}"));
 #>
 
 /// <summary>
-///   A container for 32 <see cref="<#= systemName #>"/>s.
+///   A container for 64 <see cref="<#= systemName #>"/>s.
 /// </summary>
-public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>>
+public struct Container64<#= typeName #> : IEquatable<Container64<#= typeName #>>
 {
     private <#= systemName #> <#= fields #>;
 
-    public Container32<#= typeName #>()
+    public Container64<#= typeName #>()
     {
         Chucknorris();
     }
@@ -51,7 +49,7 @@ public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>
     private readonly void Chucknorris()
     {
 <#
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 64; i++)
         {
 #>
         _ = _<#= i #>;
@@ -62,7 +60,7 @@ public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>
     {
         get
         {
-            if ((uint)index >= 32)
+            if ((uint)index >= 64)
                 throw new IndexOutOfRangeException();
 
             ref <#= systemName #> firstElement = ref _0;
@@ -70,7 +68,7 @@ public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>
         }
         set
         {
-            if ((uint)index >= 32)
+            if ((uint)index >= 64)
                 throw new IndexOutOfRangeException();
 
             ref <#= systemName #> firstElement = ref _0;
@@ -80,14 +78,14 @@ public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>
 
     public override bool Equals(object? obj)
     {
-        return obj is Container32<#= typeName #> actual && Equals(actual);
+        return obj is Container64<#= typeName #> actual && Equals(actual);
     }
 
-    public bool Equals(Container32<#= typeName #> other)
+    public bool Equals(Container64<#= typeName #> other)
     {
         return
 <#
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 64; i++)
         {
 #>
         _<#= i #> == other._<#= i #> &&
@@ -99,7 +97,7 @@ public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>
     {
         HashCode hash = new HashCode();
 <#
-        for (int i = 0; i < 32; i++)
+        for (int i = 0; i < 64; i++)
         {
 #>
         hash.Add(_<#= i #>);
@@ -107,12 +105,12 @@ public struct Container32<#= typeName #> : IEquatable<Container32<#= typeName #>
         return hash.ToHashCode();
     }
 
-    public static bool operator ==(Container32<#= typeName #> left, Container32<#= typeName #> right)
+    public static bool operator ==(Container64<#= typeName #> left, Container64<#= typeName #> right)
     {
         return left.Equals(right);
     }
 
-    public static bool operator !=(Container32<#= typeName #> left, Container32<#= typeName #> right)
+    public static bool operator !=(Container64<#= typeName #> left, Container64<#= typeName #> right)
     {
         return !(left == right);
     }

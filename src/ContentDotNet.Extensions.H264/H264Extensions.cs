@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Primitives;
 using System.Drawing;
 using System.Runtime.CompilerServices;
@@ -193,5 +194,22 @@ public static class H264Extensions
             throw new ArgumentOutOfRangeException(nameof(iCbCr), "iCbCr must be 0 or 1.");
 
         return iCbCr == 0 ? residual.CavlcCbCr?.First : residual.CavlcCbCr?.Second;
+    }
+
+    /// <summary>
+    ///   Retrieves the picture structure for <paramref name="sliceHeader"/>.
+    /// </summary>
+    /// <param name="sliceHeader">The slice header.</param>
+    /// <returns><paramref name="sliceHeader"/>'s picture structure.</returns>
+    public static PictureStructure GetPictureStructure(SliceHeader sliceHeader)
+    {
+        if (sliceHeader.FieldPicFlag)
+        {
+            return sliceHeader.BottomFieldFlag
+                ? PictureStructure.BottomField
+                : PictureStructure.TopField;
+        }
+
+        return PictureStructure.Frame;
     }
 }

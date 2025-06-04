@@ -141,4 +141,22 @@ public sealed class ReferencePicture : IDisposable
 
         GC.SuppressFinalize(this);
     }
+
+    /// <summary>
+    ///   Checks if the parity of a macroblock matches that of a reference picture.
+    /// </summary>
+    /// <param name="referencePicture">The reference picture.</param>
+    /// <param name="macroblockPictureStructure">The picture structure (field) of the macroblock.</param>
+    /// <returns>True if parities match; otherwise, false.</returns>
+    public static bool HasMatchingParity(ReferencePicture referencePicture, PictureStructure macroblockPictureStructure)
+    {
+        if (!referencePicture.IsField)
+            return false;
+
+        if (macroblockPictureStructure != PictureStructure.TopField &&
+            macroblockPictureStructure != PictureStructure.BottomField)
+            return false;
+
+        return referencePicture.PictureStructure == macroblockPictureStructure;
+    }
 }

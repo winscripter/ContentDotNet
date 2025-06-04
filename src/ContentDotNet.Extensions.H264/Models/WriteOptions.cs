@@ -156,16 +156,6 @@ public ref struct HrdWriteOptions
 public ref struct SliceHeaderWriteOptions
 {
     /// <summary>
-    /// Prediction weight table list write options for list 0.
-    /// </summary>
-    public PredWeightTableListWriteOptions PredWeightTableL0;
-
-    /// <summary>
-    /// Prediction weight table list write options for list 1.
-    /// </summary>
-    public PredWeightTableListWriteOptions PredWeightTableL1;
-
-    /// <summary>
     /// Reference picture list modification entries.
     /// </summary>
     public Span<RefPicListModificationEntry> RefPicListModificationEntries;
@@ -188,22 +178,16 @@ public ref struct SliceHeaderWriteOptions
     /// <summary>
     /// Initializes a new instance of the <see cref="SliceHeaderWriteOptions"/> struct.
     /// </summary>
-    /// <param name="predWeightTableL0">Prediction weight table list write options for list 0.</param>
-    /// <param name="predWeightTableL1">Prediction weight table list write options for list 1.</param>
     /// <param name="refPicListModificationEntries">Reference picture list modification entries.</param>
     /// <param name="refPicListMvcModificationL0">Reference picture list MVC modification entries for list 0.</param>
     /// <param name="refPicListMvcModificationL1">Reference picture list MVC modification entries for list 1.</param>
     /// <param name="decRefPicMarkingEntries">Decoded reference picture marking entries.</param>
     public SliceHeaderWriteOptions(
-        PredWeightTableListWriteOptions predWeightTableL0,
-        PredWeightTableListWriteOptions predWeightTableL1,
         Span<RefPicListModificationEntry> refPicListModificationEntries,
         Span<RefPicListMvcModificationEntry> refPicListMvcModificationL0,
         Span<RefPicListMvcModificationEntry> refPicListMvcModificationL1,
         Span<DecRefPicMarkingEntry> decRefPicMarkingEntries)
     {
-        PredWeightTableL0 = predWeightTableL0;
-        PredWeightTableL1 = predWeightTableL1;
         RefPicListModificationEntries = refPicListModificationEntries;
         RefPicListMvcModificationL0 = refPicListMvcModificationL0;
         RefPicListMvcModificationL1 = refPicListMvcModificationL1;
@@ -216,16 +200,6 @@ public ref struct SliceHeaderWriteOptions
 /// </summary>
 public struct MemorySliceHeaderWriteOptions
 {
-    /// <summary>
-    /// Prediction weight table list write options for list 0.
-    /// </summary>
-    public MemoryPredWeightTableListWriteOptions PredWeightTableL0;
-
-    /// <summary>
-    /// Prediction weight table list write options for list 1.
-    /// </summary>
-    public MemoryPredWeightTableListWriteOptions PredWeightTableL1;
-
     /// <summary>
     /// Reference picture list modification entries.
     /// </summary>
@@ -249,22 +223,16 @@ public struct MemorySliceHeaderWriteOptions
     /// <summary>
     /// Initializes a new instance of the <see cref="MemorySliceHeaderWriteOptions"/> struct.
     /// </summary>
-    /// <param name="predWeightTableL0">Prediction weight table list write options for list 0.</param>
-    /// <param name="predWeightTableL1">Prediction weight table list write options for list 1.</param>
     /// <param name="refPicListModificationEntries">Reference picture list modification entries.</param>
     /// <param name="refPicListMvcModificationL0">Reference picture list MVC modification entries for list 0.</param>
     /// <param name="refPicListMvcModificationL1">Reference picture list MVC modification entries for list 1.</param>
     /// <param name="decRefPicMarkingEntries">Decoded reference picture marking entries.</param>
     public MemorySliceHeaderWriteOptions(
-        MemoryPredWeightTableListWriteOptions predWeightTableL0,
-        MemoryPredWeightTableListWriteOptions predWeightTableL1,
         Memory<RefPicListModificationEntry> refPicListModificationEntries,
         Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL0,
         Memory<RefPicListMvcModificationEntry> refPicListMvcModificationL1,
         Memory<DecRefPicMarkingEntry> decRefPicMarkingEntries)
     {
-        PredWeightTableL0 = predWeightTableL0;
-        PredWeightTableL1 = predWeightTableL1;
         RefPicListModificationEntries = refPicListModificationEntries;
         RefPicListMvcModificationL0 = refPicListMvcModificationL0;
         RefPicListMvcModificationL1 = refPicListMvcModificationL1;

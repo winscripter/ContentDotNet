@@ -435,7 +435,7 @@ public struct SliceHeader : IEquatable<SliceHeader>
 
         if ((pps.WeightedPredFlag && (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType))) ||
             (pps.WeightedBiPredIdc == 1 && SliceTypes.IsB(SliceType)))
-            this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, options.PredWeightTableL0, options.PredWeightTableL1);
+            this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
 
         if (nalu.NalRefIdc != 0)
             this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr(), options.DecRefPicMarkingEntries);
@@ -534,7 +534,7 @@ public struct SliceHeader : IEquatable<SliceHeader>
 
         if ((pps.WeightedPredFlag && (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType))) ||
             (pps.WeightedBiPredIdc == 1 && SliceTypes.IsB(SliceType)))
-            this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, options.PredWeightTableL0, options.PredWeightTableL1);
+            this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
 
         if (nalu.NalRefIdc != 0)
             this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr(), options.DecRefPicMarkingEntries.Span);
@@ -633,7 +633,7 @@ public struct SliceHeader : IEquatable<SliceHeader>
 
         if ((pps.WeightedPredFlag && (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType))) ||
             (pps.WeightedBiPredIdc == 1 && SliceTypes.IsB(SliceType)))
-            this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, options.PredWeightTableL0, options.PredWeightTableL1);
+            await this.PredWeightTable!.Value.WriteAsync(writer, (int)sps.GetChromaArrayType(), (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
 
         if (nalu.NalRefIdc != 0)
             this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr(), options.DecRefPicMarkingEntries.Span);
