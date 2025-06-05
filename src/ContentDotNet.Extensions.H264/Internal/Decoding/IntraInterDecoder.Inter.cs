@@ -1086,5 +1086,24 @@ internal partial class IntraInterDecoder
 
 
         }
+
+        public ReferencePicture SelectReferencePicture(int refIdxLX, bool l0, bool fieldPicFlag, int chromaArrayType, bool currentMbIsFrame, PictureStructure macroblockPictureStructure)
+        {
+            if (fieldPicFlag)
+                return (l0 ? RefPicListL0 : RefPicListL1)?[refIdxLX] ?? throw new VideoCodecDecoderException("Invalid reference picture");
+        
+            if (currentMbIsFrame)
+                return (l0 ? RefPicListL0 : RefPicListL1)?[refIdxLX] ?? throw new VideoCodecDecoderException("Invalid reference picture");
+        
+            ReferencePicture refFrame = (l0 ? RefPicListL0 : RefPicListL1)?[refIdxLX / 2] ?? throw new VideoCodecDecoderException("Invalid reference picture");
+            if (refIdxLX % 2 == 0)
+                if (!ReferencePicture.HasMatchingParity(refFrame, macroblockPictureStructure))
+                    throw new VideoCodecDecoderException("Parity does not match");
+            else
+                if (ReferencePicture.HasMatchingParity(refFrame, macroblockPictureStructure))
+                    throw new VideoCodecDecoderException("Parity matches");
+
+            return refFrame;
+        }
     }
 }
