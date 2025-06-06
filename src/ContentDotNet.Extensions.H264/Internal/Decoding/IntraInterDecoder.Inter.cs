@@ -40,8 +40,8 @@ internal partial class IntraInterDecoder
         private bool predFlagL0 = false;
         private bool predFlagL1 = false;
 
-        private bool[] predFlagL0Array = new bool[16];
-        private bool[] predFlagL1Array = new bool[16];
+        private readonly bool[] predFlagL0Array = new bool[16];
+        private readonly bool[] predFlagL1Array = new bool[16];
 
         private DerivationContext _derivationContext;
         private readonly IMacroblockUtility _macroblockUtility;
