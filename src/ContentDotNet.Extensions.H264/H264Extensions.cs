@@ -202,7 +202,7 @@ public static class H264Extensions
     /// </summary>
     /// <param name="sliceHeader">The slice header.</param>
     /// <returns><paramref name="sliceHeader"/>'s picture structure.</returns>
-    public static PictureStructure GetPictureStructure(SliceHeader sliceHeader)
+    public static PictureStructure GetPictureStructure(this SliceHeader sliceHeader)
     {
         if (sliceHeader.FieldPicFlag)
         {
@@ -235,5 +235,27 @@ public static class H264Extensions
         reader.GoTo(originalState);
 
         return result;
+    }
+
+    /// <summary>
+    ///   Determines the slice type from the slice header.
+    /// </summary>
+    /// <param name="sliceHeader">The slice header</param>
+    /// <returns>The type of the slice from <paramref name="sliceHeader"/>.</returns>
+    /// <exception cref="InvalidOperationException"></exception>
+    public static GeneralSliceType GetSliceType(this SliceHeader sliceHeader)
+    {
+        if (SliceTypes.IsB(sliceHeader.SliceType))
+            return GeneralSliceType.B;
+        if (SliceTypes.IsI(sliceHeader.SliceType))
+            return GeneralSliceType.I;
+        if (SliceTypes.IsP(sliceHeader.SliceType))
+            return GeneralSliceType.P;
+        if (SliceTypes.IsSI(sliceHeader.SliceType))
+            return GeneralSliceType.SI;
+        if (SliceTypes.IsSP(sliceHeader.SliceType))
+            return GeneralSliceType.SP;
+
+        throw new InvalidOperationException("Invalid slice type");
     }
 }

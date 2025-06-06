@@ -29,12 +29,12 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
     /// <summary>
     /// The motion vector difference for list 0.
     /// </summary>
-    public ContainerMatrix4x16x2 MvdL0;
+    public ContainerMatrix4x4x2 MvdL0;
 
     /// <summary>
     /// The motion vector difference for list 1.
     /// </summary>
-    public ContainerMatrix4x16x2 MvdL1;
+    public ContainerMatrix4x4x2 MvdL1;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SubMacroblockPrediction"/> struct.
@@ -44,7 +44,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
     /// <param name="refIdxL1">The reference index for list 1.</param>
     /// <param name="mvdL0">The motion vector difference for list 0.</param>
     /// <param name="mvdL1">The motion vector difference for list 1.</param>
-    public SubMacroblockPrediction(Container4UInt32 subMbType, Container4UInt32 refIdxL0, Container4UInt32 refIdxL1, ContainerMatrix4x16x2 mvdL0, ContainerMatrix4x16x2 mvdL1)
+    public SubMacroblockPrediction(Container4UInt32 subMbType, Container4UInt32 refIdxL0, Container4UInt32 refIdxL1, ContainerMatrix4x4x2 mvdL0, ContainerMatrix4x4x2 mvdL1)
     {
         SubMbType = subMbType;
         RefIdxL0 = refIdxL0;
@@ -71,8 +71,8 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
         Container4UInt32 subMbType = new();
         Container4UInt32 refIdxL0 = new();
         Container4UInt32 refIdxL1 = new();
-        ContainerMatrix4x16x2 mvdL0 = new();
-        ContainerMatrix4x16x2 mvdL1 = new();
+        ContainerMatrix4x4x2 mvdL0 = new();
+        ContainerMatrix4x4x2 mvdL1 = new();
 
         for (int i = 0; i < 4; i++)
             subMbType[i] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)reader.ReadAE();
