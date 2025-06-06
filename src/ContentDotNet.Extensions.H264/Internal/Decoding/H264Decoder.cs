@@ -63,6 +63,10 @@ internal sealed class H264Decoder
         MacroblockSizeChroma sizes,
         int totalMbsInFrame,
         int chromaArrayType,
+        SequenceParameterSet sps,
+        PictureParameterSet pps,
+        SliceHeader sliceHeader,
+        NalUnit nalu,
         /*output*/ Matrix cSL,
         /*output*/ Matrix cSCb,
         /*output*/ Matrix cSCr)
@@ -95,6 +99,21 @@ internal sealed class H264Decoder
         }
         else
         {
+            if (sliceType is GeneralSliceType.P or GeneralSliceType.B)
+            {
+                intraInter.InterPredictor.Decode(
+                    mbLayer.SubMacroblockPrediction is not null,
+                    currMbAddr % (int)(sps.PicWidthInMbsMinus1 + 1),
+                    currMbAddr / (int)(sps.PicWidthInMbsMinus1 + 1),
+                    sizes,
+                    mbLayer,
+                    ChromaFormat.GetSubsamplingAndSize(sps),
+                    cSL,
+                    cSCb,
+                    cSCr);
+                return (default, default, default);
+            }
+
             int mbPartPredMode = Util264.MbPartPredMode((int)mbLayer.MbType, 0, mbLayer.TransformSize8x8Flag, sliceType);
             switch (mbPartPredMode)
             {
