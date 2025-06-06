@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Colors;
+﻿using System.Numerics;
+
+namespace ContentDotNet.Colors;
 
 /// <summary>
 ///   Represents an RGB color with 8 bits per channel.
@@ -88,6 +90,16 @@ public struct Rgb : IColor, IEquatable<Rgb>
     /// </summary>
     /// <returns>The packed color as a <see cref="ulong"/>.</returns>
     public readonly ulong LongPack() => Pack();
+
+    public static IColor FromVector4(Vector4 v4)
+    {
+        return new Rgb((byte)v4.X, (byte)v4.Y, (byte)v4.Z);
+    }
+
+    public static IColor FromVector3(Vector3 v3)
+    {
+        return new Rgb((byte)v3.X, (byte)v3.Y, (byte)v3.Z);
+    }
 
     /// <summary>
     ///   Determines whether two <see cref="Rgb"/> instances are equal.

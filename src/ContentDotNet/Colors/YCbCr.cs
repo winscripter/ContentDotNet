@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Colors;
+﻿using System.Numerics;
+
+namespace ContentDotNet.Colors;
 
 /// <summary>
 ///   Represents a YCbCr color.
@@ -95,6 +97,18 @@ public struct YCbCr : IColor, IEquatable<YCbCr>
     /// <returns>The packed color representation as <see cref="ulong"/>.</returns>
     public readonly ulong LongPack() => Pack();
 
+    public static IColor FromVector4(Vector4 v4)
+    {
+        var (y, u, v) = ConvertRGBtoYUV((byte)v4.X, (byte)v4.Y, (byte)v4.Z);
+        return new YCbCr(y, u, v);
+    }
+
+    public static IColor FromVector3(Vector3 v3)
+    {
+        var (y, u, v) = ConvertRGBtoYUV((byte)v3.X, (byte)v3.Y, (byte)v3.Z);
+        return new YCbCr(y, u, v);
+    }
+
     /// <summary>
     ///   Determines whether two <see cref="YCbCr"/> instances are equal.
     /// </summary>
@@ -115,5 +129,14 @@ public struct YCbCr : IColor, IEquatable<YCbCr>
     public static bool operator !=(YCbCr left, YCbCr right)
     {
         return !(left == right);
+    }
+
+    private static (byte Y, byte U, byte V) ConvertRGBtoYUV(byte R, byte G, byte B)
+    {
+        double Y = 0.299 * R + 0.587 * G + 0.114 * B;
+        double U = -0.14713 * R - 0.28886 * G + 0.436 * B;
+        double V = 0.615 * R - 0.51499 * G - 0.10001 * B;
+
+        return ((byte)Y, (byte)U, (byte)V);
     }
 }

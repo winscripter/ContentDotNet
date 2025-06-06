@@ -163,6 +163,16 @@ public struct Rgba : IColor
     /// <inheritdoc cref="IColor{TSelf}.LongPack" />
     public readonly ulong LongPack() => Pack();
 
+    public static IColor FromVector4(Vector4 v4)
+    {
+        return new Rgba((byte)v4.X, (byte)v4.Y, (byte)v4.Z, (byte)v4.W);
+    }
+
+    public static IColor FromVector3(Vector3 v3)
+    {
+        return new Rgba((byte)v3.X, (byte)v3.Y, (byte)v3.Z, 255);
+    }
+
     /// <summary>
     /// Determines whether two <see cref="Rgba"/> instances are equal.
     /// </summary>

@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Colors;
+﻿using System.Numerics;
+
+namespace ContentDotNet.Colors;
 
 /// <summary>
 ///   Represents a color.
@@ -16,4 +18,7 @@ public interface IColor
     /// </summary>
     /// <returns>Packed color representation.</returns>
     ulong LongPack();
+
+    static abstract IColor FromVector4(Vector4 v4);
+    static abstract IColor FromVector3(Vector3 v3);
 }

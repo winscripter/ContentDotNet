@@ -452,7 +452,7 @@ internal sealed class H264Decoder
         }
     }
 
-    private static int DeriveIntra16x16PredictionMode(int mbType)
+    public static int DeriveIntra16x16PredictionMode(int mbType)
     {
         if (Intra16x16_0.Contains(mbType))
             return 0;
