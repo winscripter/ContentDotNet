@@ -8,6 +8,7 @@ using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Primitives;
 using System.Drawing;
 using System.Runtime.CompilerServices;
+using System.Runtime.Intrinsics;
 using static ContentDotNet.Extensions.H264.SliceTypes;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
@@ -1087,7 +1088,7 @@ internal partial class IntraInterDecoder
 
         }
 
-        public ReferencePicture SelectReferencePicture(int refIdxLX, bool l0, bool fieldPicFlag, int chromaArrayType, bool currentMbIsFrame, PictureStructure macroblockPictureStructure)
+        public ReferencePicture SelectReferencePicture(int refIdxLX, bool l0, bool fieldPicFlag, bool currentMbIsFrame, PictureStructure macroblockPictureStructure)
         {
             if (fieldPicFlag)
                 return (l0 ? RefPicListL0 : RefPicListL1)?[refIdxLX] ?? throw new VideoCodecDecoderException("Invalid reference picture");
@@ -1104,6 +1105,432 @@ internal partial class IntraInterDecoder
                     throw new VideoCodecDecoderException("Parity matches");
 
             return refFrame;
+        }
+
+        public ReferencePicture DecodeInterPredictionSamples(
+            int subMbPartIdx, int mbIndexX, int mbIndexY, bool fieldPicFlag, bool predFlagL0, bool predFlagL1, bool currentMbIsFrame, PictureStructure macroblockPictureStructure,
+            int partWidth,
+            int partHeight,
+            int partWidthC,
+            int partHeightC,
+            int refIdxL0,
+            int refIdxL1,
+            MacroblockSizeChroma size,
+            MotionVector mvL0,
+            MotionVector mvCL0,
+            MotionVector mvL1,
+            MotionVector mvCL1,
+            bool mbaffFrameFlag,
+            in ChromaFormat chromaFormat,
+            SequenceParameterSet sps,
+            in SliceHeader header,
+            in PictureParameterSet pps,
+            int chromaArrayType,
+            Matrix16x16 predPartL0L,
+            Matrix16x16 predPartL0CB,
+            Matrix16x16 predPartL0CR,
+            Matrix16x16 predPartL1L,
+            Matrix16x16 predPartL1CB,
+            Matrix16x16 predPartL1CR,
+            int logWDc,
+            Vector64<int> w,
+            Vector64<int> o,
+            Matrix16x16 predPartL,
+            Matrix16x16 predPartCb,
+            Matrix16x16 predPartCr)
+        {
+            int bitDepthY = (int)(sps.BitDepthLumaMinus8 - 8);
+            int bitDepthC = (int)(sps.BitDepthChromaMinus8 - 8);
+
+            uint colorPlaneId = header.ColorPlaneId;
+            bool isPSPSlice = IsP(header.SliceType) || IsSP(header.SliceType);
+            bool isBSlice = IsB(header.SliceType);
+
+            if (predFlagL0)
+            {
+                var refPic = SelectReferencePicture(refIdxL0, false, fieldPicFlag, currentMbIsFrame, macroblockPictureStructure);
+                InterpolateFractionalSample(mbIndexX, mbIndexY, size, subMbPartIdx, partWidth, partHeight, partWidthC, partHeightC, mvL0, mvCL0, refPic.Frame.Y, refPic.Frame.U, refPic.Frame.V, sps, mbaffFrameFlag, MbFieldDecodingFlag, bitDepthY, in chromaFormat, chromaArrayType, predPartL0L, predPartL0CB, predPartL0CR);
+
+                PredictWeightedSample(sps.SeparateColourPlaneFlag, colorPlaneId, isPSPSlice, isBSlice, pps.WeightedPredFlag, pps.WeightedBiPredIdc, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, logWDc, w, o, partWidth, partHeight, partWidthC, partHeightC, bitDepthY, bitDepthC, predPartL, predPartCb, predPartCr);
+
+                return refPic;
+            }
+            
+            if (predFlagL1)
+            {
+                var refPic = SelectReferencePicture(refIdxL1, false, fieldPicFlag, currentMbIsFrame, macroblockPictureStructure);
+                InterpolateFractionalSample(mbIndexX, mbIndexY, size, subMbPartIdx, partWidth, partHeight, partWidthC, partHeightC, mvL1, mvCL1, refPic.Frame.Y, refPic.Frame.U, refPic.Frame.V, sps, mbaffFrameFlag, MbFieldDecodingFlag, bitDepthY, in chromaFormat, chromaArrayType, predPartL1L, predPartL1CB, predPartL1CR);
+
+                PredictWeightedSample(sps.SeparateColourPlaneFlag, colorPlaneId, isPSPSlice, isBSlice, pps.WeightedPredFlag, pps.WeightedBiPredIdc, predFlagL1, predFlagL1, predPartL1L, predPartL1CB, predPartL1CR, predPartL1L, predPartL1CB, predPartL1CR, logWDc, w, o, partWidth, partHeight, partWidthC, partHeightC, bitDepthY, bitDepthC, predPartL, predPartCb, predPartCr);
+
+                return refPic;
+            }
+
+            throw new InvalidOperationException("Nothing to predict");
+        }
+
+        public static void PredictWeightedSample(bool separateColorPlaneFlag, uint colorPlaneId, bool isPSPSlice, bool isBSlice, bool weightedPredFlag, uint weightedBiPredIdc, bool predFlagL0, bool predFlagL1, Matrix16x16 predPartL0L, Matrix16x16 predPartL0CB, Matrix16x16 predPartL0CR, Matrix16x16 predPartL1L, Matrix16x16 predPartL1CB, Matrix16x16 predPartL1CR, int logWDc, Vector64<int> w, Vector64<int> o, int partWidth, int partHeight, int partWidthC, int partHeightC, int bitDepthY, int bitDepthC,
+            Matrix16x16 predPartL, Matrix16x16 predPartCb, Matrix16x16 predPartCr)
+        {
+            bool yDerived = (separateColorPlaneFlag && colorPlaneId == 0) || !separateColorPlaneFlag;
+            bool cbDerived = (separateColorPlaneFlag && colorPlaneId == 1) || !separateColorPlaneFlag;
+            bool crDerived = (separateColorPlaneFlag && colorPlaneId == 2) || !separateColorPlaneFlag;
+
+            if (isPSPSlice && predFlagL0)
+            {
+                if (weightedPredFlag)
+                    PredictDefaultWeightedSample(yDerived, cbDerived, partWidth, partHeight, partWidthC, partHeightC, crDerived, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, predPartL, predPartCb, predPartCr);
+                else
+                    PredictWeightedSample2(yDerived, cbDerived, o, w, logWDc, partWidth, partHeight, partWidthC, partHeightC, crDerived, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, predPartL, predPartCb, predPartCr, bitDepthY, bitDepthC);
+            }
+
+            if (isBSlice && (predFlagL0 || predFlagL1))
+            {
+                if (weightedBiPredIdc == 0u)
+                {
+                    PredictDefaultWeightedSample(yDerived, cbDerived, partWidth, partHeight, partWidthC, partHeightC, crDerived, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, predPartL, predPartCb, predPartCr);
+                }
+                else if (weightedBiPredIdc == 1u)
+                {
+                    PredictWeightedSample2(yDerived, cbDerived, o, w, logWDc, partWidth, partHeight, partWidthC, partHeightC, crDerived, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, predPartL, predPartCb, predPartCr, bitDepthY, bitDepthC);
+                }
+                else
+                {
+                    if (predFlagL0 && predFlagL1)
+                    {
+                        PredictWeightedSample2(yDerived, cbDerived, o, w, logWDc, partWidth, partHeight, partWidthC, partHeightC, crDerived, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, predPartL, predPartCb, predPartCr, bitDepthY, bitDepthC);
+                    }
+                    else
+                    {
+                        PredictDefaultWeightedSample(yDerived, cbDerived, partWidth, partHeight, partWidthC, partHeightC, crDerived, predFlagL0, predFlagL1, predPartL0L, predPartL0CB, predPartL0CR, predPartL1L, predPartL1CB, predPartL1CR, predPartL, predPartCb, predPartCr);
+                    }
+                }
+            }
+        }
+
+        private static void PredictDefaultWeightedSample(bool yDerived, bool cbDerived, int partWidth, int partHeight, int partWidthC, int partHeightC, bool crDerived, bool predFlagL0, bool predFlagL1, Matrix16x16 predPartL0L, Matrix16x16 predPartL0CB, Matrix16x16 predPartL0CR, Matrix16x16 predPartL1L, Matrix16x16 predPartL1CB, Matrix16x16 predPartL1CR, Matrix16x16 predPartL, Matrix16x16 predPartCb, Matrix16x16 predPartCr)
+        {
+            int xMin;
+            int xMax;
+            int yMin;
+            int yMax;
+
+            if (yDerived)
+            {
+                xMin = 0;
+                xMax = partWidth - 1;
+                yMin = 0;
+                yMax = partHeight - 1;
+
+                if (predFlagL0 && !predFlagL1)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartL[x, y] = predPartL0L[x, y];
+                        }
+                    }
+                }
+                else if (!predFlagL0 && predFlagL1)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartL[x, y] = predPartL1L[x, y];
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartL[x, y] = (predPartL0L[x, y] + predPartL1L[x, y] + 1) >> 1;
+                        }
+                    }
+                }
+            }
+            else if (cbDerived)
+            {
+                xMin = 0;
+                xMax = partWidthC - 1;
+                yMin = 0;
+                yMax = partHeightC - 1;
+
+                if (predFlagL0 && !predFlagL1)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCb[x, y] = predPartL0CB[x, y];
+                        }
+                    }
+                }
+                else if (!predFlagL0 && predFlagL1)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCb[x, y] = predPartL1CB[x, y];
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCb[x, y] = (predPartL0CB[x, y] + predPartL1CB[x, y] + 1) >> 1;
+                        }
+                    }
+                }
+            }
+            else if (crDerived)
+            {
+                xMin = 0;
+                xMax = partWidthC - 1;
+                yMin = 0;
+                yMax = partHeightC - 1;
+
+                if (predFlagL0 && !predFlagL1)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCr[x, y] = predPartL0CR[x, y];
+                        }
+                    }
+                }
+                else if (!predFlagL0 && predFlagL1)
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCr[x, y] = predPartL1CR[x, y];
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCr[x, y] = (predPartL0CR[x, y] + predPartL1CR[x, y] + 1) >> 1;
+                        }
+                    }
+                }
+            }
+        }
+
+        private static void PredictWeightedSample2(bool yDerived, bool cbDerived, Vector64<int> o, Vector64<int> w, int logWDc, int partWidth, int partHeight, int partWidthC, int partHeightC, bool crDerived, bool predFlagL0, bool predFlagL1, Matrix16x16 predPartL0L, Matrix16x16 predPartL0CB, Matrix16x16 predPartL0CR, Matrix16x16 predPartL1L, Matrix16x16 predPartL1CB, Matrix16x16 predPartL1CR, Matrix16x16 predPartL, Matrix16x16 predPartCb, Matrix16x16 predPartCr, int bitDepthY, int bitDepthC)
+        {
+            if (yDerived)
+            {
+                int xMin = 0;
+                int xMax = partWidth - 1;
+                int yMin = 0;
+                int yMax = partHeight - 1;
+
+                int pow = (int)Math.Pow(2, logWDc - 1);
+
+                if (predFlagL0 && !predFlagL1)
+                {
+                    if (logWDc >= 1)
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartL[x, y] = Util264.Clip1Y(((predPartL0L[x, y] * WeightedPredictionSamples.GetW(w, 0) + pow) >> logWDc) + WeightedPredictionSamples.GetO(o, 0), bitDepthY);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartL[x, y] = Util264.Clip1Y(predPartL0L[x, y] * WeightedPredictionSamples.GetW(w, 0) + WeightedPredictionSamples.GetO(o, 0), bitDepthY);
+                            }
+                        }
+                    }
+                }
+                else if (!predFlagL0 && predFlagL1)
+                {
+                    if (logWDc >= 1)
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartL[x, y] = Util264.Clip1Y(((predPartL1L[x, y] * WeightedPredictionSamples.GetW(w, 1) + pow) >> logWDc) + WeightedPredictionSamples.GetO(o, 1), bitDepthY);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartL[x, y] = Util264.Clip1Y(predPartL1L[x, y] * WeightedPredictionSamples.GetW(w, 1) + WeightedPredictionSamples.GetO(o, 1), bitDepthY);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartL[x, y] = Util264.Clip1Y(((predPartL0L[x, y] * WeightedPredictionSamples.GetW(w, 0) + predPartL1L[x, y] * WeightedPredictionSamples.GetW(w, 1) + pow) >> (logWDc + 1)) + ((WeightedPredictionSamples.GetO(o, 0) + WeightedPredictionSamples.GetO(o, 1) + 1) >> 1), bitDepthY);
+                        }
+                    }
+                }
+            }
+            else if (cbDerived)
+            {
+                int xMin = 0;
+                int xMax = partWidthC - 1;
+                int yMin = 0;
+                int yMax = partHeightC - 1;
+
+                int pow = (int)Math.Pow(2, logWDc - 1);
+
+                if (predFlagL0 && !predFlagL1)
+                {
+                    if (logWDc >= 1)
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCb[x, y] = Util264.Clip1C(((predPartL0CB[x, y] * WeightedPredictionSamples.GetW(w, 0) + pow) >> logWDc) + WeightedPredictionSamples.GetO(o, 0), bitDepthC);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCb[x, y] = Util264.Clip1C(predPartL0CB[x, y] * WeightedPredictionSamples.GetW(w, 0) + WeightedPredictionSamples.GetO(o, 0), bitDepthC);
+                            }
+                        }
+                    }
+                }
+                else if (!predFlagL0 && predFlagL1)
+                {
+                    if (logWDc >= 1)
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCb[x, y] = Util264.Clip1C(((predPartL1CB[x, y] * WeightedPredictionSamples.GetW(w, 1) + pow) >> logWDc) + WeightedPredictionSamples.GetO(o, 1), bitDepthC);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCb[x, y] = Util264.Clip1C(predPartL1CB[x, y] * WeightedPredictionSamples.GetW(w, 1) + WeightedPredictionSamples.GetO(o, 1), bitDepthC);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCb[x, y] = Util264.Clip1C(((predPartL0CB[x, y] * WeightedPredictionSamples.GetW(w, 0) + predPartL1CB[x, y] * WeightedPredictionSamples.GetW(w, 1) + pow) >> (logWDc + 1)) + ((WeightedPredictionSamples.GetO(o, 0) + WeightedPredictionSamples.GetO(o, 1) + 1) >> 1), bitDepthC);
+                        }
+                    }
+                }
+            }
+            else if (crDerived)
+            {
+                int xMin = 0;
+                int xMax = partWidthC - 1;
+                int yMin = 0;
+                int yMax = partHeightC - 1;
+
+                int pow = (int)Math.Pow(2, logWDc - 1);
+
+                if (predFlagL0 && !predFlagL1)
+                {
+                    if (logWDc >= 1)
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCr[x, y] = Util264.Clip1C(((predPartL0CR[x, y] * WeightedPredictionSamples.GetW(w, 0) + pow) >> logWDc) + WeightedPredictionSamples.GetO(o, 0), bitDepthC);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCr[x, y] = Util264.Clip1C(predPartL0CR[x, y] * WeightedPredictionSamples.GetW(w, 0) + WeightedPredictionSamples.GetO(o, 0), bitDepthC);
+                            }
+                        }
+                    }
+                }
+                else if (!predFlagL0 && predFlagL1)
+                {
+                    if (logWDc >= 1)
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCr[x, y] = Util264.Clip1C(((predPartL1CR[x, y] * WeightedPredictionSamples.GetW(w, 1) + pow) >> logWDc) + WeightedPredictionSamples.GetO(o, 1), bitDepthC);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        for (int x = xMin; x <= xMax; x++)
+                        {
+                            for (int y = yMin; y <= yMax; y++)
+                            {
+                                predPartCr[x, y] = Util264.Clip1C(predPartL1CR[x, y] * WeightedPredictionSamples.GetW(w, 1) + WeightedPredictionSamples.GetO(o, 1), bitDepthC);
+                            }
+                        }
+                    }
+                }
+                else
+                {
+                    for (int x = xMin; x <= xMax; x++)
+                    {
+                        for (int y = yMin; y <= yMax; y++)
+                        {
+                            predPartCr[x, y] = Util264.Clip1C(((predPartL0CR[x, y] * WeightedPredictionSamples.GetW(w, 0) + predPartL1CR[x, y] * WeightedPredictionSamples.GetW(w, 1) + pow) >> (logWDc + 1)) + ((WeightedPredictionSamples.GetO(o, 0) + WeightedPredictionSamples.GetO(o, 1) + 1) >> 1), bitDepthC);
+                        }
+                    }
+                }
+            }
         }
     }
 }

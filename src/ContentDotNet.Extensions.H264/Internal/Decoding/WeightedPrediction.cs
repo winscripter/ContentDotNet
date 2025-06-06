@@ -29,8 +29,8 @@ internal static class WeightedPrediction
         bool mbaffFrameFlag,
         int bitDepthY,
         out int logWDc,
-        out Vector256<int> w,
-        out Vector256<int> o)
+        out Vector64<int> w,
+        out Vector64<int> o)
     {
         bool implicitModeFlag = false;
         bool explicitModeFlag = false;
@@ -53,8 +53,8 @@ internal static class WeightedPrediction
         // Otherwise both are zero like they already are.
 
         logWDc = 0;
-        o = Vector256<int>.Zero;
-        w = Vector256<int>.Zero;
+        o = Vector64<int>.Zero;
+        w = Vector64<int>.Zero;
 
         if (implicitModeFlag)
         {
@@ -62,9 +62,9 @@ internal static class WeightedPrediction
 
             // PERF: Don't set o0c and o1c, they're already zero
 
-            ReferencePicture? currPicOrField = null;
-            ReferencePicture? pic0 = null;
-            ReferencePicture? pic1 = null;
+            ReferencePicture currPicOrField;
+            ReferencePicture pic0;
+            ReferencePicture pic1;
 
             if (!fieldPicFlag && currentMbIsField)
             {
@@ -152,14 +152,8 @@ internal static class WeightedPrediction
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void SetO(ref Vector256<int> o, int index, int value)
-    {
-        o = o.WithElement(index, value);
-    }
+    private static void SetO(ref Vector64<int> o, int index, int value) => WeightedPredictionSamples.SetO(ref o, index, value);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    private static void SetW(ref Vector256<int> w, int index, int value)
-    {
-        w = w.WithElement(index, value);
-    }
+    private static void SetW(ref Vector64<int> w, int index, int value) => WeightedPredictionSamples.SetW(ref w, index, value);
 }

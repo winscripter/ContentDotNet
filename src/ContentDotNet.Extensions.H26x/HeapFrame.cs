@@ -7,51 +7,52 @@ namespace ContentDotNet.Extensions.H26x;
 /// </summary>
 public sealed class HeapFrame : IFrame
 {
-    private Yuv[][] _yuv;
+    private Matrix? _y;
+    private Matrix? _u;
+    private Matrix? _v;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="HeapFrame"/> class.
-    /// </summary>
-    /// <param name="yuv">All YUV colors</param>
-    public HeapFrame(Yuv[][] yuv)
-    {
-        _yuv = yuv;
-    }
-
-    /// <summary>
-    ///   Initializes a new instance of the <see cref="HeapFrame"/> class, creating an
-    ///   empty frame with only pixels of #000000 with the size being <paramref name="width"/>x<paramref name="height"/>,
-    ///   accordingly.
     /// </summary>
     /// <param name="width">Width</param>
     /// <param name="height">Height</param>
     public HeapFrame(int width, int height)
     {
-        Yuv[][] yuvs = new Yuv[width][];
-        for (int x = 0; x < width; x++)
-            yuvs[x] = new Yuv[height];
-        _yuv = yuvs;
-    }
-
-    /// <inheritdoc cref="IFrame.this[int, int]" />
-    public Yuv this[int x, int y]
-    {
-        get => _yuv[x][y];
-        set => _yuv[x][y] = value;
+        _y = new Matrix(width, height);
+        _u = new Matrix(width, height);
+        _v = new Matrix(width, height);
     }
 
     /// <inheritdoc cref="IFrame.Width" />
     public int Width
     {
-        get => _yuv.Length;
+        get => _y!.Width;
         set => throw new NotImplementedException();
     }
 
     /// <inheritdoc cref="IFrame.Height" />
     public int Height
     {
-        get => _yuv[0].Length;
+        get => _y!.Height;
         set => throw new NotImplementedException();
+    }
+
+    public Matrix Y
+    {
+        get => _y!;
+        set => _y = value;
+    }
+
+    public Matrix U
+    {
+        get => _u!;
+        set => _u = value;
+    }
+
+    public Matrix V
+    {
+        get => _v!;
+        set => _v = value;
     }
 
     /// <inheritdoc cref="IDisposable.Dispose()" />
@@ -59,7 +60,9 @@ public sealed class HeapFrame : IFrame
     {
         // Since this is heap-allocated, we can only hint the GC
         // to dispose of it.
-        _yuv = [];
+        _y = null;
+        _u = null;
+        _v = null;
 
         GC.SuppressFinalize(this);
     }

@@ -3,7 +3,7 @@
 /// <summary>
 ///   Represents a variable matrix of <see cref="int"/>.
 /// </summary>
-public sealed class Matrix
+public class Matrix
 {
     private readonly int[] _data;
     private readonly int _width, _height;
@@ -53,7 +53,7 @@ public sealed class Matrix
     /// <param name="x">The column index.</param>
     /// <param name="y">The row index.</param>
     /// <returns>The value at the specified position in the matrix.</returns>
-    public int this[int x, int y]
+    public virtual int this[int x, int y]
     {
         get => _data[x * _width + y];
         set => _data[x * _width + y] = value;

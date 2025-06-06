@@ -1,6 +1,7 @@
 ﻿using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
+using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264.Internal.Decoding;
@@ -29,9 +30,9 @@ internal sealed partial class IntraInterDecoder
             int bitDepthY,
             in ChromaFormat chromaFormat,
             int chromaArrayType,
-            /*out*/ Matrix predPartLXL,
-            /*out*/ Matrix predPartLXCB,
-            /*out*/ Matrix predPartLXCR)
+            /*out*/ Matrix16x16 predPartLXL,
+            /*out*/ Matrix16x16 predPartLXCB,
+            /*out*/ Matrix16x16 predPartLXCR)
         {
             int xAL = (mbIndexX * 16) + (subMbPartIdx * size.Width);
             int yAL = (mbIndexY * 16) + (subMbPartIdx * size.Height);
@@ -174,7 +175,7 @@ internal sealed partial class IntraInterDecoder
             int xL,
             int yL,
             int bitDepthY,
-            Matrix predPartLXL)
+            Matrix16x16 predPartLXL)
         {
             int PicHeightInSamplesL = sps.GetPicHeightInSamplesL();
             int PicWidthInSamplesL = sps.GetPicHeightInSamplesL();
@@ -330,7 +331,7 @@ internal sealed partial class IntraInterDecoder
             int yFracC,
             int xC,
             int yC,
-            Matrix predPartLXC)
+            Matrix16x16 predPartLXC)
         {
             int PicWidthInSamplesC = sps.GetPicWidthInSamplesC();
 

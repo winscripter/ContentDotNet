@@ -18,10 +18,17 @@ public interface IFrame : IDisposable
     int Height { get; set; }
 
     /// <summary>
-    ///   Gets/sets a pixel at index.
+    ///   The Y plane.
     /// </summary>
-    /// <param name="x">X</param>
-    /// <param name="y">Y</param>
-    /// <returns>Pixel at index</returns>
-    Yuv this[int x, int y] { get; set; }
+    Matrix Y { get; set; }
+
+    /// <summary>
+    ///   The U plane.
+    /// </summary>
+    Matrix U { get; set; }
+
+    /// <summary>
+    ///   The V plane.
+    /// </summary>
+    Matrix V { get; set; }
 }
