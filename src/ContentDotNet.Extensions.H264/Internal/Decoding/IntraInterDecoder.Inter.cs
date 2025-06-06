@@ -48,7 +48,7 @@ internal partial class IntraInterDecoder
 
         private Size frameSize = default;
 
-        private ReferencePicture? CurrPic = null;
+        public ReferencePicture? CurrPic { get; set; }
 
         private SequenceParameterSet sps = default;
         private PictureParameterSet pps = default;
@@ -1033,7 +1033,7 @@ internal partial class IntraInterDecoder
             }
         }
 
-        public void Decode(int mbPartIdx, int subMbPartIdx, bool isSubMacroblock, int mbIndexX, int mbIndexY, MacroblockSizeChroma size, MacroblockLayer layer, ChromaFormat chromaFormat, Matrix predL, Matrix predCb, Matrix predCr)
+        public void Decode(bool isSubMacroblock, int mbIndexX, int mbIndexY, MacroblockSizeChroma size, MacroblockLayer layer, ChromaFormat chromaFormat, Matrix predL, Matrix predCb, Matrix predCr)
         {
             if ((!isSubMacroblock && layer.Prediction is null) ||
                 (isSubMacroblock && layer.SubMacroblockPrediction is null))
@@ -1066,155 +1066,168 @@ internal partial class IntraInterDecoder
             bool mbaffFrameFlag = sps.MbAdaptiveFrameFieldFlag;
             PredWeightTable predWeightTable = sliceHeader.PredWeightTable!.Value;
 
-            int partWidth = 0;
-            int partHeight = 0;
-            if (mbType is not P_8x8 and not P_8x8ref0 and not B_Skip and not B_Direct_16x16 and not B_8x8)
+            for (int i = 0; i <= (mbType is B_Skip or B_Direct_16x16 && IsB(sliceTypeNum) ? 3 : Util264.NumMbPart(mbType, sliceType)); i++)
             {
-                partWidth = Util264.MbPartWidth(mbType, sliceType);
-                partHeight = Util264.MbPartHeight(mbType, sliceType);
-            }
-            else if (mbType is not P_8x8 and not P_8x8ref0 || (mbType == B_8x8 && subMbTypeArray[mbPartIdx] != B_Direct_8x8))
-            {
-                partWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
-                partHeight = Util264.SubMbPartHeight(subMbType[mbPartIdx], sliceType);
-            }
-            else
-            {
-                partWidth = 4;
-                partHeight = 4;
-            }
+                int mbPartIdx = i;
+                int subMbPartIdx = layer.SubMacroblockPrediction is not null ? subMbType[mbPartIdx] : 0;
+                this.mbPartIdx = mbPartIdx;
+                this.subMbPartIdx = subMbPartIdx;
 
-            int partWidthC = 0;
-            int partHeightC = 0;
-            if (chromaArrayType != 0)
-            {
-                partWidthC = partWidth / chromaFormat.ChromaWidth;
-                partHeightC = partHeight / chromaFormat.ChromaHeight;
-            }
+                _Core(subMbType);
 
-            int MvCnt = 0;
-
-            DeriveMotionVectorComponentsAndReferenceIndices(
-                mbPartIdx,
-                subMbPartIdx,
-                mbType,
-                sliceType,
-                transformSize8x8Flag,
-                mvdL0,
-                mvdL1,
-                chromaArrayType,
-                out var mvL0,
-                out var mvL1,
-                out var mvCL0,
-                out var mvCL1,
-                out var refIdxL0,
-                out var refIdxL1,
-                out var predFlagL0,
-                out var predFlagL1,
-                out var subMvCnt
-            );
-
-            MvCnt += subMvCnt;
-
-            int logWDc = 0;
-            Vector64<int> o = Vector64<int>.Zero;
-            Vector64<int> w = Vector64<int>.Zero;
-
-            if ((weightedPredFlag && (sliceTypeNum % 5) is 0 or 3) ||
-                (weightedBiPredIdc > 0 && sliceTypeNum % 5 == 1))
-            {
-                WeightedPrediction.Apply(refIdxL0, refIdxL1, fieldPicFlag, currentMbIsField, CurrPic!, RefPicListL0, RefPicListL1!, predFlagL0, predFlagL1, chromaArrayType, sliceTypeNum, weightedPredFlag, weightedBiPredIdc, this, picStruct, predWeightTable, mbaffFrameFlag, bitDepthY, out logWDc, out w, out o);
-            }
-
-            Span<int> predPartL0LBacking = stackalloc int[16 * 16];
-            Span<int> predPartL0CBBacking = stackalloc int[16 * 16];
-            Span<int> predPartL0CRBacking = stackalloc int[16 * 16];
-            Span<int> predPartL1LBacking = stackalloc int[16 * 16];
-            Span<int> predPartL1CBBacking = stackalloc int[16 * 16];
-            Span<int> predPartL1CRBacking = stackalloc int[16 * 16];
-            Span<int> predPartLBacking = stackalloc int[16 * 16];
-            Span<int> predPartCbBacking = stackalloc int[16 * 16];
-            Span<int> predPartCrBacking = stackalloc int[16 * 16];
-            Matrix16x16 predPartL0L = new(predPartL0LBacking);
-            Matrix16x16 predPartL0CB = new(predPartL0CBBacking);
-            Matrix16x16 predPartL0CR = new(predPartL0CRBacking);
-            Matrix16x16 predPartL1L = new(predPartL1LBacking);
-            Matrix16x16 predPartL1CB = new(predPartL1CBBacking);
-            Matrix16x16 predPartL1CR = new(predPartL1CRBacking);
-            Matrix16x16 predPartL = new(predPartLBacking);
-            Matrix16x16 predPartCb = new(predPartCbBacking);
-            Matrix16x16 predPartCr = new(predPartCrBacking);
-
-            DecodeInterPredictionSamples(
-                subMbPartIdx,
-                mbIndexX,
-                mbIndexY,
-                fieldPicFlag,
-                predFlagL0,
-                predFlagL1,
-                currentMbIsFrame,
-                picStruct,
-                partWidth,
-                partHeight,
-                partWidthC,
-                partHeightC,
-                refIdxL0,
-                refIdxL1,
-                size,
-                mvL0,
-                mvCL0,
-                mvL1,
-                mvCL1,
-                mbaffFrameFlag,
-                in chromaFormat,
-                sps,
-                in sliceHeader,
-                in pps,
-                chromaArrayType,
-                predPartL0L,
-                predPartL0CB,
-                predPartL0CR,
-                predPartL1L,
-                predPartL1CB,
-                predPartL1CR,
-                logWDc,
-                w,
-                o,
-                predPartL,
-                predPartCb,
-                predPartCr);
-
-            this.mvL0[mbPartIdx, subMbPartIdx, 0] = mvL0.X;
-            this.mvL0[mbPartIdx, subMbPartIdx, 1] = mvL0.Y;
-            this.mvL1[mbPartIdx, subMbPartIdx, 0] = mvL1.X;
-            this.mvL1[mbPartIdx, subMbPartIdx, 1] = mvL1.Y;
-            this.refIdxL0[mbPartIdx] = refIdxL0;
-            this.refIdxL1[mbPartIdx] = refIdxL1;
-            this.predFlagL0Array[mbPartIdx] = predFlagL0;
-            this.predFlagL1Array[mbPartIdx] = predFlagL1;
-
-            int xP = 0;
-            int yP = 0;
-            Scanning.InverseMacroblockPartitionScan(mbPartIdx, mbType, sliceType, ref xP, ref yP);
-
-            int xS = 0;
-            int yS = 0;
-            Scanning.InverseSubMacroblockPartitionScan(subMbPartIdx, this.subMbTypeArray, mbPartIdx, mbType, sliceType, ref xS, ref yS);
-            
-            for (int x = 0; x <= partWidth - 1; x++)
-            {
-                for (int y = 0; y <= partHeight - 1; y++)
+                void _Core(Span<int> subMbType)
                 {
-                    predL[xP + xS + x, yP + yS + y] = predPartL[x, y];
-                }
-            }
+                    int partWidth = 0;
+                    int partHeight = 0;
+                    if (mbType is not P_8x8 and not P_8x8ref0 and not B_Skip and not B_Direct_16x16 and not B_8x8)
+                    {
+                        partWidth = Util264.MbPartWidth(mbType, sliceType);
+                        partHeight = Util264.MbPartHeight(mbType, sliceType);
+                    }
+                    else if (mbType is not P_8x8 and not P_8x8ref0 || (mbType == B_8x8 && subMbTypeArray[mbPartIdx] != B_Direct_8x8))
+                    {
+                        partWidth = Util264.SubMbPartWidth(subMbType[mbPartIdx], sliceType);
+                        partHeight = Util264.SubMbPartHeight(subMbType[mbPartIdx], sliceType);
+                    }
+                    else
+                    {
+                        partWidth = 4;
+                        partHeight = 4;
+                    }
 
-            for (int x = 0; x <= partWidthC - 1; x++)
-            {
-                for (int y = 0; y <= partHeightC - 1; y++)
-                {
-                    predCb[xP + xS + x, yP + yS + y] = predPartCb[x, y];
-                    predCr[xP + xS + x, yP + yS + y] = predPartCr[x, y];
+                    int partWidthC = 0;
+                    int partHeightC = 0;
+                    if (chromaArrayType != 0)
+                    {
+                        partWidthC = partWidth / chromaFormat.ChromaWidth;
+                        partHeightC = partHeight / chromaFormat.ChromaHeight;
+                    }
+
+                    int MvCnt = 0;
+
+                    DeriveMotionVectorComponentsAndReferenceIndices(
+                        mbPartIdx,
+                        subMbPartIdx,
+                        mbType,
+                        sliceType,
+                        transformSize8x8Flag,
+                        mvdL0,
+                        mvdL1,
+                        chromaArrayType,
+                        out var mvL0,
+                        out var mvL1,
+                        out var mvCL0,
+                        out var mvCL1,
+                        out var refIdxL0,
+                        out var refIdxL1,
+                        out var predFlagL0,
+                        out var predFlagL1,
+                        out var subMvCnt
+                    );
+
+                    MvCnt += subMvCnt;
+
+                    int logWDc = 0;
+                    Vector64<int> o = Vector64<int>.Zero;
+                    Vector64<int> w = Vector64<int>.Zero;
+
+                    if ((weightedPredFlag && (sliceTypeNum % 5) is 0 or 3) ||
+                        (weightedBiPredIdc > 0 && sliceTypeNum % 5 == 1))
+                    {
+                        WeightedPrediction.Apply(refIdxL0, refIdxL1, fieldPicFlag, currentMbIsField, CurrPic!, RefPicListL0, RefPicListL1!, predFlagL0, predFlagL1, chromaArrayType, sliceTypeNum, weightedPredFlag, weightedBiPredIdc, this, picStruct, predWeightTable, mbaffFrameFlag, bitDepthY, out logWDc, out w, out o);
+                    }
+
+                    Span<int> predPartL0LBacking = stackalloc int[16 * 16];
+                    Span<int> predPartL0CBBacking = stackalloc int[16 * 16];
+                    Span<int> predPartL0CRBacking = stackalloc int[16 * 16];
+                    Span<int> predPartL1LBacking = stackalloc int[16 * 16];
+                    Span<int> predPartL1CBBacking = stackalloc int[16 * 16];
+                    Span<int> predPartL1CRBacking = stackalloc int[16 * 16];
+                    Span<int> predPartLBacking = stackalloc int[16 * 16];
+                    Span<int> predPartCbBacking = stackalloc int[16 * 16];
+                    Span<int> predPartCrBacking = stackalloc int[16 * 16];
+                    Matrix16x16 predPartL0L = new(predPartL0LBacking);
+                    Matrix16x16 predPartL0CB = new(predPartL0CBBacking);
+                    Matrix16x16 predPartL0CR = new(predPartL0CRBacking);
+                    Matrix16x16 predPartL1L = new(predPartL1LBacking);
+                    Matrix16x16 predPartL1CB = new(predPartL1CBBacking);
+                    Matrix16x16 predPartL1CR = new(predPartL1CRBacking);
+                    Matrix16x16 predPartL = new(predPartLBacking);
+                    Matrix16x16 predPartCb = new(predPartCbBacking);
+                    Matrix16x16 predPartCr = new(predPartCrBacking);
+
+                    DecodeInterPredictionSamples(
+                        subMbPartIdx,
+                        mbIndexX,
+                        mbIndexY,
+                        fieldPicFlag,
+                        predFlagL0,
+                        predFlagL1,
+                        currentMbIsFrame,
+                        picStruct,
+                        partWidth,
+                        partHeight,
+                        partWidthC,
+                        partHeightC,
+                        refIdxL0,
+                        refIdxL1,
+                        size,
+                        mvL0,
+                        mvCL0,
+                        mvL1,
+                        mvCL1,
+                        mbaffFrameFlag,
+                        in chromaFormat,
+                        sps,
+                        in sliceHeader,
+                        in pps,
+                        chromaArrayType,
+                        predPartL0L,
+                        predPartL0CB,
+                        predPartL0CR,
+                        predPartL1L,
+                        predPartL1CB,
+                        predPartL1CR,
+                        logWDc,
+                        w,
+                        o,
+                        predPartL,
+                        predPartCb,
+                        predPartCr);
+
+                    this.mvL0[mbPartIdx, subMbPartIdx, 0] = mvL0.X;
+                    this.mvL0[mbPartIdx, subMbPartIdx, 1] = mvL0.Y;
+                    this.mvL1[mbPartIdx, subMbPartIdx, 0] = mvL1.X;
+                    this.mvL1[mbPartIdx, subMbPartIdx, 1] = mvL1.Y;
+                    this.refIdxL0[mbPartIdx] = refIdxL0;
+                    this.refIdxL1[mbPartIdx] = refIdxL1;
+                    this.predFlagL0Array[mbPartIdx] = predFlagL0;
+                    this.predFlagL1Array[mbPartIdx] = predFlagL1;
+
+                    int xP = 0;
+                    int yP = 0;
+                    Scanning.InverseMacroblockPartitionScan(mbPartIdx, mbType, sliceType, ref xP, ref yP);
+
+                    int xS = 0;
+                    int yS = 0;
+                    Scanning.InverseSubMacroblockPartitionScan(subMbPartIdx, this.subMbTypeArray, mbPartIdx, mbType, sliceType, ref xS, ref yS);
+
+                    for (int x = 0; x <= partWidth - 1; x++)
+                    {
+                        for (int y = 0; y <= partHeight - 1; y++)
+                        {
+                            predL[xP + xS + x, yP + yS + y] = predPartL[x, y];
+                        }
+                    }
+
+                    for (int x = 0; x <= partWidthC - 1; x++)
+                    {
+                        for (int y = 0; y <= partHeightC - 1; y++)
+                        {
+                            predCb[xP + xS + x, yP + yS + y] = predPartCb[x, y];
+                            predCr[xP + xS + x, yP + yS + y] = predPartCr[x, y];
+                        }
+                    }
                 }
             }
         }
