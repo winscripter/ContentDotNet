@@ -1,0 +1,78 @@
+﻿MP4File = ftyp | moov | mdat | free | skip | wide | uuid;
+
+ftyp = ;  // File Type Box (no children)
+
+moov = mvhd | trak+ | mvex? | udta?;
+
+mvhd = ;  // Movie Header Box
+
+trak = tkhd | tref? | edts? | mdia;
+
+tkhd = ;  // Track Header Box
+tref = ref_type_box+;
+ref_type_box = ;  // Each box is named by its reference type (e.g., 'hint', 'dpnd')
+
+edts = elst;
+elst = ;  // Edit List Box
+
+mdia = mdhd | hdlr | minf;
+
+mdhd = ;  // Media Header Box
+hdlr = ;  // Handler Reference Box
+
+minf = vmhd? | smhd? | hmhd? | nmhd? | dinf | stbl;
+
+vmhd = ;  // Video Media Header Box
+smhd = ;  // Sound Media Header Box
+hmhd = ;  // Hint Media Header Box
+nmhd = ;  // Null Media Header Box (used when no media-specific header)
+
+dinf = dref;
+
+dref = data_entry_box+;
+data_entry_box = url | urn | other_entry;
+
+url = ;   // DataEntryUrlBox
+urn = ;   // DataEntryUrnBox
+other_entry = ;  // Vendor-specific or extended entry
+
+stbl = stsd | stts | stsc | stsz | stco | ctts? | stss? | stsh? | padb? | stdp? | sdtp? | subs? | saiz? | saio?;
+
+stsd = sample_entry_box+;
+sample_entry_box = visual_sample_entry | audio_sample_entry | hint_sample_entry | other_sample_entry;
+
+visual_sample_entry = avcC? | hvcC? | pasp? | colr? | clap? | other_visual_data;
+audio_sample_entry = esds? | btrt? | other_audio_data;
+hint_sample_entry = ;  // Hint track entries
+other_sample_entry = ; // Includes subtypes for subtitles, metadata, etc.
+
+stts = ;  // Decoding Time-to-Sample
+ctts = ;  // Composition Time-to-Sample
+stsc = ;  // Sample-to-Chunk
+stsz = ;  // Sample Size
+stco = ;  // Chunk Offset
+stss = ;  // Sync Sample
+stsh = ;  // Shadow Sync Sample
+padb = ;  // Sample Padding
+stdp = ;  // Sample Degradation Priority
+sdtp = ;  // Independent and Disposable Samples
+subs = ;  // Sub-sample Information
+saiz = ;  // Sample Auxiliary Information Sizes
+saio = ;  // Sample Auxiliary Information Offsets
+
+mvex = trex+ | mehd? | lefa?;
+
+trex = ;  // Track Extends Box
+mehd = ;  // Movie Extends Header Box
+lefa = ;  // Least-Essential File Access (optional)
+
+mdat = ;  // Media Data (no children, just raw bytes)
+
+free = ;  // Free space
+skip = ;  // Free space (used by QuickTime)
+wide = ;  // Placeholder for expansion
+uuid = ;  // User-defined box
+
+udta = meta? | other_udta_boxes;
+meta = hdlr | ilst | other_meta_boxes;
+ilst = ;  // iTunes-style metadata

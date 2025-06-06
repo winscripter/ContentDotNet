@@ -7,15 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Models\Boxes\ThirdParty\Apple\" />
-    <Folder Include="Models\Boxes\ThirdParty\Adobe\" />
-    <Folder Include="Models\Boxes\ThirdParty\Google\" />
-    <Folder Include="Models\Boxes\ThirdParty\Microsoft\" />
-    <Folder Include="Models\Boxes\ThirdParty\Netflix\" />
-    <Folder Include="Models\Boxes\ThirdParty\Sony\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
