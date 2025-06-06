@@ -56,9 +56,7 @@ internal sealed class H264Decoder
         GeneralSliceType sliceType,
         IMacroblockUtility util,
         int currMbAddr,
-        int picWidthInMbs,
         int mbsInFrame,
-        bool constrainedIntraPredFlag,
         DerivationContext dc,
         MacroblockSizeChroma sizes,
         int totalMbsInFrame,
@@ -67,10 +65,14 @@ internal sealed class H264Decoder
         PictureParameterSet pps,
         SliceHeader sliceHeader,
         NalUnit nalu,
+        bool mbFieldDecodingFlag,
         /*output*/ Matrix cSL,
         /*output*/ Matrix cSCb,
         /*output*/ Matrix cSCr)
     {
+        bool constrainedIntraPredFlag = pps.ConstrainedIntraPredFlag;
+        int picWidthInMbs = (int)(sps.PicWidthInMbsMinus1 + 1u);
+
         var matrixL = new ContainerMatrix16x16();
         var matrixCb = new ContainerMatrix16x16();
         var matrixCr = new ContainerMatrix16x16();
@@ -101,6 +103,14 @@ internal sealed class H264Decoder
         {
             if (sliceType is GeneralSliceType.P or GeneralSliceType.B)
             {
+                intraInter.InterPredictor.SequenceParameterSet = sps;
+                intraInter.InterPredictor.PictureParameterSet = pps;
+                intraInter.InterPredictor.NalUnit = nalu;
+                intraInter.InterPredictor.CurrMbAddr = currMbAddr;
+                intraInter.InterPredictor.DerivationContext = dc;
+                intraInter.InterPredictor.MbFieldDecodingFlag = mbFieldDecodingFlag;
+                intraInter.InterPredictor.SliceHeader = sliceHeader;
+
                 intraInter.InterPredictor.Decode(
                     mbLayer.SubMacroblockPrediction is not null,
                     currMbAddr % (int)(sps.PicWidthInMbsMinus1 + 1),

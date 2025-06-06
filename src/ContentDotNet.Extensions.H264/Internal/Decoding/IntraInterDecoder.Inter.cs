@@ -1062,7 +1062,7 @@ internal partial class IntraInterDecoder
                 for (int i = 0; i < 4; i++)
                     subMbType[i] = (int)layer.SubMacroblockPrediction!.Value.SubMbType[i];
 
-            int bitDepthY = (int)(sps.BitDepthLumaMinus8 - 8);
+            int bitDepthY = (int)(sps.BitDepthLumaMinus8 + 8);
             bool mbaffFrameFlag = sps.MbAdaptiveFrameFieldFlag;
             PredWeightTable predWeightTable = sliceHeader.PredWeightTable!.Value;
 
@@ -1283,8 +1283,8 @@ internal partial class IntraInterDecoder
             Matrix16x16 predPartCb,
             Matrix16x16 predPartCr)
         {
-            int bitDepthY = (int)(sps.BitDepthLumaMinus8 - 8);
-            int bitDepthC = (int)(sps.BitDepthChromaMinus8 - 8);
+            int bitDepthY = (int)(sps.BitDepthLumaMinus8 + 8);
+            int bitDepthC = (int)(sps.BitDepthChromaMinus8 + 8);
 
             uint colorPlaneId = header.ColorPlaneId;
             bool isPSPSlice = IsP(header.SliceType) || IsSP(header.SliceType);
