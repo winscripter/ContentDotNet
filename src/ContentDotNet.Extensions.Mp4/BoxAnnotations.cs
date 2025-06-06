@@ -14,7 +14,7 @@ public static class BoxAnnotations
     /// <returns>
     ///   The <see cref="BoxInfoAttribute"/> if found; otherwise, <c>null</c>.
     /// </returns>
-    public static BoxInfoAttribute? GetAttribute(IBoxData data)
+    public static BoxInfoAttribute? GetAttribute(Box data)
     {
         if (data.GetType().GetCustomAttributes(typeof(BoxInfoAttribute), true)
             .FirstOrDefault() is not BoxInfoAttribute attribute)
@@ -34,7 +34,7 @@ public static class BoxAnnotations
     ///   If one also needs to retrieve other annotations alongside just the FourCC, consider using <see cref="GetAttribute(IBoxData)"/> instead
     ///   to achieve better performance by avoiding multiple attribute lookups.
     /// </remarks>
-    public static string? GetBoxFourCC(IBoxData data)
+    public static string? GetBoxFourCC(Box data)
     {
         return GetAttribute(data)?.BoxFourCC;
     }
@@ -50,7 +50,7 @@ public static class BoxAnnotations
     ///   If one also needs to retrieve other annotations alongside just the unabbreviated form, consider using
     ///   <see cref="GetAttribute(IBoxData)"/> instead to achieve better performance by avoiding multiple attribute lookups.
     /// </remarks>
-    public static string? GetUnabbreviatedForm(IBoxData data)
+    public static string? GetUnabbreviatedForm(Box data)
     {
         return GetAttribute(data)?.UnabbreviatedForm;
     }
@@ -66,7 +66,7 @@ public static class BoxAnnotations
     ///   If one also needs to retrieve other annotations alongside just the description, consider using <see cref="GetAttribute(IBoxData)"/> instead
     ///   to achieve better performance by avoiding multiple attribute lookups.
     /// </remarks>
-    public static string? GetDescription(IBoxData data)
+    public static string? GetDescription(Box data)
     {
         return GetAttribute(data)?.Description;
     }
