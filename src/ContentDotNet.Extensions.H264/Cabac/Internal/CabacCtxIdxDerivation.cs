@@ -36,9 +36,9 @@ internal static class CabacCtxIdxDerivation
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     internal static int AssignCtxIdxBlockCatOffsetForCoeffAbsLevelMinus1(int ctxBlockCat) => CoeffAbsLevelMinus1ToCtxIdxBlockCatOffsetAssignments[ctxBlockCat];
 
-    internal static int DeriveCtxIdx(int ctxIdxOffset, int binIdx, Span<int> refIdxLX, BitString priorDecodedBinValues, IMacroblockUtility util, DerivationContext dc, int picWidthInMbs, int mbPartIdx, int subMbPartIdx, bool transformSize8x8Flag, GeneralSliceType sliceType, MacroblockTypeHistory mbTypeArray, MacroblockTypeHistory subMbTypeArray, ContainerMatrix4x4x2 mvdLX, bool invokedForL0, out bool applyInference)
+    internal static int DeriveCtxIdx(int ctxIdxOffset, int binIdx, Span<int> refIdxLX, BitString priorDecodedBinValues, IMacroblockUtility util, DerivationContext dc, int picWidthInMbs, int mbPartIdx, int subMbPartIdx, bool transformSize8x8Flag, GeneralSliceType sliceType, MacroblockTypeHistory mbTypeArray, MacroblockTypeHistory subMbTypeArray, ContainerMatrix4x4x2 mvdLX, bool invokedForL0, out bool applyInference, out bool bypassFlag)
     {
-        int ctxIdxInc = AssignCtxIdxInc(ctxIdxOffset, binIdx, refIdxLX, priorDecodedBinValues, util, dc, picWidthInMbs, mbPartIdx, subMbPartIdx, transformSize8x8Flag, sliceType, mbTypeArray, subMbTypeArray, mvdLX, invokedForL0, out applyInference);
+        int ctxIdxInc = AssignCtxIdxInc(ctxIdxOffset, binIdx, refIdxLX, priorDecodedBinValues, util, dc, picWidthInMbs, mbPartIdx, subMbPartIdx, transformSize8x8Flag, sliceType, mbTypeArray, subMbTypeArray, mvdLX, invokedForL0, out applyInference, out bypassFlag);
         return ctxIdxInc + ctxIdxOffset;
     }
 
@@ -66,9 +66,10 @@ internal static class CabacCtxIdxDerivation
         return ctxIdxOffset + AssignCtxIdxBlockCatOffsetForCoeffAbsLevelMinus1(ctxBlockCat);
     }
 
-    internal static int AssignCtxIdxInc(int ctxIdxOffset, int binIdx, Span<int> refIdxLX, BitString priorDecodedBinValues, IMacroblockUtility util, DerivationContext dc, int picWidthInMbs, int mbPartIdx, int subMbPartIdx, bool transformSize8x8Flag, GeneralSliceType sliceType, MacroblockTypeHistory mbTypeArray, MacroblockTypeHistory subMbTypeArray, ContainerMatrix4x4x2 mvdLX, bool invokedForL0, out bool applyInference)
+    internal static int AssignCtxIdxInc(int ctxIdxOffset, int binIdx, Span<int> refIdxLX, BitString priorDecodedBinValues, IMacroblockUtility util, DerivationContext dc, int picWidthInMbs, int mbPartIdx, int subMbPartIdx, bool transformSize8x8Flag, GeneralSliceType sliceType, MacroblockTypeHistory mbTypeArray, MacroblockTypeHistory subMbTypeArray, ContainerMatrix4x4x2 mvdLX, bool invokedForL0, out bool applyInference, out bool bypassFlag)
     {
         applyInference = false;
+        bypassFlag = false;
 
         if (ctxIdxOffset == 0)
         {
@@ -207,9 +208,8 @@ internal static class CabacCtxIdxDerivation
             return 0; // Everything else is "not an"
         else if (ctxIdxOffset == 399)
             return CabacCtxIdxIncDerivation.DeriveCtxIdxIncForTransformSize8x8Flag(dc, util, picWidthInMbs);
-        else
-            throw new ArgumentException("Invalid ctxIdxOffset values", nameof(ctxIdxOffset));
 
-        throw new InvalidOperationException("Cannot derive ctxIdxInc");
+        bypassFlag = true;
+        return 0;
     }
 }
