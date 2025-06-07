@@ -47,6 +47,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Rtsp", "src\R
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneBmpWriter", "tools\StandaloneBmpWriter\StandaloneBmpWriter.csproj", "{A964E7B5-A14C-451A-B716-BF41AFB8C196}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Bmp", "src\ContentDotNet.Extensions.Bmp\ContentDotNet.Extensions.Bmp.csproj", "{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -109,6 +111,10 @@ Global
 		{A964E7B5-A14C-451A-B716-BF41AFB8C196}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A964E7B5-A14C-451A-B716-BF41AFB8C196}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A964E7B5-A14C-451A-B716-BF41AFB8C196}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -129,6 +135,7 @@ Global
 		{02EA681E-C7D8-13C7-8484-4AC65E1B71E8} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{F34F371D-CF8F-4C2E-9813-AEE2073C7E47} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A964E7B5-A14C-451A-B716-BF41AFB8C196} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
+		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

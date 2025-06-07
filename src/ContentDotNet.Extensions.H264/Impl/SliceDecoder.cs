@@ -11,7 +11,7 @@ namespace ContentDotNet.Extensions.H264.Impl;
 internal sealed class SliceDecoder : IMacroblockUtility
 {
     private readonly Dictionary<int, MacroblockLayer> AddressCache = [];
-    private ReaderState SliceOffset;
+    private readonly ReaderState SliceOffset;
     private readonly SequenceParameterSet _sps;
     private readonly PictureParameterSet _pps;
     private readonly SliceHeader _shd;
