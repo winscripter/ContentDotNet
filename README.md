@@ -22,14 +22,33 @@ It is cross-platform and platform-independent, allowing ContentDotNet to run on 
 worrying about compatibility, while also making deployment easier.
 
 ## What's supported?
-ContentDotNet yet supports H.264 for video codecs and MP4 for video formats. This is an alpha release and
-the stable one is expected to have more codecs and formats supported. Adding your own
-codecs and formats is straightforward and is documented.
+### Formats
 
-Besides, it also supports G.711, G.722 and G.726 for audio codecs; PNG and BMP for image formats; and TTF
-for font formats.
+- Video:
+    - Codecs:
+        - H.264
+    - Formats
+        - MP4
+- Image:
+    - Formats:
+        - PNG
+        - BMP
+- Data:
+    - Hashing:
+        - Adler32
+        - CRC32
+        - CRC64
+        - XXHash128
+    - Compression:
+        - LZ77
+        - LZW
+- Audio:
+    - Codecs:
+        - G.711
+        - G.722
+        - G.726
 
-It also supports the RTSP protocol.
+### Capabilities
 
 H.264:
   - CAVLC and CABAC

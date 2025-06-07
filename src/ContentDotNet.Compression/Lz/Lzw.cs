@@ -1,9 +1,9 @@
 ﻿namespace ContentDotNet.Compression.Lz;
 
 /// <summary>
-///   LZX compression and decompression
+///   LZW compression and decompression
 /// </summary>
-public static class Lzx
+public static class Lzw
 {
     /// <summary>
     ///   Decompresses an LZW-encoded byte array.
