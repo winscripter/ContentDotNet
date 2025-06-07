@@ -5,7 +5,7 @@ using ContentDotNet.Extensions.H264.Models;
 using var fs = File.OpenRead("output.h264");
 using var br = new BitStreamReader(fs);
 
-for (int i = 0; i < 25; i++)
+for (int i = 0; i < 3; i++)
     DumpNalu();
 
 void DumpNalu()
@@ -13,16 +13,14 @@ void DumpNalu()
     if (!NalUnit.SkipStartCode(br))
         throw new Exception("Cannot skip start code");
 
-    ReaderState pos = br.GetState();
-    _ = NalUnit.SkipStartCode(br);
+    long len = H264Extensions.GetNalLength(br);
 
-    ReaderState newPos = br.GetState();
+    if (len > 500)
+        throw new InvalidOperationException("len too big");
+    Console.WriteLine("L: " + len);
 
-    long length = newPos.ByteOffset - pos.ByteOffset;
-    br.GoTo(pos);
-
-    var unit = NalUnit.Read(br, 1);
-    Console.WriteLine("type: " + unit.NalUnitType);
+    var nal = NalUnit.Read(br, (int)len);
+    Console.WriteLine("type: " + nal.NalUnitType);
 }
 
 static void SpsDump(SequenceParameterSet sps)

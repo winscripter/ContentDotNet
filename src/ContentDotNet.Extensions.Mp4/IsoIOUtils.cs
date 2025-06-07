@@ -1,4 +1,6 @@
-﻿namespace ContentDotNet.Extensions.Mp4;
+﻿using System.Text;
+
+namespace ContentDotNet.Extensions.Mp4;
 
 internal static class IsoIOUtils
 {
@@ -10,5 +12,21 @@ internal static class IsoIOUtils
         writer.Write((byte)((value >> 16) & 0xFF));
         writer.Write((byte)((value >> 8) & 0xFF));
         writer.Write((byte)(value & 0xFF));
+    }
+
+    public static string ReadNullTerminatedString(this BinaryReader reader)
+    {
+        var stringBuilder = new StringBuilder();
+        char last;
+        while ((last = reader.ReadChar()) != 0)
+            stringBuilder.Append(last);
+        return stringBuilder.ToString();
+    }
+
+    public static void WriteNullTerminatedString(this BinaryWriter writer, string str)
+    {
+        foreach (char c in str)
+            writer.Write((byte)c);
+        writer.Write((byte)0);
     }
 }

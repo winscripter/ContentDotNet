@@ -21,9 +21,8 @@ public abstract class FullBox : Box
     /// <param name="size">Size</param>
     /// <param name="type">Type</param>
     protected FullBox(uint size, uint type)
+        : base(size, type)
     {
-        Size = size;
-        Type = type;
     }
 
     protected static (uint size, uint type, byte version, uint flags) ParseFullBoxHeader(BinaryReader reader)

@@ -1,5 +1,6 @@
 ﻿namespace ContentDotNet.Extensions.Mp4.Models.Boxes;
 
+[BoxInfo("mdhd", "Media Header", "The Media Header")]
 public sealed class MediaHeaderBox : FullBox, IEquatable<MediaHeaderBox?>
 {
     public ulong CreationTime { get; set; }

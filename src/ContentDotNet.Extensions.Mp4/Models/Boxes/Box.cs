@@ -15,6 +15,12 @@ public abstract class Box
     /// </summary>
     public uint Type { get; set; }
 
+    protected Box(uint size, uint type)
+    {
+        Size = size;
+        Type = type;
+    }
+
     /// <summary>
     ///   Writes this box to <paramref name="writer"/>.
     /// </summary>
