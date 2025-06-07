@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StandaloneBmpWriter", "tool
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Bmp", "src\ContentDotNet.Extensions.Bmp\ContentDotNet.Extensions.Bmp.csproj", "{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Compression", "src\ContentDotNet.Compression\ContentDotNet.Compression.csproj", "{120D2328-1175-46B3-AFFB-C902C25996F1}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -115,6 +117,10 @@ Global
 		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{120D2328-1175-46B3-AFFB-C902C25996F1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{120D2328-1175-46B3-AFFB-C902C25996F1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{120D2328-1175-46B3-AFFB-C902C25996F1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{120D2328-1175-46B3-AFFB-C902C25996F1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -136,6 +142,7 @@ Global
 		{F34F371D-CF8F-4C2E-9813-AEE2073C7E47} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{A964E7B5-A14C-451A-B716-BF41AFB8C196} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
 		{C1C6FDAD-3AC7-4FF7-8FD4-0859E4B1DFA4} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
+		{120D2328-1175-46B3-AFFB-C902C25996F1} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}
