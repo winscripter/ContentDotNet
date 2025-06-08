@@ -4,7 +4,6 @@ using ContentDotNet.Extensions.H264.Internal.Encoding.Predicted;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
-using ContentDotNet.Primitives;
 using System.Drawing;
 
 namespace ContentDotNet.Extensions.H264.Internal.Encoding;
