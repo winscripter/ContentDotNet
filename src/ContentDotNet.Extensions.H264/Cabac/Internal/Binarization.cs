@@ -867,13 +867,6 @@ internal static class Binarization
         {
             case SyntaxElement.MacroblockType:
                 {
-                    binarized = BinarizeMacroblockOrSubMacroblockType(
-                        reader,
-                        sliceType == GeneralSliceType.SI,
-                        sliceType == GeneralSliceType.B,
-                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
-                        false);
-
                     if (sliceType == GeneralSliceType.SI)
                     {
                         maxBinIdxCtx = AssociateWithPrefixSuffix(0, 6);
@@ -894,13 +887,18 @@ internal static class Binarization
                         maxBinIdxCtx = AssociateWithPrefixSuffix(3, 5);
                         ctxIdxOffset = AssociateWithPrefixSuffix(27, 32);
                     }
+
+                    binarized = BinarizeMacroblockOrSubMacroblockType(
+                        reader,
+                        sliceType == GeneralSliceType.SI,
+                        sliceType == GeneralSliceType.B,
+                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
+                        false);
                 }
                 break;
 
             case SyntaxElement.MacroblockSkipFlag:
                 {
-                    binarized = FixedLengthBinarize(reader, 1);
-
                     if (sliceType is GeneralSliceType.P or GeneralSliceType.SP)
                     {
                         maxBinIdxCtx = 0;
@@ -912,18 +910,13 @@ internal static class Binarization
                         ctxIdxOffset = 24;
                     }
 
+                    binarized = FixedLengthBinarize(reader, 1);
+
                     break;
                 }
 
             case SyntaxElement.SubMacroblockType:
                 {
-                    binarized = BinarizeMacroblockOrSubMacroblockType(
-                        reader,
-                        sliceType == GeneralSliceType.SI,
-                        sliceType == GeneralSliceType.B,
-                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
-                        true);
-
                     if (sliceType is GeneralSliceType.P or GeneralSliceType.SP)
                     {
                         maxBinIdxCtx = 2;
@@ -935,102 +928,117 @@ internal static class Binarization
                         ctxIdxOffset = 36;
                     }
 
+                    binarized = BinarizeMacroblockOrSubMacroblockType(
+                        reader,
+                        sliceType == GeneralSliceType.SI,
+                        sliceType == GeneralSliceType.B,
+                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
+                        true);
+
                     break;
                 }
 
             case SyntaxElement.MotionVectorDifferenceX:
                 {
+                    maxBinIdxCtx = 4;
+                    ctxIdxOffset = 40;
+
                     binarized = UegkBinarize(
                         reader,
                         true,
                         3,
                         9);
-
-                    maxBinIdxCtx = 4;
-                    ctxIdxOffset = 40;
+                    
                     break;
                 }
 
             case SyntaxElement.MotionVectorDifferenceY:
                 {
+                    maxBinIdxCtx = 4;
+                    ctxIdxOffset = 47;
+
                     binarized = UegkBinarize(
                         reader,
                         true,
                         3,
                         9);
-
-                    maxBinIdxCtx = 4;
-                    ctxIdxOffset = 47;
+                    
                     break;
                 }
 
             case SyntaxElement.ReferenceIndex:
                 {
-                    binarized = UnaryBinarize(reader);
-
                     maxBinIdxCtx = 2;
                     ctxIdxOffset = 54;
+
+                    binarized = UnaryBinarize(reader);
+                    
                     break;
                 }
 
             case SyntaxElement.MacroblockQuantizationParameterDelta:
                 {
-                    binarized = BinarizeMbQpDelta(reader);
-
                     maxBinIdxCtx = 2;
                     ctxIdxOffset = 60;
+
+                    binarized = BinarizeMbQpDelta(reader);
+                    
                     break;
                 }
 
             case SyntaxElement.IntraChromaPredictionMode:
                 {
-                    binarized = TruncatedUnaryBinarize(reader, 3);
-
                     maxBinIdxCtx = 1;
                     ctxIdxOffset = 64;
+
+                    binarized = TruncatedUnaryBinarize(reader, 3);
+                    
                     break;
                 }
 
             case SyntaxElement.PreviousIntraNxNPredictionModeFlag:
                 {
-                    binarized = FixedLengthBinarize(reader, 1);
-
                     maxBinIdxCtx = 0;
                     ctxIdxOffset = 68;
+
+                    binarized = FixedLengthBinarize(reader, 1);
+                    
                     break;
                 }
 
             case SyntaxElement.RemainingIntraNxNPredictionMode:
                 {
-                    binarized = FixedLengthBinarize(reader, 8);
-
                     maxBinIdxCtx = 0;
                     ctxIdxOffset = 69;
+
+                    binarized = FixedLengthBinarize(reader, 8);
+                    
                     break;
                 }
 
             case SyntaxElement.MacroblockFieldDecodingFlag:
                 {
-                    binarized = FixedLengthBinarize(reader, 1);
-
                     maxBinIdxCtx = 0;
                     ctxIdxOffset = 70;
+
+                    binarized = FixedLengthBinarize(reader, 1);
+                    
                     break;
                 }
 
             case SyntaxElement.CodedBlockPattern:
                 {
-                    binarized = BinarizeCodedBlockPattern(reader, chromaArrayType);
-
                     maxBinIdxCtx = AssociateWithPrefixSuffix(3, 1);
                     ctxIdxOffset = AssociateWithPrefixSuffix(73, 77);
+
+                    binarized = BinarizeCodedBlockPattern(reader, chromaArrayType);
+                    
                     break;
                 }
 
             case SyntaxElement.CodedBlockFlag:
                 {
                     (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(residualBlkType, NumC8x8);
-                    binarized = FixedLengthBinarize(reader, 1);
 
                     maxBinIdxCtx = 0;
 
@@ -1051,13 +1059,14 @@ internal static class Binarization
                         ctxIdxOffset = 1012;
                     }
 
+                    binarized = FixedLengthBinarize(reader, 1);
+
                     break;
                 }
 
             case SyntaxElement.SignificantCoeffFlag:
                 {
                     (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(residualBlkType, NumC8x8);
-                    binarized = FixedLengthBinarize(reader, 1);
 
                     maxBinIdxCtx = 0;
 
@@ -1116,13 +1125,14 @@ internal static class Binarization
                         }
                     }
 
+                    binarized = FixedLengthBinarize(reader, 1);
+
                     break;
                 }
 
             case SyntaxElement.LastSignificantCoeffFlag:
                 {
                     (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(residualBlkType, NumC8x8);
-                    binarized = FixedLengthBinarize(reader, 1);
 
                     maxBinIdxCtx = 0;
 
@@ -1181,13 +1191,14 @@ internal static class Binarization
                         }
                     }
 
+                    binarized = FixedLengthBinarize(reader, 1);
+
                     break;
                 }
 
             case SyntaxElement.CoeffAbsLevelMinus1:
                 {
                     (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(residualBlkType, NumC8x8);
-                    binarized = UegkBinarize(reader, false, 0, 14);
 
                     maxBinIdxCtx = AssociateWithPrefixSuffix(1, 0);
 
@@ -1216,6 +1227,8 @@ internal static class Binarization
                         ctxIdxOffset = 766;
                     }
 
+                    binarized = UegkBinarize(reader, false, 0, 14);
+
                     break;
                 }
 
@@ -1229,16 +1242,18 @@ internal static class Binarization
 
             case SyntaxElement.EndOfSliceFlag:
                 {
-                    binarized = FixedLengthBinarize(reader, 1);
                     ctxIdxOffset = 276;
+
+                    binarized = FixedLengthBinarize(reader, 1);
 
                     break;
                 }
 
             case SyntaxElement.TransformSize8x8Flag:
                 {
-                    binarized = FixedLengthBinarize(reader, 1);
                     ctxIdxOffset = 399;
+
+                    binarized = FixedLengthBinarize(reader, 1);
 
                     break;
                 }

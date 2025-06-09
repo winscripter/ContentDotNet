@@ -5,6 +5,7 @@ using ContentDotNet.Extensions.H26x;
 using ContentDotNet.Primitives;
 using ContentDotNet.Containers;
 using static ContentDotNet.Extensions.H264.SliceTypes;
+using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264.Models;
 
@@ -164,6 +165,196 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
         }
 
         return new MacroblockLayer(mbType, pcmLuma, pcmChroma, transformSize8x8Flag, codedBlockPattern, mbQpDelta, residual, mbPrediction, subMbPrediction);
+    }
+
+    /// <summary>
+    ///   Writes the macroblock.
+    /// </summary>
+    /// <param name="writer"></param>
+    /// <param name="bitDepthLumaMinus8"></param>
+    /// <param name="bitDepthChromaMinus8"></param>
+    /// <param name="entropyCodingMode"></param>
+    /// <param name="sizes"></param>
+    /// <param name="sliceType"></param>
+    /// <param name="transform8x8ModeFlag"></param>
+    /// <param name="numRefIdxL0ActiveMinus1"></param>
+    /// <param name="numRefIdxL1ActiveMinus1"></param>
+    /// <param name="mbFieldDecodingFlag"></param>
+    /// <param name="fieldPicFlag"></param>
+    /// <param name="direct8x8InferenceFlag"></param>
+    /// <param name="mbaffFrameFlag"></param>
+    /// <param name="chromaArrayType"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    public void Write(BitStreamWriter writer, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, EntropyCodingMode entropyCodingMode, MacroblockSizeChroma sizes, GeneralSliceType sliceType, bool transform8x8ModeFlag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, bool direct8x8InferenceFlag, bool mbaffFrameFlag, int chromaArrayType)
+    {
+        if (entropyCodingMode == EntropyCodingMode.Cavlc)
+            writer.WriteUE(MbType);
+        else
+            writer.WriteAE((int)MbType);
+
+        if (MbType is I_PCM)
+        {
+            for (int i = 0; i < 256; i++)
+                writer.WriteBits(PcmLuma[i], bitDepthLumaMinus8 + 8);
+            for (int i = 0; i < 2 * sizes.Width * sizes.Height; i++)
+                writer.WriteBits(PcmChroma[i], bitDepthChromaMinus8 + 8);
+        }
+        else
+        {
+            bool noSubMbPartSizeLessThan8x8Flag = true;
+            if (MbType != I_NxN &&
+                Util264.MbPartPredMode((int)MbType, 0, false, sliceType) != Intra_16x16 &&
+                Util264.NumMbPart((int)MbType, sliceType) == 4)
+            {
+                SubMacroblockPrediction!.Value.Write(writer, entropyCodingMode, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, sliceType, (int)MbType, mbFieldDecodingFlag);
+                for (int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++)
+                {
+                    if (SubMacroblockPrediction.Value.SubMbType[mbPartIdx] != B_Direct_8x8)
+                    {
+                        if (Util264.NumSubMbPart((int)SubMacroblockPrediction.Value.SubMbType[mbPartIdx], sliceType) > 1)
+                            noSubMbPartSizeLessThan8x8Flag = false;
+                    }
+                    else if (!direct8x8InferenceFlag)
+                    {
+                        noSubMbPartSizeLessThan8x8Flag = false;
+                    }
+                }
+            }
+            else
+            {
+                if (transform8x8ModeFlag && MbType == I_NxN)
+                    if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                        writer.WriteBit(TransformSize8x8Flag);
+                    else
+                        writer.WriteAE(Int32Boolean.I32(TransformSize8x8Flag));
+                Prediction!.Value.Write(writer, (int)MbType, mbaffFrameFlag, entropyCodingMode, sliceType, TransformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
+            }
+
+            int CodedBlockPatternLuma = CodedBlockPattern % 16;
+            int CodedBlockPatternChroma = CodedBlockPattern / 16;
+
+            if (Util264.MbPartPredMode((int)MbType, 0, TransformSize8x8Flag, sliceType) != Intra_16x16)
+            {
+                if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                    writer.WriteME(CodedBlockPattern);
+                else
+                    writer.WriteAE(CodedBlockPattern);
+
+                if (CodedBlockPatternLuma > 0 && TransformSize8x8Flag && MbType != I_NxN &&
+                    noSubMbPartSizeLessThan8x8Flag && (MbType != B_Direct_16x16 || direct8x8InferenceFlag))
+                {
+                    if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                        writer.WriteBit(TransformSize8x8Flag);
+                    else
+                        writer.WriteAE(Int32Boolean.I32(TransformSize8x8Flag));
+                }
+            }
+
+            if (CodedBlockPatternLuma > 0 || CodedBlockPatternChroma > 0 ||
+                Util264.MbPartPredMode((int)MbType, 0, TransformSize8x8Flag, sliceType) == Intra_16x16)
+            {
+                if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                    writer.WriteSE(MbQpDelta);
+                else
+                    writer.WriteAE(MbQpDelta);
+                throw new NotImplementedException("residual writes");
+            }
+        }
+    }
+
+    /// <summary>
+    ///   Writes the macroblock.
+    /// </summary>
+    /// <param name="writer"></param>
+    /// <param name="bitDepthLumaMinus8"></param>
+    /// <param name="bitDepthChromaMinus8"></param>
+    /// <param name="entropyCodingMode"></param>
+    /// <param name="sizes"></param>
+    /// <param name="sliceType"></param>
+    /// <param name="transform8x8ModeFlag"></param>
+    /// <param name="numRefIdxL0ActiveMinus1"></param>
+    /// <param name="numRefIdxL1ActiveMinus1"></param>
+    /// <param name="mbFieldDecodingFlag"></param>
+    /// <param name="fieldPicFlag"></param>
+    /// <param name="direct8x8InferenceFlag"></param>
+    /// <param name="mbaffFrameFlag"></param>
+    /// <param name="chromaArrayType"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    public async Task WriteAsync(BitStreamWriter writer, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, EntropyCodingMode entropyCodingMode, MacroblockSizeChroma sizes, GeneralSliceType sliceType, bool transform8x8ModeFlag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, bool direct8x8InferenceFlag, bool mbaffFrameFlag, int chromaArrayType)
+    {
+        if (entropyCodingMode == EntropyCodingMode.Cavlc)
+            await writer.WriteUEAsync(MbType);
+        else
+            await writer.WriteAEAsync((int)MbType);
+
+        if (MbType is I_PCM)
+        {
+            for (int i = 0; i < 256; i++)
+                await writer.WriteBitsAsync(PcmLuma[i], bitDepthLumaMinus8 + 8);
+            for (int i = 0; i < 2 * sizes.Width * sizes.Height; i++)
+                await writer.WriteBitsAsync(PcmChroma[i], bitDepthChromaMinus8 + 8);
+        }
+        else
+        {
+            bool noSubMbPartSizeLessThan8x8Flag = true;
+            if (MbType != I_NxN &&
+                Util264.MbPartPredMode((int)MbType, 0, false, sliceType) != Intra_16x16 &&
+                Util264.NumMbPart((int)MbType, sliceType) == 4)
+            {
+                await SubMacroblockPrediction!.Value.WriteAsync(writer, entropyCodingMode, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, sliceType, (int)MbType, mbFieldDecodingFlag);
+                for (int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++)
+                {
+                    if (SubMacroblockPrediction.Value.SubMbType[mbPartIdx] != B_Direct_8x8)
+                    {
+                        if (Util264.NumSubMbPart((int)SubMacroblockPrediction.Value.SubMbType[mbPartIdx], sliceType) > 1)
+                            noSubMbPartSizeLessThan8x8Flag = false;
+                    }
+                    else if (!direct8x8InferenceFlag)
+                    {
+                        noSubMbPartSizeLessThan8x8Flag = false;
+                    }
+                }
+            }
+            else
+            {
+                if (transform8x8ModeFlag && MbType == I_NxN)
+                    if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                        await writer.WriteBitAsync(TransformSize8x8Flag);
+                    else
+                        await writer.WriteAEAsync(Int32Boolean.I32(TransformSize8x8Flag));
+                await Prediction!.Value.WriteAsync(writer, (int)MbType, mbaffFrameFlag, entropyCodingMode, sliceType, TransformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
+            }
+
+            int CodedBlockPatternLuma = CodedBlockPattern % 16;
+            int CodedBlockPatternChroma = CodedBlockPattern / 16;
+
+            if (Util264.MbPartPredMode((int)MbType, 0, TransformSize8x8Flag, sliceType) != Intra_16x16)
+            {
+                if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                    await writer.WriteMEAsync(CodedBlockPattern);
+                else
+                    await writer.WriteAEAsync(CodedBlockPattern);
+
+                if (CodedBlockPatternLuma > 0 && TransformSize8x8Flag && MbType != I_NxN &&
+                    noSubMbPartSizeLessThan8x8Flag && (MbType != B_Direct_16x16 || direct8x8InferenceFlag))
+                {
+                    if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                        await writer.WriteBitAsync(TransformSize8x8Flag);
+                    else
+                        await writer.WriteAEAsync(Int32Boolean.I32(TransformSize8x8Flag));
+                }
+            }
+
+            if (CodedBlockPatternLuma > 0 || CodedBlockPatternChroma > 0 ||
+                Util264.MbPartPredMode((int)MbType, 0, TransformSize8x8Flag, sliceType) == Intra_16x16)
+            {
+                if (entropyCodingMode == EntropyCodingMode.Cavlc)
+                    await writer.WriteSEAsync(MbQpDelta);
+                else
+                    await writer.WriteAEAsync(MbQpDelta);
+                throw new NotImplementedException("residual writes");
+            }
+        }
     }
 
     /// <inheritdoc/>

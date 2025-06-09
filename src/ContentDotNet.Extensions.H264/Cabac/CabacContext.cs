@@ -9,27 +9,40 @@ namespace ContentDotNet.Extensions.H264.Cabac;
 /// <summary>
 ///   Represents context for CABAC bitstream parsing.
 /// </summary>
-public struct CabacContext
+public sealed class CabacContext
 {
+    private int _binIdx = 0;
+    private bool _recordBinIdx = false;
+
     /// <summary>
     ///   PStateIdx
     /// </summary>
-    public int PStateIdx;
+    public int PStateIdx { get; set; }
 
     /// <summary>
     ///   Most Probable Symbol
     /// </summary>
-    public bool ValMps;
+    public bool ValMps { get; set; }
 
     /// <summary>
     ///   CodIRange
     /// </summary>
-    public uint CodIRange;
+    public uint CodIRange { get; set; }
 
     /// <summary>
     ///   CodIOffset
     /// </summary>
-    public uint CodIOffset;
+    public uint CodIOffset { get; set; }
+
+    /// <summary>
+    ///   Context index
+    /// </summary>
+    public int CtxIdx { get; set; }
+
+    /// <summary>
+    ///   Bin index
+    /// </summary>
+    public int BinIdx => _binIdx;
 
     /// <summary>
     ///   Initializes the CABAC decoding engine.
@@ -65,6 +78,25 @@ public struct CabacContext
         }
 
         InitializeArithmeticDecodingEngine(reader);
+
+        CtxIdx = ctxIdx;
+    }
+
+    /// <summary>
+    ///   Begins recording of <see cref="BinIdx"/>.
+    /// </summary>
+    public void BeginRecordBinIdx()
+    {
+        _binIdx = 0;
+        _recordBinIdx = true;
+    }
+
+    /// <summary>
+    ///   Stops recording <see cref="BinIdx"/>.
+    /// </summary>
+    public void StopRecordBinIdx()
+    {
+        _recordBinIdx = false;
     }
 
     private void InitializeArithmeticDecodingEngine(BitStreamReader reader)
@@ -80,15 +112,19 @@ public struct CabacContext
     ///   Reads a CABAC bin.
     /// </summary>
     /// <param name="reader">Reader</param>
-    /// <param name="ctxIdx">ctxIdx</param>
     /// <param name="bypassFlag">Bypass flag</param>
     /// <returns>The bin.</returns>
-    public bool ReadBin(BitStreamReader reader, int ctxIdx, bool bypassFlag)
+    public bool ReadBin(BitStreamReader reader, bool bypassFlag)
     {
-        return ReadAEBinaryDecision(reader, PStateIdx, ValMps, ctxIdx, bypassFlag, ref CodIRange, ref CodIOffset);
+        uint codIRange = CodIRange;
+        uint codIOffset = CodIOffset;
+        bool retval = ReadAEBinaryDecision(reader, PStateIdx, ValMps, CtxIdx, bypassFlag, ref codIRange, ref codIOffset);
+        CodIRange = codIRange;
+        CodIOffset = codIOffset;
+        return retval;
     }
 
-    internal static bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
+    internal bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
     {
         if (bypassFlag)
             return AEDecodeBypass(reader, ref codIOffset, codIRange);
@@ -141,12 +177,15 @@ public struct CabacContext
         }
     }
 
-    private static bool AEDecodeDecision(int pStateIdx, bool valMPS, ref uint codIOffset, ref uint codIRange)
+    private bool AEDecodeDecision(int pStateIdx, bool valMPS, ref uint codIOffset, ref uint codIRange)
     {
         uint qCodIRangeIdx = codIRange >> 6 & 0x03;
         int codIRangeLPS = CabacFunctions.GetRangeTabLps(pStateIdx, (int)qCodIRangeIdx);
 
         codIRange -= (uint)codIRangeLPS;
+
+        if (_recordBinIdx)
+            _binIdx++;
 
         if (codIOffset >= codIRange)
         {

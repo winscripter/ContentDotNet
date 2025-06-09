@@ -64,11 +64,10 @@ H.264:
   - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
   - VUI parameters
   - Weighted Prediction
-  
+
 > [!NOTE]
-> Encoding isn't yet supported because the H.264 specification only provides decoding. However,
-> this is an alpha release and the stable one is expected to have encoding support (it's on the TODO list).
-> Writing raw H.264 structures is supported, except for CABAC.
+> Encoding is not supported because the H.264 spec doesn't provide how to do so.
+> If you find an encoding spec or any other solution, please create a GitHub Issues post and let me know!
 
 MP4:
   - Sample entries
