@@ -3,20 +3,6 @@ using System.Runtime.CompilerServices;
 
 namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
-internal readonly struct MbTypeOrSubMbTypeArithmeticElement
-{
-    public readonly int Category;
-    public readonly int Index;
-    public readonly BitString BitString;
-
-    public MbTypeOrSubMbTypeArithmeticElement(int category, int index, BitString bitString)
-    {
-        Category = category;
-        Index = index;
-        BitString = bitString;
-    }
-}
-
 /// <summary>
 ///   Handles CABAC (Context Adaptive Binary Arithmetic Coding) entropy coding, from derivation
 ///   to actual decoding logic. Compared to CAVLC (Context Adaptive Variable Length Coding), CABAC

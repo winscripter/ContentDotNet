@@ -13,6 +13,13 @@ public sealed class CabacContext
 {
     private int _binIdx = 0;
     private bool _recordBinIdx = false;
+    private readonly BitStreamReader _boundReader;
+    private BitString _priorDecodedBins = default;
+
+    /// <summary>
+    ///   BypassFlag
+    /// </summary>
+    public bool BypassFlag { get; set; } = false;
 
     /// <summary>
     ///   PStateIdx
@@ -42,7 +49,11 @@ public sealed class CabacContext
     /// <summary>
     ///   Bin index
     /// </summary>
-    public int BinIdx => _binIdx;
+    public int BinIdx
+    {
+        get => _binIdx;
+        internal set => _binIdx = value;
+    }
 
     /// <summary>
     ///   Initializes the CABAC decoding engine.
@@ -80,6 +91,8 @@ public sealed class CabacContext
         InitializeArithmeticDecodingEngine(reader);
 
         CtxIdx = ctxIdx;
+
+        _boundReader = reader;
     }
 
     /// <summary>
@@ -108,23 +121,33 @@ public sealed class CabacContext
             throw new CabacArithmeticException("CodIOffset must be less than 510 or 511, but was " + CodIOffset + ".");
     }
 
+    internal BitString PriorDecodedBinValues
+    {
+        get => _priorDecodedBins;
+        set => _priorDecodedBins = value;
+    }
+
+    internal void ResetPriorDecodedBins()
+    {
+        _priorDecodedBins = default;
+    }
+
     /// <summary>
     ///   Reads a CABAC bin.
     /// </summary>
-    /// <param name="reader">Reader</param>
-    /// <param name="bypassFlag">Bypass flag</param>
     /// <returns>The bin.</returns>
-    public bool ReadBin(BitStreamReader reader, bool bypassFlag)
+    public bool ReadBin()
     {
         uint codIRange = CodIRange;
         uint codIOffset = CodIOffset;
-        bool retval = ReadAEBinaryDecision(reader, PStateIdx, ValMps, CtxIdx, bypassFlag, ref codIRange, ref codIOffset);
+        bool retVal = ReadAEBinaryDecision(_boundReader, PStateIdx, ValMps, CtxIdx, BypassFlag, ref codIRange, ref codIOffset);
         CodIRange = codIRange;
         CodIOffset = codIOffset;
-        return retval;
+        _priorDecodedBins += new BitString(retVal ? 1 : 0, 1);
+        return retVal;
     }
 
-    internal bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
+    private bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
     {
         if (bypassFlag)
             return AEDecodeBypass(reader, ref codIOffset, codIRange);

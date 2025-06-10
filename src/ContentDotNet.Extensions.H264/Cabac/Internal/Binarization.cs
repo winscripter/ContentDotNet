@@ -8,20 +8,20 @@ namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
 internal static class Binarization
 {
-    public static int UnaryBinarize(BitStreamReader reader)
+    public static int UnaryBinarize(CabacContext ctx)
     {
         int synElVal = 0;
-        while (reader.ReadBit())
+        while (ctx.ReadBin())
             synElVal++;
         return synElVal;
     }
 
-    public static int TruncatedUnaryBinarize(BitStreamReader reader, int cMax)
+    public static int TruncatedUnaryBinarize(CabacContext ctx, int cMax)
     {
         int count = 0;
         for (int i = 0; i < cMax; i++)
         {
-            bool bit = reader.ReadBit();
+            bool bit = ctx.ReadBin();
             if (!bit)
                 break;
             count++;
@@ -30,13 +30,13 @@ internal static class Binarization
         return count;
     }
 
-    public static (int count, int value) TruncatedUnaryBinarizeWithValue(BitStreamReader reader, int cMax)
+    public static (int count, int value) TruncatedUnaryBinarizeWithValue(CabacContext ctx, int cMax)
     {
         int count = 0;
         int value = 0;
         for (int i = 0; i < cMax; i++)
         {
-            bool bit = reader.ReadBit();
+            bool bit = ctx.ReadBin();
             if (bit)
                 value = (value << 1) | 0x1;
             else
@@ -51,9 +51,9 @@ internal static class Binarization
         return (count, value);
     }
 
-    public static int UegkBinarize(BitStreamReader reader, bool signedValFlag, int k, int uCoff)
+    public static int UegkBinarize(CabacContext ctx, bool signedValFlag, int k, int uCoff)
     {
-        var (count, value) = TruncatedUnaryBinarizeWithValue(reader, uCoff);
+        var (count, value) = TruncatedUnaryBinarizeWithValue(ctx, uCoff);
 
         if ((!signedValFlag && count != uCoff && Intrinsic.AllBitsSetToOne(value, 0, count)) ||
             (signedValFlag && count == 0 && value == 0))
@@ -104,13 +104,27 @@ internal static class Binarization
         }
     }
 
-    public static int FixedLengthBinarize(BitStreamReader reader, int cMax)
+    public static int FixedLengthBinarize(CabacContext ctx, int cMax)
     {
         uint fixedLength = Intrinsic.CeilLog2((uint)cMax + 1u);
-        return (int)reader.ReadBits(fixedLength);
+
+        int result = 0;
+        for (int i = 0; i < fixedLength; i++)
+        {
+            if (ctx.ReadBin())
+            {
+                result = (result << 1) | 0x1;
+            }
+            else
+            {
+                result <<= 1;
+            }
+        }
+
+        return result;
     }
 
-    public static int BinarizeMacroblockOrSubMacroblockType(BitStreamReader reader, bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
+    public static int BinarizeMacroblockOrSubMacroblockType(CabacContext ctx, bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
     {
         if (isSISlice)
         {
@@ -164,7 +178,7 @@ internal static class Binarization
 
         int LookUpISlice()
         {
-            if (!reader.ReadBit())  // first bit == 0
+            if (!ctx.ReadBin())  // first bit == 0
             {
                 // code "0" → symbol 0 (I_NxN)
                 return 0;
@@ -173,7 +187,7 @@ internal static class Binarization
             {
                 // first bit == 1
 
-                if (reader.ReadBit())  // second bit == 1
+                if (ctx.ReadBin())  // second bit == 1
                 {
                     // code "11" → symbol 25 (I_PCM)
                     return 25;
@@ -182,19 +196,19 @@ internal static class Binarization
                 {
                     // second bit == 0
 
-                    if (!reader.ReadBit())  // third bit == 0
+                    if (!ctx.ReadBin())  // third bit == 0
                     {
                         // third bit == 0
 
-                        if (!reader.ReadBit())  // fourth bit == 0
+                        if (!ctx.ReadBin())  // fourth bit == 0
                         {
                             // fourth bit == 0
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
                                 // fifth bit == 0
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 0 0 0 0 0" → symbol 1
                                     return 1;
@@ -210,7 +224,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 0 0 0 1 0" → symbol 3
                                     return 3;
@@ -227,11 +241,11 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 0 0 0" → symbol 5
                                         return 5;
@@ -247,7 +261,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 0 1 0" → symbol 7
                                         return 7;
@@ -264,9 +278,9 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 1 0 0" → symbol 9
                                         return 9;
@@ -282,7 +296,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 1 1 0" → symbol 11
                                         return 11;
@@ -301,11 +315,11 @@ internal static class Binarization
                     {
                         // third bit == 1
 
-                        if (!reader.ReadBit())  // fourth bit == 0
+                        if (!ctx.ReadBin())  // fourth bit == 0
                         {
                             // fourth bit == 0
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
                                 // code "1 0 1 0 0 0" → symbol 13
                                 return 13;
@@ -314,7 +328,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 0 1 0 0 1" → symbol 14
                                     return 14;
@@ -331,11 +345,11 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 0 0 0" → symbol 17
                                         return 17;
@@ -351,7 +365,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 0 1 0" → symbol 19
                                         return 19;
@@ -368,9 +382,9 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 1 0 0" → symbol 21
                                         return 21;
@@ -386,7 +400,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 1 1 0" → symbol 23
                                         return 23;
@@ -407,7 +421,7 @@ internal static class Binarization
 
         int LookUpBSlice()
         {
-            if (!reader.ReadBit())  // first bit == 0
+            if (!ctx.ReadBin())  // first bit == 0
             {
                 // code "0" → symbol 0 (B_Direct_16x16)
                 return 0;
@@ -416,11 +430,11 @@ internal static class Binarization
             {
                 // first bit == 1
 
-                if (!reader.ReadBit())  // second bit == 0
+                if (!ctx.ReadBin())  // second bit == 0
                 {
                     // second bit == 0
 
-                    if (!reader.ReadBit())  // third bit == 0
+                    if (!ctx.ReadBin())  // third bit == 0
                     {
                         // code "1 0 0" → symbol 1 (B_L0_16x16)
                         return 1;
@@ -437,19 +451,19 @@ internal static class Binarization
                 {
                     // second bit == 1
 
-                    if (!reader.ReadBit())  // third bit == 0
+                    if (!ctx.ReadBin())  // third bit == 0
                     {
                         // third bit == 0
 
-                        if (!reader.ReadBit())  // fourth bit == 0
+                        if (!ctx.ReadBin())  // fourth bit == 0
                         {
                             // fourth bit == 0
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
                                 // fifth bit == 0
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 1 0 0 0 0" → symbol 3 (B_Bi_16x16)
                                     return 3;
@@ -466,7 +480,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 1 0 0 1 0" → symbol 5 (B_L0_L0_8x16)
                                     return 5;
@@ -484,9 +498,9 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 1 0 1 0 0" → symbol 7 (B_L1_L1_8x16)
                                     return 7;
@@ -503,7 +517,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 1 0 1 1 0" → symbol 9 (B_L0_L1_8x16)
                                     return 9;
@@ -522,15 +536,15 @@ internal static class Binarization
                     {
                         // third bit == 1
 
-                        if (!reader.ReadBit())  // fourth bit == 1
+                        if (!ctx.ReadBin())  // fourth bit == 1
                         {
                             // code starts with "1 1 1 0"
 
-                            if (!reader.ReadBit())  // fifth bit == 0
+                            if (!ctx.ReadBin())  // fifth bit == 0
                             {
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 0 0 0" → symbol 12 (B_L0_Bi_16x8)
                                         return 12;
@@ -547,7 +561,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 0 1 0" → symbol 14 (B_L1_Bi_16x8)
                                         return 14;
@@ -565,9 +579,9 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 1 0 0" → symbol 16 (B_Bi_L0_16x8)
                                         return 16;
@@ -584,7 +598,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!reader.ReadBit())  // seventh bit == 0
+                                    if (!ctx.ReadBin())  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 1 1 0" → symbol 18 (B_Bi_L1_16x8)
                                         return 18;
@@ -603,9 +617,9 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!reader.ReadBit())  // fifth bit == 1
+                            if (!ctx.ReadBin())  // fifth bit == 1
                             {
-                                if (!reader.ReadBit())  // sixth bit == 0
+                                if (!ctx.ReadBin())  // sixth bit == 0
                                 {
                                     // code "1 1 1 1 0 0 0" → symbol 20 (B_Bi_Bi_16x8)
                                     return 20;
@@ -621,7 +635,7 @@ internal static class Binarization
                                 // code "1 1 1 1 1 1" → symbol 22 (B_8x8)
                                 // Only 6 bits here, so we read only 6 bits total for this one
 
-                                if (!reader.ReadBit())  // sixth bit == 1
+                                if (!ctx.ReadBin())  // sixth bit == 1
                                 {
                                     // code mismatch or error
                                     return -1;
@@ -637,11 +651,11 @@ internal static class Binarization
 
         int LookUpPSPSlice()
         {
-            if (!reader.ReadBit())  // first bit == 0
+            if (!ctx.ReadBin())  // first bit == 0
             {
-                if (!reader.ReadBit())  // second bit == 0
+                if (!ctx.ReadBin())  // second bit == 0
                 {
-                    if (!reader.ReadBit())  // third bit == 0
+                    if (!ctx.ReadBin())  // third bit == 0
                     {
                         // 0 0 0 → symbol 0 (P_L0_16x16)
                         return 0;
@@ -655,7 +669,7 @@ internal static class Binarization
                 else
                 {
                     // second bit == 1
-                    if (!reader.ReadBit())  // third bit == 0
+                    if (!ctx.ReadBin())  // third bit == 0
                     {
                         // 0 1 0 → symbol 2 (P_L0_L0_8x16)
                         return 2;
@@ -676,7 +690,7 @@ internal static class Binarization
 
         int LookUpSubPSPSlice()
         {
-            if (reader.ReadBit()) // first bit == 1
+            if (ctx.ReadBin()) // first bit == 1
             {
                 // code "1" → symbol 0 (P_L0_8x8)
                 return 0;
@@ -685,7 +699,7 @@ internal static class Binarization
             {
                 // first bit == 0
 
-                if (!reader.ReadBit()) // second bit == 0
+                if (!ctx.ReadBin()) // second bit == 0
                 {
                     // code "0 0" → symbol 1 (P_L0_8x4)
                     return 1;
@@ -694,7 +708,7 @@ internal static class Binarization
                 {
                     // second bit == 1
 
-                    if (reader.ReadBit()) // third bit == 1
+                    if (ctx.ReadBin()) // third bit == 1
                     {
                         // code "0 1 1" → symbol 2 (P_L0_4x8)
                         return 2;
@@ -712,7 +726,7 @@ internal static class Binarization
 
         int LookUpSubBSlice()
         {
-            if (!reader.ReadBit()) // first bit == 0
+            if (!ctx.ReadBin()) // first bit == 0
             {
                 // code "0" → symbol 0 (B_Direct_8x8)
                 return 0;
@@ -721,9 +735,9 @@ internal static class Binarization
             {
                 // first bit == 1
 
-                if (!reader.ReadBit()) // second bit == 0
+                if (!ctx.ReadBin()) // second bit == 0
                 {
-                    if (!reader.ReadBit()) // third bit == 0
+                    if (!ctx.ReadBin()) // third bit == 0
                     {
                         // code "1 0 0" → symbol 1 (B_L0_8x8)
                         return 1;
@@ -739,11 +753,11 @@ internal static class Binarization
                 {
                     // second bit == 1
 
-                    if (!reader.ReadBit()) // third bit == 0
+                    if (!ctx.ReadBin()) // third bit == 0
                     {
-                        if (!reader.ReadBit()) // fourth bit == 0
+                        if (!ctx.ReadBin()) // fourth bit == 0
                         {
-                            if (!reader.ReadBit()) // fifth bit == 0
+                            if (!ctx.ReadBin()) // fifth bit == 0
                             {
                                 // code "1 1 0 0 0" → symbol 3 (B_Bi_8x8)
                                 return 3;
@@ -759,7 +773,7 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!reader.ReadBit()) // fifth bit == 0
+                            if (!ctx.ReadBin()) // fifth bit == 0
                             {
                                 // code "1 1 0 1 0" → symbol 5 (B_L0_4x8)
                                 return 5;
@@ -776,11 +790,11 @@ internal static class Binarization
                     {
                         // third bit == 1
 
-                        if (!reader.ReadBit()) // fourth bit == 0
+                        if (!ctx.ReadBin()) // fourth bit == 0
                         {
-                            if (!reader.ReadBit()) // fifth bit == 0
+                            if (!ctx.ReadBin()) // fifth bit == 0
                             {
-                                if (!reader.ReadBit()) // sixth bit == 0
+                                if (!ctx.ReadBin()) // sixth bit == 0
                                 {
                                     // code "1 1 1 0 0 0" → symbol 7 (B_L1_4x8)
                                     return 7;
@@ -796,7 +810,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!reader.ReadBit()) // sixth bit == 0
+                                if (!ctx.ReadBin()) // sixth bit == 0
                                 {
                                     // code "1 1 1 0 1 0" → symbol 9 (B_Bi_4x8)
                                     return 9;
@@ -813,7 +827,7 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!reader.ReadBit()) // fifth bit == 0
+                            if (!ctx.ReadBin()) // fifth bit == 0
                             {
                                 // code "1 1 1 1 0" → symbol 11 (B_L1_4x4)
                                 return 11;
@@ -830,13 +844,13 @@ internal static class Binarization
         }
     }
 
-    public static int BinarizeCodedBlockPattern(BitStreamReader reader, int chromaArrayType)
+    public static int BinarizeCodedBlockPattern(CabacContext ctx, int chromaArrayType)
     {
-        BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(reader, 15));
+        BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(ctx, 15));
 
         if (chromaArrayType is not 0 and not 3)
         {
-            BitString bsSuffix = BitString.From(TruncatedUnaryBinarize(reader, 2));
+            BitString bsSuffix = BitString.From(TruncatedUnaryBinarize(ctx, 2));
 
             BitString bsResult = bsPrefix + bsSuffix;
 
@@ -848,20 +862,19 @@ internal static class Binarization
         }
     }
 
-    public static int BinarizeMbQpDelta(BitStreamReader reader)
+    public static int BinarizeMbQpDelta(CabacContext ctx)
     {
-        return UnaryBinarize(reader);
+        return UnaryBinarize(ctx);
     }
 
     // I might be wrong, so I'll include this method so that if I'm wrong, I can change it later.
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int AssociateWithPrefixSuffix(int prefix, int suffix) => prefix;
 
-    public static (int binarized, int maxBinIdxCtx, int ctxIdxOffset) Binarize(BitStreamReader reader, GeneralSliceType sliceType, SyntaxElement element, int chromaArrayType, int NumC8x8, ResidualBlockType residualBlkType, bool isFrameMacroblock)
+    public static (int maxBinIdxCtx, int ctxIdxOffset) GetFields(SyntaxElement element, GeneralSliceType sliceType, ResidualBlockType residualBlkType, int NumC8x8, bool isFrameMacroblock)
     {
         int maxBinIdxCtx = 0;
         int ctxIdxOffset = 0;
-        int binarized;
 
         switch (element)
         {
@@ -887,13 +900,6 @@ internal static class Binarization
                         maxBinIdxCtx = AssociateWithPrefixSuffix(3, 5);
                         ctxIdxOffset = AssociateWithPrefixSuffix(27, 32);
                     }
-
-                    binarized = BinarizeMacroblockOrSubMacroblockType(
-                        reader,
-                        sliceType == GeneralSliceType.SI,
-                        sliceType == GeneralSliceType.B,
-                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
-                        false);
                 }
                 break;
 
@@ -909,8 +915,6 @@ internal static class Binarization
                         maxBinIdxCtx = 0;
                         ctxIdxOffset = 24;
                     }
-
-                    binarized = FixedLengthBinarize(reader, 1);
 
                     break;
                 }
@@ -928,13 +932,6 @@ internal static class Binarization
                         ctxIdxOffset = 36;
                     }
 
-                    binarized = BinarizeMacroblockOrSubMacroblockType(
-                        reader,
-                        sliceType == GeneralSliceType.SI,
-                        sliceType == GeneralSliceType.B,
-                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
-                        true);
-
                     break;
                 }
 
@@ -943,12 +940,6 @@ internal static class Binarization
                     maxBinIdxCtx = 4;
                     ctxIdxOffset = 40;
 
-                    binarized = UegkBinarize(
-                        reader,
-                        true,
-                        3,
-                        9);
-                    
                     break;
                 }
 
@@ -957,12 +948,6 @@ internal static class Binarization
                     maxBinIdxCtx = 4;
                     ctxIdxOffset = 47;
 
-                    binarized = UegkBinarize(
-                        reader,
-                        true,
-                        3,
-                        9);
-                    
                     break;
                 }
 
@@ -971,8 +956,6 @@ internal static class Binarization
                     maxBinIdxCtx = 2;
                     ctxIdxOffset = 54;
 
-                    binarized = UnaryBinarize(reader);
-                    
                     break;
                 }
 
@@ -981,8 +964,6 @@ internal static class Binarization
                     maxBinIdxCtx = 2;
                     ctxIdxOffset = 60;
 
-                    binarized = BinarizeMbQpDelta(reader);
-                    
                     break;
                 }
 
@@ -991,8 +972,6 @@ internal static class Binarization
                     maxBinIdxCtx = 1;
                     ctxIdxOffset = 64;
 
-                    binarized = TruncatedUnaryBinarize(reader, 3);
-                    
                     break;
                 }
 
@@ -1001,8 +980,6 @@ internal static class Binarization
                     maxBinIdxCtx = 0;
                     ctxIdxOffset = 68;
 
-                    binarized = FixedLengthBinarize(reader, 1);
-                    
                     break;
                 }
 
@@ -1011,8 +988,6 @@ internal static class Binarization
                     maxBinIdxCtx = 0;
                     ctxIdxOffset = 69;
 
-                    binarized = FixedLengthBinarize(reader, 8);
-                    
                     break;
                 }
 
@@ -1021,8 +996,6 @@ internal static class Binarization
                     maxBinIdxCtx = 0;
                     ctxIdxOffset = 70;
 
-                    binarized = FixedLengthBinarize(reader, 1);
-                    
                     break;
                 }
 
@@ -1031,8 +1004,6 @@ internal static class Binarization
                     maxBinIdxCtx = AssociateWithPrefixSuffix(3, 1);
                     ctxIdxOffset = AssociateWithPrefixSuffix(73, 77);
 
-                    binarized = BinarizeCodedBlockPattern(reader, chromaArrayType);
-                    
                     break;
                 }
 
@@ -1058,8 +1029,6 @@ internal static class Binarization
                     {
                         ctxIdxOffset = 1012;
                     }
-
-                    binarized = FixedLengthBinarize(reader, 1);
 
                     break;
                 }
@@ -1125,8 +1094,6 @@ internal static class Binarization
                         }
                     }
 
-                    binarized = FixedLengthBinarize(reader, 1);
-
                     break;
                 }
 
@@ -1191,8 +1158,6 @@ internal static class Binarization
                         }
                     }
 
-                    binarized = FixedLengthBinarize(reader, 1);
-
                     break;
                 }
 
@@ -1227,33 +1192,179 @@ internal static class Binarization
                         ctxIdxOffset = 766;
                     }
 
-                    binarized = UegkBinarize(reader, false, 0, 14);
+                    break;
+                }
+
+            case SyntaxElement.CoeffSignFlag:
+                break;
+
+            case SyntaxElement.EndOfSliceFlag:
+                ctxIdxOffset = 276;
+                break;
+
+            case SyntaxElement.TransformSize8x8Flag:
+                ctxIdxOffset = 399;
+                break;
+
+            default:
+                throw new NotImplementedException("Syntax element named " + element + " is not yet implemented");
+        }
+
+        return (maxBinIdxCtx, ctxIdxOffset);
+    }
+
+    public static int Binarize(CabacContext ctx, GeneralSliceType sliceType, SyntaxElement element, int chromaArrayType)
+    {
+        int binarized;
+
+        switch (element)
+        {
+            case SyntaxElement.MacroblockType:
+                {
+                    binarized = BinarizeMacroblockOrSubMacroblockType(
+                        ctx,
+                        sliceType == GeneralSliceType.SI,
+                        sliceType == GeneralSliceType.B,
+                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
+                        false);
+                }
+                break;
+
+            case SyntaxElement.MacroblockSkipFlag:
+                {
+                    binarized = FixedLengthBinarize(ctx, 1);
+
+                    break;
+                }
+
+            case SyntaxElement.SubMacroblockType:
+                {
+                    binarized = BinarizeMacroblockOrSubMacroblockType(
+                        ctx,
+                        sliceType == GeneralSliceType.SI,
+                        sliceType == GeneralSliceType.B,
+                        sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
+                        true);
+
+                    break;
+                }
+
+            case SyntaxElement.MotionVectorDifferenceX:
+                {
+                    binarized = UegkBinarize(
+                        ctx,
+                        true,
+                        3,
+                        9);
+                    
+                    break;
+                }
+
+            case SyntaxElement.MotionVectorDifferenceY:
+                {
+                    binarized = UegkBinarize(
+                        ctx,
+                        true,
+                        3,
+                        9);
+                    
+                    break;
+                }
+
+            case SyntaxElement.ReferenceIndex:
+                {
+                    binarized = UnaryBinarize(ctx);
+                    
+                    break;
+                }
+
+            case SyntaxElement.MacroblockQuantizationParameterDelta:
+                {
+                    binarized = BinarizeMbQpDelta(ctx);
+                    
+                    break;
+                }
+
+            case SyntaxElement.IntraChromaPredictionMode:
+                {
+                    binarized = TruncatedUnaryBinarize(ctx, 3);
+                    
+                    break;
+                }
+
+            case SyntaxElement.PreviousIntraNxNPredictionModeFlag:
+                {
+                    binarized = FixedLengthBinarize(ctx, 1);
+                    
+                    break;
+                }
+
+            case SyntaxElement.RemainingIntraNxNPredictionMode:
+                {
+                    binarized = FixedLengthBinarize(ctx, 8);
+                    
+                    break;
+                }
+
+            case SyntaxElement.MacroblockFieldDecodingFlag:
+                {
+                    binarized = FixedLengthBinarize(ctx, 1);
+                    
+                    break;
+                }
+
+            case SyntaxElement.CodedBlockPattern:
+                {
+                    binarized = BinarizeCodedBlockPattern(ctx, chromaArrayType);
+                    
+                    break;
+                }
+
+            case SyntaxElement.CodedBlockFlag:
+                {
+                    binarized = FixedLengthBinarize(ctx, 1);
+
+                    break;
+                }
+
+            case SyntaxElement.SignificantCoeffFlag:
+                {
+                    binarized = FixedLengthBinarize(ctx, 1);
+
+                    break;
+                }
+
+            case SyntaxElement.LastSignificantCoeffFlag:
+                {
+                    binarized = FixedLengthBinarize(ctx, 1);
+
+                    break;
+                }
+
+            case SyntaxElement.CoeffAbsLevelMinus1:
+                {
+                    binarized = UegkBinarize(ctx, false, 0, 14);
 
                     break;
                 }
 
             case SyntaxElement.CoeffSignFlag:
                 {
-                    binarized = FixedLengthBinarize(reader, 1);
+                    binarized = FixedLengthBinarize(ctx, 1);
 
-                    // Doesn't look like we assign anything.
                     break;
                 }
 
             case SyntaxElement.EndOfSliceFlag:
                 {
-                    ctxIdxOffset = 276;
-
-                    binarized = FixedLengthBinarize(reader, 1);
+                    binarized = FixedLengthBinarize(ctx, 1);
 
                     break;
                 }
 
             case SyntaxElement.TransformSize8x8Flag:
                 {
-                    ctxIdxOffset = 399;
-
-                    binarized = FixedLengthBinarize(reader, 1);
+                    binarized = FixedLengthBinarize(ctx, 1);
 
                     break;
                 }
@@ -1262,6 +1373,6 @@ internal static class Binarization
                 throw new NotImplementedException("Syntax element named " + element + " is not yet implemented");
         }
 
-        return (binarized, maxBinIdxCtx, ctxIdxOffset);
+        return binarized;
     }
 }
