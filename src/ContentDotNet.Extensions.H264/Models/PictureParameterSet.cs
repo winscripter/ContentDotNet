@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Primitives;
 
@@ -65,6 +66,11 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     /// Specifies the slice group map type.
     /// </summary>
     public uint SliceGroupMapType;
+
+    /// <summary>
+    /// Specifies the run lengths.
+    /// </summary>
+    public Container8UInt32 RunLengthMinus1;
 
     /// <summary>
     /// Specifies the size of the picture in map units minus 1.
@@ -154,6 +160,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     /// <param name="sliceGroupChangeDirectionFlag">Part of the PPS.</param>
     /// <param name="sliceGroupChangeRateMinus1">Part of the PPS.</param>
     /// <param name="sliceGroupMapType">Part of the PPS.</param>
+    /// <param name="runLengthMinus1">Part of the PPS.</param>
     /// <param name="picSizeInMapUnitsMinus1">Part of the PPS.</param>
     /// <param name="numRefIdxL0DefaultActiveMinus1">Part of the PPS.</param>
     /// <param name="numRefIdxL1DefaultActiveMinus1">Part of the PPS.</param>
@@ -166,7 +173,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     /// <param name="constrainedIntraPredFlag">Part of the PPS.</param>
     /// <param name="redundantPicCntPresentFlag">Part of the PPS.</param>
     /// <param name="secondChromaQpIndexOffset">Part of the PPS.</param>
-    public PictureParameterSet(uint spsId, uint ppsId, bool entropyCodingModeFlag, bool bottomFieldPicOrderInFramePresentFlag, uint numSliceGroupsMinus1, Span<uint> topLeft, Span<uint> bottomRight, bool sliceGroupChangeDirectionFlag, uint sliceGroupChangeRateMinus1, uint sliceGroupMapType, uint picSizeInMapUnitsMinus1, uint numRefIdxL0DefaultActiveMinus1, uint numRefIdxL1DefaultActiveMinus1, bool weightedPredFlag, uint weightedBiPredIdc, int picInitQpMinus26, int picInitQsMinus26, int chromaQpIndexOffset, bool deblockingFilterControlPresentFlag, bool constrainedIntraPredFlag, bool redundantPicCntPresentFlag, int secondChromaQpIndexOffset)
+    public PictureParameterSet(uint spsId, uint ppsId, bool entropyCodingModeFlag, bool bottomFieldPicOrderInFramePresentFlag, uint numSliceGroupsMinus1, Span<uint> topLeft, Span<uint> bottomRight, bool sliceGroupChangeDirectionFlag, uint sliceGroupChangeRateMinus1, uint sliceGroupMapType, Container8UInt32 runLengthMinus1, uint picSizeInMapUnitsMinus1, uint numRefIdxL0DefaultActiveMinus1, uint numRefIdxL1DefaultActiveMinus1, bool weightedPredFlag, uint weightedBiPredIdc, int picInitQpMinus26, int picInitQsMinus26, int chromaQpIndexOffset, bool deblockingFilterControlPresentFlag, bool constrainedIntraPredFlag, bool redundantPicCntPresentFlag, int secondChromaQpIndexOffset)
     {
         SpsId = spsId;
         PpsId = ppsId;
@@ -180,6 +187,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         SliceGroupChangeDirectionFlag = sliceGroupChangeDirectionFlag;
         SliceGroupChangeRateMinus1 = sliceGroupChangeRateMinus1;
         SliceGroupMapType = sliceGroupMapType;
+        RunLengthMinus1 = runLengthMinus1;
         PicSizeInMapUnitsMinus1 = picSizeInMapUnitsMinus1;
         NumRefIdxL0DefaultActiveMinus1 = numRefIdxL0DefaultActiveMinus1;
         NumRefIdxL1DefaultActiveMinus1 = numRefIdxL1DefaultActiveMinus1;
@@ -228,6 +236,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         bool picScalingMatrixPresentFlag = false;
         int secondChromaQpIndexOffset = 0;
         ScalingMatrices? matrix = null;
+        Container8UInt32 runLengthMinus1 = default;
 
         if (numSliceGroupsMinus1 > 0)
         {
@@ -236,7 +245,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
             {
                 for (int iGroup = 0; iGroup <= numSliceGroupsMinus1; iGroup++)
                 {
-                    _ = reader.ReadUE(); // run_length_minus1[iGroup]
+                    runLengthMinus1[iGroup] = reader.ReadUE(); // run_length_minus1[iGroup]
                 }
             }
             else if (sliceGroupMapType == 2u)
@@ -305,6 +314,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
             sliceGroupChangeDirectionFlag,
             sliceGroupChangeRateMinus1,
             sliceGroupMapType,
+            runLengthMinus1,
             picSizeInMapUnitsMinus1,
             numRefIdxL0DefaultActiveMinus1,
             numRefIdxL1DefaultActiveMinus1,
@@ -323,11 +333,10 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     ///   Writes the PPS to the bitstream.
     /// </summary>
     /// <param name="writer"></param>
-    /// <param name="runLengthMinus1"></param>
     /// <param name="sliceGroupId"></param>
     /// <param name="moreRBSPData"></param>
     /// <param name="build"></param>
-    public readonly void Write(BitStreamWriter writer, Span<uint> runLengthMinus1, Span<uint> sliceGroupId, bool moreRBSPData, ScalingMatrixBuilder build)
+    public readonly void Write(BitStreamWriter writer, Span<uint> sliceGroupId, bool moreRBSPData, ScalingMatrixBuilder build)
     {
         writer.WriteUE(SpsId);
         writer.WriteUE(PpsId);
@@ -342,7 +351,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
             {
                 for (int iGroup = 0; iGroup <= NumSliceGroupsMinus1; iGroup++)
                 {
-                    writer.WriteUE(runLengthMinus1[iGroup]);
+                    writer.WriteUE(RunLengthMinus1[iGroup]);
                 }
             }
             else if (SliceGroupMapType == 2u)
@@ -415,36 +424,33 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     ///   Writes the PPS to the bitstream.
     /// </summary>
     /// <param name="writer"></param>
-    /// <param name="runLengthMinus1"></param>
     /// <param name="sliceGroupId"></param>
     /// <param name="build"></param>
-    public readonly void Write(BitStreamWriter writer, Span<uint> runLengthMinus1, Span<uint> sliceGroupId, ScalingMatrixBuilder build) =>
-        Write(writer, runLengthMinus1, sliceGroupId, true, build);
+    public readonly void Write(BitStreamWriter writer, Span<uint> sliceGroupId, ScalingMatrixBuilder build) =>
+        Write(writer, sliceGroupId, true, build);
 
     /// <summary>
     ///   Writes the PPS to the bitstream.
     /// </summary>
     /// <param name="writer"></param>
-    /// <param name="runLengthMinus1"></param>
     /// <param name="sliceGroupId"></param>
     /// <param name="moreRBSPData"></param>
-    public readonly void Write(BitStreamWriter writer, Span<uint> runLengthMinus1, Span<uint> sliceGroupId, bool moreRBSPData)
+    public readonly void Write(BitStreamWriter writer, Span<uint> sliceGroupId, bool moreRBSPData)
     {
         if (moreRBSPData && this.PicScalingMatrixPresentFlag)
             throw new InvalidOperationException("Scaling matrix builder not provided");
 
-        Write(writer, runLengthMinus1, sliceGroupId, moreRBSPData, BogusBuilder);
+        Write(writer, sliceGroupId, moreRBSPData, BogusBuilder);
     }
 
     /// <summary>
     ///   Writes the PPS to the bitstream.
     /// </summary>
     /// <param name="writer"></param>
-    /// <param name="runLengthMinus1"></param>
     /// <param name="sliceGroupId"></param>
     /// <param name="moreRBSPData"></param>
     /// <param name="build"></param>
-    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> runLengthMinus1, Memory<uint> sliceGroupId, bool moreRBSPData, ScalingMatrixBuilder build)
+    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> sliceGroupId, bool moreRBSPData, ScalingMatrixBuilder build)
     {
         await writer.WriteUEAsync(SpsId);
         await writer.WriteUEAsync(PpsId);
@@ -459,7 +465,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
             {
                 for (int iGroup = 0; iGroup <= NumSliceGroupsMinus1; iGroup++)
                 {
-                    await writer.WriteUEAsync(runLengthMinus1.Span[iGroup]);
+                    await writer.WriteUEAsync(RunLengthMinus1[iGroup]);
                 }
             }
             else if (SliceGroupMapType == 2u)
@@ -532,25 +538,23 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     ///   Writes the PPS to the bitstream.
     /// </summary>
     /// <param name="writer"></param>
-    /// <param name="runLengthMinus1"></param>
     /// <param name="sliceGroupId"></param>
     /// <param name="build"></param>
-    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> runLengthMinus1, Memory<uint> sliceGroupId, ScalingMatrixBuilder build) =>
-        await WriteAsync(writer, runLengthMinus1, sliceGroupId, true, build);
+    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> sliceGroupId, ScalingMatrixBuilder build) =>
+        await WriteAsync(writer, sliceGroupId, true, build);
 
     /// <summary>
     ///   Writes the PPS to the bitstream.
     /// </summary>
     /// <param name="writer"></param>
-    /// <param name="runLengthMinus1"></param>
     /// <param name="sliceGroupId"></param>
     /// <param name="moreRBSPData"></param>
-    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> runLengthMinus1, Memory<uint> sliceGroupId, bool moreRBSPData)
+    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<uint> sliceGroupId, bool moreRBSPData)
     {
         if (moreRBSPData && this.PicScalingMatrixPresentFlag)
             throw new InvalidOperationException("Scaling matrix builder not provided");
 
-        await WriteAsync(writer, runLengthMinus1, sliceGroupId, moreRBSPData, BogusBuilder);
+        await WriteAsync(writer, sliceGroupId, moreRBSPData, BogusBuilder);
     }
 
     /// <summary>
@@ -679,6 +683,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
                SliceGroupChangeDirectionFlag == other.SliceGroupChangeDirectionFlag &&
                SliceGroupChangeRateMinus1 == other.SliceGroupChangeRateMinus1 &&
                SliceGroupMapType == other.SliceGroupMapType &&
+               RunLengthMinus1 == other.RunLengthMinus1 &&
                PicSizeInMapUnitsMinus1 == other.PicSizeInMapUnitsMinus1 &&
                NumRefIdxL0DefaultActiveMinus1 == other.NumRefIdxL0DefaultActiveMinus1 &&
                NumRefIdxL1DefaultActiveMinus1 == other.NumRefIdxL1DefaultActiveMinus1 &&
@@ -728,6 +733,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         hash.Add(SliceGroupChangeDirectionFlag);
         hash.Add(SliceGroupChangeRateMinus1);
         hash.Add(SliceGroupMapType);
+        hash.Add(RunLengthMinus1);
         hash.Add(PicSizeInMapUnitsMinus1);
         hash.Add(NumRefIdxL0DefaultActiveMinus1);
         hash.Add(NumRefIdxL1DefaultActiveMinus1);

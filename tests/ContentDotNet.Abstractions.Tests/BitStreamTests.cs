@@ -505,6 +505,36 @@ public class BitStreamTests
             });
     }
 
+    [Fact]
+    public void Backtrack()
+    {
+        UseBSWriterThenReader(
+            writer =>
+            {
+                WriteString("Hello, World!", writer);
+                writer.WriteBits(0, 8);
+            },
+            reader =>
+            {
+                _ = reader.ReadByte();
+                var state = reader.GetState();
+                _ = reader.ReadByte();
+                _ = reader.ReadByte();
+                reader.GoTo(state);
+                Assert.Equal(reader.GetState().BitPosition, state.BitPosition);
+                Assert.Equal(reader.GetState().ByteOffset, state.ByteOffset);
+                Assert.Equal(reader.GetState().CurrentByte, state.CurrentByte);
+                Assert.Equal('e', reader.ReadByte());
+                Assert.Equal('l', reader.ReadByte());
+            });
+    }
+
+    private static void WriteString(string str, BitStreamWriter writer)
+    {
+        foreach (char c in str)
+            writer.WriteBits((byte)c, 8);
+    }
+
     private static void TestCodedInteger(uint value, uint bits)
     {
         UseBSWriterThenReader(

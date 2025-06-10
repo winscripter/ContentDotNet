@@ -1,5 +1,5 @@
 ﻿using ContentDotNet.BitStream;
-using ContentDotNet.Extensions.H264.Internal.Decoding;
+using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Internal.Macroblocks;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
@@ -225,4 +225,37 @@ internal static class Util264
     }
 
     public static int? PrevMbAddress(int mbAddr) => mbAddr == 0 ? null : (mbAddr - 1);
+
+    //public static int NextMbAddress(PictureParameterSet pps, SequenceParameterSet sps, int CurrMbAddr)
+    //{
+    //    RefinedSliceGroupMapType refinedSliceGroupMapType = RefinedSliceGroupMapType.From(pps);
+    //    int i = 0;
+    //    Container512UInt32 mapUnitToSliceGroupMap = default;
+    //    int PicSizeInMapUnits = sps.GetPicSizeInMapUnits();
+    //    int PicWidthInMbs = (int)(sps.PicWidthInMbsMinus1 + 1);
+    //    switch (pps.SliceGroupMapType)
+    //    {
+    //        case 0:
+    //            {
+    //                do
+    //                {
+    //                    for (int iGroup = 0; iGroup <= pps.NumSliceGroupsMinus1 && i < PicSizeInMapUnits; i += (int)pps.RunLengthMinus1[iGroup++] + 1)
+    //                    {
+    //                        for (int j = 0; j <= (int)pps.RunLengthMinus1[iGroup] + 1 && i + j < PicSizeInMapUnits; j++)
+    //                            mapUnitToSliceGroupMap[i + j] = (uint)iGroup;
+    //                    }
+    //                }
+    //                while (i < PicSizeInMapUnits);
+    //            }
+    //            break;
+
+    //        case 1:
+    //            {
+    //                for (i = 0; i < PicSizeInMapUnits; i++)
+    //                    mapUnitToSliceGroupMap[i] = (uint)(((i % PicWidthInMbs) +
+    //                                                 (i / PicWidthInMbs * ((int)pps.NumSliceGroupsMinus1 + 1) / 2))
+    //                                                 % ((int)pps.NumSliceGroupsMinus1 + 1));
+    //            }
+    //    }
+    //}
 }
