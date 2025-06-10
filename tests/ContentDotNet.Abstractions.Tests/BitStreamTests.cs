@@ -553,6 +553,27 @@ public class BitStreamTests
             });
     }
 
+    [Fact]
+    public void Backtrack_3()
+    {
+        UseBSWriterThenReader(
+            writer =>
+            {
+                WriteString("Hello, World!", writer);
+                writer.WriteBits(0, 8);
+            },
+            reader =>
+            {
+                // read 4 bytes
+                for (int i = 0; i < 4; i++)
+                    _ = reader.ReadByte();
+                // go to byte 2
+                reader.Backtrack(2);
+                // make sure it's valid
+                Assert.Equal('e', reader.ReadByte());
+            });
+    }
+
     private static void WriteString(string str, BitStreamWriter writer)
     {
         foreach (char c in str)
