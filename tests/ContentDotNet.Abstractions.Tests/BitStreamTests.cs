@@ -545,7 +545,7 @@ public class BitStreamTests
                     _ = reader.ReadByte();
                 // go to byte 2
                 var state = reader.GetState();
-                state.ByteOffset -= 2;
+                state.ByteOffset = 2;
                 state.BitPosition = 0;
                 reader.GoTo(state);
                 // make sure it's valid
