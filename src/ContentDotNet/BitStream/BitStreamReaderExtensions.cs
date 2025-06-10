@@ -68,7 +68,7 @@ public static class BitStreamReaderExtensions
     {
         ReaderState state = reader.GetState();
         state.BitPosition = 0;
-        state.ByteOffset -= by;
+        state.ByteOffset -= by + 1;
         reader.GoTo(state);
     }
 }
