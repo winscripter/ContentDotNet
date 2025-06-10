@@ -3,24 +3,24 @@
 /// <summary>
 ///   Reader State allows one to track the bitstream reader's location.
 /// </summary>
-public readonly struct ReaderState : IEquatable<ReaderState>
+public struct ReaderState : IEquatable<ReaderState>
 {
     public static readonly ReaderState Blank = new(-1, 255, 255);
 
     /// <summary>
     ///   Byte offset.
     /// </summary>
-    public readonly long ByteOffset;
+    public long ByteOffset;
 
     /// <summary>
     ///   Bit position.
     /// </summary>
-    public readonly byte BitPosition;
+    public byte BitPosition;
 
     /// <summary>
     ///   Current byte.
     /// </summary>
-    public readonly byte CurrentByte;
+    public byte CurrentByte;
 
     public ReaderState(long byteOffset, byte bitPosition, byte currentByte)
     {
