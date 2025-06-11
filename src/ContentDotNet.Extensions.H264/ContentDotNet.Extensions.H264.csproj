@@ -54,6 +54,7 @@
 
   <ItemGroup>
     <InternalsVisibleTo Include="ContentDotNet.Extensions.H264.Tests" />
+    <InternalsVisibleTo Include="Dump264" />
   </ItemGroup>
 
 </Project>

@@ -207,8 +207,9 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
     /// </summary>
     /// <param name="reader">Bitstream reader where the PPS is read from.</param>
     /// <param name="sps">SPS, required for PPS parsing.</param>
+    /// <param name="nalLength">Number of bytes in NAL Unit + RBSP</param>
     /// <returns>PPS, parsed from the bitstream.</returns>
-    public static PictureParameterSet Read(BitStreamReader reader, SequenceParameterSet sps)
+    public static PictureParameterSet Read(BitStreamReader reader, long nalLength, SequenceParameterSet sps)
     {
         uint spsId = reader.ReadUE();
         uint ppsId = reader.ReadUE();
@@ -282,7 +283,7 @@ public struct PictureParameterSet : IParameterSet, IEquatable<PictureParameterSe
         constrainedIntraPredFlag = reader.ReadBit();
         redundantPicCntPresentFlag = reader.ReadBit();
 
-        if (Util264.MoreRbspData(reader))
+        if (Util264.MoreRbspData(reader, nalLength))
         {
             transform8x8ModeFlag = reader.ReadBit();
             picScalingMatrixPresentFlag = reader.ReadBit();

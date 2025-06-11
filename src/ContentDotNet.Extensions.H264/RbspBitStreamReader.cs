@@ -104,7 +104,7 @@ public sealed class RbspBitStreamReader : BitStreamReader
     public override int ReadSE()
     {
         uint codeNum = ReadUE();
-        int val = (int)(codeNum + 1 >> 1);
+        int val = (int)((codeNum + 1) >> 1);
         return (codeNum & 1) == 0 ? -val : val;
     }
 }

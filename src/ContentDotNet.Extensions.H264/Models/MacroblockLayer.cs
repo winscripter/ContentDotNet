@@ -5,7 +5,7 @@ using ContentDotNet.Extensions.H26x;
 using ContentDotNet.Primitives;
 using ContentDotNet.Containers;
 using static ContentDotNet.Extensions.H264.SliceTypes;
-using System.Reflection.PortableExecutable;
+using ContentDotNet.Extensions.H264.Cabac;
 
 namespace ContentDotNet.Extensions.H264.Models;
 
@@ -85,7 +85,7 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
     }
 
 #pragma warning disable
-    public static MacroblockLayer Read(BitStreamReader reader, bool transform8x8ModeFlag, EntropyCodingMode codingMode, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, MacroblockSizeChroma sizes, int chromaArrayType, GeneralSliceType sliceType, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool mbaffFrameFlag, bool fieldPicFlag, bool direct8x8InferenceFlag, NalUnit nalu, DerivationContext dc, IMacroblockUtility util, ResidualMode mode, bool constrainedIntraPredFlag, int subWidthC, int subHeightC)
+    public static MacroblockLayer Read(BitStreamReader reader, CabacManager? cabac, bool transform8x8ModeFlag, EntropyCodingMode codingMode, uint bitDepthLumaMinus8, uint bitDepthChromaMinus8, MacroblockSizeChroma sizes, int chromaArrayType, GeneralSliceType sliceType, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool mbaffFrameFlag, bool fieldPicFlag, bool direct8x8InferenceFlag, NalUnit nalu, DerivationContext dc, IMacroblockUtility util, ResidualMode mode, bool constrainedIntraPredFlag, int subWidthC, int subHeightC)
 #pragma warning restore
     {
         Container256UInt32 pcmLuma = new();
@@ -93,7 +93,7 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
         SubMacroblockPrediction? subMbPrediction = null;
         MacroblockPrediction? mbPrediction = null;
 
-        uint mbType = codingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)reader.ReadAE();
+        uint mbType = codingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)cabac!.ParseMbType();
 
         bool transformSize8x8Flag = false;
         int codedBlockPattern = 0;
@@ -120,7 +120,7 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
                 Util264.MbPartPredMode((int)mbType, 0, false, sliceType) != Intra_16x16 &&
                 Util264.NumMbPart((int)mbType, sliceType) == 4)
             {
-                subMbPrediction = Models.SubMacroblockPrediction.Read(reader, mbaffFrameFlag, sliceType, codingMode, (int)mbType, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag);
+                subMbPrediction = Models.SubMacroblockPrediction.Read(reader, cabac, mbaffFrameFlag, sliceType, codingMode, (int)mbType, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag);
                 for (int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++)
                 {
                     if (subMbPrediction.Value.SubMbType[mbPartIdx] != B_Direct_8x8)
@@ -137,13 +137,13 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
             else
             {
                 if (transform8x8ModeFlag && mbType == I_NxN)
-                    transformSize8x8Flag = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(reader.ReadAE());
-                mbPrediction = MacroblockPrediction.Read(reader, (int)mbType, mbaffFrameFlag, codingMode, sliceType, transformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
+                    transformSize8x8Flag = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(cabac!.ParseTransformSize8x8Flag());
+                mbPrediction = MacroblockPrediction.Read(reader, cabac, (int)mbType, mbaffFrameFlag, codingMode, sliceType, transformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
             }
 
             if (Util264.MbPartPredMode((int)mbType, 0, transformSize8x8Flag, sliceType) != Intra_16x16)
             {
-                codedBlockPattern = codingMode == EntropyCodingMode.Cavlc ? reader.ReadME() : reader.ReadAE();
+                codedBlockPattern = codingMode == EntropyCodingMode.Cavlc ? reader.ReadME() : cabac!.ParseCodedBlockPattern();
 
                 CodedBlockPatternLuma = codedBlockPattern % 16;
                 CodedBlockPatternChroma = codedBlockPattern / 16;
@@ -151,14 +151,14 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
                 if (CodedBlockPatternLuma > 0 && transformSize8x8Flag && mbType != I_NxN &&
                     noSubMbPartSizeLessThan8x8Flag && (mbType != B_Direct_16x16 || direct8x8InferenceFlag))
                 {
-                    transformSize8x8Flag = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(reader.ReadAE());
+                    transformSize8x8Flag = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(cabac!.ParseTransformSize8x8Flag());
                 }
             }
 
             if (CodedBlockPatternLuma > 0 || CodedBlockPatternChroma > 0 ||
                 Util264.MbPartPredMode((int)mbType, 0, transformSize8x8Flag, sliceType) == Intra_16x16)
             {
-                mbQpDelta = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : reader.ReadAE();
+                mbQpDelta = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : cabac!.ParseMbQpDelta();
                 int z = 0;
                 residual = Residual.Read(reader, codingMode, chromaArrayType, transformSize8x8Flag, (int)mbType, CodedBlockPatternLuma, sliceType, 0, 15, nalu, dc, ref z, ref z, ref z, 0, util, mode, constrainedIntraPredFlag, subWidthC, subHeightC, CodedBlockPatternChroma);
             }

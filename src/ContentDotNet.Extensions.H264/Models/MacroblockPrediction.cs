@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Containers;
+using ContentDotNet.Extensions.H264.Cabac;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H26x;
 using ContentDotNet.Primitives;
@@ -95,6 +96,7 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
     /// Reads the macroblock prediction data from the bitstream.
     /// </summary>
     /// <param name="reader">The <see cref="BitStreamReader"/> to read from.</param>
+    /// <param name="cabac">CABAC</param>
     /// <param name="mbType">The macroblock type.</param>
     /// <param name="mbaffFrameFlag">Indicates if MBAFF is used in the frame.</param>
     /// <param name="codingMode">The entropy coding mode (CAVLC or CABAC).</param>
@@ -106,7 +108,7 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
     /// <param name="fieldPicFlag">Indicates if the picture is a field picture.</param>
     /// <param name="chromaArrayType">The chroma array type.</param>
     /// <returns>A <see cref="MacroblockPrediction"/> instance containing the read data.</returns>
-    public static MacroblockPrediction Read(BitStreamReader reader, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
+    public static MacroblockPrediction Read(BitStreamReader reader, CabacManager? cabac, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
     {
         Container16Boolean prevIntra4x4PredModeFlag = new();
         Container16UInt32 remIntra4x4PredMode = new();
@@ -126,9 +128,9 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
             {
                 for (int luma4x4BlkIdx = 0; luma4x4BlkIdx < 16; luma4x4BlkIdx++)
                 {
-                    prevIntra4x4PredModeFlag[luma4x4BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(reader.ReadAE());
+                    prevIntra4x4PredModeFlag[luma4x4BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(cabac!.ParsePrevIntraNxNPredModeFlag());
                     if (prevIntra4x4PredModeFlag[luma4x4BlkIdx])
-                        remIntra4x4PredMode[luma4x4BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBits(3) : (uint)reader.ReadAE();
+                        remIntra4x4PredMode[luma4x4BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBits(3) : (uint)cabac!.ParseRemIntraNxNPredMode();
                 }
             }
 
@@ -136,14 +138,14 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
             {
                 for (int luma8x8BlkIdx = 0; luma8x8BlkIdx < 4; luma8x8BlkIdx++)
                 {
-                    prevIntra8x8PredModeFlag[luma8x8BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(reader.ReadAE());
+                    prevIntra8x8PredModeFlag[luma8x8BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBit() : Int32Boolean.B(cabac!.ParsePrevIntraNxNPredModeFlag());
                     if (prevIntra8x8PredModeFlag[luma8x8BlkIdx])
-                        remIntra8x8PredMode[luma8x8BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBits(3) : (uint)reader.ReadAE();
+                        remIntra8x8PredMode[luma8x8BlkIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadBits(3) : (uint)cabac!.ParseRemIntraNxNPredMode();
                 }
             }
 
             if (chromaArrayType is 1 or 2)
-                intraChromaPredMode = codingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)reader.ReadAE();
+                intraChromaPredMode = codingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)cabac!.ParseIntraChromaPredMode();
         }
         else if (Util264.MbPartPredMode(mbType, 0, transformSize8x8Flag, sliceType) != Direct)
         {
@@ -153,7 +155,7 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
                     Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType) != Pred_L1)
                 {
                     int truncatedRange = (!mbaffFrameFlag || !mbFieldDecodingFlag) ? numRefIdxL0ActiveMinus1 : (2 * numRefIdxL0ActiveMinus1 + 1);
-                    refIdxL0[mbPartIdx] = codingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)reader.ReadAE();
+                    refIdxL0[mbPartIdx] = codingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)cabac!.ParseRefIdxLX();
                 }
             }
 
@@ -163,7 +165,7 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
                     Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType) != Pred_L0)
                 {
                     int truncatedRange = (!mbaffFrameFlag || !mbFieldDecodingFlag) ? numRefIdxL1ActiveMinus1 : (2 * numRefIdxL1ActiveMinus1 + 1);
-                    refIdxL1[mbPartIdx] = codingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)reader.ReadAE();
+                    refIdxL1[mbPartIdx] = codingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)cabac!.ParseRefIdxLX();
                 }
             }
 
@@ -172,7 +174,7 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
                 if (Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType) != Pred_L1)
                 {
                     for (int compIdx = 0; compIdx < 2; compIdx++)
-                        mvdL0[mbPartIdx, 0, compIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : reader.ReadAE();
+                        mvdL0[mbPartIdx, 0, compIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : cabac!.ParseMvdL0();
                 }
             }
 
@@ -181,7 +183,7 @@ public struct MacroblockPrediction : IEquatable<MacroblockPrediction>
                 if (Util264.MbPartPredMode(mbType, mbPartIdx, transformSize8x8Flag, sliceType) != Pred_L0)
                 {
                     for (int compIdx = 0; compIdx < 2; compIdx++)
-                        mvdL1[mbPartIdx, 0, compIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : reader.ReadAE();
+                        mvdL1[mbPartIdx, 0, compIdx] = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : cabac!.ParseMvdL1();
                 }
             }
         }

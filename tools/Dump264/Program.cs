@@ -1,11 +1,30 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264;
+using ContentDotNet.Extensions.H264.Cabac;
+using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
+using System.Runtime.InteropServices;
 
 using var fs = File.OpenRead("output.h264");
 using var br = new BitStreamReader(fs);
 
-for (int i = 0; i < 3; i++)
+SequenceParameterSet globalSps = default;
+PictureParameterSet globalPps = default;
+
+PrintStructSizes();
+
+static unsafe void PrintStructSizes()
+{
+    Console.WriteLine("SPS sizes: " + sizeof(SequenceParameterSet));
+    Console.WriteLine("PPS sizes: " + sizeof(PictureParameterSet));
+    Console.WriteLine("MB Pred sizes: " + sizeof(MacroblockPrediction));
+    Console.WriteLine("Sub MB Pred sizes: " + sizeof(SubMacroblockPrediction));
+    Console.WriteLine("MB sizes: " + sizeof(MacroblockLayer));
+    Console.WriteLine("Residual sizes: " + sizeof(Residual));
+}
+
+for (int i = 0; i < 5; i++)
     DumpNalu();
 
 void DumpNalu()
@@ -15,12 +34,42 @@ void DumpNalu()
 
     long len = H264Extensions.GetNalLength(br);
 
-    if (len > 500)
+    if (len > 1000000)
         throw new InvalidOperationException("len too big");
     Console.WriteLine("L: " + len);
 
     var nal = NalUnit.Read(br, (int)len);
     Console.WriteLine("type: " + nal.NalUnitType);
+
+    if (nal.IsSps())
+    {
+        var prevState = br.GetState();
+        br.GoTo(nal.Rbsp);
+        var rbsp = new RbspBitStreamReader(br);
+        var sps = SequenceParameterSet.Read(rbsp);
+        SpsDump(sps);
+        br.GoTo(prevState);
+        globalSps = sps;
+    }
+    else if (nal.IsPps())
+    {
+        var prevState = br.GetState();
+        br.GoTo(nal.Rbsp);
+        var rbsp = new RbspBitStreamReader(br);
+        var pps = PictureParameterSet.Read(rbsp, len, globalSps);
+        PpsDump(pps);
+        br.GoTo(prevState);
+        globalPps = pps;
+    }
+    else if (nal.IsIdr())
+    {
+        var prevState = br.GetState();
+        br.GoTo(nal.Rbsp);
+        var rbsp = new RbspBitStreamReader(br);
+        var shd = SliceHeader.Read(rbsp, nal, globalSps, globalPps);
+        SliceHeaderDump(shd);
+        br.GoTo(prevState);
+    }
 }
 
 static void SpsDump(SequenceParameterSet sps)
@@ -84,4 +133,211 @@ static void PpsDump(PictureParameterSet pps)
     Console.WriteLine("transform_8x8_mode_flag: " + pps.Transform8x8ModeFlag);
     Console.WriteLine("pic_scaling_matrix_present_flag: " + pps.PicScalingMatrixPresentFlag);
     Console.WriteLine("second_chroma_qp_index_offset: " + pps.SecondChromaQpIndexOffset);
+}
+
+void SliceHeaderDump(SliceHeader shd)
+{
+    Console.WriteLine("first_mb_in_slice: " + shd.FirstMbInSlice);
+    Console.WriteLine("slice_type: " + shd.SliceType);
+    Console.WriteLine("pic_parameter_set_id: " + shd.PpsId);
+    Console.WriteLine("colour_plane_id: " + shd.ColorPlaneId);
+    Console.WriteLine("frame_num: " + shd.FrameNum);
+    Console.WriteLine("field_pic_flag: " + shd.FieldPicFlag);
+    Console.WriteLine("bottom_field_flag: " + shd.BottomFieldFlag);
+    Console.WriteLine("idr_pic_id: " + shd.IDRPicId);
+    Console.WriteLine("pic_order_cnt_lsb: " + shd.PicOrderCntLsb);
+    Console.WriteLine("delta_pic_order_cnt_bottom: " + shd.DeltaPicOrderCntBottom);
+    Console.WriteLine("delta_pic_order_cnt[0]: " + shd.DeltaPicOrderCnt.Item1);
+    Console.WriteLine("delta_pic_order_cnt[1]: " + shd.DeltaPicOrderCnt.Item2);
+    Console.WriteLine("redundant_pic_cnt: " + shd.RedundantPicCnt);
+    Console.WriteLine("direct_spatial_mv_pred_flag: " + shd.DirectSpatialMvPredFlag);
+    Console.WriteLine("num_ref_idx_active_override_flag: " + shd.NumRefIdxActiveOverrideFlag);
+    Console.WriteLine("num_ref_idx_l0_active_minus1: " + shd.NumRefIdxL0ActiveMinus1);
+    Console.WriteLine("num_ref_idx_l1_active_minus1: " + shd.NumRefIdxL1ActiveMinus1);
+    Console.WriteLine("cabac_init_idc: " + shd.CabacInitIdc);
+    Console.WriteLine("slice_qp_delta: " + shd.SliceQpDelta);
+    Console.WriteLine("sp_for_switch_flag: " + shd.SpForSwitchFlag);
+    Console.WriteLine("slice_qs_delta: " + shd.SliceQsDelta);
+    Console.WriteLine("disable_deblocking_filter_idc: " + shd.DisableDeblockingFilterIdc);
+    Console.WriteLine("slice_alpha_c0_offset_div2: " + shd.SliceAlphaC0OffsetDiv2);
+    Console.WriteLine("slice_beta_offset_div2: " + shd.SliceBetaOffsetDiv2);
+    Console.WriteLine("slice_group_change_cycle: " + shd.SliceGroupChangeCycle);
+}
+
+internal sealed class BogusMacroblockUtil : IMacroblockUtility
+{
+    public bool AllAcResidualTransformsAreZeroDueToCodedBlockPatternsBeingZero(int address)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Get16x16LumaBlock(int luma16x16BlkIdx, ContainerMatrix16x16 output)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Get4x4LumaBlock(int luma4x4BlkIdx, ContainerMatrix4x4 output)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void Get8x8LumaBlock(int luma8x8BlkIdx, ContainerMatrix8x8 output)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void GetIntra16x16PredMode(int mbAddr, Span<int> output)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void GetIntra4x4PredMode(int mbAddr, Span<int> output)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void GetIntra8x8PredMode(int mbAddr, Span<int> output)
+    {
+        throw new NotImplementedException();
+    }
+
+    public MacroblockLayer GetMacroblock(int address)
+    {
+        throw new NotImplementedException();
+    }
+
+    public MacroblockLayer? GetMacroblockToTheBottom(int address)
+    {
+        throw new NotImplementedException();
+    }
+
+    public MacroblockLayer? GetMacroblockToTheLeft(int address)
+    {
+        throw new NotImplementedException();
+    }
+
+    public MacroblockLayer? GetMacroblockToTheRight(int address)
+    {
+        throw new NotImplementedException();
+    }
+
+    public MacroblockLayer? GetMacroblockToTheTop(int address)
+    {
+        throw new NotImplementedException();
+    }
+
+    public uint GetMbType(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ContainerMatrix16x16 GetPixels(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ContainerMatrix16x16? GetPixelsToBottom(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ContainerMatrix16x16? GetPixelsToLeft(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ContainerMatrix16x16? GetPixelsToRight(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public ContainerMatrix16x16? GetPixelsToTop(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public uint GetSubMbType(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public int GetTotalCoefficient(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasPixels(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasPixelsToBottom(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasPixelsToLeft(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasPixelsToRight(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool HasPixelsToTop(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsCodedWithInter(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsCodedWithIntra(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsCodedWithIntra16x16(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsCodedWithIntra4x4(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsCodedWithIntra8x8(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsFieldMacroblock(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsFrameMacroblock(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsMacroblockOfTypeSi(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public bool IsMbSkipFlagForMacroblock(int mbAddr)
+    {
+        throw new NotImplementedException();
+    }
+
+    public void SetPixels(int mbAddr, ContainerMatrix16x16 pixels)
+    {
+        throw new NotImplementedException();
+    }
 }

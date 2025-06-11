@@ -61,7 +61,7 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
     /// <summary>
     /// The RBSP.
     /// </summary>
-    public BitStreamReader Rbsp;
+    public ReaderState Rbsp;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="NalUnit"/> struct.
@@ -72,7 +72,7 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
     /// <param name="avc3DExtensionFlag">Indicates if the AVC 3D extension is present.</param>
     /// <param name="extension">The optional NAL unit header extension.</param>
     /// <param name="rbsp">The RBSP</param>
-    public NalUnit(uint nalRefIdc, uint nalUnitType, bool svcExtensionFlag, bool avc3DExtensionFlag, INalUnitHeaderExtension? extension, BitStreamReader rbsp)
+    public NalUnit(uint nalRefIdc, uint nalUnitType, bool svcExtensionFlag, bool avc3DExtensionFlag, INalUnitHeaderExtension? extension, ReaderState rbsp)
     {
         NalRefIdc = nalRefIdc;
         NalUnitType = nalUnitType;
@@ -122,14 +122,14 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
             }
         }
 
-        var rbsp = new MemoryStream();
+        var rbsp = reader.GetState();
 
         for (int i = nuhBytes; i < numOfBytesInNalUnit; i++)
         {
             if (i + 2 < numOfBytesInNalUnit && reader.PeekBits(24) == 0x000003)
             {
-                rbsp.WriteByte((byte)reader.ReadBits(8));
-                rbsp.WriteByte((byte)reader.ReadBits(8));
+                _ = (byte)reader.ReadBits(8);
+                _ = (byte)reader.ReadBits(8);
                 i += 2;
                 uint ep3b = reader.ReadBits(8);
                 if (ep3b != 0x03)
@@ -137,11 +137,9 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
             }
             else
             {
-                rbsp.WriteByte((byte)reader.ReadBits(8));
+                _ = (byte)reader.ReadBits(8);
             }
         }
-
-        rbsp.Position = 0;
 
         return new NalUnit(
             nalRefIdc,
@@ -149,7 +147,7 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
             svcExtensionFlag,
             avc3DExtensionFlag,
             nuhExt,
-            new BitStreamReader(rbsp)
+            rbsp
         );
     }
 
@@ -277,7 +275,6 @@ public sealed class NalUnit : IEquatable<NalUnit>, IDisposable
     /// </summary>
     public void Dispose()
     {
-        this.Rbsp.Dispose();
         GC.SuppressFinalize(this);
     }
 

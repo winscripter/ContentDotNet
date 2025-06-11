@@ -52,7 +52,7 @@ internal partial class IntraInterDecoder
 
         private SequenceParameterSet sps = default;
         private PictureParameterSet pps = default;
-        private NalUnit nalu = new(0, 0, false, false, null, new BitStreamReader(Stream.Null));
+        private NalUnit nalu = new(0, 0, false, false, null, default);
         private SliceHeader sliceHeader = default;
 
         private PocContext pocCtx = default;

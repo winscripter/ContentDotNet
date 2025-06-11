@@ -165,8 +165,8 @@ internal sealed class H264Codec : IVideoCodec
                     }
                     else if (nalu.IsPps())
                     {
-                        PictureParameterSet pps = PictureParameterSet.Read(_bitstream, spsLast);
-                        ppsLast = pps;
+                        //PictureParameterSet pps = PictureParameterSet.Read(_bitstream, spsLast);
+                        //ppsLast = pps;
                     }
                 }
                 catch (InfiniteLoopException)

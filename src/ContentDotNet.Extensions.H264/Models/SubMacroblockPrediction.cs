@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Containers;
+using ContentDotNet.Extensions.H264.Cabac;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H26x;
 using static ContentDotNet.Extensions.H264.SliceTypes;
@@ -57,6 +58,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
     ///   Reads the sub macroblock prediction from the bitstream.
     /// </summary>
     /// <param name="reader"></param>
+    /// <param name="cabac"></param>
     /// <param name="mbaffFrameFlag"></param>
     /// <param name="sliceType"></param>
     /// <param name="entropyCodingMode"></param>
@@ -66,7 +68,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
     /// <param name="mbFieldDecodingFlag"></param>
     /// <param name="fieldPicFlag"></param>
     /// <returns>Sub macroblock prediction</returns>
-    public static SubMacroblockPrediction Read(BitStreamReader reader, bool mbaffFrameFlag, GeneralSliceType sliceType, EntropyCodingMode entropyCodingMode, int mbType, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag)
+    public static SubMacroblockPrediction Read(BitStreamReader reader, CabacManager? cabac, bool mbaffFrameFlag, GeneralSliceType sliceType, EntropyCodingMode entropyCodingMode, int mbType, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag)
     {
         Container4UInt32 subMbType = new();
         Container4UInt32 refIdxL0 = new();
@@ -75,7 +77,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
         ContainerMatrix4x4x2 mvdL1 = new();
 
         for (int i = 0; i < 4; i++)
-            subMbType[i] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)reader.ReadAE();
+            subMbType[i] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadUE() : (uint)cabac!.ParseSubMbType();
 
         for (int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++)
         {
@@ -86,7 +88,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
             {
                 int truncatedRange = (!mbaffFrameFlag || !mbFieldDecodingFlag) ? numRefIdxL0ActiveMinus1 : (2 * numRefIdxL0ActiveMinus1 + 1);
                 refIdxL0[mbPartIdx] =
-                    entropyCodingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)reader.ReadAE();
+                    entropyCodingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)cabac!.ParseRefIdxLX();
             }
         }
 
@@ -98,7 +100,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
             {
                 int truncatedRange = (!mbaffFrameFlag || !mbFieldDecodingFlag) ? numRefIdxL1ActiveMinus1 : (2 * numRefIdxL1ActiveMinus1 + 1);
                 refIdxL1[mbPartIdx] =
-                    entropyCodingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)reader.ReadAE();
+                    entropyCodingMode == EntropyCodingMode.Cavlc ? (uint)reader.ReadTE(truncatedRange) : (uint)cabac!.ParseRefIdxLX();
             }
         }
 
@@ -109,7 +111,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
                 for (int subMbPartIdx = 0; subMbPartIdx < Util264.NumSubMbPart((int)subMbType[mbPartIdx], sliceType); subMbPartIdx++)
                 {
                     for (int compIdx = 0; compIdx < 2; compIdx++)
-                        mvdL0[mbPartIdx, subMbPartIdx, compIdx] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : reader.ReadAE();
+                        mvdL0[mbPartIdx, subMbPartIdx, compIdx] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : cabac!.ParseMvdL0();
                 }
             }
         }
@@ -121,7 +123,7 @@ public struct SubMacroblockPrediction : IEquatable<SubMacroblockPrediction>
                 for (int subMbPartIdx = 0; subMbPartIdx < Util264.NumSubMbPart((int)subMbType[mbPartIdx], sliceType); subMbPartIdx++)
                 {
                     for (int compIdx = 0; compIdx < 2; compIdx++)
-                        mvdL1[mbPartIdx, subMbPartIdx, compIdx] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : reader.ReadAE();
+                        mvdL1[mbPartIdx, subMbPartIdx, compIdx] = entropyCodingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : cabac!.ParseMvdL1();
                 }
             }
         }

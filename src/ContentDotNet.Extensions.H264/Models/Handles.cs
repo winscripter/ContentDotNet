@@ -294,14 +294,15 @@ public readonly struct PictureParameterSetHandle : IEquatable<PictureParameterSe
     /// Retrieves the Picture Parameter Set using the specified reader and Sequence Parameter Set.
     /// </summary>
     /// <param name="reader">The bit stream reader.</param>
+    /// <param name="len">Number of bytes in the NAL Unit + RBSP</param>
     /// <param name="sequenceParameterSet">The sequence parameter set.</param>
     /// <returns>The retrieved <see cref="PictureParameterSet"/>.</returns>
-    public PictureParameterSet Get(BitStreamReader reader, SequenceParameterSet sequenceParameterSet)
+    public PictureParameterSet Get(BitStreamReader reader, long len, SequenceParameterSet sequenceParameterSet)
     {
         ReaderState prev = reader.GetState();
         reader.GoTo(ReaderState);
 
-        var result = PictureParameterSet.Read(reader, sequenceParameterSet);
+        var result = PictureParameterSet.Read(reader, len, sequenceParameterSet);
 
         reader.GoTo(prev);
 

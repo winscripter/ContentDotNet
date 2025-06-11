@@ -16,8 +16,8 @@ public static class H264Extensions
     ///   Is the given NAL unit an IDR NAL unit?
     /// </summary>
     /// <param name="nal">NAL unit</param>
-    /// <returns>A boolean that indicates whether its type is 6.</returns>
-    public static bool IsIdr(this NalUnit nal) => nal.NalUnitType == 6;
+    /// <returns>A boolean that indicates whether its type is 5.</returns>
+    public static bool IsIdr(this NalUnit nal) => nal.NalUnitType == 5;
 
     /// <summary>
     ///   Is the given NAL unit an SPS NAL unit?
@@ -229,6 +229,8 @@ public static class H264Extensions
             return reader.BaseStream.Length - reader.BaseStream.Position;
         }
 
+        reader.Backtrack(3);
+
         ReaderState activeState = reader.GetState();
         long result = activeState.ByteOffset - originalState.ByteOffset;
 
@@ -258,4 +260,13 @@ public static class H264Extensions
 
         throw new InvalidOperationException("Invalid slice type");
     }
+
+    /// <summary>
+    ///   Returns the <c>MbaffFrameFlag</c> symbol.
+    /// </summary>
+    /// <param name="sliceHeader"></param>
+    /// <param name="sps"></param>
+    /// <returns><c>MbaffFrameFlag</c></returns>
+    public static bool GetMbaffFrameFlag(this SliceHeader sliceHeader, SequenceParameterSet sps) =>
+        sps.MbAdaptiveFrameFieldFlag && !sliceHeader.FieldPicFlag;
 }
