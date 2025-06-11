@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Containers;
+using ContentDotNet.Extensions.H264.Cabac;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using System.Diagnostics.CodeAnalysis;
 
@@ -1139,12 +1140,12 @@ public readonly struct SubMacroblockPredictionHandle : IEquatable<SubMacroblockP
     /// <param name="reader">The bit stream reader.</param>
     /// <returns>The retrieved <see cref="SubMacroblockPrediction"/>.</returns>
 #pragma warning disable CS1573
-    public SubMacroblockPrediction Get(BitStreamReader reader, EntropyCodingMode entropyCodingMode, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, GeneralSliceType sliceType, int mbType, bool mbaffFrameFlag)
+    public SubMacroblockPrediction Get(BitStreamReader reader, CabacManager? cabac, EntropyCodingMode entropyCodingMode, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, GeneralSliceType sliceType, int mbType, bool mbaffFrameFlag)
     {
         ReaderState prev = reader.GetState();
         reader.GoTo(ReaderState);
 
-        var result = SubMacroblockPrediction.Read(reader, mbaffFrameFlag, sliceType, entropyCodingMode, mbType, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag);
+        var result = SubMacroblockPrediction.Read(reader, cabac, mbaffFrameFlag, sliceType, entropyCodingMode, mbType, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag);
 
         reader.GoTo(prev);
 
@@ -1216,6 +1217,7 @@ public readonly struct MacroblockPredictionHandle : IEquatable<MacroblockPredict
     /// Retrieves the Macroblock prediction using the specified reader.
     /// </summary>
     /// <param name="reader">The bit stream reader.</param>
+    /// <param name="cabac">CABAC</param>
     /// <param name="mbType">The macroblock type.</param>
     /// <param name="mbaffFrameFlag">Indicates if MBAFF is used in the frame.</param>
     /// <param name="codingMode">The entropy coding mode (CAVLC or CABAC).</param>
@@ -1227,12 +1229,12 @@ public readonly struct MacroblockPredictionHandle : IEquatable<MacroblockPredict
     /// <param name="fieldPicFlag">Indicates if the picture is a field picture.</param>
     /// <param name="chromaArrayType">The chroma array type.</param>
     /// <returns>The retrieved <see cref="MacroblockPrediction"/>.</returns>
-    public MacroblockPrediction Get(BitStreamReader reader, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
+    public MacroblockPrediction Get(BitStreamReader reader, CabacManager? cabac, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
     {
         ReaderState prev = reader.GetState();
         reader.GoTo(ReaderState);
 
-        var result = MacroblockPrediction.Read(reader, mbType, mbaffFrameFlag, codingMode, sliceType, transformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
+        var result = MacroblockPrediction.Read(reader, cabac, mbType, mbaffFrameFlag, codingMode, sliceType, transformSize8x8Flag, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag, chromaArrayType);
 
         reader.GoTo(prev);
 
