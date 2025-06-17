@@ -11,4 +11,16 @@ public readonly record struct MacroblockSizeChroma(int Width, int Height)
     ///   A singleton macroblock with (0, 0) as value.
     /// </summary>
     public static readonly MacroblockSizeChroma Zero = new(0, 0);
+
+    internal static MacroblockSizeChroma From(uint chromaFormatIdc)
+    {
+        return chromaFormatIdc switch
+        {
+            0 => Zero,
+            1 => new MacroblockSizeChroma(8, 8),
+            2 => new MacroblockSizeChroma(8, 16),
+            3 => new MacroblockSizeChroma(16, 16),
+            _ => throw new InvalidOperationException("Invalid chroma_format_idc")
+        };
+    }
 }

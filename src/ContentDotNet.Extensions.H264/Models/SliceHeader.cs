@@ -375,8 +375,7 @@ public struct SliceHeader : IEquatable<SliceHeader>
     /// <param name="nalu">Current NAL unit</param>
     /// <param name="sps">Last SPS</param>
     /// <param name="pps">Last PPS</param>
-    /// <param name="options">Options for writing this slice header</param>
-    public readonly void Write(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps, SliceHeaderWriteOptions options)
+    public readonly void Write(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps)
     {
         writer.WriteUE(FirstMbInSlice);
         writer.WriteUE(SliceType);
@@ -429,16 +428,16 @@ public struct SliceHeader : IEquatable<SliceHeader>
         }
 
         if (nalu.NalUnitType is 20 or 21)
-            this.RefPicListMvcModification!.Value.Write(writer, (int)SliceType, options.RefPicListMvcModificationL0, options.RefPicListMvcModificationL1);
+            this.RefPicListMvcModification!.Value.Write(writer, (int)SliceType);
         else
-            this.RefPicListModification!.Value.Write(writer, options.RefPicListModificationEntries, 0u);
+            this.RefPicListModification!.Value.Write(writer, 0u);
 
         if ((pps.WeightedPredFlag && (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType))) ||
             (pps.WeightedBiPredIdc == 1 && SliceTypes.IsB(SliceType)))
             this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
 
         if (nalu.NalRefIdc != 0)
-            this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr(), options.DecRefPicMarkingEntries);
+            this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr());
 
         if (pps.EntropyCodingModeFlag && !SliceTypes.IsI(SliceType) && !SliceTypes.IsSI(SliceType))
             writer.WriteUE(CabacInitIdc);
@@ -474,107 +473,7 @@ public struct SliceHeader : IEquatable<SliceHeader>
     /// <param name="nalu">Current NAL unit</param>
     /// <param name="sps">Last SPS</param>
     /// <param name="pps">Last PPS</param>
-    /// <param name="options">Options for writing this slice header</param>
-    public readonly void Write(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps, MemorySliceHeaderWriteOptions options)
-    {
-        writer.WriteUE(FirstMbInSlice);
-        writer.WriteUE(SliceType);
-        writer.WriteUE(PpsId);
-
-        if (sps.SeparateColourPlaneFlag)
-            writer.WriteBits(ColorPlaneId, 2);
-
-        writer.WriteBits(FrameNum, (uint)Math.Ceiling(Math.Log2(sps.Log2MaxFrameNumMinus4 + 4u)));
-
-        if (!sps.FrameMbsOnlyFlag)
-        {
-            writer.WriteBit(FieldPicFlag);
-            if (FieldPicFlag)
-                writer.WriteBit(BottomFieldFlag);
-        }
-
-        if (nalu.IsIdr())
-            writer.WriteUE(IDRPicId);
-
-        if (sps.PicOrderCntType == 0u)
-        {
-            writer.WriteBits(PicOrderCntLsb, (uint)Math.Ceiling(Math.Log2(sps.Log2MaxFrameNumMinus4 + 4u)));
-            if (pps.BottomFieldPicOrderInFramePresentFlag && FieldPicFlag)
-                writer.WriteSE(DeltaPicOrderCntBottom);
-        }
-
-        if (sps.PicOrderCntType == 1 && !sps.DeltaPicOrderAlwaysZeroFlag)
-        {
-            writer.WriteSE(DeltaPicOrderCnt.Item1);
-            if (pps.BottomFieldPicOrderInFramePresentFlag && FieldPicFlag)
-                writer.WriteSE(DeltaPicOrderCnt.Item2);
-        }
-
-        if (pps.RedundantPicCntPresentFlag)
-            writer.WriteUE(RedundantPicCnt);
-
-        if (SliceTypes.IsB(SliceType))
-            writer.WriteBit(DirectSpatialMvPredFlag);
-
-        if (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType) || SliceTypes.IsB(SliceType))
-        {
-            writer.WriteBit(NumRefIdxActiveOverrideFlag);
-            if (NumRefIdxActiveOverrideFlag)
-            {
-                writer.WriteUE(NumRefIdxL0ActiveMinus1);
-                if (SliceTypes.IsB(SliceType))
-                    writer.WriteUE(NumRefIdxL1ActiveMinus1);
-            }
-        }
-
-        if (nalu.NalUnitType is 20 or 21)
-            this.RefPicListMvcModification!.Value.Write(writer, (int)SliceType, options.RefPicListMvcModificationL0.Span, options.RefPicListMvcModificationL1.Span);
-        else
-            this.RefPicListModification!.Value.Write(writer, options.RefPicListModificationEntries.Span, 0u);
-
-        if ((pps.WeightedPredFlag && (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType))) ||
-            (pps.WeightedBiPredIdc == 1 && SliceTypes.IsB(SliceType)))
-            this.PredWeightTable!.Value.Write(writer, (int)sps.GetChromaArrayType(), (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
-
-        if (nalu.NalRefIdc != 0)
-            this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr(), options.DecRefPicMarkingEntries.Span);
-
-        if (pps.EntropyCodingModeFlag && !SliceTypes.IsI(SliceType) && !SliceTypes.IsSI(SliceType))
-            writer.WriteUE(CabacInitIdc);
-
-        writer.WriteSE(SliceQpDelta);
-        if (SliceTypes.IsSP(SliceType) || SliceTypes.IsSI(SliceType))
-        {
-            if (SliceTypes.IsSP(SliceType))
-                writer.WriteBit(SpForSwitchFlag);
-            writer.WriteSE(SliceQsDelta);
-        }
-
-        uint disableDeblockingFilterIdc = 0u;
-        if (pps.DeblockingFilterControlPresentFlag)
-        {
-            writer.WriteUE(DisableDeblockingFilterIdc);
-            if (disableDeblockingFilterIdc != 1u)
-            {
-                writer.WriteSE(SliceAlphaC0OffsetDiv2);
-                writer.WriteSE(SliceBetaOffsetDiv2);
-            }
-        }
-
-        if (pps.NumSliceGroupsMinus1 > 0 &&
-            pps.SliceGroupMapType is >= 3 and <= 5)
-            writer.WriteBits(SliceGroupChangeCycle, (uint)Math.Ceiling(Math.Log2(pps.PicSizeInMapUnitsMinus1 + 1u / pps.SliceGroupChangeRateMinus1 + 1u)));
-    }
-
-    /// <summary>
-    ///   Writes this slice header to the given bitstream.
-    /// </summary>
-    /// <param name="writer">Bitstream writer where the slice header is written to.</param>
-    /// <param name="nalu">Current NAL unit</param>
-    /// <param name="sps">Last SPS</param>
-    /// <param name="pps">Last PPS</param>
-    /// <param name="options">Options for writing this slice header</param>
-    public readonly async Task WriteAsync(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps, MemorySliceHeaderWriteOptions options)
+    public readonly async Task WriteAsync(BitStreamWriter writer, NalUnit nalu, SequenceParameterSet sps, PictureParameterSet pps)
     {
         await writer.WriteUEAsync(FirstMbInSlice);
         await writer.WriteUEAsync(SliceType);
@@ -627,16 +526,16 @@ public struct SliceHeader : IEquatable<SliceHeader>
         }
 
         if (nalu.NalUnitType is 20 or 21)
-            this.RefPicListMvcModification!.Value.Write(writer, (int)SliceType, options.RefPicListMvcModificationL0.Span, options.RefPicListMvcModificationL1.Span);
+            this.RefPicListMvcModification!.Value.Write(writer, (int)SliceType);
         else
-            this.RefPicListModification!.Value.Write(writer, options.RefPicListModificationEntries.Span, 0u);
+            this.RefPicListModification!.Value.Write(writer, 0u);
 
         if ((pps.WeightedPredFlag && (SliceTypes.IsP(SliceType) || SliceTypes.IsSP(SliceType))) ||
             (pps.WeightedBiPredIdc == 1 && SliceTypes.IsB(SliceType)))
             await this.PredWeightTable!.Value.WriteAsync(writer, (int)sps.GetChromaArrayType(), (int)SliceType, (int)NumRefIdxL0ActiveMinus1, (int)NumRefIdxL1ActiveMinus1);
 
         if (nalu.NalRefIdc != 0)
-            this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr(), options.DecRefPicMarkingEntries.Span);
+            this.DecRefPicMarking!.Value.Write(writer, nalu.IsIdr());
 
         if (pps.EntropyCodingModeFlag && !SliceTypes.IsI(SliceType) && !SliceTypes.IsSI(SliceType))
             await writer.WriteUEAsync(CabacInitIdc);

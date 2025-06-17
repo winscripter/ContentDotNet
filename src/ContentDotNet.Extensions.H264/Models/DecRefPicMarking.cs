@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Containers;
 
 namespace ContentDotNet.Extensions.H264.Models;
 
@@ -191,9 +192,9 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
     public bool AdaptiveRefPicMarkingModeFlag;
 
     /// <summary>
-    /// The offset in the bitstream where the entries are located.
+    /// The entries.
     /// </summary>
-    public ReaderState EntriesOffset;
+    public Container32DecRefPicMarkingEntry Entries;
 
     /// <summary>
     /// The number of entries in the marking process.
@@ -206,38 +207,15 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
     /// <param name="noOutputOfPriorPicsFlag">Indicates whether prior pictures should not be output.</param>
     /// <param name="longTermReferenceFlag">Indicates whether the current picture is a long-term reference picture.</param>
     /// <param name="adaptiveRefPicMarkingModeFlag">Indicates whether adaptive reference picture marking mode is enabled.</param>
-    /// <param name="entriesOffset">The offset in the bitstream where the entries are located.</param>
+    /// <param name="entriesOffset">The entries.</param>
     /// <param name="entryCount">The number of entries in the marking process.</param>
-    public DecRefPicMarking(bool noOutputOfPriorPicsFlag, bool longTermReferenceFlag, bool adaptiveRefPicMarkingModeFlag, ReaderState entriesOffset, int entryCount)
+    public DecRefPicMarking(bool noOutputOfPriorPicsFlag, bool longTermReferenceFlag, bool adaptiveRefPicMarkingModeFlag, Container32DecRefPicMarkingEntry entriesOffset, int entryCount)
     {
         NoOutputOfPriorPicsFlag = noOutputOfPriorPicsFlag;
         LongTermReferenceFlag = longTermReferenceFlag;
         AdaptiveRefPicMarkingModeFlag = adaptiveRefPicMarkingModeFlag;
-        EntriesOffset = entriesOffset;
+        Entries = entriesOffset;
         EntryCount = entryCount;
-    }
-
-    /// <summary>
-    /// Retrieves a specific entry from the marking process.
-    /// </summary>
-    /// <param name="reader">The bitstream reader.</param>
-    /// <param name="index">The index of the entry to retrieve.</param>
-    /// <returns>The <see cref="DecRefPicMarkingEntry"/> at the specified index.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
-    public readonly DecRefPicMarkingEntry GetEntry(BitStreamReader reader, int index)
-    {
-        if (index + 1 > this.EntryCount)
-            throw new ArgumentOutOfRangeException(nameof(index));
-
-        ReaderState prev = reader.GetState();
-        reader.GoTo(this.EntriesOffset);
-
-        DecRefPicMarkingEntry lastEntry = new();
-        for (int i = 0; i < index; i++)
-            lastEntry = DecRefPicMarkingEntry.Read(reader);
-
-        reader.GoTo(prev);
-        return lastEntry;
     }
 
     /// <summary>
@@ -252,12 +230,12 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
         {
             bool noOutputOfPriorPicsFlag = reader.ReadBit();
             bool longTermReferenceFlag = reader.ReadBit();
-            return new DecRefPicMarking(noOutputOfPriorPicsFlag, longTermReferenceFlag, false, ReaderState.Blank, 0);
+            return new DecRefPicMarking(noOutputOfPriorPicsFlag, longTermReferenceFlag, false, default, 0);
         }
 
         bool adaptiveRefPicMarkingModeFlag = reader.ReadBit();
         DecRefPicMarkingEntry lastEntry;
-        ReaderState offset = reader.GetState();
+        Container32DecRefPicMarkingEntry entries = default;
         int count = 0;
 
         if (adaptiveRefPicMarkingModeFlag)
@@ -265,12 +243,13 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
             do
             {
                 lastEntry = DecRefPicMarkingEntry.Read(reader);
+                entries[count] = lastEntry;
                 count++;
             }
             while (lastEntry.MemoryManagementControlOperation != 3);
         }
 
-        return new DecRefPicMarking(false, false, adaptiveRefPicMarkingModeFlag, offset, count);
+        return new DecRefPicMarking(false, false, adaptiveRefPicMarkingModeFlag, entries, count);
     }
 
     /// <summary>
@@ -278,8 +257,7 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
     /// </summary>
     /// <param name="writer">The bitstream writer.</param>
     /// <param name="idrPicFlag">Indicates whether the current picture is an IDR picture.</param>
-    /// <param name="entries">The entries to write.</param>
-    public readonly void Write(BitStreamWriter writer, bool idrPicFlag, Span<DecRefPicMarkingEntry> entries)
+    public readonly void Write(BitStreamWriter writer, bool idrPicFlag)
     {
         if (idrPicFlag)
         {
@@ -291,8 +269,8 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
             writer.WriteBit(AdaptiveRefPicMarkingModeFlag);
             if (AdaptiveRefPicMarkingModeFlag)
             {
-                for (int i = 0; i < entries.Length; i++)
-                    entries[i].Write(writer);
+                for (int i = 0; i < EntryCount; i++)
+                    Entries[i].Write(writer);
             }
         }
     }
@@ -302,9 +280,8 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
     /// </summary>
     /// <param name="writer">The bitstream writer.</param>
     /// <param name="idrPicFlag">Indicates whether the current picture is an IDR picture.</param>
-    /// <param name="entries">The entries to write.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
-    public readonly async Task WriteAsync(BitStreamWriter writer, bool idrPicFlag, Memory<DecRefPicMarkingEntry> entries)
+    public readonly async Task WriteAsync(BitStreamWriter writer, bool idrPicFlag)
     {
         if (idrPicFlag)
         {
@@ -316,8 +293,8 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
             await writer.WriteBitAsync(AdaptiveRefPicMarkingModeFlag);
             if (AdaptiveRefPicMarkingModeFlag)
             {
-                for (int i = 0; i < entries.Length; i++)
-                    await entries.Span[i].WriteAsync(writer);
+                for (int i = 0; i < EntryCount; i++)
+                    await Entries[i].WriteAsync(writer);
             }
         }
     }
@@ -338,14 +315,14 @@ public struct DecRefPicMarking : IEquatable<DecRefPicMarking>
         return NoOutputOfPriorPicsFlag == other.NoOutputOfPriorPicsFlag &&
                LongTermReferenceFlag == other.LongTermReferenceFlag &&
                AdaptiveRefPicMarkingModeFlag == other.AdaptiveRefPicMarkingModeFlag &&
-               EqualityComparer<ReaderState>.Default.Equals(EntriesOffset, other.EntriesOffset) &&
+               EqualityComparer<Container32DecRefPicMarkingEntry>.Default.Equals(Entries, other.Entries) &&
                EntryCount == other.EntryCount;
     }
 
     /// <inheritdoc/>
     public readonly override int GetHashCode()
     {
-        return HashCode.Combine(NoOutputOfPriorPicsFlag, LongTermReferenceFlag, AdaptiveRefPicMarkingModeFlag, EntriesOffset, EntryCount);
+        return HashCode.Combine(NoOutputOfPriorPicsFlag, LongTermReferenceFlag, AdaptiveRefPicMarkingModeFlag, Entries, EntryCount);
     }
 
     /// <summary>

@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Minimal;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Primitives;
@@ -150,6 +151,20 @@ public static class H264Extensions
     public static int GetCodedBlockPatternChroma(this MacroblockLayer mbLayer) => mbLayer.CodedBlockPattern / 16;
 
     /// <summary>
+    ///   Gets the coded block pattern for the luma component of the macroblock.
+    /// </summary>
+    /// <param name="mbLayer">The macroblock layer.</param>
+    /// <returns>The coded block pattern for luma (0-15).</returns>
+    public static int GetCodedBlockPatternLuma(this MinimalMacroblockLayer mbLayer) => mbLayer.CodedBlockPattern % 16;
+
+    /// <summary>
+    ///   Gets the coded block pattern for the chroma component of the macroblock.
+    /// </summary>
+    /// <param name="mbLayer">The macroblock layer.</param>
+    /// <returns>The coded block pattern for chroma (0-3).</returns>
+    public static int GetCodedBlockPatternChroma(this MinimalMacroblockLayer mbLayer) => mbLayer.CodedBlockPattern / 16;
+
+    /// <summary>
     ///   Returns the residual block for the given chroma component (see <see cref="Residual.CabacCbCr"/>).
     ///   <paramref name="iCbCr"/> must be 0 or 1.
     /// </summary>
@@ -166,6 +181,30 @@ public static class H264Extensions
     /// </returns>
     /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="iCbCr"/> is neither 0 nor 1</exception>
     public static CabacResidual? GetCbCrResidualBlockCabac(this Residual residual, int iCbCr)
+    {
+        if (iCbCr is not 0 or 1)
+            throw new ArgumentOutOfRangeException(nameof(iCbCr), "iCbCr must be 0 or 1.");
+
+        return iCbCr == 0 ? residual.CabacCbCr?.First : residual.CabacCbCr?.Second;
+    }
+
+    /// <summary>
+    ///   Returns the residual block for the given chroma component (see <see cref="MinimalResidual.CabacCbCr"/>).
+    ///   <paramref name="iCbCr"/> must be 0 or 1.
+    /// </summary>
+    /// <param name="residual">Input residual.</param>
+    /// <param name="iCbCr">0 if Cb; 1 if Cr.</param>
+    /// <returns>
+    /// A CABAC residual indexed from <see cref="MinimalResidual.CabacCbCr"/>, or <see langword="null"/> if
+    /// the <see cref="MinimalResidual.CabacCbCr"/> property is <see langword="null"/>, which is under one
+    /// of the following cases:
+    /// <list type="number">
+    ///   <item>The <see cref="MinimalResidual.PreferCabac"/> property is <see langword="false"/>,</item>
+    ///   <item>The <c>ChromaArrayType</c> wasn't 1 and wasn't 2.</item>
+    /// </list>
+    /// </returns>
+    /// <exception cref="ArgumentOutOfRangeException">Thrown if <paramref name="iCbCr"/> is neither 0 nor 1</exception>
+    public static MinimalCabacResidual? GetCbCrResidualBlockCabac(this MinimalResidual residual, int iCbCr)
     {
         if (iCbCr is not 0 or 1)
             throw new ArgumentOutOfRangeException(nameof(iCbCr), "iCbCr must be 0 or 1.");
@@ -269,4 +308,14 @@ public static class H264Extensions
     /// <returns><c>MbaffFrameFlag</c></returns>
     public static bool GetMbaffFrameFlag(this SliceHeader sliceHeader, SequenceParameterSet sps) =>
         sps.MbAdaptiveFrameFieldFlag && !sliceHeader.FieldPicFlag;
+
+    /// <summary>
+    ///   Returns the H.264 Chroma Format using the SPS.
+    /// </summary>
+    /// <param name="sps">The sequence parameter set to use.</param>
+    /// <returns>Chroma format, using raw syntax elements from the provided SPS.</returns>
+    public static ChromaFormat GetChromaFormat(this SequenceParameterSet sps)
+    {
+        return ChromaFormat.GetSubsamplingAndSize(sps);
+    }
 }

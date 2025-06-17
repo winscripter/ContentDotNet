@@ -195,40 +195,40 @@ public sealed partial class CabacManager
             _cabacs[MacroblockType] = new CabacContext(_boundReader, ctxIdx, CabacInitIdc, SliceType is GeneralSliceType.I or GeneralSliceType.SI, SliceQPY);
             _init[MacroblockType] = true;
         }
-        else
-        {
-            var (maxBinIdxCtx, ctxIdxOffset) = Binarization.GetFields(SyntaxElement.MacroblockType, SliceType, BlockType, NumC8x8, IsFrameMacroblock);
+        //else
+        //{
+        //    var (maxBinIdxCtx, ctxIdxOffset) = Binarization.GetFields(SyntaxElement.MacroblockType, SliceType, BlockType, NumC8x8, IsFrameMacroblock);
 
-            int binIdx = _cabacs[cabacIndex].BinIdx;
-            BitString priorDecodedBins = _cabacs[cabacIndex].PriorDecodedBinValues;
+        //    int binIdx = _cabacs[cabacIndex].BinIdx;
+        //    BitString priorDecodedBins = _cabacs[cabacIndex].PriorDecodedBinValues;
 
-            Span<int> s = stackalloc int[1];
-            int ctxIdx = CabacCtxIdxDerivation.AssignCtxIdxInc(
-                ctxIdxOffset,
-                binIdx,
-                s,
-                priorDecodedBins,
-                Utility,
-                DerivationContext,
-                PicWidthInMbs,
-                MbPartIdx,
-                SubMbPartIdx,
-                TransformSize8x8Flag,
-                SliceType,
-                MbTypeArray,
-                SubMbTypeArray,
-                MvdLX,
-                L0Mode,
-                out _,
-                out bool bypass
-            );
+        //    Span<int> s = stackalloc int[1];
+        //    int ctxIdx = CabacCtxIdxDerivation.AssignCtxIdxInc(
+        //        ctxIdxOffset,
+        //        binIdx,
+        //        s,
+        //        priorDecodedBins,
+        //        Utility,
+        //        DerivationContext,
+        //        PicWidthInMbs,
+        //        MbPartIdx,
+        //        SubMbPartIdx,
+        //        TransformSize8x8Flag,
+        //        SliceType,
+        //        MbTypeArray,
+        //        SubMbTypeArray,
+        //        MvdLX,
+        //        L0Mode,
+        //        out _,
+        //        out bool bypass
+        //    );
 
-            _cabacs[cabacIndex] = new CabacContext(_boundReader, ctxIdx, CabacInitIdc, SliceType is GeneralSliceType.I or GeneralSliceType.SI, SliceQPY)
-            {
-                BinIdx = binIdx,
-                PriorDecodedBinValues = priorDecodedBins
-            };
-        }
+        //    _cabacs[cabacIndex] = new CabacContext(_boundReader, ctxIdx, CabacInitIdc, SliceType is GeneralSliceType.I or GeneralSliceType.SI, SliceQPY)
+        //    {
+        //        BinIdx = binIdx,
+        //        PriorDecodedBinValues = priorDecodedBins
+        //    };
+        //}
     }
 
     private int Parse(int index, SyntaxElement se)

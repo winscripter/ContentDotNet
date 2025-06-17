@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Containers;
 
 namespace ContentDotNet.Extensions.H264.Models;
 
@@ -156,9 +157,9 @@ public struct RefPicListMvcModificationList : IEquatable<RefPicListMvcModificati
     public bool Flag;
 
     /// <summary>
-    /// The offset in the bitstream where the entries start.
+    /// The entries.
     /// </summary>
-    public ReaderState EntriesOffset;
+    public Container32RefPicListMvcModificationEntry Entries;
 
     /// <summary>
     /// The number of entries in the list.
@@ -169,12 +170,12 @@ public struct RefPicListMvcModificationList : IEquatable<RefPicListMvcModificati
     /// Initializes a new instance of the <see cref="RefPicListMvcModificationList"/> struct.
     /// </summary>
     /// <param name="flag">Indicates whether the list is active.</param>
-    /// <param name="entriesOffset">The offset in the bitstream where the entries start.</param>
+    /// <param name="entries">The entries.</param>
     /// <param name="entriesCount">The number of entries in the list.</param>
-    public RefPicListMvcModificationList(bool flag, ReaderState entriesOffset, int entriesCount)
+    public RefPicListMvcModificationList(bool flag, Container32RefPicListMvcModificationEntry entries, int entriesCount)
     {
         Flag = flag;
-        EntriesOffset = entriesOffset;
+        Entries = entries;
         EntriesCount = entriesCount;
     }
 
@@ -186,34 +187,32 @@ public struct RefPicListMvcModificationList : IEquatable<RefPicListMvcModificati
     public static RefPicListMvcModificationList Read(BitStreamReader reader)
     {
         bool flag = reader.ReadBit();
-        ReaderState offset = reader.GetState();
+        Container32RefPicListMvcModificationEntry entries = default;
         int count = 0;
 
         RefPicListMvcModificationEntry lastEntry;
         do
         {
             lastEntry = RefPicListMvcModificationEntry.Read(reader);
+            entries[count] = lastEntry;
             count++;
         }
         while (lastEntry.ModificationOfPicNumsIdc != 3);
 
-        return new RefPicListMvcModificationList(flag, offset, count);
+        return new RefPicListMvcModificationList(flag, entries, count);
     }
 
     /// <summary>
     /// Writes the current instance to the specified <see cref="BitStreamWriter"/>.
     /// </summary>
     /// <param name="writer">The bitstream writer to write to.</param>
-    /// <param name="entries">The entries to write.</param>
-    public readonly void Write(BitStreamWriter writer, Span<RefPicListMvcModificationEntry> entries)
+    public readonly void Write(BitStreamWriter writer)
     {
         writer.WriteBit(Flag);
         if (Flag)
         {
-            foreach (RefPicListMvcModificationEntry entry in entries)
-            {
-                entry.Write(writer);
-            }
+            for (int i = 0; i < this.EntriesCount; i++)
+                this.Entries[i].Write(writer);
         }
     }
 
@@ -221,15 +220,14 @@ public struct RefPicListMvcModificationList : IEquatable<RefPicListMvcModificati
     /// Asynchronously writes the current instance to the specified <see cref="BitStreamWriter"/>.
     /// </summary>
     /// <param name="writer">The bitstream writer to write to.</param>
-    /// <param name="entries">The entries to write.</param>
     /// <returns>A task that represents the asynchronous write operation.</returns>
-    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<RefPicListMvcModificationEntry> entries)
+    public readonly async Task WriteAsync(BitStreamWriter writer)
     {
         await writer.WriteBitAsync(Flag);
         if (Flag)
         {
-            for (int i = 0; i < entries.Length; i++)
-                await entries.Span[i].WriteAsync(writer);
+            for (int i = 0; i < this.EntriesCount; i++)
+                await this.Entries[i].WriteAsync(writer);
         }
     }
 
@@ -247,14 +245,14 @@ public struct RefPicListMvcModificationList : IEquatable<RefPicListMvcModificati
     public readonly bool Equals(RefPicListMvcModificationList other)
     {
         return Flag == other.Flag &&
-               EqualityComparer<ReaderState>.Default.Equals(EntriesOffset, other.EntriesOffset) &&
+               EqualityComparer<Container32RefPicListMvcModificationEntry>.Default.Equals(Entries, other.Entries) &&
                EntriesCount == other.EntriesCount;
     }
 
     /// <inheritdoc/>
     public readonly override int GetHashCode()
     {
-        return HashCode.Combine(Flag, EntriesOffset, EntriesCount);
+        return HashCode.Combine(Flag, Entries, EntriesCount);
     }
 
     /// <summary>
@@ -358,17 +356,15 @@ public struct RefPicListMvcModification : IEquatable<RefPicListMvcModification>
     /// </summary>
     /// <param name="writer">The bitstream writer to write to.</param>
     /// <param name="sliceType">The type of the slice being written.</param>
-    /// <param name="l0">The entries for list 0 to write.</param>
-    /// <param name="l1">The entries for list 1 to write.</param>
     /// <exception cref="InvalidOperationException">Thrown if a required list is null.</exception>
-    public readonly void Write(BitStreamWriter writer, int sliceType, Span<RefPicListMvcModificationEntry> l0, Span<RefPicListMvcModificationEntry> l1)
+    public readonly void Write(BitStreamWriter writer, int sliceType)
     {
         if (sliceType % 5 != 2 && sliceType % 5 != 4)
         {
             if (L0 is null)
                 throw new InvalidOperationException("L0 is required");
 
-            this.L0!.Value.Write(writer, l0);
+            this.L0!.Value.Write(writer);
         }
 
         if (sliceType % 5 == 1)
@@ -376,7 +372,7 @@ public struct RefPicListMvcModification : IEquatable<RefPicListMvcModification>
             if (L1 is null)
                 throw new InvalidOperationException("L1 is required");
 
-            this.L1!.Value.Write(writer, l1);
+            this.L1!.Value.Write(writer);
         }
     }
 
@@ -385,17 +381,15 @@ public struct RefPicListMvcModification : IEquatable<RefPicListMvcModification>
     /// </summary>
     /// <param name="writer">The bitstream writer to write to.</param>
     /// <param name="sliceType">The type of the slice being written.</param>
-    /// <param name="l0">The entries for list 0 to write.</param>
-    /// <param name="l1">The entries for list 1 to write.</param>
     /// <exception cref="InvalidOperationException">Thrown if a required list is null.</exception>
-    public readonly async Task WriteAsync(BitStreamWriter writer, int sliceType, Memory<RefPicListMvcModificationEntry> l0, Memory<RefPicListMvcModificationEntry> l1)
+    public readonly async Task WriteAsync(BitStreamWriter writer, int sliceType)
     {
         if (sliceType % 5 != 2 && sliceType % 5 != 4)
         {
             if (L0 is null)
                 throw new InvalidOperationException("L0 is required");
 
-            await this.L0!.Value.WriteAsync(writer, l0);
+            await this.L0!.Value.WriteAsync(writer);
         }
 
         if (sliceType % 5 == 1)
@@ -403,7 +397,7 @@ public struct RefPicListMvcModification : IEquatable<RefPicListMvcModification>
             if (L1 is null)
                 throw new InvalidOperationException("L1 is required");
 
-            await this.L1!.Value.WriteAsync(writer, l1);
+            await this.L1!.Value.WriteAsync(writer);
         }
     }
 

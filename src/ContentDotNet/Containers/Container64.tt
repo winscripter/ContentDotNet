@@ -24,7 +24,8 @@ namespace ContentDotNet.Containers;
 
 <#
     var typeNames = new Dictionary<string, string>() {
-        { "Int32", "int" }
+        { "Int32", "int" },
+        { "Byte", "byte" }
     };
 
     foreach (KeyValuePair<string, string> kvp in typeNames) {

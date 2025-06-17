@@ -26,7 +26,10 @@ namespace ContentDotNet.Extensions.H264.Containers;
 <#
     var typeNames = new Dictionary<string, string>() {
         { "CabacResidual", "CabacResidual" },
-        { "CavlcResidual", "CavlcResidual" }
+        { "CavlcResidual", "CavlcResidual" },
+        { "DecRefPicMarkingEntry", "DecRefPicMarkingEntry" },
+        { "RefPicListModificationEntry", "RefPicListModificationEntry" },
+        { "RefPicListMvcModificationEntry", "RefPicListMvcModificationEntry" }
     };
 
     foreach (KeyValuePair<string, string> kvp in typeNames) {

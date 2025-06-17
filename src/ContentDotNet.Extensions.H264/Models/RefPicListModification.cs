@@ -1,4 +1,5 @@
 ﻿using ContentDotNet.BitStream;
+using ContentDotNet.Extensions.H264.Containers;
 
 namespace ContentDotNet.Extensions.H264.Models;
 
@@ -123,7 +124,6 @@ public struct RefPicListModificationEntry : IEquatable<RefPicListModificationEnt
     }
 }
 
-// 🐓
 /// <summary>
 ///   Ref pic list modification
 /// </summary>
@@ -140,9 +140,9 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
     public bool RefPicListModificationFlagL1;
 
     /// <summary>
-    /// Represents the offset in the bitstream pool where the reference picture list modification entries are stored.
+    /// The entries.
     /// </summary>
-    public ReaderState PoolOffset;
+    public Container32RefPicListModificationEntry Entries;
 
     /// <summary>
     /// The number of elements in the reference picture list modification.
@@ -154,37 +154,14 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
     /// </summary>
     /// <param name="refPicListModificationFlagL0">Flag indicating if list 0 modification is enabled.</param>
     /// <param name="refPicListModificationFlagL1">Flag indicating if list 1 modification is enabled.</param>
-    /// <param name="poolOffset">The offset in the bitstream pool for the modification entries.</param>
+    /// <param name="entries">The entries.</param>
     /// <param name="numberOfElements">The number of elements in the modification list.</param>
-    public RefPicListModification(bool refPicListModificationFlagL0, bool refPicListModificationFlagL1, ReaderState poolOffset, int numberOfElements)
+    public RefPicListModification(bool refPicListModificationFlagL0, bool refPicListModificationFlagL1, Container32RefPicListModificationEntry entries, int numberOfElements)
     {
         RefPicListModificationFlagL0 = refPicListModificationFlagL0;
         RefPicListModificationFlagL1 = refPicListModificationFlagL1;
-        PoolOffset = poolOffset;
+        Entries = entries;
         NumberOfElements = numberOfElements;
-    }
-
-    /// <summary>
-    /// Retrieves a specific entry from the reference picture list modification.
-    /// </summary>
-    /// <param name="reader">The bit stream reader.</param>
-    /// <param name="index">The index of the entry to retrieve.</param>
-    /// <returns>The requested reference picture list modification entry.</returns>
-    /// <exception cref="ArgumentOutOfRangeException">Thrown if the index is out of range.</exception>
-    public readonly RefPicListModificationEntry GetEntry(BitStreamReader reader, int index)
-    {
-        if (index + 1 > NumberOfElements)
-            throw new ArgumentOutOfRangeException(nameof(index));
-
-        ReaderState prev = reader.GetState();
-        reader.GoTo(this.PoolOffset);
-
-        RefPicListModificationEntry last = new();
-        for (int i = 0; i < index + 1; i++)
-            last = RefPicListModificationEntry.Parse(reader);
-
-        reader.GoTo(prev);
-        return last;
     }
 
     /// <summary>
@@ -198,7 +175,7 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
         if (sliceType % 5 != 2 && sliceType % 5 != 4)
         {
             bool refPicListModificationFlagL0 = reader.ReadBit();
-            ReaderState poolOffset = reader.GetState();
+            Container32RefPicListModificationEntry entries = default;
             RefPicListModificationEntry lastEntry;
             int elementCount = 0;
 
@@ -207,17 +184,18 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
                 do
                 {
                     lastEntry = RefPicListModificationEntry.Parse(reader);
+                    entries[elementCount] = lastEntry;
                     elementCount++;
                 }
                 while (lastEntry.ModificationOfPicNumsIdc != 3);
             }
 
-            return new RefPicListModification(refPicListModificationFlagL0, false, poolOffset, elementCount);
+            return new RefPicListModification(refPicListModificationFlagL0, false, entries, elementCount);
         }
         else
         {
             bool refPicListModificationFlagL1 = reader.ReadBit();
-            ReaderState poolOffset = reader.GetState();
+            Container32RefPicListModificationEntry entries = default;
             RefPicListModificationEntry lastEntry;
             int elementCount = 0;
 
@@ -226,12 +204,13 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
                 do
                 {
                     lastEntry = RefPicListModificationEntry.Parse(reader);
+                    entries[elementCount] = lastEntry;
                     elementCount++;
                 }
                 while (lastEntry.ModificationOfPicNumsIdc != 3);
             }
 
-            return new RefPicListModification(false, refPicListModificationFlagL1, poolOffset, elementCount);
+            return new RefPicListModification(false, refPicListModificationFlagL1, entries, elementCount);
         }
     }
 
@@ -239,9 +218,8 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
     /// Writes the current modification to a <see cref="BitStreamWriter"/>.
     /// </summary>
     /// <param name="writer">The bit stream writer.</param>
-    /// <param name="entries">The entries to write.</param>
     /// <param name="sliceType">The slice type value.</param>
-    public readonly void Write(BitStreamWriter writer, Span<RefPicListModificationEntry> entries, uint sliceType)
+    public readonly void Write(BitStreamWriter writer, uint sliceType)
     {
         if (sliceType % 5 != 2 && sliceType % 5 != 4)
         {
@@ -250,7 +228,7 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
             {
                 for (int i = 0; i < this.NumberOfElements; i++)
                 {
-                    entries[i].Write(writer);
+                    Entries[i].Write(writer);
                 }
             }
         }
@@ -261,7 +239,7 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
             {
                 for (int i = 0; i < this.NumberOfElements; i++)
                 {
-                    entries[i].Write(writer);
+                    Entries[i].Write(writer);
                 }
             }
         }
@@ -271,10 +249,9 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
     /// Asynchronously writes the current modification to a <see cref="BitStreamWriter"/>.
     /// </summary>
     /// <param name="writer">The bit stream writer.</param>
-    /// <param name="entries">The entries to write.</param>
     /// <param name="sliceType">The slice type value.</param>
     /// <returns>A task representing the asynchronous operation.</returns>
-    public readonly async Task WriteAsync(BitStreamWriter writer, Memory<RefPicListModificationEntry> entries, uint sliceType)
+    public readonly async Task WriteAsync(BitStreamWriter writer, uint sliceType)
     {
         if (sliceType % 5 != 2 && sliceType % 5 != 4)
         {
@@ -283,7 +260,7 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
             {
                 for (int i = 0; i < this.NumberOfElements; i++)
                 {
-                    await entries.Span[i].WriteAsync(writer);
+                    await Entries[i].WriteAsync(writer);
                 }
             }
         }
@@ -294,7 +271,7 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
             {
                 for (int i = 0; i < this.NumberOfElements; i++)
                 {
-                    await entries.Span[i].WriteAsync(writer);
+                    await Entries[i].WriteAsync(writer);
                 }
             }
         }
@@ -315,14 +292,14 @@ public struct RefPicListModification : IEquatable<RefPicListModification>
     {
         return RefPicListModificationFlagL0 == other.RefPicListModificationFlagL0 &&
                RefPicListModificationFlagL1 == other.RefPicListModificationFlagL1 &&
-               EqualityComparer<ReaderState>.Default.Equals(PoolOffset, other.PoolOffset) &&
+               EqualityComparer<Container32RefPicListModificationEntry>.Default.Equals(Entries, other.Entries) &&
                NumberOfElements == other.NumberOfElements;
     }
 
     /// <inheritdoc/>
     public readonly override int GetHashCode()
     {
-        return HashCode.Combine(RefPicListModificationFlagL0, RefPicListModificationFlagL1, PoolOffset, NumberOfElements);
+        return HashCode.Combine(RefPicListModificationFlagL0, RefPicListModificationFlagL1, Entries, NumberOfElements);
     }
 
     /// <summary>

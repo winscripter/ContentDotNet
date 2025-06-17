@@ -2,6 +2,7 @@
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Internal.Decoding;
 using ContentDotNet.Extensions.H264.Macroblocks;
+using ContentDotNet.Extensions.H264.Minimal;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Primitives;
@@ -121,7 +122,7 @@ internal static class CabacCtxIdxIncDerivation
         if (prevMbAddr is null)
             return 0;
 
-        MacroblockLayer mb = mbUtil.GetMacroblock(prevMbAddr.Value);
+        MinimalMacroblockLayer mb = mbUtil.GetMacroblock(prevMbAddr.Value);
         if (mb.MbType is P_Skip or B_Skip)
             return 0;
 
@@ -169,8 +170,8 @@ internal static class CabacCtxIdxIncDerivation
         bool refIdxZeroFlagA = dc.IsMbaff && mbUtil.IsFrameMacroblock(dc.CurrMbAddr) && mbUtil.IsFieldMacroblock(mbAddrA) ? (refIdxLX[mbPartIdxA] > 1) ? false : true : (refIdxLX[mbPartIdxA] > 0) ? false : true;
         bool refIdxZeroFlagB = dc.IsMbaff && mbUtil.IsFrameMacroblock(dc.CurrMbAddr) && mbUtil.IsFieldMacroblock(mbAddrB) ? (refIdxLX[mbPartIdxB] > 1) ? false : true : (refIdxLX[mbPartIdxB] > 0) ? false : true;
 
-        MacroblockLayer mbA = mbUtil.GetMacroblock(mbAddrA);
-        MacroblockLayer mbB = mbUtil.GetMacroblock(mbAddrB);
+        MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(mbAddrA);
+        MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(mbAddrB);
 
         bool predModeEqualFlagA;
         bool predModeEqualFlagB;
@@ -301,8 +302,8 @@ internal static class CabacCtxIdxIncDerivation
         bool predModeEqualFlagA;
         bool predModeEqualFlagB;
 
-        MacroblockLayer mbA = mbUtil.GetMacroblock(mbAddrA);
-        MacroblockLayer mbB = mbUtil.GetMacroblock(mbAddrB);
+        MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(mbAddrA);
+        MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(mbAddrB);
 
         if (mbA.MbType is B_Direct_16x16 or B_Skip)
         {
@@ -481,8 +482,8 @@ internal static class CabacCtxIdxIncDerivation
             out var neighboringMacroblocks
         );
 
-        MacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
-        MacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
+        MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
+        MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
 
         bool condTermFlagA = !(neighboringMacroblocks.IsMbAddrAAvailable || mbUtil.IsCodedWithInter(neighboringMacroblocks.MbAddrA) || mbA.MbType is I_PCM || mbA.Prediction?.IntraChromaPredMode == 0);
         bool condTermFlagB = !(neighboringMacroblocks.IsMbAddrBAvailable || mbUtil.IsCodedWithInter(neighboringMacroblocks.MbAddrA) || mbB.MbType is I_PCM || mbB.Prediction?.IntraChromaPredMode == 0);
@@ -525,11 +526,11 @@ internal static class CabacCtxIdxIncDerivation
                 out var neighboringMacroblocks
             );
 
-            MacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
-            MacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
+            MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
+            MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
 
-            Residual residualA = mbA.Intra16x16Residual ?? default;
-            Residual residualB = mbB.Intra16x16Residual ?? default;
+            MinimalResidual residualA = mbA.Intra16x16Residual ?? default;
+            MinimalResidual residualB = mbB.Intra16x16Residual ?? default;
 
             mbAddrA = neighboringMacroblocks.MbAddrA;
             mbAddrAAvailable = neighboringMacroblocks.IsMbAddrAAvailable;
@@ -574,13 +575,13 @@ internal static class CabacCtxIdxIncDerivation
 
             if (mbAddrAAvailable || mbAddrBAvailable)
             {
-                MacroblockLayer mbA = mbUtil.GetMacroblock(mbAddrA);
-                MacroblockLayer mbB = mbUtil.GetMacroblock(mbAddrB);
+                MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(mbAddrA);
+                MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(mbAddrB);
 
-                transformCodedBlockFlagA = ProcessMacroblockLayer(mbA, luma4x4BlkIdxA, true);
-                transformCodedBlockFlagB = ProcessMacroblockLayer(mbB, luma4x4BlkIdxB, false);
+                transformCodedBlockFlagA = ProcessMinimalMacroblockLayer(mbA, luma4x4BlkIdxA, true);
+                transformCodedBlockFlagB = ProcessMinimalMacroblockLayer(mbB, luma4x4BlkIdxB, false);
 
-                static bool ProcessMacroblockLayer(MacroblockLayer mbN, int luma4x4BlkIdxN, bool nIsA)
+                static bool ProcessMinimalMacroblockLayer(MinimalMacroblockLayer mbN, int luma4x4BlkIdxN, bool nIsA)
                 {
                     bool condition = mbN.MbType is not P_Skip and not B_Skip;
                     if (nIsA)
@@ -630,7 +631,7 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (mbN.GetCodedBlockPatternChroma() != 0)
@@ -638,7 +639,7 @@ internal static class CabacCtxIdxIncDerivation
                             // We operate under the Chroma channel right here,
                             // so pull that.
 
-                            Residual? residual = mbN.Intra16x16Residual;
+                            MinimalResidual? residual = mbN.Intra16x16Residual;
                             if (residual is null)
                                 return false;
 
@@ -668,14 +669,14 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (mbN.GetCodedBlockPatternChroma() == 2)
                         {
                             // We operate under the Chroma channel right here,
                             // so pull that.
-                            Residual? residual = mbN.Intra16x16Residual;
+                            MinimalResidual? residual = mbN.Intra16x16Residual;
                             if (residual is null)
                                 return false;
 
@@ -703,7 +704,7 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (((mbN.GetCodedBlockPatternLuma() >> parameter1) & 1) != 0)
@@ -738,13 +739,13 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
 
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (((mbN.GetCodedBlockPatternLuma() >> (cb4x4BlkIdxN >> 2)) & 1) != 0)
                         {
-                            Residual? residual = mbN.Intra16x16Residual;
+                            MinimalResidual? residual = mbN.Intra16x16Residual;
                             if (residual is null)
                                 return false;
 
@@ -778,13 +779,13 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
 
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (((mbN.GetCodedBlockPatternLuma() >> cb8x8BlkIdxN) & 1) != 0)
                         {
-                            Residual? residual = mbN.Intra16x16Residual;
+                            MinimalResidual? residual = mbN.Intra16x16Residual;
                             if (residual is null)
                                 return false;
 
@@ -818,13 +819,13 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
 
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (((mbN.GetCodedBlockPatternLuma() >> (cr4x4BlkIdxN >> 2)) & 1) != 0)
                         {
-                            Residual? residual = mbN.Intra16x16Residual;
+                            MinimalResidual? residual = mbN.Intra16x16Residual;
                             if (residual is null)
                                 return false;
 
@@ -858,13 +859,13 @@ internal static class CabacCtxIdxIncDerivation
             {
                 if (mbAddrNAvailable)
                 {
-                    MacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
+                    MinimalMacroblockLayer mbN = mbUtil.GetMacroblock(mbAddrN);
 
                     if (mbN.MbType is not P_Skip and not B_Skip and not I_PCM)
                     {
                         if (((mbN.GetCodedBlockPatternLuma() >> cr8x8BlkIdxN) & 1) != 0)
                         {
-                            Residual? residual = mbN.Intra16x16Residual;
+                            MinimalResidual? residual = mbN.Intra16x16Residual;
                             if (residual is null)
                                 return false;
 
@@ -915,8 +916,8 @@ internal static class CabacCtxIdxIncDerivation
             out var neighboringMacroblocks
         );
 
-        MacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
-        MacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
+        MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
+        MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
 
         bool condTermFlagA = !(!neighboringMacroblocks.IsMbAddrAAvailable || !mbA.TransformSize8x8Flag);
         bool condTermFlagB = !(!neighboringMacroblocks.IsMbAddrBAvailable || !mbB.TransformSize8x8Flag);

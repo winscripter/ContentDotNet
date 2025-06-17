@@ -64,6 +64,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Container512.tt</DependentUpon>
     </Compile>
+    <Compile Update="Containers\Container64.gen.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Container64.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
   <ItemGroup>

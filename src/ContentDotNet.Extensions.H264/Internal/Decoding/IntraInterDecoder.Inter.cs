@@ -2,6 +2,7 @@
 using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Macroblocks;
+using ContentDotNet.Extensions.H264.Minimal;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Pictures;
 using ContentDotNet.Extensions.H264.Utilities;
@@ -1033,7 +1034,7 @@ internal partial class IntraInterDecoder
             }
         }
 
-        public void Decode(bool isSubMacroblock, int mbIndexX, int mbIndexY, MacroblockSizeChroma size, MacroblockLayer layer, ChromaFormat chromaFormat, Matrix predL, Matrix predCb, Matrix predCr)
+        public void Decode(bool isSubMacroblock, int mbIndexX, int mbIndexY, MacroblockSizeChroma size, MinimalMacroblockLayer layer, ChromaFormat chromaFormat, Matrix predL, Matrix predCb, Matrix predCr)
         {
             if ((!isSubMacroblock && layer.Prediction is null) ||
                 (isSubMacroblock && layer.SubMacroblockPrediction is null))

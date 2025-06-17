@@ -855,7 +855,6 @@ internal partial class IntraInterDecoder
 
         public void Intra16x16SamplePredict(
             Matrix cSL,
-            ref Matrix16x16 predL,
             bool constrainedIntraPredFlag,
             int intra16x16PredMode,
             IntraPredictionSamples p,

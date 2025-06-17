@@ -3,6 +3,7 @@ using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264;
 using ContentDotNet.Extensions.H264.Cabac;
 using ContentDotNet.Extensions.H264.Macroblocks;
+using ContentDotNet.Extensions.H264.Minimal;
 using ContentDotNet.Extensions.H264.Models;
 using System.Runtime.InteropServices;
 
@@ -16,16 +17,20 @@ PrintStructSizes();
 
 static unsafe void PrintStructSizes()
 {
-    Console.WriteLine("SPS sizes: " + sizeof(SequenceParameterSet));
-    Console.WriteLine("PPS sizes: " + sizeof(PictureParameterSet));
-    Console.WriteLine("MB Pred sizes: " + sizeof(MacroblockPrediction));
-    Console.WriteLine("Sub MB Pred sizes: " + sizeof(SubMacroblockPrediction));
-    Console.WriteLine("MB sizes: " + sizeof(MacroblockLayer));
-    Console.WriteLine("Residual sizes: " + sizeof(Residual));
+    Console.WriteLine("[PrintStructSizes] CABAC: " + sizeof(CabacResidual));
+    Console.WriteLine("[PrintStructSizes] CAVLC: " + sizeof(CavlcResidual));
+    Console.WriteLine("[PrintStructSizes] Luma Residual: " + sizeof(ResidualLuma));
+    Console.WriteLine("[PrintStructSizes] Residual: " + sizeof(Residual));
+    Console.WriteLine("[PrintStructSizes] Macroblock: " + sizeof(MacroblockLayer));
+
+    Console.WriteLine("[PrintStructSizes] Min CABAC: " + sizeof(MinimalCabacResidual));
+    Console.WriteLine("[PrintStructSizes] Min Luma Residual: " + sizeof(MinimalLumaResidual));
+    Console.WriteLine("[PrintStructSizes] Min Residual: " + sizeof(MinimalResidual));
+    Console.WriteLine("[PrintStructSizes] Min Macroblock: " + sizeof(MinimalMacroblockLayer));
 }
 
-for (int i = 0; i < 5; i++)
-    DumpNalu();
+//for (int i = 0; i < 5; i++)
+//    DumpNalu();
 
 void DumpNalu()
 {
@@ -69,6 +74,10 @@ void DumpNalu()
         var shd = SliceHeader.Read(rbsp, nal, globalSps, globalPps);
         SliceHeaderDump(shd);
         br.GoTo(prevState);
+
+        //Console.WriteLine("parsing...");
+        //var sl = H264Slice.ParseSlice(globalSps, globalPps, shd, rbsp, nal, len);
+        //Console.WriteLine("parsed!");
     }
 }
 
@@ -162,182 +171,4 @@ void SliceHeaderDump(SliceHeader shd)
     Console.WriteLine("slice_alpha_c0_offset_div2: " + shd.SliceAlphaC0OffsetDiv2);
     Console.WriteLine("slice_beta_offset_div2: " + shd.SliceBetaOffsetDiv2);
     Console.WriteLine("slice_group_change_cycle: " + shd.SliceGroupChangeCycle);
-}
-
-internal sealed class BogusMacroblockUtil : IMacroblockUtility
-{
-    public bool AllAcResidualTransformsAreZeroDueToCodedBlockPatternsBeingZero(int address)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Get16x16LumaBlock(int luma16x16BlkIdx, ContainerMatrix16x16 output)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Get4x4LumaBlock(int luma4x4BlkIdx, ContainerMatrix4x4 output)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void Get8x8LumaBlock(int luma8x8BlkIdx, ContainerMatrix8x8 output)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void GetIntra16x16PredMode(int mbAddr, Span<int> output)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void GetIntra4x4PredMode(int mbAddr, Span<int> output)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void GetIntra8x8PredMode(int mbAddr, Span<int> output)
-    {
-        throw new NotImplementedException();
-    }
-
-    public MacroblockLayer GetMacroblock(int address)
-    {
-        throw new NotImplementedException();
-    }
-
-    public MacroblockLayer? GetMacroblockToTheBottom(int address)
-    {
-        throw new NotImplementedException();
-    }
-
-    public MacroblockLayer? GetMacroblockToTheLeft(int address)
-    {
-        throw new NotImplementedException();
-    }
-
-    public MacroblockLayer? GetMacroblockToTheRight(int address)
-    {
-        throw new NotImplementedException();
-    }
-
-    public MacroblockLayer? GetMacroblockToTheTop(int address)
-    {
-        throw new NotImplementedException();
-    }
-
-    public uint GetMbType(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ContainerMatrix16x16 GetPixels(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ContainerMatrix16x16? GetPixelsToBottom(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ContainerMatrix16x16? GetPixelsToLeft(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ContainerMatrix16x16? GetPixelsToRight(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public ContainerMatrix16x16? GetPixelsToTop(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public uint GetSubMbType(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public int GetTotalCoefficient(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool HasPixels(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool HasPixelsToBottom(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool HasPixelsToLeft(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool HasPixelsToRight(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool HasPixelsToTop(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsCodedWithInter(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsCodedWithIntra(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsCodedWithIntra16x16(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsCodedWithIntra4x4(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsCodedWithIntra8x8(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsFieldMacroblock(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsFrameMacroblock(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsMacroblockOfTypeSi(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public bool IsMbSkipFlagForMacroblock(int mbAddr)
-    {
-        throw new NotImplementedException();
-    }
-
-    public void SetPixels(int mbAddr, ContainerMatrix16x16 pixels)
-    {
-        throw new NotImplementedException();
-    }
 }
