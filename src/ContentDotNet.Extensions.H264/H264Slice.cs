@@ -283,8 +283,12 @@ public sealed class H264Slice
 
                                         var p = new IntraPredictionSamples(buf, leftL, topL, topLeft);
 
+                                        Span<int> resultBuf = stackalloc int[16 * 16];
+                                        Matrix16x16 result = new(resultBuf);
+
                                         _intraInterDecoder.IntraPredictor.Intra16x16SamplePredict(
                                             frame.Y,
+                                            result,
                                             PPS.ConstrainedIntraPredFlag,
                                             s_intra16x16MbTypeToIntraPredMode[(int)mb.MbType],
                                             p,
@@ -294,7 +298,7 @@ public sealed class H264Slice
                                         {
                                             for (int y = 0; y < 16; y++)
                                             {
-                                                frame.Y[(mbX * 16) + x, (mbY * 16) + y] = p.GetP(x, y);
+                                                frame.Y[(mbX * 16) + x, (mbY * 16) + y] = result[x, y];
                                             }
                                         }
                                     }
@@ -461,6 +465,68 @@ public sealed class H264Slice
                                         }
                                     }
                                 }
+                        }
+
+                        if (SliceTypes.IsIntra(Util264.MbPartPredMode((int)mb.MbType, 0, mb.TransformSize8x8Flag, sliceType)) &&
+                            SPS.GetChromaArrayType() != 0)
+                        {
+                            Span<int> leftCb = stackalloc int[16];
+                            Span<int> topCb = stackalloc int[16];
+                            int topLeftCb;
+                            Span<int> leftCr = stackalloc int[16];
+                            Span<int> topCr = stackalloc int[16];
+                            int topLeftCr;
+
+                            for (int i = 0; i < 16; i++)
+                            {
+                                if (mbX > 0)
+                                {
+                                    leftCb[i] = frame.U[(mbX * 16) - 1, (mbY * 16) + i];
+                                    leftCr[i] = frame.V[(mbX * 16) - 1, (mbY * 16) + i];
+                                }
+
+                                if (mbY > 0)
+                                {
+                                    topCb[i] = frame.U[(mbX * 16) + i, (mbY * 16) - 1];
+                                    topCr[i] = frame.V[(mbX * 16) + i, (mbY * 16) - 1];
+                                }
+                            }
+
+                            topLeftCb = mbX > 0 && mbY > 0 ? frame.U[(mbX * 16) - 1, (mbY * 16) - 1] : 0;
+                            topLeftCr = mbX > 0 && mbY > 0 ? frame.V[(mbX * 16) - 1, (mbY * 16) - 1] : 0;
+
+                            Span<int> bufCb = stackalloc int[16 * 16];
+                            Span<int> bufCr = stackalloc int[16 * 16];
+
+                            var pCb = new IntraPredictionSamples(bufCb, leftCb, topCb, topLeftCb);
+                            var pCr = new IntraPredictionSamples(bufCr, leftCr, topCr, topLeftCr);
+
+                            Span<int> predCbBuf = stackalloc int[16 * 16];
+                            Span<int> predCrBuf = stackalloc int[16 * 16];
+                            Matrix16x16 predCb = new(predCbBuf);
+                            Matrix16x16 predCr = new(predCrBuf);
+
+                            _intraInterDecoder.IntraPredictor.IntraChromaSamplePredict(
+                                frame.U,
+                                ref predCb,
+                                MacroblockSizeChroma.From(SPS.ChromaFormatIdc),
+                                pCb,
+                                Context,
+                                PPS.ConstrainedIntraPredFlag,
+                                (int)mb.Prediction!.Value.IntraChromaPredMode,
+                                (int)SPS.GetChromaArrayType()
+                            );
+
+                            _intraInterDecoder.IntraPredictor.IntraChromaSamplePredict(
+                                frame.V,
+                                ref predCr,
+                                MacroblockSizeChroma.From(SPS.ChromaFormatIdc),
+                                pCr,
+                                Context,
+                                PPS.ConstrainedIntraPredFlag,
+                                (int)mb.Prediction!.Value.IntraChromaPredMode,
+                                (int)SPS.GetChromaArrayType()
+                            );
                         }
 
                         break;

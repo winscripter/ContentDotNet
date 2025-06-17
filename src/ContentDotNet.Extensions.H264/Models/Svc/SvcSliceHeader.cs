@@ -1,5 +1,4 @@
 ﻿using ContentDotNet.BitStream;
-using ContentDotNet.Extensions.H264.Models;
 
 namespace ContentDotNet.Extensions.H264.Models.Svc;
 
@@ -778,8 +777,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                 }
             }
 
-            Span<RefPicListModificationEntry> entries = stackalloc RefPicListModificationEntry[RefPicListModification.NumberOfElements];
-            RefPicListModification.Write(writer, entries, SliceType);
+            RefPicListModification.Write(writer, SliceType);
 
             if (weightedPredFlag && SliceTypes.IsEP(SliceType, nalUnitType) || weightedBiPredIdc == 1 && SliceTypes.IsEB(SliceType, nalUnitType))
             {
@@ -792,11 +790,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
 
             if (nalRefIdc != 0u)
             {
-                Span<DecRefPicMarkingEntry> entriesCnt = stackalloc DecRefPicMarkingEntry[DecRefPicMarking!.Value.EntryCount];
-                for (int i = 0; i < DecRefPicMarking!.Value.EntryCount; i++)
-                    entriesCnt[i] = DecRefPicMarking!.Value.GetEntry(originalReader, i);
-
-                DecRefPicMarking.Value.Write(writer, idrPicFlag, entriesCnt);
+                DecRefPicMarking!.Value.Write(writer, idrPicFlag);
                 if (!sliceHeaderRestrictionFlag)
                 {
                     writer.WriteBit(StoreRefBasePicFlag);
@@ -978,8 +972,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
                 }
             }
 
-            Memory<RefPicListModificationEntry> entries = new(new RefPicListModificationEntry[RefPicListModification.NumberOfElements]);
-            RefPicListModification.Write(writer, entries.Span, SliceType);
+            RefPicListModification.Write(writer, SliceType);
 
             if (weightedPredFlag && SliceTypes.IsEP(SliceType, nalUnitType) || weightedBiPredIdc == 1 && SliceTypes.IsEB(SliceType, nalUnitType))
             {
@@ -992,11 +985,7 @@ public struct SvcSliceHeader : IEquatable<SvcSliceHeader>
 
             if (nalRefIdc != 0u)
             {
-                Memory<DecRefPicMarkingEntry> entriesCnt = new(new DecRefPicMarkingEntry[DecRefPicMarking!.Value.EntryCount]);
-                for (int i = 0; i < DecRefPicMarking!.Value.EntryCount; i++)
-                    entriesCnt.Span[i] = DecRefPicMarking!.Value.GetEntry(originalReader, i);
-
-                await DecRefPicMarking.Value.WriteAsync(writer, idrPicFlag, entriesCnt);
+                await DecRefPicMarking!.Value.WriteAsync(writer, idrPicFlag);
                 if (!sliceHeaderRestrictionFlag)
                 {
                     await writer.WriteBitAsync(StoreRefBasePicFlag);

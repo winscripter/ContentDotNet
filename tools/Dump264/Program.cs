@@ -13,24 +13,8 @@ using var br = new BitStreamReader(fs);
 SequenceParameterSet globalSps = default;
 PictureParameterSet globalPps = default;
 
-PrintStructSizes();
-
-static unsafe void PrintStructSizes()
-{
-    Console.WriteLine("[PrintStructSizes] CABAC: " + sizeof(CabacResidual));
-    Console.WriteLine("[PrintStructSizes] CAVLC: " + sizeof(CavlcResidual));
-    Console.WriteLine("[PrintStructSizes] Luma Residual: " + sizeof(ResidualLuma));
-    Console.WriteLine("[PrintStructSizes] Residual: " + sizeof(Residual));
-    Console.WriteLine("[PrintStructSizes] Macroblock: " + sizeof(MacroblockLayer));
-
-    Console.WriteLine("[PrintStructSizes] Min CABAC: " + sizeof(MinimalCabacResidual));
-    Console.WriteLine("[PrintStructSizes] Min Luma Residual: " + sizeof(MinimalLumaResidual));
-    Console.WriteLine("[PrintStructSizes] Min Residual: " + sizeof(MinimalResidual));
-    Console.WriteLine("[PrintStructSizes] Min Macroblock: " + sizeof(MinimalMacroblockLayer));
-}
-
-//for (int i = 0; i < 5; i++)
-//    DumpNalu();
+for (int i = 0; i < 5; i++)
+    DumpNalu();
 
 void DumpNalu()
 {
