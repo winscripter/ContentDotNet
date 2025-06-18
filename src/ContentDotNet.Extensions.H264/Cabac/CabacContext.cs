@@ -1,26 +1,14 @@
-﻿using ContentDotNet.BitStream;
-using ContentDotNet.Extensions.H264.Cabac.Internal;
+﻿using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Models;
-using ContentDotNet.Primitives;
 
 namespace ContentDotNet.Extensions.H264.Cabac;
 
 /// <summary>
 ///   Represents context for CABAC bitstream parsing.
 /// </summary>
-public sealed class CabacContext
+public struct CabacContext
 {
-    private int _binIdx = 0;
-    private bool _recordBinIdx = false;
-    private readonly BitStreamReader _boundReader;
-    private BitString _priorDecodedBins = default;
-
-    /// <summary>
-    ///   BypassFlag
-    /// </summary>
-    public bool BypassFlag { get; set; } = false;
-
     /// <summary>
     ///   PStateIdx
     /// </summary>
@@ -32,33 +20,13 @@ public sealed class CabacContext
     public bool ValMps { get; set; }
 
     /// <summary>
-    ///   CodIRange
-    /// </summary>
-    public uint CodIRange { get; set; }
-
-    /// <summary>
-    ///   CodIOffset
-    /// </summary>
-    public uint CodIOffset { get; set; }
-
-    /// <summary>
     ///   Context index
     /// </summary>
     public int CtxIdx { get; set; }
 
     /// <summary>
-    ///   Bin index
-    /// </summary>
-    public int BinIdx
-    {
-        get => _binIdx;
-        internal set => _binIdx = value;
-    }
-
-    /// <summary>
     ///   Initializes the CABAC decoding engine.
     /// </summary>
-    /// <param name="reader">The bitstream reader.</param>
     /// <param name="ctxIdx">The context index.</param>
     /// <param name="cabacInitIdc">CABAC Initialization Identifier Code. See <see cref="SliceHeader.CabacInitIdc"/></param>
     /// <param name="isIOrSISlice">
@@ -72,7 +40,7 @@ public sealed class CabacContext
     /// as well as <see cref="SliceHeader.SliceType"/>.
     /// </param>
     /// <param name="sliceQPY">Slice Quantization Parameter for the Luma channel.</param>
-    public CabacContext(BitStreamReader reader, int ctxIdx, int cabacInitIdc, bool isIOrSISlice, int sliceQPY)
+    public CabacContext(int ctxIdx, int cabacInitIdc, bool isIOrSISlice, int sliceQPY)
     {
         (int m, int n) = isIOrSISlice ? CabacFunctions.GetInitDataForIOrSISlice(ctxIdx) : CabacFunctions.GetInitData(ctxIdx, cabacInitIdc);
 
@@ -88,137 +56,6 @@ public sealed class CabacContext
             ValMps = true;
         }
 
-        InitializeArithmeticDecodingEngine(reader);
-
         CtxIdx = ctxIdx;
-
-        _boundReader = reader;
-    }
-
-    /// <summary>
-    ///   Begins recording of <see cref="BinIdx"/>.
-    /// </summary>
-    public void BeginRecordBinIdx()
-    {
-        _binIdx = 0;
-        _recordBinIdx = true;
-    }
-
-    /// <summary>
-    ///   Stops recording <see cref="BinIdx"/>.
-    /// </summary>
-    public void StopRecordBinIdx()
-    {
-        _recordBinIdx = false;
-    }
-
-    private void InitializeArithmeticDecodingEngine(BitStreamReader reader)
-    {
-        CodIRange = 510;
-        CodIOffset = reader.ReadBits(9);
-
-        if (CodIOffset is 510 or 511)
-            throw new CabacArithmeticException("CodIOffset must be less than 510 or 511, but was " + CodIOffset + ".");
-    }
-
-    internal BitString PriorDecodedBinValues
-    {
-        get => _priorDecodedBins;
-        set => _priorDecodedBins = value;
-    }
-
-    internal void ResetPriorDecodedBins()
-    {
-        _priorDecodedBins = default;
-    }
-
-    /// <summary>
-    ///   Reads a CABAC bin.
-    /// </summary>
-    /// <returns>The bin.</returns>
-    public bool ReadBin()
-    {
-        uint codIRange = CodIRange;
-        uint codIOffset = CodIOffset;
-        bool retVal = ReadAEBinaryDecision(_boundReader, PStateIdx, ValMps, CtxIdx, BypassFlag, ref codIRange, ref codIOffset);
-        CodIRange = codIRange;
-        CodIOffset = codIOffset;
-        _priorDecodedBins += new BitString(retVal ? 1 : 0, 1);
-        return retVal;
-    }
-
-    private bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
-    {
-        if (bypassFlag)
-            return AEDecodeBypass(reader, ref codIOffset, codIRange);
-        if (ctxIdx == 276)
-            return AEDecodeTerminate(reader, ref codIOffset, ref codIRange);
-        return AEDecodeDecision(pStateIdx, valMPS, ref codIOffset, ref codIRange);
-    }
-
-    private static bool AEDecodeBypass(BitStreamReader reader, ref uint codIOffset, uint codIRange)
-    {
-        codIOffset *= 2;
-        codIOffset |= Int32Boolean.U32(reader.ReadBit());
-
-        if (codIOffset >= codIRange)
-        {
-            codIOffset -= codIRange;
-            return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    private static bool AEDecodeTerminate(BitStreamReader reader, ref uint codIOffset, ref uint codIRange)
-    {
-        codIRange -= 2;
-        if (codIOffset >= codIRange)
-        {
-            codIOffset |= 1;
-            return true;
-        }
-        else
-        {
-            Renormalize(ref codIOffset, ref codIRange);
-            return false;
-        }
-
-        void Renormalize(ref uint codIOffset, ref uint codIRange)
-        {
-            if (codIRange < 256)
-            {
-                while (codIRange < 256)
-                {
-                    codIRange <<= 1;
-                    codIOffset <<= 1;
-                    codIOffset |= Int32Boolean.U32(reader.ReadBit());
-                }
-            }
-        }
-    }
-
-    private bool AEDecodeDecision(int pStateIdx, bool valMPS, ref uint codIOffset, ref uint codIRange)
-    {
-        uint qCodIRangeIdx = codIRange >> 6 & 0x03;
-        int codIRangeLPS = CabacFunctions.GetRangeTabLps(pStateIdx, (int)qCodIRangeIdx);
-
-        codIRange -= (uint)codIRangeLPS;
-
-        if (_recordBinIdx)
-            _binIdx++;
-
-        if (codIOffset >= codIRange)
-        {
-            codIOffset -= codIRange;
-            codIRange = (uint)codIRangeLPS;
-            return Int32Boolean.B(1 - Int32Boolean.U32(valMPS));
-        }
-        else
-        {
-            return valMPS;
-        }
     }
 }
