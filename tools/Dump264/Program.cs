@@ -59,9 +59,9 @@ void DumpNalu()
         SliceHeaderDump(shd);
         br.GoTo(prevState);
 
-        //Console.WriteLine("parsing...");
-        //var sl = H264Slice.ParseSlice(globalSps, globalPps, shd, rbsp, nal, len);
-        //Console.WriteLine("parsed!");
+        Console.WriteLine("parsing...");
+        var sl = H264Slice.ParseSlice(globalSps, globalPps, shd, rbsp, nal, len);
+        Console.WriteLine("parsed!");
     }
 }
 

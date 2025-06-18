@@ -123,7 +123,7 @@ internal partial class IntraInterDecoder
 
         public static void DeriveNeighboringMacroblockAddresses(int currMbAddr, int picWidthInMbs, bool isMbaff, out NeighboringMacroblocks macroblocks)
         {
-            if (isMbaff) DeriveNeighboringMacroblockAddresses(currMbAddr, picWidthInMbs, out macroblocks);
+            if (!isMbaff) DeriveNeighboringMacroblockAddresses(currMbAddr, picWidthInMbs, out macroblocks);
             else DeriveNeighboringMacroblockAddressesMbaff(currMbAddr, picWidthInMbs, out macroblocks);
         }
 

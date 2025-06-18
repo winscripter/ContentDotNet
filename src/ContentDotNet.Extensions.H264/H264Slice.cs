@@ -54,7 +54,7 @@ public sealed class H264Slice
     // Thus, setting them to null will hint the GC to collect it.
     // We care about memory usage, significantly in fact.
 
-    private readonly List<int> _mapUnitToSliceGroupMap;
+    private readonly int[] _mapUnitToSliceGroupMap;
     internal readonly List<MinimalMacroblockLayer> _mbs;
     internal readonly List<bool> _mbFieldDecodingFlags;
     internal readonly List<bool> _mbSkipFlags;
@@ -81,7 +81,6 @@ public sealed class H264Slice
         _nalLen = nalLength;
         NAL = nal;
 
-        _mapUnitToSliceGroupMap = [];
         _mbs = [];
         _mbFieldDecodingFlags = [];
         _mbSkipFlags = [];
@@ -90,6 +89,8 @@ public sealed class H264Slice
         SPS = sps;
         PPS = pps;
         SliceHeader = shd;
+
+        _mapUnitToSliceGroupMap = new int[SPS.GetPicSizeInMapUnits()];
 
         _util = new MbUtilImpl(this);
 
@@ -109,8 +110,8 @@ public sealed class H264Slice
 
         _intraInterDecoder = new IntraInterDecoder(Context, _util, SPS.GetFrameSize());
 
-        Parse();
         CreateMapUnitToSliceGroupMaps();
+        Parse();
     }
 
     private int NextMbAddress(int n)
@@ -566,7 +567,7 @@ public sealed class H264Slice
         if (PPS.NumSliceGroupsMinus1 == 0)
         {
             for (int i = 0; i < PicSizeInMapUnits - 1; i++)
-                _mapUnitToSliceGroupMap.Add(0);
+                _mapUnitToSliceGroupMap[i] = 0;
         }
         else
         {
@@ -582,11 +583,6 @@ public sealed class H264Slice
                             {
                                 for (int j = 0; j <= PPS.RunLengthMinus1[iGroup] && i + j < PicSizeInMapUnits; j++)
                                 {
-                                    while (_mapUnitToSliceGroupMap.Count - 1 < j + i)
-                                    {
-                                        _mapUnitToSliceGroupMap.Add(0);
-                                    }
-
                                     _mapUnitToSliceGroupMap[i + j] = iGroup;
                                 }
                             }
@@ -600,9 +596,9 @@ public sealed class H264Slice
                     {
                         for (int i = 0; i < PicSizeInMapUnits; i++)
                         {
-                            _mapUnitToSliceGroupMap.Add(((i % PicWidthInMbs) +
+                            _mapUnitToSliceGroupMap[i] = ((i % PicWidthInMbs) +
                                                               (((i / PicWidthInMbs) * ((int)PPS.NumSliceGroupsMinus1 + 1)) / 2))
-                                                            % ((int)PPS.NumSliceGroupsMinus1 + 1));
+                                                            % ((int)PPS.NumSliceGroupsMinus1 + 1);
                         }
 
                         break;
@@ -611,7 +607,7 @@ public sealed class H264Slice
                 case 2:
                     {
                         for (int i = 0; i < PicSizeInMapUnits; i++)
-                            _mapUnitToSliceGroupMap.Add((int)PPS.NumSliceGroupsMinus1);
+                            _mapUnitToSliceGroupMap[i] = (int)PPS.NumSliceGroupsMinus1;
 
                         for (int iGroup = (int)PPS.NumSliceGroupsMinus1 - 1; iGroup >= 0; iGroup--)
                         {
@@ -623,11 +619,6 @@ public sealed class H264Slice
                             {
                                 for (int x = xTopLeft; x <= xBottomRight; x++)
                                 {
-                                    while (_mapUnitToSliceGroupMap.Count - 1 < y * PicWidthInMbs + x)
-                                    {
-                                        _mapUnitToSliceGroupMap.Add(0);
-                                    }
-
                                     _mapUnitToSliceGroupMap[y * PicWidthInMbs + x] = iGroup;
                                 }
                             }
@@ -774,7 +765,7 @@ public sealed class H264Slice
         public MinimalMacroblockLayer GetMacroblock(int address)
         {
             if (address < 0 || address > ((_self.SPS.PicWidthInMbsMinus1 + 1) * (_self.SPS.PicHeightInMapUnitsMinus1 + 1)))
-                throw new InvalidOperationException("Attempting to access macroblock out of range");
+                throw new InvalidOperationException("Attempting to access macroblock out of range. Total MBs: " + ((_self.SPS.PicWidthInMbsMinus1 + 1) * (_self.SPS.PicHeightInMapUnitsMinus1 + 1)) + ", MB: " + address + ", discovered: " + _self._mbs.Count);
 
             return _self._mbs![address]; // Does not discover macroblocks ahead
         }

@@ -64,8 +64,26 @@ internal static class CabacCtxIdxIncDerivation
     {
         IntraInterDecoder.Scanning.DeriveNeighboringMacroblockAddresses(dc.CurrMbAddr, picWidthInMbs, dc.IsMbaff, out var macroblocks);
 
-        bool condTermFlagA = !(macroblocks.IsMbAddrAAvailable || (ctxIdxOffset == 0 && IsSI(mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType)) || (ctxIdxOffset == 3 && mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMacroblock(macroblocks.MbAddrA).MbType is B_Skip or B_Direct_16x16));
-        bool condTermFlagB = !(macroblocks.IsMbAddrBAvailable || (ctxIdxOffset == 0 && IsSI(mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType)) || (ctxIdxOffset == 3 && mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMacroblock(macroblocks.MbAddrB).MbType is B_Skip or B_Direct_16x16));
+        bool condTermFlagA = true;
+        bool condTermFlagB = true;
+
+        if (!macroblocks.IsMbAddrAAvailable || macroblocks.MbAddrA < 0)
+        {
+            condTermFlagA = false;
+        }
+        else
+        {
+            condTermFlagA = !((ctxIdxOffset == 0 && mbUtil.IsMacroblockOfTypeSi(macroblocks.MbAddrA)) || (ctxIdxOffset == 3 && mbUtil.GetMbType(macroblocks.MbAddrA) == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMbType(macroblocks.MbAddrA) is B_Skip or B_Direct_16x16));
+        }
+
+        if (!macroblocks.IsMbAddrBAvailable || macroblocks.MbAddrB < 0)
+        {
+            condTermFlagB = false;
+        }
+        else
+        {
+            condTermFlagB = !((ctxIdxOffset == 0 && mbUtil.IsMacroblockOfTypeSi(macroblocks.MbAddrB)) || (ctxIdxOffset == 3 && mbUtil.GetMbType(macroblocks.MbAddrB) == I_NxN) || (ctxIdxOffset == 27 && mbUtil.GetMbType(macroblocks.MbAddrB) is B_Skip or B_Direct_16x16));
+        }
 
         return Int32Boolean.I32(condTermFlagA) + Int32Boolean.I32(condTermFlagB);
     }
@@ -482,11 +500,28 @@ internal static class CabacCtxIdxIncDerivation
             out var neighboringMacroblocks
         );
 
-        MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
-        MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
+        bool condTermFlagA = true;
+        bool condTermFlagB = true;
 
-        bool condTermFlagA = !(neighboringMacroblocks.IsMbAddrAAvailable || mbUtil.IsCodedWithInter(neighboringMacroblocks.MbAddrA) || mbA.MbType is I_PCM || mbA.Prediction?.IntraChromaPredMode == 0);
-        bool condTermFlagB = !(neighboringMacroblocks.IsMbAddrBAvailable || mbUtil.IsCodedWithInter(neighboringMacroblocks.MbAddrA) || mbB.MbType is I_PCM || mbB.Prediction?.IntraChromaPredMode == 0);
+        if (!neighboringMacroblocks.IsMbAddrAAvailable || neighboringMacroblocks.MbAddrA < 0)
+        {
+            condTermFlagA = false;
+        }
+        else
+        {
+            MinimalMacroblockLayer mbA = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrA);
+            condTermFlagA = !(mbUtil.IsCodedWithInter(neighboringMacroblocks.MbAddrA) || mbA.MbType is I_PCM || mbA.Prediction?.IntraChromaPredMode == 0);
+        }
+
+        if (!neighboringMacroblocks.IsMbAddrBAvailable || neighboringMacroblocks.MbAddrB < 0)
+        {
+            condTermFlagB = false;
+        }
+        else
+        {
+            MinimalMacroblockLayer mbB = mbUtil.GetMacroblock(neighboringMacroblocks.MbAddrB);
+            condTermFlagB = !(neighboringMacroblocks.IsMbAddrBAvailable || mbUtil.IsCodedWithInter(neighboringMacroblocks.MbAddrA) || mbB.MbType is I_PCM || mbB.Prediction?.IntraChromaPredMode == 0);
+        }
 
         return Int32Boolean.I32(condTermFlagA) + Int32Boolean.I32(condTermFlagB);
     }

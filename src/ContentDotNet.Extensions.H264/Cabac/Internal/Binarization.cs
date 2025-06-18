@@ -123,56 +123,23 @@ internal static class Binarization
         return result;
     }
 
-    public static int BinarizeMacroblockOrSubMacroblockType(ArithmeticDecoder dec, CabacContext ctx, bool isSISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
+    public static int BinarizeMacroblockOrSubMacroblockType(ArithmeticDecoder dec, CabacContext ctx, bool isISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
     {
-        if (isSISlice)
+        if (isISlice)
         {
-            if ((isSISlice ? 0 : 1) == 0)
-            {
-                return 0;
-            }
-            else
-            {
-                int b1 = LookUpISlice();
-                return b1;
-            }
+            return LookUpISlice();
+        }
+        else if (isPorSPSlice)
+        {
+            return isSubMbType ? LookUpPSPSlice() : LookUpSubPSPSlice();
+        }
+        else if (isBSlice)
+        {
+            return isSubMbType ? LookUpBSlice() : LookUpSubBSlice();
         }
         else
         {
-            if (isPorSPSlice)
-            {
-                int mbType = LookUpISlice();
-                if (mbType is >= 5 and <= 30)
-                    mbType -= 5;
-                return mbType;
-            }
-            else if (isBSlice)
-            {
-                int mbType = LookUpBSlice();
-                if (mbType is >= 23 and <= 48)
-                    mbType -= 23;
-                return mbType;
-            }
-            else if (isBSlice && isSubMbType)
-            {
-                return LookUpSubBSlice();
-            }
-            else if (isPorSPSlice && isSubMbType)
-            {
-                return LookUpSubPSPSlice();
-            }
-            else if (isBSlice && !isSubMbType)
-            {
-                return LookUpBSlice();
-            }
-            else if (isPorSPSlice && !isSubMbType)
-            {
-                return LookUpPSPSlice();
-            }
-            else
-            {
-                throw new InvalidOperationException("Invalid CABAC mb_type/sub_mb_type[] binarization");
-            }
+            throw new InvalidOperationException("Invalid CABAC mb_type/sub_mb_type[] binarization");
         }
 
         int LookUpISlice()
@@ -1222,7 +1189,7 @@ internal static class Binarization
                 {
                     binarized = BinarizeMacroblockOrSubMacroblockType(
                         dec, ctx,
-                        sliceType == GeneralSliceType.SI,
+                        sliceType == GeneralSliceType.I,
                         sliceType == GeneralSliceType.B,
                         sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
                         false);
@@ -1240,7 +1207,7 @@ internal static class Binarization
                 {
                     binarized = BinarizeMacroblockOrSubMacroblockType(
                         dec, ctx,
-                        sliceType == GeneralSliceType.SI,
+                        sliceType == GeneralSliceType.I,
                         sliceType == GeneralSliceType.B,
                         sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
                         true);

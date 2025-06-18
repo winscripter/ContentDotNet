@@ -74,7 +74,7 @@ public static class H264Extensions
     /// <returns>Picture size in map units</returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetPicSizeInMapUnits(this SequenceParameterSet sps) =>
-        (int)((sps.PicWidthInMbsMinus1 + 1) * ((2 - Int32Boolean.I32(sps.FrameMbsOnlyFlag)) * (sps.PicHeightInMapUnitsMinus1 + 1)));
+        ((int)sps.PicWidthInMbsMinus1 + 1) * ((int)sps.PicHeightInMapUnitsMinus1 + 1);
 
     /// <summary>
     ///   Returns the picture height in samples for the Luma channel.
