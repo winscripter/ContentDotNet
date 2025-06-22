@@ -1,5 +1,6 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Containers;
+using ContentDotNet.Extensions.H264.Cabac;
 using ContentDotNet.Extensions.H264.Containers;
 using ContentDotNet.Extensions.H264.Helpers;
 using ContentDotNet.Extensions.H264.Internal;
@@ -755,18 +756,18 @@ public struct CabacResidual : IEquatable<CabacResidual>
     /// <summary>
     ///   Reads the CABAC residual from the given bitstream.
     /// </summary>
-    /// <param name="reader"></param>
+    /// <param name="cabac">CABAC</param>
     /// <param name="coeffLevel"></param>
     /// <param name="startIdx"></param>
     /// <param name="endIdx"></param>
     /// <param name="maxNumCoeff"></param>
     /// <param name="chromaArrayType"></param>
     /// <returns></returns>
-    public static CabacResidual Read(BitStreamReader reader, Span<uint> coeffLevel, int startIdx, int endIdx, int maxNumCoeff, int chromaArrayType)
+    public static CabacResidual Read(CabacManager cabac, Span<uint> coeffLevel, int startIdx, int endIdx, int maxNumCoeff, int chromaArrayType)
     {
         bool codedBlockFlag = false;
         if (maxNumCoeff != 64 || chromaArrayType == 3)
-            codedBlockFlag = Int32Boolean.B(reader.ReadAE());
+            codedBlockFlag = Int32Boolean.B(cabac.ParseCodedBlockFlag());
 
         for (int i = 0; i < maxNumCoeff; i++)
             coeffLevel[i] = 0u;
@@ -782,18 +783,18 @@ public struct CabacResidual : IEquatable<CabacResidual>
             int i = startIdx;
             while (i < numCoeff - 1)
             {
-                significantCoeffFlag[i] = Int32Boolean.B(reader.ReadAE());
+                significantCoeffFlag[i] = Int32Boolean.B(cabac.ParseSignificantCoeffFlag());
                 if (significantCoeffFlag[i])
                 {
-                    lastSignificantCoeffFlag[i] = Int32Boolean.B(reader.ReadAE());
+                    lastSignificantCoeffFlag[i] = Int32Boolean.B(cabac.ParseLastSignificantCoeffFlag());
                     if (lastSignificantCoeffFlag[i])
                         numCoeff = i + 1;
                 }
                 i++;
             }
 
-            coeffAbsLevelMinus1[numCoeff - 1] = (uint)reader.ReadAE();
-            coeffSignFlag[numCoeff - 1] = Int32Boolean.B(reader.ReadAE());
+            coeffAbsLevelMinus1[numCoeff - 1] = (uint)cabac.ParseCoeffAbsLevelMinus1();
+            coeffSignFlag[numCoeff - 1] = Int32Boolean.B(cabac.ParseCoeffSignFlag());
 
             coeffLevel[numCoeff - 1] = (coeffAbsLevelMinus1[numCoeff - 1] + 1) *
                                        (1 - 2 * Int32Boolean.U32(coeffSignFlag[numCoeff - 1]));
@@ -802,8 +803,8 @@ public struct CabacResidual : IEquatable<CabacResidual>
             {
                 if (significantCoeffFlag[i])
                 {
-                    coeffAbsLevelMinus1[i] = (uint)reader.ReadAE();
-                    coeffSignFlag[i] = Int32Boolean.B(reader.ReadAE());
+                    coeffAbsLevelMinus1[i] = (uint)cabac.ParseCoeffAbsLevelMinus1();
+                    coeffSignFlag[i] = Int32Boolean.B(cabac.ParseCoeffSignFlag());
                     coeffLevel[i] = (coeffAbsLevelMinus1[i] + 1) *
                                     (1 - 2 * Int32Boolean.U32(coeffSignFlag[i]));
                 }
@@ -1089,6 +1090,7 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
     ///   Reads the residual luma.
     /// </summary>
     /// <param name="reader">Bitstream to read from</param>
+    /// <param name="cabac">The CABAC manager</param>
     /// <param name="entropyCodingMode">Taken from PPS</param>
     /// <param name="transformSize8x8Flag">Taken from PPS</param>
     /// <param name="mbType">Macroblock type</param>
@@ -1098,6 +1100,8 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
     /// <param name="i16x16ACLevel">AC Level</param>
     /// <param name="level8x8">8x8 Level</param>
     /// <param name="level4x4">4x4 Level</param>
+    /// <param name="cb">Is being parsed for the Cb channel?</param>
+    /// <param name="cr">Is being parsed for the Cr channel?</param>
     /// <param name="sliceType">Taken from the Slice Header</param>
     /// <param name="startIdx">Start</param>
     /// <param name="endIdx">End</param>
@@ -1113,6 +1117,7 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
     /// <returns>Residual luma, parsed from <paramref name="reader"/></returns>
     public static ResidualLuma Read(
         BitStreamReader reader,
+        CabacManager? cabac,
         EntropyCodingMode entropyCodingMode,
         bool transformSize8x8Flag,
         int mbType,
@@ -1120,8 +1125,10 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
         int chromaArrayType,
         out Container64UInt32 i16x16DCLevel,
         out ContainerMatrix16x16 i16x16ACLevel,
-        out ContainerMatrix4x64 level8x8,
-        out ContainerMatrix4x64 level4x4,
+        out ContainerMatrix16x16 level8x8,
+        out ContainerMatrix16x16 level4x4,
+        bool cb,
+        bool cr,
         GeneralSliceType sliceType,
         int startIdx,
         int endIdx,
@@ -1154,7 +1161,8 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
             {
                 Span<uint> sp = stackalloc uint[64];
 
-                startCABAC = CabacResidual.Read(reader, sp, 0, 15, 16, chromaArrayType);
+                cabac!.BlockType = cb ? ResidualBlockType.Cb16x16DCLevel : cr ? ResidualBlockType.Cr16x16DCLevel : ResidualBlockType.Intra16x16DCLevel;
+                startCABAC = CabacResidual.Read(cabac!, sp, 0, 15, 16, chromaArrayType);
 
                 for (int i = 0; i < 64; i++)
                     i16x16DCLevel[i] = sp[i];
@@ -1190,8 +1198,9 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
                                 {
                                     Span<uint> acLevel = stackalloc uint[64];
 
+                                    cabac!.BlockType = cb ? ResidualBlockType.Cb16x16ACLevel : cr ? ResidualBlockType.Cr16x16ACLevel : ResidualBlockType.Intra16x16ACLevel;
                                     cabacs[residualTop++] = CabacResidual.Read(
-                                        reader, acLevel, Math.Max(0, startIdx - 1), endIdx - 1, 15, chromaArrayType);
+                                        cabac!, acLevel, Math.Max(0, startIdx - 1), endIdx - 1, 15, chromaArrayType);
 
                                     for (int i = 0; i < 16; i++)
                                         i16x16ACLevel[i8x8 * 4 + i4x4, i] = acLevel[i];
@@ -1219,12 +1228,13 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
                             {
                                 _Core(level4x4);
 
-                                void _Core(ContainerMatrix4x64 level4x4)
+                                void _Core(ContainerMatrix16x16 level4x4)
                                 {
-                                    Span<uint> lvl4x4 = stackalloc uint[4];
+                                    Span<uint> lvl4x4 = stackalloc uint[16];
+                                    cabac!.BlockType = cb ? ResidualBlockType.CbLevel4x4 : cr ? ResidualBlockType.CrLevel4x4 : ResidualBlockType.LumaLevel4x4;
 
                                     cabacs[residualTop++] = CabacResidual.Read(
-                                        reader, lvl4x4, Math.Max(0, startIdx - 1), endIdx - 1, 15, chromaArrayType);
+                                        cabac!, lvl4x4, Math.Max(0, startIdx - 1), endIdx - 1, 15, chromaArrayType);
 
                                     for (int i = 0; i < 4; i++)
                                         level4x4[i8x8 * 4 + i4x4, i] = lvl4x4[i];
@@ -1234,9 +1244,9 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
                             {
                                 _Core(level4x4, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx);
 
-                                void _Core(ContainerMatrix4x64 level4x4, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
+                                void _Core(ContainerMatrix16x16 level4x4, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
                                 {
-                                    Span<uint> lvl4x4 = stackalloc uint[4];
+                                    Span<uint> lvl4x4 = stackalloc uint[16];
 
                                     cavlcs[residualTop++] = CavlcResidual.Read(
                                         reader, lvl4x4, Math.Max(0, startIdx - 1), endIdx - 1, 15, nalu, dc, chromaArrayType, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, mode, util, constrainedIntraPredFlag);
@@ -1249,17 +1259,23 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
                     }
                     else if (mbPartPredMode == Intra_16x16)
                     {
+                        cabac!.BlockType = cb ? ResidualBlockType.Cb16x16ACLevel : cr ? ResidualBlockType.Cr16x16ACLevel : ResidualBlockType.Intra16x16ACLevel;
+
                         for (int i = 0; i < 15; i++)
                             i16x16ACLevel[i8x8 * 4 + i4x4, i] = 0;
                     }
                     else
                     {
+                        cabac!.BlockType = cb ? ResidualBlockType.CbLevel4x4 : cr ? ResidualBlockType.CrLevel4x4 : ResidualBlockType.LumaLevel4x4;
+
                         for (int i = 0; i < 16; i++)
                             level4x4[i8x8 * 4 + i4x4, i] = 0;
                     }
 
                     if (entropyCodingMode == EntropyCodingMode.Cabac && transformSize8x8Flag)
                     {
+                        cabac!.BlockType = cb ? ResidualBlockType.CbLevel8x8 : cr ? ResidualBlockType.CrLevel8x8 : ResidualBlockType.LumaLevel8x8;
+
                         for (int i = 0; i < 16; i++)
                             level8x8[i8x8, 4 * i + i4x4] = (uint)level4x4[i8x8 * 4 + i4x4, i];
                     }
@@ -1271,11 +1287,12 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
                 {
                     _Core(level8x8);
 
-                    void _Core(ContainerMatrix4x64 level8x8)
+                    void _Core(ContainerMatrix16x16 level8x8)
                     {
                         Span<uint> coeffLevel = stackalloc uint[64];
+                        cabac!.BlockType = cb ? ResidualBlockType.CbLevel8x8 : cr ? ResidualBlockType.CrLevel8x8 : ResidualBlockType.LumaLevel8x8;
 
-                        cabacs[residualTop++] = CabacResidual.Read(reader, coeffLevel, 4 * startIdx, 4 * endIdx, 64, chromaArrayType);
+                        cabacs[residualTop++] = CabacResidual.Read(cabac!, coeffLevel, 4 * startIdx, 4 * endIdx, 64, chromaArrayType);
 
                         for (int i = 0; i < 64; i++)
                             level8x8[i8x8, i] = coeffLevel[i];
@@ -1285,7 +1302,7 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
                 {
                     _Core(level8x8, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx);
 
-                    void _Core(ContainerMatrix4x64 level8x8, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
+                    void _Core(ContainerMatrix16x16 level8x8, ref int luma4x4BlkIdx, ref int cb4x4BlkIdx, ref int cr4x4BlkIdx)
                     {
                         Span<uint> coeffLevel = stackalloc uint[64];
 
@@ -1298,6 +1315,8 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
             }
             else
             {
+                cabac!.BlockType = cb ? ResidualBlockType.CbLevel8x8 : cr ? ResidualBlockType.CrLevel8x8 : ResidualBlockType.LumaLevel8x8;
+
                 for (int i = 0; i < 64; i++)
                     level8x8[i8x8, i] = 0;
             }
@@ -1669,12 +1688,12 @@ public struct Residual : IEquatable<Residual>
     /// <summary>
     ///   Container for the luma coefficients in 8x8 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64 Level8x8;
+    public ContainerMatrix16x16 Level8x8;
 
     /// <summary>
     ///   Container for the luma coefficients in 4x4 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64 Level4x4;
+    public ContainerMatrix16x16 Level4x4;
 
     /// <summary>
     ///   Container for the DC coefficients of the chroma blue (Cb) 16x16 block.
@@ -1689,12 +1708,12 @@ public struct Residual : IEquatable<Residual>
     /// <summary>
     ///   Container for the chroma blue (Cb) coefficients in 8x8 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64 CbLevel8x8;
+    public ContainerMatrix16x16 CbLevel8x8;
 
     /// <summary>
     ///   Container for the chroma blue (Cb) coefficients in 4x4 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64 CbLevel4x4;
+    public ContainerMatrix16x16 CbLevel4x4;
 
     /// <summary>
     ///   Container for the DC coefficients of the chroma red (Cr) 16x16 block.
@@ -1709,12 +1728,12 @@ public struct Residual : IEquatable<Residual>
     /// <summary>
     ///   Container for the chroma red (Cr) coefficients in 8x8 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64 CrLevel8x8;
+    public ContainerMatrix16x16 CrLevel8x8;
 
     /// <summary>
     ///   Container for the chroma red (Cr) coefficients in 4x4 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64 CrLevel4x4;
+    public ContainerMatrix16x16 CrLevel4x4;
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Residual"/> struct.
@@ -1752,16 +1771,16 @@ public struct Residual : IEquatable<Residual>
         bool preferCabac,
         Container64UInt32 intra16x16DCLevel,
         ContainerMatrix16x16 intra16x16ACLevel,
-        ContainerMatrix4x64 level8x8,
-        ContainerMatrix4x64 level4x4,
+        ContainerMatrix16x16 level8x8,
+        ContainerMatrix16x16 level4x4,
         Container64UInt32 cb16x16DCLevel,
         ContainerMatrix16x16 cb16x16ACLevel,
-        ContainerMatrix4x64 cbLevel8x8,
-        ContainerMatrix4x64 cbLevel4x4,
+        ContainerMatrix16x16 cbLevel8x8,
+        ContainerMatrix16x16 cbLevel4x4,
         Container64UInt32 cr16x16DCLevel,
         ContainerMatrix16x16 cr16x16ACLevel,
-        ContainerMatrix4x64 crLevel8x8,
-        ContainerMatrix4x64 crLevel4x4)
+        ContainerMatrix16x16 crLevel8x8,
+        ContainerMatrix16x16 crLevel4x4)
     {
         FirstLumaResidual = firstLumaResidual;
         CabacCbCr = cabacCbCr;
@@ -1790,6 +1809,7 @@ public struct Residual : IEquatable<Residual>
     public static Residual Read(
 #pragma warning restore
         BitStreamReader reader,
+        CabacManager? cabac,
         EntropyCodingMode codingMode,
         int chromaArrayType,
         bool transformSize8x8Flag,
@@ -1811,22 +1831,22 @@ public struct Residual : IEquatable<Residual>
         int subHeightC,
         int codedBlockPatternChroma)
     {
-        ResidualLuma firstResidualLuma = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out var i16x16DCLevel, out var i16x16ACLevel, out var level8x8, out var level4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
+        ResidualLuma firstResidualLuma = ResidualLuma.Read(reader, cabac, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out var i16x16DCLevel, out var i16x16ACLevel, out var level8x8, out var level4x4, false, false, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
 
         Container64UInt32 Intra16x16DCLevel = i16x16DCLevel;
         ContainerMatrix16x16 Intra16x16ACLevel = i16x16ACLevel;
-        ContainerMatrix4x64 LumaLevel8x8 = level8x8;
-        ContainerMatrix4x64 LumaLevel4x4 = level4x4;
+        ContainerMatrix16x16 LumaLevel8x8 = level8x8;
+        ContainerMatrix16x16 LumaLevel4x4 = level4x4;
 
         Container64UInt32 Cb16x16DCLevel = default;
         ContainerMatrix16x16 Cb16x16ACLevel = default;
-        ContainerMatrix4x64 CbLevel8x8 = default;
-        ContainerMatrix4x64 CbLevel4x4 = default;
+        ContainerMatrix16x16 CbLevel8x8 = default;
+        ContainerMatrix16x16 CbLevel4x4 = default;
 
         Container64UInt32 Cr16x16DCLevel = default;
         ContainerMatrix16x16 Cr16x16ACLevel = default;
-        ContainerMatrix4x64 CrLevel8x8 = default;
-        ContainerMatrix4x64 CrLevel4x4 = default;
+        ContainerMatrix16x16 CrLevel8x8 = default;
+        ContainerMatrix16x16 CrLevel4x4 = default;
 
         ContainerMatrix16x16 Chroma16x16DCLevel = new();
         ContainerMatrix2x16x16 Chroma16x16ACLevel = new();
@@ -1854,13 +1874,13 @@ public struct Residual : IEquatable<Residual>
                     {
                         cabacCbCr ??= default;
 
-                        CabacResidual cabac = _Core(ref Chroma16x16DCLevel);
+                        CabacResidual cabacR = _Core(ref Chroma16x16DCLevel);
 
                         CabacResidual _Core(ref ContainerMatrix16x16 chromaDCLevel)
                         {
                             Span<uint> sp = stackalloc uint[16];
 
-                            CabacResidual res = CabacResidual.Read(reader, sp, 0, 4 * NumC8x8 - 1, 4 * NumC8x8, chromaArrayType);
+                            CabacResidual res = CabacResidual.Read(cabac!, sp, 0, 4 * NumC8x8 - 1, 4 * NumC8x8, chromaArrayType);
 
                             for (int i = 0; i < sp.Length; i++)
                                 chromaDCLevel[iCbCr, i] = sp[i];
@@ -1871,13 +1891,13 @@ public struct Residual : IEquatable<Residual>
                         if (iCbCr == 0)
                         {
                             var temp = cabacCbCr.Value;
-                            temp.First = cabac;
+                            temp.First = cabacR;
                             cabacCbCr = temp;
                         }
                         else
                         {
                             var temp = cabacCbCr.Value;
-                            temp.Second = cabac;
+                            temp.Second = cabacR;
                             cabacCbCr = temp;
                         }
                     }
@@ -1930,20 +1950,20 @@ public struct Residual : IEquatable<Residual>
                         {
                             if (codingMode == EntropyCodingMode.Cabac)
                             {
-                                CabacResidual cabac = _Core(ref Chroma16x16ACLevel);
+                                CabacResidual cabacR = _Core(ref Chroma16x16ACLevel);
 
-                                cabacs[cabacsTop++] = cabac;
+                                cabacs[cabacsTop++] = cabacR;
 
                                 CabacResidual _Core(ref ContainerMatrix2x16x16 Chroma16x16ACLevel)
                                 {
                                     Span<uint> span = stackalloc uint[16];
 
-                                    CabacResidual cabac = CabacResidual.Read(reader, span, Math.Max(0, startIdx - 1), endIdx - 1, 15, chromaArrayType);
+                                    CabacResidual cabacR = CabacResidual.Read(cabac!, span, Math.Max(0, startIdx - 1), endIdx - 1, 15, chromaArrayType);
 
                                     for (int i = 0; i < 16; i++)
                                         Chroma16x16ACLevel[iCbCr, i8x8 * 4 + i4x4, i] = span[i];
 
-                                    return cabac;
+                                    return cabacR;
                                 }
                             }
                             else
@@ -1976,8 +1996,8 @@ public struct Residual : IEquatable<Residual>
         }
         else if (chromaArrayType == 3)
         {
-            yuv444Cb = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out Cb16x16DCLevel, out Cb16x16ACLevel, out CbLevel8x8, out CbLevel4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
-            yuv444Cr = ResidualLuma.Read(reader, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out Cr16x16DCLevel, out Cr16x16ACLevel, out CrLevel8x8, out CrLevel4x4, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
+            yuv444Cb = ResidualLuma.Read(reader, cabac, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out Cb16x16DCLevel, out Cb16x16ACLevel, out CbLevel8x8, out CbLevel4x4, true, false, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
+            yuv444Cr = ResidualLuma.Read(reader, cabac, codingMode, transformSize8x8Flag, mbType, codedBlockPatternLuma, chromaArrayType, out Cr16x16DCLevel, out Cr16x16ACLevel, out CrLevel8x8, out CrLevel4x4, false, true, sliceType, startIdx, endIdx, nalu, dc, ref luma4x4BlkIdx, ref cb4x4BlkIdx, ref cr4x4BlkIdx, chroma4x4BlkIdx, util, mode, constrainedIntraPredFlag);
         }
 
         return new Residual(
@@ -2014,16 +2034,16 @@ public struct Residual : IEquatable<Residual>
                PreferCabac == other.PreferCabac &&
                EqualityComparer<Container64UInt32>.Default.Equals(Intra16x16DCLevel, other.Intra16x16DCLevel) &&
                EqualityComparer<ContainerMatrix16x16>.Default.Equals(Intra16x16ACLevel, other.Intra16x16ACLevel) &&
-               EqualityComparer<ContainerMatrix4x64>.Default.Equals(Level8x8, other.Level8x8) &&
-               EqualityComparer<ContainerMatrix4x64>.Default.Equals(Level4x4, other.Level4x4) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(Level8x8, other.Level8x8) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(Level4x4, other.Level4x4) &&
                EqualityComparer<Container64UInt32>.Default.Equals(Cb16x16DCLevel, other.Cb16x16DCLevel) &&
                EqualityComparer<ContainerMatrix16x16>.Default.Equals(Cb16x16ACLevel, other.Cb16x16ACLevel) &&
-               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CbLevel8x8, other.CbLevel8x8) &&
-               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CbLevel4x4, other.CbLevel4x4) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(CbLevel8x8, other.CbLevel8x8) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(CbLevel4x4, other.CbLevel4x4) &&
                EqualityComparer<Container64UInt32>.Default.Equals(Cr16x16DCLevel, other.Cr16x16DCLevel) &&
                EqualityComparer<ContainerMatrix16x16>.Default.Equals(Cr16x16ACLevel, other.Cr16x16ACLevel) &&
-               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CrLevel8x8, other.CrLevel8x8) &&
-               EqualityComparer<ContainerMatrix4x64>.Default.Equals(CrLevel4x4, other.CrLevel4x4);
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(CrLevel8x8, other.CrLevel8x8) &&
+               EqualityComparer<ContainerMatrix16x16>.Default.Equals(CrLevel4x4, other.CrLevel4x4);
     }
 
     /// <inheritdoc/>

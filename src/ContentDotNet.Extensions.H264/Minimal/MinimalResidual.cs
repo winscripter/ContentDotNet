@@ -43,12 +43,12 @@ public struct MinimalResidual
     /// <summary>
     ///   Container for the luma coefficients in 8x8 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64Byte Level8x8;
+    public ContainerMatrix16x16Byte Level8x8;
 
     /// <summary>
     ///   Container for the luma coefficients in 4x4 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64Byte Level4x4;
+    public ContainerMatrix16x16Byte Level4x4;
 
     /// <summary>
     ///   Container for the DC coefficients of the chroma blue (Cb) 16x16 block.
@@ -63,12 +63,12 @@ public struct MinimalResidual
     /// <summary>
     ///   Container for the chroma blue (Cb) coefficients in 8x8 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64Byte CbLevel8x8;
+    public ContainerMatrix16x16Byte CbLevel8x8;
 
     /// <summary>
     ///   Container for the chroma blue (Cb) coefficients in 4x4 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64Byte CbLevel4x4;
+    public ContainerMatrix16x16Byte CbLevel4x4;
 
     /// <summary>
     ///   Container for the DC coefficients of the chroma red (Cr) 16x16 block.
@@ -83,15 +83,15 @@ public struct MinimalResidual
     /// <summary>
     ///   Container for the chroma red (Cr) coefficients in 8x8 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64Byte CrLevel8x8;
+    public ContainerMatrix16x16Byte CrLevel8x8;
 
     /// <summary>
     ///   Container for the chroma red (Cr) coefficients in 4x4 transform blocks.
     /// </summary>
-    public ContainerMatrix4x64Byte CrLevel4x4;
+    public ContainerMatrix16x16Byte CrLevel4x4;
 
 #pragma warning disable CS1591 // Missing XML comment for publicly visible type or member
-    public MinimalResidual(bool preferCabac, MinimalLumaResidual firstLumaResidual, MinimalLumaResidual? yuv444Cb, MinimalLumaResidual? yuv444Cr, Container64Byte intra16x16DCLevel, ContainerMatrix16x16Byte intra16x16ACLevel, ContainerMatrix4x64Byte level8x8, ContainerMatrix4x64Byte level4x4, Container64Byte cb16x16DCLevel, ContainerMatrix16x16Byte cb16x16ACLevel, ContainerMatrix4x64Byte cbLevel8x8, ContainerMatrix4x64Byte cbLevel4x4, Container64Byte cr16x16DCLevel, ContainerMatrix16x16Byte cr16x16ACLevel, ContainerMatrix4x64Byte crLevel8x8, ContainerMatrix4x64Byte crLevel4x4, (MinimalCabacResidual First, MinimalCabacResidual Second)? cabacCbCr)
+    public MinimalResidual(bool preferCabac, MinimalLumaResidual firstLumaResidual, MinimalLumaResidual? yuv444Cb, MinimalLumaResidual? yuv444Cr, Container64Byte intra16x16DCLevel, ContainerMatrix16x16Byte intra16x16ACLevel, ContainerMatrix16x16Byte level8x8, ContainerMatrix16x16Byte level4x4, Container64Byte cb16x16DCLevel, ContainerMatrix16x16Byte cb16x16ACLevel, ContainerMatrix16x16Byte cbLevel8x8, ContainerMatrix16x16Byte cbLevel4x4, Container64Byte cr16x16DCLevel, ContainerMatrix16x16Byte cr16x16ACLevel, ContainerMatrix16x16Byte crLevel8x8, ContainerMatrix16x16Byte crLevel4x4, (MinimalCabacResidual First, MinimalCabacResidual Second)? cabacCbCr)
 #pragma warning restore CS1591 // Missing XML comment for publicly visible type or member
     {
         PreferCabac = preferCabac;

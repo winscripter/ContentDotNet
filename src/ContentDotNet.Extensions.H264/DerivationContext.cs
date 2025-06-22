@@ -5,7 +5,7 @@ namespace ContentDotNet.Extensions.H264;
 /// <summary>
 /// Represents the derivation context used in H.264 processing.
 /// </summary>
-public struct DerivationContext : IEquatable<DerivationContext>
+public sealed class DerivationContext : IEquatable<DerivationContext>
 {
     /// <summary>
     /// Gets or sets the macroblock address X.
@@ -15,57 +15,57 @@ public struct DerivationContext : IEquatable<DerivationContext>
     /// <summary>
     /// Gets or sets a value indicating whether the macroblock is in MBAFF mode.
     /// </summary>
-    public bool IsMbaff;
+    public bool IsMbaff { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the macroblock is a field macroblock in MBAFF mode.
     /// </summary>
-    public bool IsMbaffFieldMacroblock;
+    public bool IsMbaffFieldMacroblock { get; set; }
 
     /// <summary>
     /// Gets or sets the chroma macroblock sizes.
     /// </summary>
-    public MacroblockSizeChroma Sizes;
+    public MacroblockSizeChroma Sizes { get; set; }
 
     /// <summary>
     /// Gets or sets the neighboring macroblocks.
     /// </summary>
-    public NeighboringMacroblocks NeighboringMacroblocks;
+    public NeighboringMacroblocks NeighboringMacroblocks { get; set; }
 
     /// <summary>
     /// Gets or sets the current macroblock address.
     /// </summary>
-    public int CurrMbAddr;
+    public int CurrMbAddr { get; set; }
 
     /// <summary>
     /// Gets or sets the macroblock type.
     /// </summary>
-    public int MbType;
+    public int MbType { get; set; }
 
     /// <summary>
     /// Gets or sets the sub-macroblock type.
     /// </summary>
-    public int SubMbType;
+    public int SubMbType { get; set; }
 
     /// <summary>
     /// Gets or sets the picture width in samples for the luma component.
     /// </summary>
-    public int PictureWidthInSamplesL;
+    public int PictureWidthInSamplesL { get; set; }
 
     /// <summary>
     /// Gets or sets a value indicating whether the macroblock address X is in frame mode.
     /// </summary>
-    public bool MbAddrXFrameFlag;
+    public bool MbAddrXFrameFlag { get; set; }
 
     /// <summary>
     /// Gets or sets the bit depth for the luma component.
     /// </summary>
-    public int BitDepthY;
+    public int BitDepthY { get; set; }
 
     /// <summary>
     /// Gets or sets the bit depth for the chroma component.
     /// </summary>
-    public int BitDepthC;
+    public int BitDepthC { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="DerivationContext"/> struct.
@@ -111,7 +111,7 @@ public struct DerivationContext : IEquatable<DerivationContext>
     }
 
     /// <inheritdoc/>
-    public readonly override bool Equals(object? obj)
+    public override bool Equals(object? obj)
     {
         return obj is DerivationContext context && Equals(context);
     }
@@ -121,9 +121,10 @@ public struct DerivationContext : IEquatable<DerivationContext>
     /// </summary>
     /// <param name="other">The other <see cref="DerivationContext"/> to compare.</param>
     /// <returns><c>true</c> if the specified instance is equal; otherwise, <c>false</c>.</returns>
-    public readonly bool Equals(DerivationContext other)
+    public bool Equals(DerivationContext? other)
     {
-        return MbAddrX == other.MbAddrX &&
+        return other is not null &&
+               MbAddrX == other.MbAddrX &&
                IsMbaff == other.IsMbaff &&
                IsMbaffFieldMacroblock == other.IsMbaffFieldMacroblock &&
                Sizes.Equals(other.Sizes) &&
@@ -138,7 +139,7 @@ public struct DerivationContext : IEquatable<DerivationContext>
     }
 
     /// <inheritdoc/>
-    public readonly override int GetHashCode()
+    public override int GetHashCode()
     {
         var hash = new HashCode();
         hash.Add(MbAddrX);

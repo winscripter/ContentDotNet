@@ -121,6 +121,7 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
                 Util264.NumMbPart((int)mbType, sliceType) == 4)
             {
                 subMbPrediction = Models.SubMacroblockPrediction.Read(reader, cabac, mbaffFrameFlag, sliceType, codingMode, (int)mbType, numRefIdxL0ActiveMinus1, numRefIdxL1ActiveMinus1, mbFieldDecodingFlag, fieldPicFlag);
+
                 for (int mbPartIdx = 0; mbPartIdx < 4; mbPartIdx++)
                 {
                     if (subMbPrediction.Value.SubMbType[mbPartIdx] != B_Direct_8x8)
@@ -159,8 +160,9 @@ public struct MacroblockLayer : IEquatable<MacroblockLayer>
                 Util264.MbPartPredMode((int)mbType, 0, transformSize8x8Flag, sliceType) == Intra_16x16)
             {
                 mbQpDelta = codingMode == EntropyCodingMode.Cavlc ? reader.ReadSE() : cabac!.ParseMbQpDelta();
+
                 int z = 0;
-                residual = Residual.Read(reader, codingMode, chromaArrayType, transformSize8x8Flag, (int)mbType, CodedBlockPatternLuma, sliceType, 0, 15, nalu, dc, ref z, ref z, ref z, 0, util, mode, constrainedIntraPredFlag, subWidthC, subHeightC, CodedBlockPatternChroma);
+                residual = Residual.Read(reader, cabac, codingMode, chromaArrayType, transformSize8x8Flag, (int)mbType, CodedBlockPatternLuma, sliceType, 0, 15, nalu, dc, ref z, ref z, ref z, 0, util, mode, constrainedIntraPredFlag, subWidthC, subHeightC, CodedBlockPatternChroma);
             }
         }
 

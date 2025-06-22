@@ -23,13 +23,13 @@ public static class Int32Boolean
     /// Converts an integer to a boolean value.
     /// </summary>
     /// <param name="i">The integer value to convert.</param>
-    /// <returns>true if <paramref name="i"/> is 0; otherwise, false.</returns>
-    public static bool B(int i) => i == 0;
+    /// <returns>true if <paramref name="i"/> is not 0; otherwise, false.</returns>
+    public static bool B(int i) => i != 0;
 
     /// <summary>
     /// Converts an unsigned integer to a boolean value.
     /// </summary>
     /// <param name="i">The unsigned integer value to convert.</param>
-    /// <returns>true if <paramref name="i"/> is 0; otherwise, false.</returns>
-    public static bool B(uint i) => i == 0;
+    /// <returns>true if <paramref name="i"/> is not 0; otherwise, false.</returns>
+    public static bool B(uint i) => i != 0;
 }

@@ -10,8 +10,13 @@ internal static class Binarization
     public static int UnaryBinarize(ArithmeticDecoder dec, CabacContext ctx)
     {
         int synElVal = 0;
+        RecursionCounter counter = new(10000);
         while (dec.ReadBin(ctx))
+        {
+            counter.Increment();
             synElVal++;
+        }
+
         return synElVal;
     }
 
@@ -112,12 +117,9 @@ internal static class Binarization
         {
             if (dec.ReadBin(ctx))
             {
-                result = (result << 1) | 0x1;
+                result |= (1 << i); // LSB first
             }
-            else
-            {
-                result <<= 1;
-            }
+            // else do nothing, the bit is already 0
         }
 
         return result;
@@ -830,17 +832,29 @@ internal static class Binarization
 
     public static int BinarizeMbQpDelta(ArithmeticDecoder dec, CabacContext ctx)
     {
-        return UnaryBinarize(dec, ctx);
+        int codeNum = UnaryBinarize(dec, ctx);
+        return codeNum switch
+        {
+            0 => 0,
+            1 => 1,
+            2 => -1,
+            3 => 2,
+            4 => -2,
+            5 => 3,
+            6 => -3,
+            _ => (int)Math.Pow(-1, codeNum + 1) * (int)Math.Ceiling((double)codeNum / 2)
+        };
     }
 
     // I might be wrong, so I'll include this method so that if I'm wrong, I can change it later.
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private static int AssociateWithPrefixSuffix(int prefix, int suffix) => prefix;
 
-    public static (int maxBinIdxCtx, int ctxIdxOffset) GetFields(SyntaxElement element, GeneralSliceType sliceType, ResidualBlockType residualBlkType, int NumC8x8, bool isFrameMacroblock)
+    public static (int maxBinIdxCtx, int ctxIdxOffset, bool bypassFlag) GetFields(SyntaxElement element, GeneralSliceType sliceType, ResidualBlockType residualBlkType, int NumC8x8, bool isFrameMacroblock)
     {
         int maxBinIdxCtx = 0;
         int ctxIdxOffset = 0;
+        bool bypassFlag = false;
 
         switch (element)
         {
@@ -905,6 +919,7 @@ internal static class Binarization
                 {
                     maxBinIdxCtx = 4;
                     ctxIdxOffset = 40;
+                    bypassFlag = true;
 
                     break;
                 }
@@ -913,6 +928,7 @@ internal static class Binarization
                 {
                     maxBinIdxCtx = 4;
                     ctxIdxOffset = 47;
+                    bypassFlag = true;
 
                     break;
                 }
@@ -1136,32 +1152,39 @@ internal static class Binarization
                     if (ctxBlockCat < 5)
                     {
                         ctxIdxOffset = 227;
+                        bypassFlag = true;
                     }
                     else if (ctxBlockCat == 5)
                     {
                         ctxIdxOffset = 426;
+                        bypassFlag = true;
                     }
                     else if (5 < ctxBlockCat && ctxBlockCat < 9)
                     {
                         ctxIdxOffset = 952;
+                        bypassFlag = true;
                     }
                     else if (9 < ctxBlockCat && ctxBlockCat < 13)
                     {
                         ctxIdxOffset = 982;
+                        bypassFlag = true;
                     }
                     else if (ctxBlockCat == 9)
                     {
                         ctxIdxOffset = 708;
+                        bypassFlag = true;
                     }
                     else if (ctxBlockCat == 13)
                     {
                         ctxIdxOffset = 766;
+                        bypassFlag = true;
                     }
 
                     break;
                 }
 
             case SyntaxElement.CoeffSignFlag:
+                bypassFlag = true;
                 break;
 
             case SyntaxElement.EndOfSliceFlag:
@@ -1176,7 +1199,7 @@ internal static class Binarization
                 throw new NotImplementedException("Syntax element named " + element + " is not yet implemented");
         }
 
-        return (maxBinIdxCtx, ctxIdxOffset);
+        return (maxBinIdxCtx, ctxIdxOffset, bypassFlag);
     }
 
     public static int Binarize(ArithmeticDecoder dec, CabacContext ctx, GeneralSliceType sliceType, SyntaxElement element, int chromaArrayType)

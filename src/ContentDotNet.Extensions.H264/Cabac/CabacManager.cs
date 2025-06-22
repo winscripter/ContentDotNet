@@ -33,6 +33,11 @@ public sealed partial class CabacManager
     }
 
     /// <summary>
+    ///   Gets the arithmetic decoding engine.
+    /// </summary>
+    public ArithmeticDecoder Decoder => _arithmeticDecodingEngine;
+
+    /// <summary>
     ///   Gets or sets the type of the current slice.
     /// </summary>
     public GeneralSliceType SliceType { get; set; } = GeneralSliceType.I;
@@ -119,18 +124,18 @@ public sealed partial class CabacManager
 
     private void InitializeOrUpdate(SyntaxElement se)
     {
-        int ctxIdx = GetCtxIdx(se);
+        var (ctxIdx, bypassFlag) = GetCtxIdxAndBypassFlag(se);
 
         if (!_init[ctxIdx])
         {
-            _cabacs[ctxIdx] = new CabacContext(ctxIdx, CabacInitIdc, SliceType is GeneralSliceType.I or GeneralSliceType.SI, SliceQPY);
+            _cabacs[ctxIdx] = new CabacContext(ctxIdx, CabacInitIdc, SliceType is GeneralSliceType.I or GeneralSliceType.SI, bypassFlag, SliceQPY);
             _init[ctxIdx] = true;
         }
     }
 
-    private int GetCtxIdx(SyntaxElement se)
+    private (int ctxIdx, bool bypassFlag) GetCtxIdxAndBypassFlag(SyntaxElement se)
     {
-        var (maxBinIdxCtx, ctxIdxOffset) = Binarization.GetFields(se, SliceType, BlockType, NumC8x8, IsFrameMacroblock);
+        var (maxBinIdxCtx, ctxIdxOffset, bypassFlag) = Binarization.GetFields(se, SliceType, BlockType, NumC8x8, IsFrameMacroblock);
 
         Span<int> s = stackalloc int[1];
         int ctxIdx = CabacCtxIdxDerivation.AssignCtxIdxInc(
@@ -153,13 +158,13 @@ public sealed partial class CabacManager
             out _
         );
 
-        return ctxIdx;
+        return (ctxIdx, bypassFlag);
     }
 
     private int Parse(SyntaxElement se)
     {
         InitializeOrUpdate(se);
-        int ctxIdx = GetCtxIdx(se);
+        var (ctxIdx, _) = GetCtxIdxAndBypassFlag(se);
         return Binarization.Binarize(_arithmeticDecodingEngine, _cabacs[ctxIdx], SliceType, se, ChromaArrayType);
     }
 

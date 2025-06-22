@@ -10,6 +10,7 @@ using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
 using ContentDotNet.Primitives;
+using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264;
 
@@ -55,17 +56,17 @@ public sealed class H264Slice
     // We care about memory usage, significantly in fact.
 
     private readonly int[] _mapUnitToSliceGroupMap;
-    internal readonly List<MinimalMacroblockLayer> _mbs;
-    internal readonly List<bool> _mbFieldDecodingFlags;
-    internal readonly List<bool> _mbSkipFlags;
-    private readonly CabacManager? _cabac;
+    internal readonly LimitedList<MinimalMacroblockLayer> _mbs;
+    internal readonly LimitedList<bool> _mbFieldDecodingFlags;
+    internal readonly LimitedList<bool> _mbSkipFlags;
+    private CabacManager? _cabac;
     private readonly int _initialCurrMbAddr;
 
     internal readonly SequenceParameterSet SPS;
     internal readonly PictureParameterSet PPS;
     internal readonly SliceHeader SliceHeader;
 
-    internal DerivationContext Context = default;
+    internal DerivationContext Context;
     internal NalUnit NAL;
 
     private readonly IMacroblockUtility _util;
@@ -81,32 +82,35 @@ public sealed class H264Slice
         _nalLen = nalLength;
         NAL = nal;
 
-        _mbs = [];
-        _mbFieldDecodingFlags = [];
-        _mbSkipFlags = [];
-        _initialCurrMbAddr = (int)shd.FirstMbInSlice * (2 - Int32Boolean.I32(shd.GetMbaffFrameFlag(sps)));
-
         SPS = sps;
         PPS = pps;
         SliceHeader = shd;
+
+        _mbs = new LimitedList<MinimalMacroblockLayer>(SPS.GetPicSizeInMapUnits() + 1);
+        _mbFieldDecodingFlags = new LimitedList<bool>(SPS.GetPicSizeInMapUnits() + 1);
+        _mbSkipFlags = new LimitedList<bool>(SPS.GetPicSizeInMapUnits() + 1);
+        _initialCurrMbAddr = (int)shd.FirstMbInSlice * (2 - Int32Boolean.I32(shd.GetMbaffFrameFlag(sps)));
 
         _mapUnitToSliceGroupMap = new int[SPS.GetPicSizeInMapUnits()];
 
         _util = new MbUtilImpl(this);
 
         _connectedBsReader = reader;
-        if (pps.EntropyCodingModeFlag)
-        {
-            _cabac = new CabacManager(reader, _util)
-            {
-                CabacInitIdc = (int)shd.CabacInitIdc,
-                ChromaArrayType = (int)sps.GetChromaArrayType(),
-                DerivationContext = new DerivationContext(0, sps.MbAdaptiveFrameFieldFlag, false, default, new NeighboringMacroblocks(), _initialCurrMbAddr, 0, 0, sps.GetPicWidthInSamplesL(), false, (int)(sps.BitDepthLumaMinus8 + 8), (int)(sps.BitDepthChromaMinus8 + 8)),
-                L0Mode = true,
-                PicWidthInMbs = (int)(sps.PicWidthInMbsMinus1 + 1),
-                SliceType = shd.GetSliceType()
-            };
-        }
+
+        Context = new DerivationContext(
+            0,
+            SliceHeader.GetMbaffFrameFlag(SPS),
+            false,
+            Util264.GetMbWidthHeightC(SPS),
+            default,
+            _initialCurrMbAddr,
+            0,
+            0,
+            SPS.GetPicWidthInSamplesL(),
+            false,
+            (int)(SPS.BitDepthLumaMinus8 + 8),
+            (int)(SPS.BitDepthChromaMinus8 + 8)
+        );
 
         _intraInterDecoder = new IntraInterDecoder(Context, _util, SPS.GetFrameSize());
 
@@ -138,12 +142,30 @@ public sealed class H264Slice
 
     private void Parse()
     {
+        if (PPS.EntropyCodingModeFlag)
+        {
+            _cabac = new CabacManager(_connectedBsReader, _util)
+            {
+                CabacInitIdc = (int)SliceHeader.CabacInitIdc,
+                ChromaArrayType = (int)SPS.GetChromaArrayType(),
+                DerivationContext = Context,
+                L0Mode = true,
+                PicWidthInMbs = (int)(SPS.PicWidthInMbsMinus1 + 1),
+                SliceType = SliceHeader.GetSliceType()
+            };
+            Console.WriteLine("Offset: " + _cabac.Decoder.CodIOffset + ", range: " + _cabac.Decoder.CodIRange);
+            while (!Util264.ByteAligned(_connectedBsReader))
+                _ = _connectedBsReader.ReadBit(); // cabac_alignment_one_bit
+        }
+        int iteration = 0;
         bool moreDataFlag = true;
         bool prevMbSkipped = false;
         int CurrMbAddr = _initialCurrMbAddr;
         bool mbFieldDecodingFlag;
         do
         {
+            Console.WriteLine("iter: " + iteration);
+            iteration++;
             bool mbSkipFlag = false;
             mbFieldDecodingFlag = false;
             GeneralSliceType sliceType = this.SliceHeader.GetSliceType();
@@ -156,14 +178,10 @@ public sealed class H264Slice
                     for (int i = 0; i < mbSkipRun; i++)
                     {
                         CurrMbAddr = NextMbAddress(CurrMbAddr);
-                        if (_cabac is not null)
-                        {
-                            var dc = _cabac.DerivationContext;
-                            dc.CurrMbAddr = CurrMbAddr;
-                            _cabac!.DerivationContext = dc;
+                        Context.CurrMbAddr = CurrMbAddr;
+                        Context.NeighboringMacroblocks.Refresh(CurrMbAddr, SPS);
 
-                            this.Context.CurrMbAddr = CurrMbAddr;
-                        }
+                        this.Context.CurrMbAddr = CurrMbAddr;
                     }
 
                     if (mbSkipRun > 0)
@@ -183,7 +201,10 @@ public sealed class H264Slice
                 {
                     mbFieldDecodingFlag = Int32Boolean.B(_cabac!.ParseMacroblockFieldDecodingFlag());
                 }
-                _mbs!.Add(ParseMacroblockLayer(mbFieldDecodingFlag));
+                Context.IsMbaffFieldMacroblock = mbFieldDecodingFlag;
+                var mb = ParseMacroblockLayer(mbFieldDecodingFlag);
+                Context.MbType = (int)mb.MbType;
+                _mbs!.Add(mb);
                 _mbFieldDecodingFlags.Add(mbFieldDecodingFlag);
                 _mbSkipFlags.Add(mbSkipFlag);
             }
@@ -210,9 +231,8 @@ public sealed class H264Slice
             CurrMbAddr = NextMbAddress(CurrMbAddr);
             if (_cabac is not null)
             {
-                var dc = _cabac.DerivationContext;
-                dc.CurrMbAddr = CurrMbAddr;
-                _cabac!.DerivationContext = dc;
+                Context.CurrMbAddr = CurrMbAddr;
+                Context.NeighboringMacroblocks.Refresh(CurrMbAddr, SPS);
 
                 this.Context.CurrMbAddr = CurrMbAddr;
             }

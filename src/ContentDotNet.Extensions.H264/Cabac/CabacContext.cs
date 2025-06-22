@@ -25,10 +25,16 @@ public struct CabacContext
     public int CtxIdx { get; set; }
 
     /// <summary>
+    ///   BypassFlag
+    /// </summary>
+    public bool BypassFlag { get; set; }
+
+    /// <summary>
     ///   Initializes the CABAC decoding engine.
     /// </summary>
     /// <param name="ctxIdx">The context index.</param>
     /// <param name="cabacInitIdc">CABAC Initialization Identifier Code. See <see cref="SliceHeader.CabacInitIdc"/></param>
+    /// <param name="bypassFlag">The bypass flag.</param>
     /// <param name="isIOrSISlice">
     /// Is the current slice an I or SI slice? See the following methods:
     /// <list type="bullet">
@@ -40,8 +46,10 @@ public struct CabacContext
     /// as well as <see cref="SliceHeader.SliceType"/>.
     /// </param>
     /// <param name="sliceQPY">Slice Quantization Parameter for the Luma channel.</param>
-    public CabacContext(int ctxIdx, int cabacInitIdc, bool isIOrSISlice, int sliceQPY)
+    public CabacContext(int ctxIdx, int cabacInitIdc, bool isIOrSISlice, bool bypassFlag, int sliceQPY)
     {
+        BypassFlag = bypassFlag;
+
         (int m, int n) = isIOrSISlice ? CabacFunctions.GetInitDataForIOrSISlice(ctxIdx) : CabacFunctions.GetInitData(ctxIdx, cabacInitIdc);
 
         int preCtxState = Util264.Clip3(1, 126, ((m * Util264.Clip3(0, 51, sliceQPY)) >> 4) + n);

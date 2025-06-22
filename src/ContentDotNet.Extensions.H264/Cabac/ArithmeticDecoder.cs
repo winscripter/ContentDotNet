@@ -1,16 +1,31 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Primitives;
+using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264.Cabac;
 
-internal sealed class ArithmeticDecoder
+/// <summary>
+///   An H.264 arithmetic decoding engine.
+/// </summary>
+public sealed class ArithmeticDecoder
 {
     private readonly BitStreamReader _boundReader;
 
+    /// <summary>
+    ///   CodIRange
+    /// </summary>
     public uint CodIRange { get; set; }
+
+    /// <summary>
+    ///   CodIOffset
+    /// </summary>
     public uint CodIOffset { get; set; }
 
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="ArithmeticDecoder"/> class.
+    /// </summary>
+    /// <param name="boundReader">The bitstream reader.</param>
     public ArithmeticDecoder(BitStreamReader boundReader)
     {
         _boundReader = boundReader;
@@ -30,32 +45,34 @@ internal sealed class ArithmeticDecoder
     ///   Reads a CABAC bin.
     /// </summary>
     /// <returns>The bin.</returns>
-    public bool ReadBin(int pStateIdx, bool valMPS, bool bypassFlag, int ctxIdx)
+    public bool ReadBin(CabacContext cabac, bool bypassFlag)
     {
         uint codIRange = CodIRange;
         uint codIOffset = CodIOffset;
-        bool retVal = ReadAEBinaryDecision(_boundReader, pStateIdx, valMPS, ctxIdx, bypassFlag, ref codIRange, ref codIOffset);
+        bool retVal = ReadAEBinaryDecision(_boundReader, ref cabac, bypassFlag, ref codIRange, ref codIOffset);
         CodIRange = codIRange;
         CodIOffset = codIOffset;
         return retVal;
     }
 
-    public bool ReadBin(CabacContext cabac)
-        => ReadBin(cabac.PStateIdx, cabac.ValMps, false, cabac.CtxIdx);
+    /// <summary>
+    ///   Reads a CABAC bin.
+    /// </summary>
+    /// <returns>The bin.</returns>
+    public bool ReadBin(CabacContext ctx) => ReadBin(ctx, false);
 
-    private bool ReadAEBinaryDecision(BitStreamReader reader, int pStateIdx, bool valMPS, int ctxIdx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
+    private static bool ReadAEBinaryDecision(BitStreamReader reader, ref CabacContext cabacCtx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
     {
         if (bypassFlag)
             return AEDecodeBypass(reader, ref codIOffset, codIRange);
-        if (ctxIdx == 276)
+        if (cabacCtx.CtxIdx == 276)
             return AEDecodeTerminate(reader, ref codIOffset, ref codIRange);
-        return AEDecodeDecision(pStateIdx, valMPS, ref codIOffset, ref codIRange);
+        return AEDecodeDecision(reader, ref cabacCtx, ref codIOffset, ref codIRange);
     }
 
     private static bool AEDecodeBypass(BitStreamReader reader, ref uint codIOffset, uint codIRange)
     {
-        codIOffset *= 2;
-        codIOffset |= Int32Boolean.U32(reader.ReadBit());
+        codIOffset = (codIOffset << 1) | Int32Boolean.U32(reader.ReadBit());
 
         if (codIOffset >= codIRange)
         {
@@ -78,40 +95,48 @@ internal sealed class ArithmeticDecoder
         }
         else
         {
-            Renormalize(ref codIOffset, ref codIRange);
+            Renormalize(reader, ref codIOffset, ref codIRange);
             return false;
         }
+    }
 
-        void Renormalize(ref uint codIOffset, ref uint codIRange)
+    static void Renormalize(BitStreamReader reader, ref uint codIOffset, ref uint codIRange)
+    {
+        if (codIRange < 256)
         {
-            if (codIRange < 256)
+            while (codIRange < 256)
             {
-                while (codIRange < 256)
-                {
-                    codIRange <<= 1;
-                    codIOffset <<= 1;
-                    codIOffset |= Int32Boolean.U32(reader.ReadBit());
-                }
+                codIRange <<= 1;
+                codIOffset <<= 1;
+                codIOffset |= Int32Boolean.U32(reader.ReadBit());
             }
         }
     }
 
-    private static bool AEDecodeDecision(int pStateIdx, bool valMPS, ref uint codIOffset, ref uint codIRange)
+    private static bool AEDecodeDecision(BitStreamReader reader, ref CabacContext cabac, ref uint codIOffset, ref uint codIRange)
     {
         uint qCodIRangeIdx = codIRange >> 6 & 0x03;
-        int codIRangeLPS = CabacFunctions.GetRangeTabLps(pStateIdx, (int)qCodIRangeIdx);
+        int codIRangeLPS = CabacFunctions.GetRangeTabLps(cabac.PStateIdx, (int)qCodIRangeIdx);
 
         codIRange -= (uint)codIRangeLPS;
+
+        bool binVal;
 
         if (codIOffset >= codIRange)
         {
             codIOffset -= codIRange;
             codIRange = (uint)codIRangeLPS;
-            return Int32Boolean.B(1 - Int32Boolean.U32(valMPS));
+            binVal = Int32Boolean.B(1 - Int32Boolean.U32(cabac.ValMps));
         }
         else
         {
-            return valMPS;
+            binVal = cabac.ValMps;
         }
+
+        StateTransitioning.Apply(ref cabac, binVal);
+
+        Renormalize(reader, ref codIRange, ref codIOffset);
+
+        return binVal;
     }
 }
