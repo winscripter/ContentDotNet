@@ -59,7 +59,7 @@ public sealed class ArithmeticDecoder
     ///   Reads a CABAC bin.
     /// </summary>
     /// <returns>The bin.</returns>
-    public bool ReadBin(CabacContext ctx) => ReadBin(ctx, false);
+    public bool ReadBin(CabacContext ctx) => ReadBin(ctx, ctx.BypassFlag);
 
     private static bool ReadAEBinaryDecision(BitStreamReader reader, ref CabacContext cabacCtx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
     {
