@@ -18,7 +18,7 @@ public class BinReaderWriterTests
                 for (int i = 0; i < BinCount; i++)
                     writer.EncodeDecision(ref symbols, i % 2 == 0);
 
-                Assert.True((writer.BaseWriter.BaseStream.Length * 8) + writer.BaseWriter.BitPosition > 9);
+                Assert.Equal(5, (writer.BaseWriter.BaseStream.Length * 8) + writer.BaseWriter.BitPosition);
             });
 
         var binReader = new ArithmeticDecoder(reader);
