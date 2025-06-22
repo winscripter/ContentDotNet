@@ -8,17 +8,19 @@ public class BinReaderWriterTests
     [Fact]
     public void SingleBinRW_ShouldNotThrow()
     {
+        const int BinCount = 100;
+
         using var reader = UseArithmeticWriter(
             writer =>
             {
                 var symbols = EncoderSymbols.From(26, true, 20, 0);
-                for (int i = 0; i < 16; i++)
+                for (int i = 0; i < BinCount; i++)
                     writer.EncodeDecision(ref symbols, i % 2 == 0);
             });
 
         var binReader = new ArithmeticDecoder(reader);
         var cabac = new CabacContext(26, 0, true, false, 20);
-        for (int i = 0; i < 16; i++)
+        for (int i = 0; i < BinCount; i++)
             Assert.Equal(i % 2 == 0, binReader.ReadBin(cabac));
     }
 
