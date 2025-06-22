@@ -15,6 +15,7 @@ public sealed class ArithmeticEncoder
     private int bitsOutstanding;
     private int BinCountsInNALunits;
     private readonly BitStreamWriter _boundWriter;
+    private readonly WriterState _start;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="ArithmeticEncoder"/> class.
@@ -28,6 +29,8 @@ public sealed class ArithmeticEncoder
         bitsOutstanding = 0;
         _boundWriter = boundWriter;
         BinCountsInNALunits = 0;
+        _start = _boundWriter.GetState();
+        _boundWriter.WriteBits(0, 9); // for now
     }
 
     /// <summary>

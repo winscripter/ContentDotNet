@@ -12,7 +12,20 @@ public class BitStreamWriter(Stream output) : IDisposable
     /// <summary>
     ///   The bit position.
     /// </summary>
-    public int BitPosition => bitPosition;
+    public int BitPosition
+    {
+        get => bitPosition;
+        set => bitPosition = value;
+    }
+
+    /// <summary>
+    ///   The current byte.
+    /// </summary>
+    public int CurrentByte
+    {
+        get => currentByte;
+        set => currentByte = value;
+    }
 
     /// <summary>
     /// Writes a single bit to the bitstream.
