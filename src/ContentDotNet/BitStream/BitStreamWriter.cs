@@ -218,4 +218,11 @@ public class BitStreamWriter(Stream output) : IDisposable
     ///   Represents a base stream where data is written to.
     /// </summary>
     public Stream BaseStream => stream;
+
+    public void GoToStart()
+    {
+        BaseStream.Position = 0;
+        CurrentByte = 0;
+        BitPosition = 0;
+    }
 }
