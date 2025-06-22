@@ -14,11 +14,11 @@ public class BinReaderWriterTests
         using var reader = UseArithmeticWriter(
             writer =>
             {
-                var symbols1 = new CabacContext(CtxIdx1, 0, true, false, 26);
-                CabacBinarizationEncoder.EncodeMbType(writer, ref symbols1, 20, GeneralSliceType.P);
+                var symbol = new CabacContext(CtxIdx1, 0, true, false, 26);
+                CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 20, GeneralSliceType.P);
 
-                var symbols2 = new CabacContext(CtxIdx2, 0, true, false, 26);
-                CabacBinarizationEncoder.EncodeUnary(writer, ref symbols2, 5);
+                symbol = new CabacContext(CtxIdx2, 0, true, false, 26);
+                CabacBinarizationEncoder.EncodeUnary(writer, ref symbol, 150);
             });
 
         var binReader = new ArithmeticDecoder(reader);
@@ -26,7 +26,7 @@ public class BinReaderWriterTests
         var symbols2 = new CabacContext(CtxIdx2, 0, true, false, 26);
 
         Assert.Equal(20, CabacBinarization.BinarizeMacroblockOrSubMacroblockType(binReader, ref symbols1, false, false, true, false));
-        Assert.Equal(5, CabacBinarization.UnaryBinarize(binReader, ref symbols2));
+        Assert.Equal(150, CabacBinarization.UnaryBinarize(binReader, ref symbols2));
     }
 
     private static BitStreamReader UseArithmeticWriter(
