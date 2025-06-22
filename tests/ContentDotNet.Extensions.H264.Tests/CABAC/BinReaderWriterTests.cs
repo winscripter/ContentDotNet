@@ -8,7 +8,7 @@ public class BinReaderWriterTests
     [Fact]
     public void SingleBinRW_ShouldNotThrow()
     {
-        const int BinCount = 100;
+        const int BinCount = 1000;
 
         using var reader = UseArithmeticWriter(
             writer =>
