@@ -17,10 +17,12 @@ public class BinReaderWriterTests
                 var symbols = EncoderSymbols.From(26, true, CtxIdx, 0);
                 for (int i = 0; i < BinCount; i++)
                     writer.EncodeDecision(ref symbols, i % 2 == 0);
+
+                Assert.True((writer.BaseWriter.BaseStream.Length * 8) + writer.BaseWriter.BitPosition > 9);
             });
 
         var binReader = new ArithmeticDecoder(reader);
-        var cabac = new CabacContext(26, 0, true, false, CtxIdx);
+        var cabac = new CabacContext(CtxIdx, 0, true, false, 26);
         for (int i = 0; i < BinCount; i++)
             Assert.Equal(i % 2 == 0, binReader.ReadBin(cabac));
     }

@@ -34,6 +34,11 @@ public sealed class ArithmeticEncoder
     }
 
     /// <summary>
+    ///   The base bitstream writer.
+    /// </summary>
+    public BitStreamWriter BaseWriter => _boundWriter;
+
+    /// <summary>
     ///   Encodes a binary decision.
     /// </summary>
     /// <param name="symbols"></param>
