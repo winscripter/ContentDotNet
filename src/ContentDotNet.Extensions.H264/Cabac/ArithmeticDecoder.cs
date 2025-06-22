@@ -23,6 +23,11 @@ public sealed class ArithmeticDecoder
     public uint CodIOffset { get; set; }
 
     /// <summary>
+    ///   The base/bound reader.
+    /// </summary>
+    public BitStreamReader BaseReader => _boundReader;
+
+    /// <summary>
     ///   Initializes a new instance of the <see cref="ArithmeticDecoder"/> class.
     /// </summary>
     /// <param name="boundReader">The bitstream reader.</param>

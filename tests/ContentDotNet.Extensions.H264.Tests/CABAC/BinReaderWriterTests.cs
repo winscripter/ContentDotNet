@@ -20,9 +20,10 @@ public class BinReaderWriterTests
             });
 
         var binReader = new ArithmeticDecoder(reader);
-        var cabac = new CabacContext(CtxIdx, 0, true, false, 26);
-        for (int i = 0; i < 50; i++)
-            Assert.Equal(i % 2 == 0, binReader.ReadBin(cabac));
+        throw new InvalidOperationException(binReader.BaseReader.ReadBits(9).ToString());
+        //var cabac = new CabacContext(CtxIdx, 0, true, false, 26);
+        //for (int i = 0; i < 50; i++)
+        //    Assert.Equal(i % 2 == 0, binReader.ReadBin(cabac));
     }
 
     private static BitStreamReader UseArithmeticWriter(
