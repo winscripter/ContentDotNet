@@ -55,7 +55,7 @@ public sealed partial class CabacManager
     /// <summary>
     ///   Gets or sets the derivation context for CABAC parsing.
     /// </summary>
-    public DerivationContext DerivationContext { get; set; } = default;
+    public DerivationContext DerivationContext { get; set; } = null!;
 
     /// <summary>
     ///   Gets or sets the CABAC initialization IDC.
@@ -165,7 +165,7 @@ public sealed partial class CabacManager
     {
         InitializeOrUpdate(se);
         var (ctxIdx, _) = GetCtxIdxAndBypassFlag(se);
-        return Binarization.Binarize(_arithmeticDecodingEngine, _cabacs[ctxIdx], SliceType, se, ChromaArrayType);
+        return Binarization.Binarize(_arithmeticDecodingEngine, ref _cabacs[ctxIdx], SliceType, se, ChromaArrayType);
     }
 
     /// <summary>

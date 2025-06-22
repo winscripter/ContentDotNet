@@ -7,11 +7,11 @@ namespace ContentDotNet.Extensions.H264.Cabac.Internal;
 
 internal static class Binarization
 {
-    public static int UnaryBinarize(ArithmeticDecoder dec, CabacContext ctx)
+    public static int UnaryBinarize(ArithmeticDecoder dec, ref CabacContext ctx)
     {
         int synElVal = 0;
         RecursionCounter counter = new(10000);
-        while (dec.ReadBin(ctx))
+        while (dec.ReadBin(ref ctx))
         {
             counter.Increment();
             synElVal++;
@@ -20,12 +20,12 @@ internal static class Binarization
         return synElVal;
     }
 
-    public static int TruncatedUnaryBinarize(ArithmeticDecoder dec, CabacContext ctx, int cMax)
+    public static int TruncatedUnaryBinarize(ArithmeticDecoder dec, ref CabacContext ctx, int cMax)
     {
         int count = 0;
         for (int i = 0; i < cMax; i++)
         {
-            bool bit = dec.ReadBin(ctx);
+            bool bit = dec.ReadBin(ref ctx);
             if (!bit)
                 break;
             count++;
@@ -34,13 +34,13 @@ internal static class Binarization
         return count;
     }
 
-    public static (int count, int value) TruncatedUnaryBinarizeWithValue(ArithmeticDecoder dec, CabacContext ctx, int cMax)
+    public static (int count, int value) TruncatedUnaryBinarizeWithValue(ArithmeticDecoder dec, ref CabacContext ctx, int cMax)
     {
         int count = 0;
         int value = 0;
         for (int i = 0; i < cMax; i++)
         {
-            bool bit = dec.ReadBin(ctx);
+            bool bit = dec.ReadBin(ref ctx);
             if (bit)
                 value = (value << 1) | 0x1;
             else
@@ -55,9 +55,9 @@ internal static class Binarization
         return (count, value);
     }
 
-    public static int UegkBinarize(ArithmeticDecoder dec, CabacContext ctx, bool signedValFlag, int k, int uCoff)
+    public static int UegkBinarize(ArithmeticDecoder dec, ref CabacContext ctx, bool signedValFlag, int k, int uCoff)
     {
-        var (count, value) = TruncatedUnaryBinarizeWithValue(dec, ctx, uCoff);
+        var (count, value) = TruncatedUnaryBinarizeWithValue(dec, ref ctx, uCoff);
 
         if ((!signedValFlag && count != uCoff && Intrinsic.AllBitsSetToOne(value, 0, count)) ||
             (signedValFlag && count == 0 && value == 0))
@@ -108,14 +108,14 @@ internal static class Binarization
         }
     }
 
-    public static int FixedLengthBinarize(ArithmeticDecoder dec, CabacContext ctx, int cMax)
+    public static int FixedLengthBinarize(ArithmeticDecoder dec, ref CabacContext ctx, int cMax)
     {
         uint fixedLength = Intrinsic.CeilLog2((uint)cMax + 1u);
 
         int result = 0;
         for (int i = 0; i < fixedLength; i++)
         {
-            if (dec.ReadBin(ctx))
+            if (dec.ReadBin(ref ctx))
             {
                 result |= (1 << i); // LSB first
             }
@@ -125,28 +125,28 @@ internal static class Binarization
         return result;
     }
 
-    public static int BinarizeMacroblockOrSubMacroblockType(ArithmeticDecoder dec, CabacContext ctx, bool isISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
+    public static int BinarizeMacroblockOrSubMacroblockType(ArithmeticDecoder dec, ref CabacContext ctx, bool isISlice, bool isBSlice, bool isPorSPSlice, bool isSubMbType)
     {
         if (isISlice)
         {
-            return LookUpISlice();
+            return LookUpISlice(ref ctx);
         }
         else if (isPorSPSlice)
         {
-            return isSubMbType ? LookUpPSPSlice() : LookUpSubPSPSlice();
+            return isSubMbType ? LookUpPSPSlice(ref ctx) : LookUpSubPSPSlice(ref ctx);
         }
         else if (isBSlice)
         {
-            return isSubMbType ? LookUpBSlice() : LookUpSubBSlice();
+            return isSubMbType ? LookUpBSlice(ref ctx) : LookUpSubBSlice(ref ctx);
         }
         else
         {
             throw new InvalidOperationException("Invalid CABAC mb_type/sub_mb_type[] binarization");
         }
 
-        int LookUpISlice()
+        int LookUpISlice(ref CabacContext ctx)
         {
-            if (!dec.ReadBin(ctx))  // first bit == 0
+            if (!dec.ReadBin(ref ctx))  // first bit == 0
             {
                 // code "0" → symbol 0 (I_NxN)
                 return 0;
@@ -155,7 +155,7 @@ internal static class Binarization
             {
                 // first bit == 1
 
-                if (dec.ReadBin(ctx))  // second bit == 1
+                if (dec.ReadBin(ref ctx))  // second bit == 1
                 {
                     // code "11" → symbol 25 (I_PCM)
                     return 25;
@@ -164,19 +164,19 @@ internal static class Binarization
                 {
                     // second bit == 0
 
-                    if (!dec.ReadBin(ctx))  // third bit == 0
+                    if (!dec.ReadBin(ref ctx))  // third bit == 0
                     {
                         // third bit == 0
 
-                        if (!dec.ReadBin(ctx))  // fourth bit == 0
+                        if (!dec.ReadBin(ref ctx))  // fourth bit == 0
                         {
                             // fourth bit == 0
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
                                 // fifth bit == 0
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 0 0 0 0 0" → symbol 1
                                     return 1;
@@ -192,7 +192,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 0 0 0 1 0" → symbol 3
                                     return 3;
@@ -209,11 +209,11 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 0 0 0" → symbol 5
                                         return 5;
@@ -229,7 +229,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 0 1 0" → symbol 7
                                         return 7;
@@ -246,9 +246,9 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 1 0 0" → symbol 9
                                         return 9;
@@ -264,7 +264,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 0 1 1 1 0" → symbol 11
                                         return 11;
@@ -283,11 +283,11 @@ internal static class Binarization
                     {
                         // third bit == 1
 
-                        if (!dec.ReadBin(ctx))  // fourth bit == 0
+                        if (!dec.ReadBin(ref ctx))  // fourth bit == 0
                         {
                             // fourth bit == 0
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
                                 // code "1 0 1 0 0 0" → symbol 13
                                 return 13;
@@ -296,7 +296,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 0 1 0 0 1" → symbol 14
                                     return 14;
@@ -313,11 +313,11 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 0 0 0" → symbol 17
                                         return 17;
@@ -333,7 +333,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 0 1 0" → symbol 19
                                         return 19;
@@ -350,9 +350,9 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 1 0 0" → symbol 21
                                         return 21;
@@ -368,7 +368,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 0 1 1 1 1 0" → symbol 23
                                         return 23;
@@ -387,9 +387,9 @@ internal static class Binarization
             }
         }
 
-        int LookUpBSlice()
+        int LookUpBSlice(ref CabacContext ctx)
         {
-            if (!dec.ReadBin(ctx))  // first bit == 0
+            if (!dec.ReadBin(ref ctx))  // first bit == 0
             {
                 // code "0" → symbol 0 (B_Direct_16x16)
                 return 0;
@@ -398,11 +398,11 @@ internal static class Binarization
             {
                 // first bit == 1
 
-                if (!dec.ReadBin(ctx))  // second bit == 0
+                if (!dec.ReadBin(ref ctx))  // second bit == 0
                 {
                     // second bit == 0
 
-                    if (!dec.ReadBin(ctx))  // third bit == 0
+                    if (!dec.ReadBin(ref ctx))  // third bit == 0
                     {
                         // code "1 0 0" → symbol 1 (B_L0_16x16)
                         return 1;
@@ -419,19 +419,19 @@ internal static class Binarization
                 {
                     // second bit == 1
 
-                    if (!dec.ReadBin(ctx))  // third bit == 0
+                    if (!dec.ReadBin(ref ctx))  // third bit == 0
                     {
                         // third bit == 0
 
-                        if (!dec.ReadBin(ctx))  // fourth bit == 0
+                        if (!dec.ReadBin(ref ctx))  // fourth bit == 0
                         {
                             // fourth bit == 0
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
                                 // fifth bit == 0
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 1 0 0 0 0" → symbol 3 (B_Bi_16x16)
                                     return 3;
@@ -448,7 +448,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 1 0 0 1 0" → symbol 5 (B_L0_L0_8x16)
                                     return 5;
@@ -466,9 +466,9 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 1 0 1 0 0" → symbol 7 (B_L1_L1_8x16)
                                     return 7;
@@ -485,7 +485,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 1 0 1 1 0" → symbol 9 (B_L0_L1_8x16)
                                     return 9;
@@ -504,15 +504,15 @@ internal static class Binarization
                     {
                         // third bit == 1
 
-                        if (!dec.ReadBin(ctx))  // fourth bit == 1
+                        if (!dec.ReadBin(ref ctx))  // fourth bit == 1
                         {
                             // code starts with "1 1 1 0"
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 0
                             {
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 0 0 0" → symbol 12 (B_L0_Bi_16x8)
                                         return 12;
@@ -529,7 +529,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 0 1 0" → symbol 14 (B_L1_Bi_16x8)
                                         return 14;
@@ -547,9 +547,9 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 1 0 0" → symbol 16 (B_Bi_L0_16x8)
                                         return 16;
@@ -566,7 +566,7 @@ internal static class Binarization
                                 {
                                     // sixth bit == 1
 
-                                    if (!dec.ReadBin(ctx))  // seventh bit == 0
+                                    if (!dec.ReadBin(ref ctx))  // seventh bit == 0
                                     {
                                         // code "1 1 1 0 1 1 0" → symbol 18 (B_Bi_L1_16x8)
                                         return 18;
@@ -585,9 +585,9 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!dec.ReadBin(ctx))  // fifth bit == 1
+                            if (!dec.ReadBin(ref ctx))  // fifth bit == 1
                             {
-                                if (!dec.ReadBin(ctx))  // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 0
                                 {
                                     // code "1 1 1 1 0 0 0" → symbol 20 (B_Bi_Bi_16x8)
                                     return 20;
@@ -603,7 +603,7 @@ internal static class Binarization
                                 // code "1 1 1 1 1 1" → symbol 22 (B_8x8)
                                 // Only 6 bits here, so we read only 6 bits total for this one
 
-                                if (!dec.ReadBin(ctx))  // sixth bit == 1
+                                if (!dec.ReadBin(ref ctx))  // sixth bit == 1
                                 {
                                     // code mismatch or error
                                     return -1;
@@ -617,13 +617,13 @@ internal static class Binarization
             }
         }
 
-        int LookUpPSPSlice()
+        int LookUpPSPSlice(ref CabacContext ctx)
         {
-            if (!dec.ReadBin(ctx))  // first bit == 0
+            if (!dec.ReadBin(ref ctx))  // first bit == 0
             {
-                if (!dec.ReadBin(ctx))  // second bit == 0
+                if (!dec.ReadBin(ref ctx))  // second bit == 0
                 {
-                    if (!dec.ReadBin(ctx))  // third bit == 0
+                    if (!dec.ReadBin(ref ctx))  // third bit == 0
                     {
                         // 0 0 0 → symbol 0 (P_L0_16x16)
                         return 0;
@@ -637,7 +637,7 @@ internal static class Binarization
                 else
                 {
                     // second bit == 1
-                    if (!dec.ReadBin(ctx))  // third bit == 0
+                    if (!dec.ReadBin(ref ctx))  // third bit == 0
                     {
                         // 0 1 0 → symbol 2 (P_L0_L0_8x16)
                         return 2;
@@ -656,9 +656,9 @@ internal static class Binarization
             }
         }
 
-        int LookUpSubPSPSlice()
+        int LookUpSubPSPSlice(ref CabacContext ctx)
         {
-            if (dec.ReadBin(ctx)) // first bit == 1
+            if (dec.ReadBin(ref ctx)) // first bit == 1
             {
                 // code "1" → symbol 0 (P_L0_8x8)
                 return 0;
@@ -667,7 +667,7 @@ internal static class Binarization
             {
                 // first bit == 0
 
-                if (!dec.ReadBin(ctx)) // second bit == 0
+                if (!dec.ReadBin(ref ctx)) // second bit == 0
                 {
                     // code "0 0" → symbol 1 (P_L0_8x4)
                     return 1;
@@ -676,7 +676,7 @@ internal static class Binarization
                 {
                     // second bit == 1
 
-                    if (dec.ReadBin(ctx)) // third bit == 1
+                    if (dec.ReadBin(ref ctx)) // third bit == 1
                     {
                         // code "0 1 1" → symbol 2 (P_L0_4x8)
                         return 2;
@@ -692,9 +692,9 @@ internal static class Binarization
             }
         }
 
-        int LookUpSubBSlice()
+        int LookUpSubBSlice(ref CabacContext ctx)
         {
-            if (!dec.ReadBin(ctx)) // first bit == 0
+            if (!dec.ReadBin(ref ctx)) // first bit == 0
             {
                 // code "0" → symbol 0 (B_Direct_8x8)
                 return 0;
@@ -703,9 +703,9 @@ internal static class Binarization
             {
                 // first bit == 1
 
-                if (!dec.ReadBin(ctx)) // second bit == 0
+                if (!dec.ReadBin(ref ctx)) // second bit == 0
                 {
-                    if (!dec.ReadBin(ctx)) // third bit == 0
+                    if (!dec.ReadBin(ref ctx)) // third bit == 0
                     {
                         // code "1 0 0" → symbol 1 (B_L0_8x8)
                         return 1;
@@ -721,11 +721,11 @@ internal static class Binarization
                 {
                     // second bit == 1
 
-                    if (!dec.ReadBin(ctx)) // third bit == 0
+                    if (!dec.ReadBin(ref ctx)) // third bit == 0
                     {
-                        if (!dec.ReadBin(ctx)) // fourth bit == 0
+                        if (!dec.ReadBin(ref ctx)) // fourth bit == 0
                         {
-                            if (!dec.ReadBin(ctx)) // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx)) // fifth bit == 0
                             {
                                 // code "1 1 0 0 0" → symbol 3 (B_Bi_8x8)
                                 return 3;
@@ -741,7 +741,7 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!dec.ReadBin(ctx)) // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx)) // fifth bit == 0
                             {
                                 // code "1 1 0 1 0" → symbol 5 (B_L0_4x8)
                                 return 5;
@@ -758,11 +758,11 @@ internal static class Binarization
                     {
                         // third bit == 1
 
-                        if (!dec.ReadBin(ctx)) // fourth bit == 0
+                        if (!dec.ReadBin(ref ctx)) // fourth bit == 0
                         {
-                            if (!dec.ReadBin(ctx)) // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx)) // fifth bit == 0
                             {
-                                if (!dec.ReadBin(ctx)) // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx)) // sixth bit == 0
                                 {
                                     // code "1 1 1 0 0 0" → symbol 7 (B_L1_4x8)
                                     return 7;
@@ -778,7 +778,7 @@ internal static class Binarization
                             {
                                 // fifth bit == 1
 
-                                if (!dec.ReadBin(ctx)) // sixth bit == 0
+                                if (!dec.ReadBin(ref ctx)) // sixth bit == 0
                                 {
                                     // code "1 1 1 0 1 0" → symbol 9 (B_Bi_4x8)
                                     return 9;
@@ -795,7 +795,7 @@ internal static class Binarization
                         {
                             // fourth bit == 1
 
-                            if (!dec.ReadBin(ctx)) // fifth bit == 0
+                            if (!dec.ReadBin(ref ctx)) // fifth bit == 0
                             {
                                 // code "1 1 1 1 0" → symbol 11 (B_L1_4x4)
                                 return 11;
@@ -812,13 +812,13 @@ internal static class Binarization
         }
     }
 
-    public static int BinarizeCodedBlockPattern(ArithmeticDecoder dec, CabacContext ctx, int chromaArrayType)
+    public static int BinarizeCodedBlockPattern(ArithmeticDecoder dec, ref CabacContext ctx, int chromaArrayType)
     {
-        BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(dec, ctx, 15));
+        BitString bsPrefix = BitString.From(TruncatedUnaryBinarize(dec, ref ctx, 15));
 
         if (chromaArrayType is not 0 and not 3)
         {
-            BitString bsSuffix = BitString.From(TruncatedUnaryBinarize(dec, ctx, 2));
+            BitString bsSuffix = BitString.From(TruncatedUnaryBinarize(dec, ref ctx, 2));
 
             BitString bsResult = bsPrefix + bsSuffix;
 
@@ -830,9 +830,9 @@ internal static class Binarization
         }
     }
 
-    public static int BinarizeMbQpDelta(ArithmeticDecoder dec, CabacContext ctx)
+    public static int BinarizeMbQpDelta(ArithmeticDecoder dec, ref CabacContext ctx)
     {
-        int codeNum = UnaryBinarize(dec, ctx);
+        int codeNum = UnaryBinarize(dec, ref ctx);
         return codeNum switch
         {
             0 => 0,
@@ -1202,7 +1202,7 @@ internal static class Binarization
         return (maxBinIdxCtx, ctxIdxOffset, bypassFlag);
     }
 
-    public static int Binarize(ArithmeticDecoder dec, CabacContext ctx, GeneralSliceType sliceType, SyntaxElement element, int chromaArrayType)
+    public static int Binarize(ArithmeticDecoder dec, ref CabacContext ctx, GeneralSliceType sliceType, SyntaxElement element, int chromaArrayType)
     {
         int binarized;
 
@@ -1211,7 +1211,7 @@ internal static class Binarization
             case SyntaxElement.MacroblockType:
                 {
                     binarized = BinarizeMacroblockOrSubMacroblockType(
-                        dec, ctx,
+                        dec, ref ctx,
                         sliceType == GeneralSliceType.I,
                         sliceType == GeneralSliceType.B,
                         sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
@@ -1221,7 +1221,7 @@ internal static class Binarization
 
             case SyntaxElement.MacroblockSkipFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }
@@ -1229,7 +1229,7 @@ internal static class Binarization
             case SyntaxElement.SubMacroblockType:
                 {
                     binarized = BinarizeMacroblockOrSubMacroblockType(
-                        dec, ctx,
+                        dec, ref ctx,
                         sliceType == GeneralSliceType.I,
                         sliceType == GeneralSliceType.B,
                         sliceType == GeneralSliceType.P || sliceType == GeneralSliceType.SP,
@@ -1241,7 +1241,7 @@ internal static class Binarization
             case SyntaxElement.MotionVectorDifferenceX:
                 {
                     binarized = UegkBinarize(
-                        dec, ctx,
+                        dec, ref ctx,
                         true,
                         3,
                         9);
@@ -1252,7 +1252,7 @@ internal static class Binarization
             case SyntaxElement.MotionVectorDifferenceY:
                 {
                     binarized = UegkBinarize(
-                        dec, ctx,
+                        dec, ref ctx,
                         true,
                         3,
                         9);
@@ -1262,98 +1262,98 @@ internal static class Binarization
 
             case SyntaxElement.ReferenceIndex:
                 {
-                    binarized = UnaryBinarize(dec, ctx);
+                    binarized = UnaryBinarize(dec, ref ctx);
                     
                     break;
                 }
 
             case SyntaxElement.MacroblockQuantizationParameterDelta:
                 {
-                    binarized = BinarizeMbQpDelta(dec, ctx);
+                    binarized = BinarizeMbQpDelta(dec, ref ctx);
                     
                     break;
                 }
 
             case SyntaxElement.IntraChromaPredictionMode:
                 {
-                    binarized = TruncatedUnaryBinarize(dec, ctx, 3);
+                    binarized = TruncatedUnaryBinarize(dec, ref ctx, 3);
                     
                     break;
                 }
 
             case SyntaxElement.PreviousIntraNxNPredictionModeFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
                     
                     break;
                 }
 
             case SyntaxElement.RemainingIntraNxNPredictionMode:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 8);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 8);
                     
                     break;
                 }
 
             case SyntaxElement.MacroblockFieldDecodingFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
                     
                     break;
                 }
 
             case SyntaxElement.CodedBlockPattern:
                 {
-                    binarized = BinarizeCodedBlockPattern(dec, ctx, chromaArrayType);
+                    binarized = BinarizeCodedBlockPattern(dec, ref ctx, chromaArrayType);
                     
                     break;
                 }
 
             case SyntaxElement.CodedBlockFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }
 
             case SyntaxElement.SignificantCoeffFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }
 
             case SyntaxElement.LastSignificantCoeffFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }
 
             case SyntaxElement.CoeffAbsLevelMinus1:
                 {
-                    binarized = UegkBinarize(dec, ctx, false, 0, 14);
+                    binarized = UegkBinarize(dec, ref ctx, false, 0, 14);
 
                     break;
                 }
 
             case SyntaxElement.CoeffSignFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }
 
             case SyntaxElement.EndOfSliceFlag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }
 
             case SyntaxElement.TransformSize8x8Flag:
                 {
-                    binarized = FixedLengthBinarize(dec, ctx, 1);
+                    binarized = FixedLengthBinarize(dec, ref ctx, 1);
 
                     break;
                 }

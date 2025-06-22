@@ -50,7 +50,7 @@ public sealed class ArithmeticDecoder
     ///   Reads a CABAC bin.
     /// </summary>
     /// <returns>The bin.</returns>
-    public bool ReadBin(CabacContext cabac, bool bypassFlag)
+    public bool ReadBin(ref CabacContext cabac, bool bypassFlag)
     {
         uint codIRange = CodIRange;
         uint codIOffset = CodIOffset;
@@ -64,7 +64,7 @@ public sealed class ArithmeticDecoder
     ///   Reads a CABAC bin.
     /// </summary>
     /// <returns>The bin.</returns>
-    public bool ReadBin(CabacContext ctx) => ReadBin(ctx, ctx.BypassFlag);
+    public bool ReadBin(ref CabacContext ctx) => ReadBin(ref ctx, ctx.BypassFlag);
 
     private static bool ReadAEBinaryDecision(BitStreamReader reader, ref CabacContext cabacCtx, bool bypassFlag, ref uint codIRange, ref uint codIOffset)
     {

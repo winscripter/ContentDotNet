@@ -6,24 +6,27 @@ namespace ContentDotNet.Extensions.H264.Tests.CABAC;
 public class BinReaderWriterTests
 {
     [Fact]
-    public void SingleBinRW_ShouldNotThrow()
+    public void SingleBinRW_PSlice_ShouldNotThrow()
     {
-        const int BinCount = 10000;
-        const int CtxIdx = 172;
+        const int CtxIdx1 = 70;
+        const int CtxIdx2 = 55;
 
         using var reader = UseArithmeticWriter(
             writer =>
             {
-                var symbols = EncoderSymbols.From(26, true, CtxIdx, 0);
-                for (int i = 0; i < BinCount; i++)
-                    writer.EncodeDecision(ref symbols, i % 2 == 0);
+                var symbols1 = new CabacContext(CtxIdx1, 0, true, false, 26);
+                CabacBinarizationEncoder.EncodeMbType(writer, ref symbols1, 20, GeneralSliceType.P);
+
+                var symbols2 = new CabacContext(CtxIdx2, 0, true, false, 26);
+                CabacBinarizationEncoder.EncodeUnary(writer, ref symbols2, 5);
             });
 
         var binReader = new ArithmeticDecoder(reader);
-        throw new InvalidOperationException(binReader.BaseReader.ReadBits(9).ToString());
-        //var cabac = new CabacContext(CtxIdx, 0, true, false, 26);
-        //for (int i = 0; i < 50; i++)
-        //    Assert.Equal(i % 2 == 0, binReader.ReadBin(cabac));
+        var symbols1 = new CabacContext(CtxIdx1, 0, true, false, 26);
+        var symbols2 = new CabacContext(CtxIdx2, 0, true, false, 26);
+
+        Assert.Equal(20, CabacBinarization.BinarizeMacroblockOrSubMacroblockType(binReader, ref symbols1, false, false, true, false));
+        Assert.Equal(5, CabacBinarization.UnaryBinarize(binReader, ref symbols2));
     }
 
     private static BitStreamReader UseArithmeticWriter(

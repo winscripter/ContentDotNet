@@ -39,11 +39,25 @@ public sealed class ArithmeticEncoder
     public BitStreamWriter BaseWriter => _boundWriter;
 
     /// <summary>
+    ///   Encodes a CABAC bin.
+    /// </summary>
+    /// <param name="symbols"></param>
+    /// <param name="binVal"></param>
+    public void WriteBin(ref CabacContext symbols, bool binVal)
+    {
+        if (symbols.BypassFlag)
+            EncodeBypass(binVal);
+        if (symbols.CtxIdx == 276)
+            EncodeTerminate(binVal);
+        EncodeDecision(ref symbols, binVal);
+    }
+
+    /// <summary>
     ///   Encodes a binary decision.
     /// </summary>
     /// <param name="symbols"></param>
     /// <param name="binVal"></param>
-    public void EncodeDecision(ref EncoderSymbols symbols, bool binVal)
+    public void EncodeDecision(ref CabacContext symbols, bool binVal)
     {
         uint qCodIRangeIdx = (this.codIRange >> 6) & 3;
         int codIRangeLPS = CabacFunctions.GetRangeTabLps(symbols.PStateIdx, (int)qCodIRangeIdx);
