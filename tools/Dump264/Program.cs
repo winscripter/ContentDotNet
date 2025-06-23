@@ -1,11 +1,6 @@
 ﻿using ContentDotNet.BitStream;
-using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264;
-using ContentDotNet.Extensions.H264.Cabac;
-using ContentDotNet.Extensions.H264.Macroblocks;
-using ContentDotNet.Extensions.H264.Minimal;
 using ContentDotNet.Extensions.H264.Models;
-using System.Runtime.InteropServices;
 
 using var fs = File.OpenRead("output.h264");
 using var br = new BitStreamReader(fs);
@@ -57,16 +52,18 @@ void DumpNalu()
         var rbsp = new RbspBitStreamReader(br);
         var shd = SliceHeader.Read(rbsp, nal, globalSps, globalPps);
         SliceHeaderDump(shd);
-        br.GoTo(prevState);
 
         Console.WriteLine("parsing...");
         var sl = H264Slice.ParseSlice(globalSps, globalPps, shd, rbsp, nal, len);
         Console.WriteLine("parsed!");
+
+        br.GoTo(prevState);
     }
 }
 
 static void SpsDump(SequenceParameterSet sps)
 {
+#if !SUPPRESS_DUMP
     Console.WriteLine("profile_idc: " + sps.ProfileIdc);
     Console.WriteLine("constraint_set0_flag: " + sps.ConstraintSet0Flag);
     Console.WriteLine("constraint_set1_flag: " + sps.ConstraintSet1Flag);
@@ -100,10 +97,12 @@ static void SpsDump(SequenceParameterSet sps)
     Console.WriteLine("frame_crop_top_offset: " + sps.FrameCropTopOffset);
     Console.WriteLine("frame_crop_bottom_offset: " + sps.FrameCropBottomOffset);
     Console.WriteLine("vui_parameters_present_flag: " + sps.VuiParametersPresentFlag);
+#endif
 }
 
 static void PpsDump(PictureParameterSet pps)
 {
+#if !SUPPRESS_DUMP
     Console.WriteLine("sps_id: " + pps.SpsId);
     Console.WriteLine("pps_id: " + pps.PpsId);
     Console.WriteLine("entropy_coding_mode_flag: " + pps.EntropyCodingModeFlag);
@@ -126,10 +125,12 @@ static void PpsDump(PictureParameterSet pps)
     Console.WriteLine("transform_8x8_mode_flag: " + pps.Transform8x8ModeFlag);
     Console.WriteLine("pic_scaling_matrix_present_flag: " + pps.PicScalingMatrixPresentFlag);
     Console.WriteLine("second_chroma_qp_index_offset: " + pps.SecondChromaQpIndexOffset);
+#endif
 }
 
 void SliceHeaderDump(SliceHeader shd)
 {
+#if !SUPPRESS_DUMP
     Console.WriteLine("first_mb_in_slice: " + shd.FirstMbInSlice);
     Console.WriteLine("slice_type: " + shd.SliceType);
     Console.WriteLine("pic_parameter_set_id: " + shd.PpsId);
@@ -155,4 +156,5 @@ void SliceHeaderDump(SliceHeader shd)
     Console.WriteLine("slice_alpha_c0_offset_div2: " + shd.SliceAlphaC0OffsetDiv2);
     Console.WriteLine("slice_beta_offset_div2: " + shd.SliceBetaOffsetDiv2);
     Console.WriteLine("slice_group_change_cycle: " + shd.SliceGroupChangeCycle);
+#endif
 }

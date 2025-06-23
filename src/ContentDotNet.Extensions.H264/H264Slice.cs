@@ -144,6 +144,8 @@ public sealed class H264Slice
     {
         if (PPS.EntropyCodingModeFlag)
         {
+            while (!Util264.ByteAligned(_connectedBsReader))
+                _ = _connectedBsReader.ReadBit(); // cabac_alignment_one_bit
             _cabac = new CabacManager(_connectedBsReader, _util)
             {
                 CabacInitIdc = (int)SliceHeader.CabacInitIdc,
@@ -154,8 +156,6 @@ public sealed class H264Slice
                 SliceType = SliceHeader.GetSliceType()
             };
             Console.WriteLine("Offset: " + _cabac.Decoder.CodIOffset + ", range: " + _cabac.Decoder.CodIRange);
-            while (!Util264.ByteAligned(_connectedBsReader))
-                _ = _connectedBsReader.ReadBit(); // cabac_alignment_one_bit
         }
         int iteration = 0;
         bool moreDataFlag = true;

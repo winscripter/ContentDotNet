@@ -142,7 +142,7 @@ public sealed partial class CabacManager
             ctxIdxOffset,
             0,
             s,
-            default,
+            _arithmeticDecodingEngine.PreviouslyDecodedBins,
             Utility,
             DerivationContext,
             PicWidthInMbs,

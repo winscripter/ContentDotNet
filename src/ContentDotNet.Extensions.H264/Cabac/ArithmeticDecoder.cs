@@ -1,7 +1,6 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Extensions.H264.Cabac.Internal;
 using ContentDotNet.Primitives;
-using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264.Cabac;
 
@@ -11,6 +10,7 @@ namespace ContentDotNet.Extensions.H264.Cabac;
 public sealed class ArithmeticDecoder
 {
     private readonly BitStreamReader _boundReader;
+    private BitString _previouslyDecodedBins = default;
 
     /// <summary>
     ///   CodIRange
@@ -37,6 +37,11 @@ public sealed class ArithmeticDecoder
         InitializeArithmeticDecodingEngine(boundReader);
     }
 
+    /// <summary>
+    ///   Bins that were decoded previously.
+    /// </summary>
+    public BitString PreviouslyDecodedBins => _previouslyDecodedBins;
+
     private void InitializeArithmeticDecodingEngine(BitStreamReader reader)
     {
         CodIRange = 510;
@@ -57,6 +62,7 @@ public sealed class ArithmeticDecoder
         bool retVal = ReadAEBinaryDecision(_boundReader, ref cabac, bypassFlag, ref codIRange, ref codIOffset);
         CodIRange = codIRange;
         CodIOffset = codIOffset;
+        _previouslyDecodedBins += new BitString(Int32Boolean.I32(retVal), 1);
         return retVal;
     }
 
