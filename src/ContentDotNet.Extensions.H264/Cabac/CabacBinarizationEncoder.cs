@@ -1,6 +1,4 @@
-﻿using ContentDotNet.Extensions.H264.Utilities;
-
-namespace ContentDotNet.Extensions.H264.Cabac;
+﻿namespace ContentDotNet.Extensions.H264.Cabac;
 
 /// <summary>
 ///   Binarization encoder
@@ -213,6 +211,22 @@ public static class CabacBinarizationEncoder
             case GeneralSliceType.B:
                 WriteBitString(encoder, ref symbols, s_subMbTypeInBSlices[value]);
                 break;
+        }
+    }
+
+    public static void EncodeTruncatedUnary(ArithmeticEncoder encoder, ref CabacContext symbols, int value, int cMax)
+    {
+        for (int i = 0; i < cMax; i++)
+        {
+            if ((value & (1 << i)) == 0)
+            {
+                encoder.WriteBin(ref symbols, false);
+                break;
+            }
+            else
+            {
+                encoder.WriteBin(ref symbols, true);
+            }
         }
     }
 }

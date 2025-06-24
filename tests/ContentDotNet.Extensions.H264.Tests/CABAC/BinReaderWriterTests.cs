@@ -22,6 +22,8 @@ public class BinReaderWriterTests
 
                 symbol = new CabacContext(CtxIdx2, 0, true, false, 26);
                 CabacBinarizationEncoder.EncodeUnary(writer, ref symbol, 150);
+
+                writer.BaseWriter.WriteBits(0, 8);
             });
 
         var binReader = new ArithmeticDecoder(reader);
