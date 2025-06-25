@@ -14,9 +14,6 @@ public class BinReaderWriterTests
         using var reader = UseArithmeticWriter(
             writer =>
             {
-                (int m, int n) = CabacContext.GetMn(CtxIdx1, 0, false);
-                throw new Exception("M: " + m + ", N: " + n);
-
                 var symbol = new CabacContext(CtxIdx1, 0, true, false, 26);
                 CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 20, GeneralSliceType.P);
                 CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 21, GeneralSliceType.P);
