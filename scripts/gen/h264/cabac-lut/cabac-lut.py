@@ -5,6 +5,14 @@
 # working directory being the root of the repository.
 #
 
+glob_index_to_line_map: dict = { }
+
+def add_to_index2line(index: int, line: int) -> None:
+    glob_index_to_line_map[index] = line
+
+def get_index2line(index: int) -> int:
+    return glob_index_to_line_map[index]
+
 class GenElement:
     """
       Represents a single line to be generated.
@@ -45,10 +53,18 @@ def process_document() -> None:
         with open("scripts/gen/h264/cabac-lut/cabac-output.txt", "a") as output:
             lines = input.readlines()
             gen_elems = []
+            lineidx = 1
             for x in lines:
                 clean_line = x.strip().replace("\u2212", "-").replace("−", "-")
                 this_line_processed = parse_gen_elements(clean_line)
+                for y in this_line_processed:
+                    for z in gen_elems:
+                        if z.index == y.index:
+                            raise Exception(f"Duplicate index {y.index}, at line {lineidx}, other at: {get_index2line(y.index)}")
                 gen_elems.extend(this_line_processed)
+                for y in this_line_processed:
+                    add_to_index2line(y.index, lineidx)
+                lineidx += 1
             sorted_gen_elements = sorted(gen_elems, key= lambda x: x.index)
             for sorted_gen_elem in sorted_gen_elements:
                 builder = "        /*"
