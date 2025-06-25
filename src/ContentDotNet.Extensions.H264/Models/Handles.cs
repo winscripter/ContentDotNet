@@ -1,5 +1,4 @@
 ﻿using ContentDotNet.BitStream;
-using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Cabac;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using System.Diagnostics.CodeAnalysis;

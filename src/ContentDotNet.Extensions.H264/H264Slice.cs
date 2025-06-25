@@ -10,7 +10,6 @@ using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Utilities;
 using ContentDotNet.Extensions.H26x;
 using ContentDotNet.Primitives;
-using System.Reflection.PortableExecutable;
 
 namespace ContentDotNet.Extensions.H264;
 

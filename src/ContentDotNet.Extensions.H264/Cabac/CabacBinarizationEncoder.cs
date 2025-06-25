@@ -214,6 +214,13 @@ public static class CabacBinarizationEncoder
         }
     }
 
+    /// <summary>
+    ///   Encodes a TU-binarized value.
+    /// </summary>
+    /// <param name="encoder"></param>
+    /// <param name="symbols"></param>
+    /// <param name="value"></param>
+    /// <param name="cMax"></param>
     public static void EncodeTruncatedUnary(ArithmeticEncoder encoder, ref CabacContext symbols, int value, int cMax)
     {
         for (int i = 0; i < cMax; i++)

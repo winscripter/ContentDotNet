@@ -11,4 +11,8 @@
     <Folder Include="Internal\Decompressors\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
+  </ItemGroup>
+
 </Project>

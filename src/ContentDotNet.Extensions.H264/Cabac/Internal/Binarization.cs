@@ -67,7 +67,7 @@ internal static class Binarization
         else
         {
             int building = 0;
-            int synElVal = 0;
+            int synElVal = value;
             if (Math.Abs(synElVal) >= uCoff)
             {
                 int sufS = Math.Abs(synElVal) - uCoff;
