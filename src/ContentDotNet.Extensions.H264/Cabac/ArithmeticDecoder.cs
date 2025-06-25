@@ -83,7 +83,8 @@ public sealed class ArithmeticDecoder
 
     private static bool AEDecodeBypass(BitStreamReader reader, ref uint codIOffset, uint codIRange)
     {
-        codIOffset = (codIOffset << 1) | Int32Boolean.U32(reader.ReadBit());
+        codIOffset <<= 1;
+        codIOffset |= Int32Boolean.U32(reader.ReadBit());
 
         if (codIOffset >= codIRange)
         {
@@ -101,7 +102,6 @@ public sealed class ArithmeticDecoder
         codIRange -= 2;
         if (codIOffset >= codIRange)
         {
-            codIOffset |= 1;
             return true;
         }
         else
@@ -126,27 +126,32 @@ public sealed class ArithmeticDecoder
 
     private static bool AEDecodeDecision(BitStreamReader reader, ref CabacContext cabac, ref uint codIOffset, ref uint codIRange)
     {
-        uint qCodIRangeIdx = codIRange >> 6 & 0x03;
+        uint qCodIRangeIdx = (codIRange >> 6) & 3;
         int codIRangeLPS = CabacFunctions.GetRangeTabLps(cabac.PStateIdx, (int)qCodIRangeIdx);
-
         codIRange -= (uint)codIRangeLPS;
 
         bool binVal;
 
         if (codIOffset >= codIRange)
         {
+            binVal = !cabac.ValMps;
             codIOffset -= codIRange;
             codIRange = (uint)codIRangeLPS;
-            binVal = Int32Boolean.B(1 - Int32Boolean.U32(cabac.ValMps));
+
+            if (cabac.PStateIdx == 0)
+            {
+                cabac.ValMps = Int32Boolean.B(1 - Int32Boolean.I32(cabac.ValMps));
+            }
+
+            cabac.PStateIdx = StateTransitioning.GetLps(cabac.PStateIdx);
         }
         else
         {
             binVal = cabac.ValMps;
+            cabac.PStateIdx = StateTransitioning.GetMps(cabac.PStateIdx);
         }
 
-        StateTransitioning.Apply(ref cabac, binVal);
-
-        Renormalize(reader, ref codIRange, ref codIOffset);
+        Renormalize(reader, ref codIOffset, ref codIRange);
 
         return binVal;
     }
