@@ -16,8 +16,11 @@ public class BinReaderWriterTests
             {
                 var symbol = new CabacContext(CtxIdx1, 0, true, false, 26);
                 CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 1, GeneralSliceType.P);
+                symbol = new CabacContext(CtxIdx1, 0, true, false, 26);
                 CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 2, GeneralSliceType.P);
+                symbol = new CabacContext(CtxIdx1, 0, true, false, 26);
                 CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 3, GeneralSliceType.P);
+                symbol = new CabacContext(CtxIdx1, 0, true, false, 26);
                 CabacBinarizationEncoder.EncodeMbType(writer, ref symbol, 6, GeneralSliceType.P);
 
                 symbol = new CabacContext(CtxIdx2, 0, true, false, 26);
@@ -31,8 +34,11 @@ public class BinReaderWriterTests
         var symbols2 = new CabacContext(CtxIdx2, 0, true, false, 26);
 
         Assert.Equal(1, CabacBinarization.BinarizeMacroblockOrSubMacroblockType(binReader, ref symbols1, false, false, true, false));
+        symbols1 = new CabacContext(CtxIdx1, 0, true, false, 26);
         Assert.Equal(2, CabacBinarization.BinarizeMacroblockOrSubMacroblockType(binReader, ref symbols1, false, false, true, false));
+        symbols1 = new CabacContext(CtxIdx1, 0, true, false, 26);
         Assert.Equal(3, CabacBinarization.BinarizeMacroblockOrSubMacroblockType(binReader, ref symbols1, false, false, true, false));
+        symbols1 = new CabacContext(CtxIdx1, 0, true, false, 26);
         Assert.Equal(6, CabacBinarization.BinarizeMacroblockOrSubMacroblockType(binReader, ref symbols1, false, false, true, false));
 
         Assert.Equal(150, CabacBinarization.UnaryBinarize(binReader, ref symbols2));
