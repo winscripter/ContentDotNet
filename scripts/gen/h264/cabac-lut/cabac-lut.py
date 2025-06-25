@@ -66,6 +66,9 @@ def process_document() -> None:
                     add_to_index2line(y.index, lineidx)
                 lineidx += 1
             sorted_gen_elements = sorted(gen_elems, key= lambda x: x.index)
+            for x in range(1024):
+                if sorted_gen_elements[x].index != x:
+                    raise Exception(f"No {x}! sorted_gen_elements[{x}] = {sorted_gen_elements[x].index}")
             for sorted_gen_elem in sorted_gen_elements:
                 builder = "        /*"
                 builder += str(sorted_gen_elem.index)
