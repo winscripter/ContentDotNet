@@ -619,40 +619,22 @@ internal static class Binarization
 
         int LookUpPSPSlice(ref CabacContext ctx)
         {
-            if (!dec.ReadBin(ref ctx))  // first bit == 0
+            if (dec.ReadBin(ref ctx))
             {
-                if (!dec.ReadBin(ref ctx))  // second bit == 0
-                {
-                    if (!dec.ReadBin(ref ctx))  // third bit == 0
-                    {
-                        // 0 0 0 → symbol 0 (P_L0_16x16)
-                        return 0;
-                    }
-                    else
-                    {
-                        // 0 0 1 → symbol 3 (P_8x8)
-                        return 3;
-                    }
-                }
-                else
-                {
-                    // second bit == 1
-                    if (!dec.ReadBin(ref ctx))  // third bit == 0
-                    {
-                        // 0 1 0 → symbol 2 (P_L0_L0_8x16)
-                        return 2;
-                    }
-                    else
-                    {
-                        // 0 1 1 → symbol 1 (P_L0_L0_16x8)
-                        return 1;
-                    }
-                }
+                return 5;
             }
             else
             {
-                // First bit == 1 → invalid for this table or error
-                return -1;
+                bool bin2 = dec.ReadBin(ref ctx);
+                bool bin3 = dec.ReadBin(ref ctx);
+                if (!bin2 && !bin3)
+                    return 0;
+                else if (bin2 && bin3)
+                    return 1;
+                else if (bin2 && !bin3)
+                    return 2;
+                else
+                    return 3;
             }
         }
 
