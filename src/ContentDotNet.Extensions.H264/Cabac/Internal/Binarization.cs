@@ -133,11 +133,11 @@ internal static class Binarization
         }
         else if (isPorSPSlice)
         {
-            return isSubMbType ? LookUpPSPSlice(ref ctx) : LookUpSubPSPSlice(ref ctx);
+            return isSubMbType ? LookUpSubPSPSlice(ref ctx) : LookUpPSPSlice(ref ctx);
         }
         else if (isBSlice)
         {
-            return isSubMbType ? LookUpBSlice(ref ctx) : LookUpSubBSlice(ref ctx);
+            return isSubMbType ? LookUpSubBSlice(ref ctx) : LookUpBSlice(ref ctx);
         }
         else
         {
