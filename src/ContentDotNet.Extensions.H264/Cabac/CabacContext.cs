@@ -50,7 +50,7 @@ public struct CabacContext
     {
         BypassFlag = bypassFlag;
 
-        (int m, int n) = isIOrSISlice ? CabacFunctions.GetInitDataForIOrSISlice(ctxIdx) : CabacFunctions.GetInitData(ctxIdx, cabacInitIdc);
+        (int m, int n) = GetMn(ctxIdx, (uint)cabacInitIdc, isIOrSISlice);
 
         int preCtxState = Util264.Clip3(1, 126, ((m * Util264.Clip3(0, 51, sliceQPY)) >> 4) + n);
         if (preCtxState <= 63)
@@ -66,4 +66,14 @@ public struct CabacContext
 
         CtxIdx = ctxIdx;
     }
+
+    /// <summary>
+    ///   Returns the variables M and N.
+    /// </summary>
+    /// <param name="ctxIdx">CtxIdx</param>
+    /// <param name="cabacInitIdc">See <see cref="SliceHeader.CabacInitIdc"/></param>
+    /// <param name="isIOrSISlice">See <see cref="SliceTypes.IsI(int)"/> and <see cref="SliceTypes.IsSI(int)"/></param>
+    /// <returns></returns>
+    public static (int m, int n) GetMn(int ctxIdx, uint cabacInitIdc, bool isIOrSISlice)
+        => isIOrSISlice ? CabacFunctions.GetInitDataForIOrSISlice(ctxIdx) : CabacFunctions.GetInitData(ctxIdx, cabacInitIdc);
 }
