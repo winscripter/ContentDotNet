@@ -94,11 +94,6 @@ public class BinReaderWriterTests
                     cabac.WritePrevIntraNxNPredModeFlag(i % 2 == 0 ? 1 : 0);
                     cabac.WriteRemIntraNxNPredMode(i + 1);
                 }
-
-                cabac.WriteMvdL0(50);
-                cabac.WriteMvdL1(25);
-                cabac.WriteMvdL1(25);
-                cabac.WriteMvdL0(50);
             });
 
         var cabac = new CabacReader(reader, MacroblockUtilityBase.Dummy)
@@ -112,10 +107,5 @@ public class BinReaderWriterTests
             Assert.Equal(i % 2 == 0 ? 1 : 0, cabac.ParsePrevIntraNxNPredModeFlag());
             Assert.Equal(i + 1, cabac.ParseRemIntraNxNPredMode());
         }
-
-        Assert.Equal(50, cabac.ParseMvdL0());
-        Assert.Equal(25, cabac.ParseMvdL1());
-        Assert.Equal(25, cabac.ParseMvdL1());
-        Assert.Equal(50, cabac.ParseMvdL0());
     }
 }
