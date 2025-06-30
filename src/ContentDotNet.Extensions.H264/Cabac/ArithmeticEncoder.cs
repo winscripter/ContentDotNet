@@ -60,30 +60,27 @@ public sealed class ArithmeticEncoder
     /// <param name="binVal"></param>
     public void EncodeDecision(ref CabacContext symbols, bool binVal)
     {
-        uint qCodIRangeIdx = (this.codIRange >> 6) & 3;
-        int codIRangeLPS = CabacFunctions.GetRangeTabLps(symbols.PStateIdx, (int)qCodIRangeIdx);
+        int qCodIRangeIdx = (int)(this.codIRange >> 6) & 3;
+        int codIRangeLPS = CabacFunctions.GetRangeTabLps(symbols.PStateIdx, qCodIRangeIdx);
         this.codIRange -= (uint)codIRangeLPS;
 
         if (binVal != symbols.ValMps)
         {
-            this.codILow += codIRange;
+            this.codILow += this.codIRange;
             this.codIRange = (uint)codIRangeLPS;
 
-            if (symbols.PStateIdx == 0)
-            {
-                symbols.ValMps = Int32Boolean.B(1 - Int32Boolean.I32(symbols.ValMps));
-            }
+            if (symbols.PStateIdx != 0)
+                symbols.ValMps = !symbols.ValMps;
 
             symbols.PStateIdx = StateTransitioning.GetLps(symbols.PStateIdx);
-            Renormalize();
-            this.BinCountsInNALunits++;
         }
         else
         {
             symbols.PStateIdx = StateTransitioning.GetMps(symbols.PStateIdx);
-            Renormalize();
-            this.BinCountsInNALunits++;
         }
+
+        Renormalize();
+        this.BinCountsInNALunits++;
     }
 
     /// <summary>
@@ -169,13 +166,19 @@ public sealed class ArithmeticEncoder
         }
         else
         {
-            this._boundWriter.WriteBit(b);
+            this.BaseWriter.WriteBit(b);
         }
 
-        while (this.bitsOutstanding > 0)
+        RecursionCounter rc = new(8192);
+
+    loop:
+        rc.Increment();
+        if (this.bitsOutstanding > 0)
         {
-            this._boundWriter.WriteBit(!b);
+            this.BaseWriter.WriteBit(!b);
             this.bitsOutstanding--;
+
+            goto loop;
         }
     }
 
