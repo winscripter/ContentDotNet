@@ -121,34 +121,40 @@ public sealed class ArithmeticEncoder
 
     private void Renormalize()
     {
-        RecursionCounter counter = new(8192);
-        while (this.codIRange < 256)
+    start:
+        if (this.codIRange < 256)
         {
             if (this.codILow < 256)
             {
                 PutBit(false);
-                this.codIRange <<= 1;
-                this.codILow <<= 1;
+                goto finishThenLoop;
             }
             else
             {
-                if (this.codILow > 512)
+                if (this.codILow >= 512)
                 {
                     this.codILow -= 512;
                     PutBit(true);
-                    this.codIRange <<= 1;
-                    this.codILow <<= 1;
+
+                    goto finishThenLoop;
                 }
                 else
                 {
                     this.codILow -= 256;
                     this.bitsOutstanding++;
-                    this.codIRange <<= 1;
-                    this.codILow <<= 1;
+                    goto finishThenLoop;
                 }
             }
-            counter.Increment();
         }
+        else
+        {
+            return;
+        }
+
+    finishThenLoop:
+        codIRange <<= 1;
+        codILow <<= 1;
+        goto start;
     }
 
     private void PutBit(bool b)
