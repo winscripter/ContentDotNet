@@ -1,4 +1,8 @@
-﻿namespace ContentDotNet.Extensions.H264.Cabac;
+﻿using ContentDotNet.Extensions.H264.Helpers;
+using ContentDotNet.Primitives;
+using System.Diagnostics.SymbolStore;
+
+namespace ContentDotNet.Extensions.H264.Cabac;
 
 /// <summary>
 ///   Binarization encoder
@@ -167,6 +171,24 @@ public static class CabacBinarizationEncoder
     }
 
     /// <summary>
+    ///   Encodes an FL-binarized value.
+    /// </summary>
+    /// <param name="encoder"></param>
+    /// <param name="symbols"></param>
+    /// <param name="value"></param>
+    /// <param name="cMax"></param>
+    public static void EncodeFixedLength(ArithmeticEncoder encoder, ref CabacContext symbols, int value, int cMax)
+    {
+        int fixedLength = (int)Math.Ceiling(Math.Log2(cMax + 1));
+
+        for (int binIdx = 0; binIdx < fixedLength; binIdx++)
+        {
+            int bit = (value >> binIdx) & 1;
+            encoder.WriteBin(ref symbols, Int32Boolean.B(bit));
+        }
+    }
+
+    /// <summary>
     ///   Encodes <c>mb_type</c>.
     /// </summary>
     /// <param name="encoder"></param>
@@ -223,17 +245,362 @@ public static class CabacBinarizationEncoder
     /// <param name="cMax"></param>
     public static void EncodeTruncatedUnary(ArithmeticEncoder encoder, ref CabacContext symbols, int value, int cMax)
     {
-        for (int i = 0; i < cMax; i++)
+        if (value < cMax)
         {
-            if ((value & (1 << i)) == 0)
-            {
-                encoder.WriteBin(ref symbols, false);
-                break;
-            }
-            else
-            {
+            EncodeUnary(encoder, ref symbols, value);
+        }
+        else if (value == cMax)
+        {
+            for (int i = 0; i < value; i++)
                 encoder.WriteBin(ref symbols, true);
+        }
+    }
+
+    /// <summary>
+    ///   Encodes a TU-binarized value.
+    /// </summary>
+    /// <param name="encoder"></param>
+    /// <param name="symbols"></param>
+    /// <param name="value"></param>
+    /// <param name="cMax"></param>
+    /// <returns>
+    ///   The value that was binarized.
+    /// </returns>
+    public static int EncodeAndGetTruncatedUnary(ArithmeticEncoder encoder, ref CabacContext symbols, int value, int cMax)
+    {
+        EncodeTruncatedUnary(encoder, ref symbols, value, cMax);
+        if (value < cMax)
+            return value;
+        else
+            return cMax;
+    }
+
+    /// <summary>
+    ///   Encodes an UEGk-binarized value
+    /// </summary>
+    /// <param name="encoder"></param>
+    /// <param name="symbols"></param>
+    /// <param name="synElVal"></param>
+    /// <param name="signedValFlag"></param>
+    /// <param name="k"></param>
+    /// <param name="uCoff"></param>
+    public static void EncodeUegk(ArithmeticEncoder encoder, ref CabacContext symbols, int synElVal, bool signedValFlag, int k, int uCoff)
+    {
+        int absVal = Math.Abs(synElVal);
+        int prefixVal = Math.Min(uCoff, absVal);
+
+        int prefix = EncodeAndGetTruncatedUnary(encoder, ref symbols, prefixVal, uCoff);
+
+        if ((!signedValFlag && prefixVal < uCoff) ||
+            (signedValFlag && prefix == 0))
+        {
+            return;
+        }
+
+        int suffixVal = absVal - uCoff;
+        EncodeExpGolombSuffix(ref symbols, suffixVal, k);
+
+        if (signedValFlag && absVal != 0)
+        {
+            encoder.WriteBin(ref symbols, synElVal < 0);
+        }
+
+        void EncodeExpGolombSuffix(ref CabacContext ctx, int val, int k)
+        {
+            int sufS = val;
+            int k_local = k;
+
+            bool stopLoop = false;
+            while (!stopLoop)
+            {
+                if (sufS >= (1 << k_local))
+                {
+                    encoder.WriteBin(ref ctx, true);
+                    sufS -= (1 << k_local);
+                    k_local++;
+                }
+                else
+                {
+                    encoder.WriteBin(ref ctx, false);
+                    for (int i = k_local - 1; i >= 0; i--)
+                    {
+                        encoder.WriteBin(ref ctx, ((sufS >> i) & 1) == 1);
+                    }
+                    stopLoop = true;
+                }
             }
+        }
+    }
+
+    /// <summary>
+    ///   Encodes <c>mb_qp_delta</c> binarized value.
+    /// </summary>
+    /// <param name="encoder"></param>
+    /// <param name="cabac"></param>
+    /// <param name="value"></param>
+    public static void EncodeMbQpDelta(ArithmeticEncoder encoder, ref CabacContext cabac, int value)
+    {
+        EncodeUnary(encoder, ref cabac, Util264.ConvertToMapped(value));
+    }
+
+    /// <summary>
+    ///   Encodes a Coded Block Pattern binarized value.
+    /// </summary>
+    /// <param name="encoder"></param>
+    /// <param name="cabac"></param>
+    /// <param name="cbp"></param>
+    public static void EncodeCodedBlockPattern(ArithmeticEncoder encoder, ref CabacContext cabac, int cbp)
+    {
+        CodedBlockPatterns cbps = CodedBlockPatterns.From(cbp);
+        EncodeFixedLength(encoder, ref cabac, cbps.CodedBlockPatternLuma, 15);
+        EncodeFixedLength(encoder, ref cabac, cbps.CodedBlockPatternChroma, 2);
+    }
+
+    /// <summary>
+    ///   Performs binarization.
+    /// </summary>
+    /// <param name="enc"></param>
+    /// <param name="ctx"></param>
+    /// <param name="sliceType"></param>
+    /// <param name="element"></param>
+    /// <param name="value"></param>
+    /// <exception cref="NotImplementedException"></exception>
+    public static void Encode(ArithmeticEncoder enc, ref CabacContext ctx, GeneralSliceType sliceType, SyntaxElement element, int value)
+    {
+        switch (element)
+        {
+            case SyntaxElement.MacroblockType:
+                {
+                    EncodeMbType(
+                        enc,
+                        ref ctx,
+                        value,
+                        sliceType
+                    );
+                }
+                break;
+
+            case SyntaxElement.MacroblockSkipFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.SubMacroblockType:
+                {
+                    EncodeSubMbType(
+                        enc,
+                        ref ctx,
+                        value,
+                        sliceType
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.MotionVectorDifferenceX:
+                {
+                    EncodeUegk(
+                        enc,
+                        ref ctx,
+                        value,
+                        true,
+                        3,
+                        9
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.MotionVectorDifferenceY:
+                {
+                    EncodeUegk(
+                        enc,
+                        ref ctx,
+                        value,
+                        true,
+                        3,
+                        9
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.ReferenceIndex:
+                {
+                    EncodeUnary(
+                        enc,
+                        ref ctx,
+                        value
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.MacroblockQuantizationParameterDelta:
+                {
+                    EncodeMbQpDelta(
+                        enc,
+                        ref ctx,
+                        value
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.IntraChromaPredictionMode:
+                {
+                    EncodeTruncatedUnary(
+                        enc,
+                        ref ctx,
+                        value,
+                        3
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.PreviousIntraNxNPredictionModeFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.RemainingIntraNxNPredictionMode:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        8
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.MacroblockFieldDecodingFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.CodedBlockPattern:
+                {
+                    EncodeCodedBlockPattern(
+                        enc,
+                        ref ctx,
+                        value
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.CodedBlockFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.SignificantCoeffFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.LastSignificantCoeffFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.CoeffAbsLevelMinus1:
+                {
+                    EncodeUegk(
+                        enc,
+                        ref ctx,
+                        value,
+                        false,
+                        0,
+                        14
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.CoeffSignFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.EndOfSliceFlag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            case SyntaxElement.TransformSize8x8Flag:
+                {
+                    EncodeFixedLength(
+                        enc,
+                        ref ctx,
+                        value,
+                        1
+                    );
+
+                    break;
+                }
+
+            default:
+                throw new NotImplementedException("Syntax element named " + element + " is not yet implemented");
         }
     }
 }

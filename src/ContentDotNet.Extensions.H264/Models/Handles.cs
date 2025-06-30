@@ -915,7 +915,7 @@ public readonly struct SubMacroblockPredictionHandle : IEquatable<SubMacroblockP
     /// <param name="reader">The bit stream reader.</param>
     /// <returns>The retrieved <see cref="SubMacroblockPrediction"/>.</returns>
 #pragma warning disable CS1573
-    public SubMacroblockPrediction Get(BitStreamReader reader, CabacManager? cabac, EntropyCodingMode entropyCodingMode, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, GeneralSliceType sliceType, int mbType, bool mbaffFrameFlag)
+    public SubMacroblockPrediction Get(BitStreamReader reader, CabacReader? cabac, EntropyCodingMode entropyCodingMode, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, GeneralSliceType sliceType, int mbType, bool mbaffFrameFlag)
     {
         ReaderState prev = reader.GetState();
         reader.GoTo(ReaderState);
@@ -1004,7 +1004,7 @@ public readonly struct MacroblockPredictionHandle : IEquatable<MacroblockPredict
     /// <param name="fieldPicFlag">Indicates if the picture is a field picture.</param>
     /// <param name="chromaArrayType">The chroma array type.</param>
     /// <returns>The retrieved <see cref="MacroblockPrediction"/>.</returns>
-    public MacroblockPrediction Get(BitStreamReader reader, CabacManager? cabac, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
+    public MacroblockPrediction Get(BitStreamReader reader, CabacReader? cabac, int mbType, bool mbaffFrameFlag, EntropyCodingMode codingMode, GeneralSliceType sliceType, bool transformSize8x8Flag, int numRefIdxL0ActiveMinus1, int numRefIdxL1ActiveMinus1, bool mbFieldDecodingFlag, bool fieldPicFlag, int chromaArrayType)
     {
         ReaderState prev = reader.GetState();
         reader.GoTo(ReaderState);

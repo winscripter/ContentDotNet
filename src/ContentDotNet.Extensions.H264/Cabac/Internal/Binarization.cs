@@ -57,55 +57,46 @@ internal static class Binarization
 
     public static int UegkBinarize(ArithmeticDecoder dec, ref CabacContext ctx, bool signedValFlag, int k, int uCoff)
     {
-        var (count, value) = TruncatedUnaryBinarizeWithValue(dec, ref ctx, uCoff);
+        int prefixVal = TruncatedUnaryBinarize(dec, ref ctx, uCoff);
 
-        if ((!signedValFlag && count != uCoff && Intrinsic.AllBitsSetToOne(value, 0, count)) ||
-            (signedValFlag && count == 0 && value == 0))
+        if ((!signedValFlag && prefixVal < uCoff) ||
+            (signedValFlag && prefixVal == 0))
         {
-            return count;
+            return signedValFlag ? 0 : prefixVal;
         }
-        else
+
+        int sufS = 0;
+        int k_local = k;
+        bool stopLoop = false;
+
+        while (!stopLoop)
         {
-            int building = 0;
-            int synElVal = value;
-            if (Math.Abs(synElVal) >= uCoff)
+            int bit = Int32Boolean.I32(dec.ReadBin(ref ctx));
+            if (bit == 1)
             {
-                int sufS = Math.Abs(synElVal) - uCoff;
-                bool stopLoop = false;
-                do
+                sufS += (1 << k_local);
+                k_local++;
+            }
+            else
+            {
+                for (int i = k_local - 1; i >= 0; i--)
                 {
-                    if (sufS >= (1 << k))
-                    {
-                        building = (building << 1) | 0x1;
-                        sufS -= 1 << k;
-                        k++;
-                    }
-                    else
-                    {
-                        building <<= 1;
-                        while (Int32Boolean.B(k--))
-                        {
-                            if (Int32Boolean.B((sufS >> k) & 0x1))
-                                building = (building << 1) | 0x1;
-                            else
-                                building <<= 1;
-                        }
-                        stopLoop = true;
-                    }
+                    int b = Int32Boolean.I32(dec.ReadBin(ref ctx));
+                    sufS += (b << i);
                 }
-                while (!stopLoop);
+                stopLoop = true;
             }
-
-            if (signedValFlag && synElVal != 0)
-            {
-                if (synElVal > 0)
-                    building <<= 1;
-                else
-                    building = (building << 1) | 0x1;
-            }
-
-            return building;
         }
+
+        int absVal = prefixVal + sufS;
+
+        if (signedValFlag && absVal != 0)
+        {
+            int signBit = Int32Boolean.I32(dec.ReadBin(ref ctx));
+            return (signBit == 1) ? -absVal : absVal;
+        }
+
+        return absVal;
     }
 
     public static int FixedLengthBinarize(ArithmeticDecoder dec, ref CabacContext ctx, int cMax)

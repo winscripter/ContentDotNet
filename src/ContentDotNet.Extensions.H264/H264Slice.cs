@@ -58,7 +58,7 @@ public sealed class H264Slice
     internal readonly LimitedList<MinimalMacroblockLayer> _mbs;
     internal readonly LimitedList<bool> _mbFieldDecodingFlags;
     internal readonly LimitedList<bool> _mbSkipFlags;
-    private CabacManager? _cabac;
+    private CabacReader? _cabac;
     private readonly int _initialCurrMbAddr;
 
     internal readonly SequenceParameterSet SPS;
@@ -145,7 +145,7 @@ public sealed class H264Slice
         {
             while (!Util264.ByteAligned(_connectedBsReader))
                 _ = _connectedBsReader.ReadBit(); // cabac_alignment_one_bit
-            _cabac = new CabacManager(_connectedBsReader, _util)
+            _cabac = new CabacReader(_connectedBsReader, _util)
             {
                 CabacInitIdc = (int)SliceHeader.CabacInitIdc,
                 ChromaArrayType = (int)SPS.GetChromaArrayType(),

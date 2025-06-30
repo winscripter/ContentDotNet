@@ -8,34 +8,34 @@ using ContentDotNet.Extensions.H264.Utilities;
 namespace ContentDotNet.Extensions.H264.Cabac;
 
 /// <summary>
-///   Manages CABAC parsing.
+///   A CABAC writer.
 /// </summary>
-public sealed partial class CabacManager
+public sealed class CabacWriter
 {
     private const int TotalCabacContexts = 1024;
 
     private readonly bool[] _init = new bool[TotalCabacContexts]; // false by default
     private readonly CabacContext[] _cabacs = new CabacContext[TotalCabacContexts];
-    private readonly ArithmeticDecoder _arithmeticDecodingEngine;
+    private readonly ArithmeticEncoder _arithmeticEncodingEngine;
 
-    private readonly BitStreamReader _boundReader;
+    private readonly BitStreamWriter _boundReader;
 
     /// <summary>
-    ///   Initializes a new instance of the <see cref="CabacManager"/> class.
+    ///   Initializes a new instance of the <see cref="CabacWriter"/> class.
     /// </summary>
-    /// <param name="boundReader">The <see cref="BitStreamReader"/> to use for reading CABAC bits.</param>
+    /// <param name="boundWriter">The <see cref="BitStreamWriter"/> to use for writing CABAC bits.</param>
     /// <param name="util">The <see cref="IMacroblockUtility"/> implementation for macroblock operations.</param>
-    public CabacManager(BitStreamReader boundReader, IMacroblockUtility util)
+    public CabacWriter(BitStreamWriter boundWriter, IMacroblockUtility util)
     {
-        _boundReader = boundReader;
+        _boundReader = boundWriter;
         Utility = util;
-        _arithmeticDecodingEngine = new ArithmeticDecoder(boundReader);
+        _arithmeticEncodingEngine = new ArithmeticEncoder(boundWriter);
     }
 
     /// <summary>
-    ///   Gets the arithmetic decoding engine.
+    ///   Gets the arithmetic encoding engine.
     /// </summary>
-    public ArithmeticDecoder Decoder => _arithmeticDecodingEngine;
+    public ArithmeticEncoder Encoder => _arithmeticEncodingEngine;
 
     /// <summary>
     ///   Gets or sets the type of the current slice.
@@ -142,7 +142,7 @@ public sealed partial class CabacManager
             ctxIdxOffset,
             0,
             s,
-            _arithmeticDecodingEngine.PreviouslyDecodedBins,
+            _arithmeticEncodingEngine.PreviouslyWrittenBins,
             Utility,
             DerivationContext,
             PicWidthInMbs,
@@ -161,137 +161,119 @@ public sealed partial class CabacManager
         return (ctxIdx, bypassFlag);
     }
 
-    private int Parse(SyntaxElement se)
+    private void Write(SyntaxElement se, int value)
     {
         InitializeOrUpdate(se);
         var (ctxIdx, _) = GetCtxIdxAndBypassFlag(se);
-        return Binarization.Binarize(_arithmeticDecodingEngine, ref _cabacs[ctxIdx], SliceType, se, ChromaArrayType);
+        CabacBinarizationEncoder.Encode(_arithmeticEncodingEngine, ref _cabacs[ctxIdx], SliceType, se, value);
     }
 
     /// <summary>
-    ///   Parses the syntax element <c>mb_type</c>.
+    ///   Writes the syntax element <c>mb_type</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseMbType() => Parse(SyntaxElement.MacroblockType);
+    public void WriteMbType(int value) => Write(SyntaxElement.MacroblockType, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>mb_skip_flag</c>.
+    ///   Writes the syntax element <c>mb_skip_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseMbSkipFlag() => Parse(SyntaxElement.MacroblockSkipFlag);
+    public void WriteMbSkipFlag(int value) => Write(SyntaxElement.MacroblockSkipFlag, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>sub_mb_type</c>.
+    ///   Writes the syntax element <c>sub_mb_type</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseSubMbType() => Parse(SyntaxElement.SubMacroblockType);
+    public void WriteSubMbType(int value) => Write(SyntaxElement.SubMacroblockType, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>mvd_l0</c>.
+    ///   Writes the syntax element <c>mvd_l0</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseMvdL0() => Parse(SyntaxElement.MotionVectorDifferenceX);
+    public void WriteMvdL0(int value) => Write(SyntaxElement.MotionVectorDifferenceX, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>mvd_l1</c>.
+    ///   Writes the syntax element <c>mvd_l1</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseMvdL1() => Parse(SyntaxElement.MotionVectorDifferenceY);
+    public void WriteMvdL1(int value) => Write(SyntaxElement.MotionVectorDifferenceY, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>ref_idx_LX</c> where LX can be L0 or L1.
+    ///   Writes the syntax element <c>ref_idx_LX</c> where LX can be L0 or L1.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseRefIdxLX() => Parse(SyntaxElement.ReferenceIndex);
+    public void WriteRefIdxLX(int value) => Write(SyntaxElement.ReferenceIndex, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>mb_qp_delta</c>.
+    ///   Writes the syntax element <c>mb_qp_delta</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseMbQpDelta() => Parse(SyntaxElement.MacroblockQuantizationParameterDelta);
+    public void WriteMbQpDelta(int value) => Write(SyntaxElement.MacroblockQuantizationParameterDelta, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>intra_chroma_pred_mode</c>.
+    ///   Writes the syntax element <c>intra_chroma_pred_mode</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseIntraChromaPredMode() => Parse(SyntaxElement.IntraChromaPredictionMode);
+    public void WriteIntraChromaPredMode(int value) => Write(SyntaxElement.IntraChromaPredictionMode, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>prev_intra_NxN_pred_mode_flag</c> where N can be 4 or 8.
+    ///   Writes the syntax element <c>prev_intra_NxN_pred_mode_flag</c> where N can be 4 or 8.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParsePrevIntraNxNPredModeFlag() => Parse(SyntaxElement.PreviousIntraNxNPredictionModeFlag);
+    public void WritePrevIntraNxNPredModeFlag(int value) => Write(SyntaxElement.PreviousIntraNxNPredictionModeFlag, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>rem_intra_NxN_pred_mode</c> where N can be 4 or 8.
+    ///   Writes the syntax element <c>rem_intra_NxN_pred_mode</c> where N can be 4 or 8.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseRemIntraNxNPredMode() => Parse(SyntaxElement.RemainingIntraNxNPredictionMode);
+    public void WriteRemIntraNxNPredMode(int value) => Write(SyntaxElement.RemainingIntraNxNPredictionMode, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>mb_field_decoding_flag</c>.
+    ///   Writes the syntax element <c>mb_field_decoding_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseMacroblockFieldDecodingFlag() => Parse(SyntaxElement.MacroblockFieldDecodingFlag);
+    public void WriteMacroblockFieldDecodingFlag(int value) => Write(SyntaxElement.MacroblockFieldDecodingFlag, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>coded_block_pattern</c>.
+    ///   Writes the syntax element <c>coded_block_pattern</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseCodedBlockPattern() => Parse(SyntaxElement.CodedBlockPattern);
+    public void WriteCodedBlockPattern(int value) => Write(SyntaxElement.CodedBlockPattern, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>coeff_sign_flag</c>.
+    ///   Writes the syntax element <c>coeff_sign_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseCoeffSignFlag() => Parse(SyntaxElement.CoeffSignFlag);
+    public void WriteCoeffSignFlag(int value) => Write(SyntaxElement.CoeffSignFlag, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>end_of_slice_flag</c>.
+    ///   Writes the syntax element <c>end_of_slice_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseEndOfSliceFlag() => Parse(SyntaxElement.EndOfSliceFlag);
+    public void WriteEndOfSliceFlag(int value) => Write(SyntaxElement.EndOfSliceFlag, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>transform_size_8x8_flag</c>.
+    ///   Writes the syntax element <c>transform_size_8x8_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseTransformSize8x8Flag() => Parse(SyntaxElement.TransformSize8x8Flag);
+    public void WriteTransformSize8x8Flag(int value) => Write(SyntaxElement.TransformSize8x8Flag, value);
 
     /// <summary>
-    ///   Parses the syntax element <c>coded_block_flag</c>.
+    ///   Writes the syntax element <c>coded_block_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseCodedBlockFlag()
+    public void WriteCodedBlockFlag(int value)
     {
         (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(BlockType, NumC8x8);
 
         if (ctxBlockCat < 5)
         {
-            return Parse(SyntaxElement.CodedBlockFlag);
+            Write(SyntaxElement.CodedBlockFlag, value);
         }
         else if (5 < ctxBlockCat && ctxBlockCat < 9)
         {
-            return Parse(SyntaxElement.CodedBlockFlag);
+            Write(SyntaxElement.CodedBlockFlag, value);
         }
         else if (9 < ctxBlockCat && ctxBlockCat < 13)
         {
-            return Parse(SyntaxElement.CodedBlockFlag);
+            Write(SyntaxElement.CodedBlockFlag, value);
         }
         else if (ctxBlockCat is 5 or 9 or 13)
         {
-            return Parse(SyntaxElement.CodedBlockFlag);
+            Write(SyntaxElement.CodedBlockFlag, value);
         }
 
         ThrowInvalidCtxBlockCat();
-        return default;
     }
 
     /// <summary>
-    ///   Parses the syntax element <c>significant_coeff_flag</c>.
+    ///   Writes the syntax element <c>significant_coeff_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseSignificantCoeffFlag()
+    public void WriteSignificantCoeffFlag(int value)
     {
         (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(BlockType, NumC8x8);
 
@@ -299,66 +281,64 @@ public sealed partial class CabacManager
         {
             if (ctxBlockCat < 5)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 5)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (5 < ctxBlockCat && ctxBlockCat < 9)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (9 < ctxBlockCat && ctxBlockCat < 13)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 9)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 13)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
         }
         else // field macroblock
         {
             if (ctxBlockCat < 5)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 5)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (5 < ctxBlockCat && ctxBlockCat < 9)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (9 < ctxBlockCat && ctxBlockCat < 13)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 9)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 13)
             {
-                return Parse(SyntaxElement.SignificantCoeffFlag);
+                Write(SyntaxElement.SignificantCoeffFlag, value);
             }
         }
 
         ThrowInvalidCtxBlockCat();
-        return default;
     }
 
     /// <summary>
-    ///   Parses the syntax element <c>last_significant_coeff_flag</c>.
+    ///   Writes the syntax element <c>last_significant_coeff_flag</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseLastSignificantCoeffFlag()
+    public void WriteLastSignificantCoeffFlag(int value)
     {
         (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(BlockType, NumC8x8);
 
@@ -366,96 +346,93 @@ public sealed partial class CabacManager
         {
             if (ctxBlockCat < 5)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 5)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (5 < ctxBlockCat && ctxBlockCat < 9)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (9 < ctxBlockCat && ctxBlockCat < 13)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 9)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 13)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
         }
         else // field macroblock
         {
             if (ctxBlockCat < 5)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 5)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (5 < ctxBlockCat && ctxBlockCat < 9)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (9 < ctxBlockCat && ctxBlockCat < 13)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 9)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
             else if (ctxBlockCat == 13)
             {
-                return Parse(SyntaxElement.LastSignificantCoeffFlag);
+                Write(SyntaxElement.LastSignificantCoeffFlag, value);
             }
         }
 
         ThrowInvalidCtxBlockCat();
-        return default;
     }
 
     /// <summary>
-    ///   Parses the syntax element <c>coeff_abs_level_minus1</c>.
+    ///   Writes the syntax element <c>coeff_abs_level_minus1</c>.
     /// </summary>
-    /// <returns>The parsed syntax element.</returns>
-    public int ParseCoeffAbsLevelMinus1()
+    public void WriteCoeffAbsLevelMinus1(int value)
     {
         (_, int ctxBlockCat) = CabacFunctions.DeriveCtxBlockCatAndMaxNumCoeff(BlockType, NumC8x8);
 
         if (ctxBlockCat < 5)
         {
-            return Parse(SyntaxElement.CoeffAbsLevelMinus1);
+            Write(SyntaxElement.CoeffAbsLevelMinus1, value);
         }
         else if (ctxBlockCat == 5)
         {
-            return Parse(SyntaxElement.CoeffAbsLevelMinus1);
+            Write(SyntaxElement.CoeffAbsLevelMinus1, value);
         }
         else if (5 < ctxBlockCat && ctxBlockCat < 9)
         {
-            return Parse(SyntaxElement.CoeffAbsLevelMinus1);
+            Write(SyntaxElement.CoeffAbsLevelMinus1, value);
         }
         else if (9 < ctxBlockCat && ctxBlockCat < 13)
         {
-            return Parse(SyntaxElement.CoeffAbsLevelMinus1);
+            Write(SyntaxElement.CoeffAbsLevelMinus1, value);
         }
         else if (ctxBlockCat == 9)
         {
-            return Parse(SyntaxElement.CoeffAbsLevelMinus1);
+            Write(SyntaxElement.CoeffAbsLevelMinus1, value);
         }
         else if (ctxBlockCat == 13)
         {
-            return Parse(SyntaxElement.CoeffAbsLevelMinus1);
+            Write(SyntaxElement.CoeffAbsLevelMinus1, value);
         }
 
         ThrowInvalidCtxBlockCat();
-        return default;
     }
 
     private static void ThrowInvalidCtxBlockCat()

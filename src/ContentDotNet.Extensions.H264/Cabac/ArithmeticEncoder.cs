@@ -15,7 +15,7 @@ public sealed class ArithmeticEncoder
     private int bitsOutstanding;
     private int BinCountsInNALunits;
     private readonly BitStreamWriter _boundWriter;
-    private readonly WriterState _start;
+    private BitString _previouslyWrittenBins = default;
 
     /// <summary>
     ///   Initializes a new instance of the <see cref="ArithmeticEncoder"/> class.
@@ -29,14 +29,17 @@ public sealed class ArithmeticEncoder
         bitsOutstanding = 0;
         _boundWriter = boundWriter;
         BinCountsInNALunits = 0;
-        _start = _boundWriter.GetState();
-        _boundWriter.WriteBits(0, 9); // for now
     }
 
     /// <summary>
     ///   The base bitstream writer.
     /// </summary>
     public BitStreamWriter BaseWriter => _boundWriter;
+
+    /// <summary>
+    ///   Bins that were previously written.
+    /// </summary>
+    public BitString PreviouslyWrittenBins => _previouslyWrittenBins;
 
     /// <summary>
     ///   Encodes a CABAC bin.
@@ -51,6 +54,8 @@ public sealed class ArithmeticEncoder
             EncodeTerminate(binVal);
         else
             EncodeDecision(ref symbols, binVal);
+
+        _previouslyWrittenBins += new BitString(Int32Boolean.I32(binVal), 1);
     }
 
     /// <summary>

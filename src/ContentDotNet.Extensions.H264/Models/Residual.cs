@@ -763,7 +763,7 @@ public struct CabacResidual : IEquatable<CabacResidual>
     /// <param name="maxNumCoeff"></param>
     /// <param name="chromaArrayType"></param>
     /// <returns></returns>
-    public static CabacResidual Read(CabacManager cabac, Span<uint> coeffLevel, int startIdx, int endIdx, int maxNumCoeff, int chromaArrayType)
+    public static CabacResidual Read(CabacReader cabac, Span<uint> coeffLevel, int startIdx, int endIdx, int maxNumCoeff, int chromaArrayType)
     {
         bool codedBlockFlag = false;
         if (maxNumCoeff != 64 || chromaArrayType == 3)
@@ -1117,7 +1117,7 @@ public struct ResidualLuma : IEquatable<ResidualLuma>
     /// <returns>Residual luma, parsed from <paramref name="reader"/></returns>
     public static ResidualLuma Read(
         BitStreamReader reader,
-        CabacManager? cabac,
+        CabacReader? cabac,
         EntropyCodingMode entropyCodingMode,
         bool transformSize8x8Flag,
         int mbType,
@@ -1809,7 +1809,7 @@ public struct Residual : IEquatable<Residual>
     public static Residual Read(
 #pragma warning restore
         BitStreamReader reader,
-        CabacManager? cabac,
+        CabacReader? cabac,
         EntropyCodingMode codingMode,
         int chromaArrayType,
         bool transformSize8x8Flag,
