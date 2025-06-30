@@ -47,9 +47,10 @@ public sealed class ArithmeticEncoder
     {
         if (symbols.BypassFlag)
             EncodeBypass(binVal);
-        if (symbols.CtxIdx == 276)
+        else if (symbols.CtxIdx == 276)
             EncodeTerminate(binVal);
-        EncodeDecision(ref symbols, binVal);
+        else
+            EncodeDecision(ref symbols, binVal);
     }
 
     /// <summary>
