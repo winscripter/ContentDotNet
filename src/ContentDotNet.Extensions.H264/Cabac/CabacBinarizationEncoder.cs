@@ -160,7 +160,7 @@ public static class CabacBinarizationEncoder
         encoder.WriteBin(ref symbols, false);
     }
 
-    private static void WriteBitString(ArithmeticEncoder encoder, ref CabacContext symbols, BitString bs)
+    internal static void WriteBitString(ArithmeticEncoder encoder, ref CabacContext symbols, BitString bs)
     {
         for (int i = 0; i < bs.Length; i++)
             encoder.WriteBin(ref symbols, bs[i]);
