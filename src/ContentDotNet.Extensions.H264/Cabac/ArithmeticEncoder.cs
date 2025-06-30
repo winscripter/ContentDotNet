@@ -121,7 +121,11 @@ public sealed class ArithmeticEncoder
 
     private void Renormalize()
     {
+        RecursionCounter rc = new(8192);
+
     start:
+        rc.Increment();
+
         if (this.codIRange < 256)
         {
             if (this.codILow < 256)
