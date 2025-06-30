@@ -60,38 +60,62 @@ public class BinReaderWriterTests
         return new BitStreamReader(newMs);
     }
 
+    private static BitStreamReader UseWriter(
+        Action<BitStreamWriter> enc)
+    {
+        using var ms = new MemoryStream();
+        using var bsw = new BitStreamWriter(ms);
+        enc(bsw);
+
+        bsw.GoToStart();
+
+        byte[] result = ms.ToArray();
+        var newMs = new MemoryStream(result);
+        return new BitStreamReader(newMs);
+    }
+
     /// <summary>
     ///   Tests an internal component.
     /// </summary>
     [Fact]
     public void TestWriteBitString()
     {
-        var reader = UseArithmeticWriter(
+        var reader = UseWriter(
             enc =>
             {
-                var cabac = new CabacContext(70, 0, false, false, 26);
-                CabacBinarizationEncoder.WriteBitString(enc, ref cabac, new BitString(0b01011010, 8));
-                CabacBinarizationEncoder.WriteBitString(enc, ref cabac, new BitString(0b11010101, 8));
-                CabacBinarizationEncoder.WriteBitString(enc, ref cabac, new BitString(0b10111011, 8));
-                CabacBinarizationEncoder.WriteBitString(enc, ref cabac, new BitString(0b00101101, 8));
-                CabacBinarizationEncoder.WriteBitString(enc, ref cabac, new BitString(0b11100011, 8));
+                var cabac = new CabacWriter(enc, MacroblockUtilityBase.Dummy)
+                {
+                    SliceType = GeneralSliceType.P
+                };
+
+                cabac.WriteMbType(15);
+                for (int i = 0; i < 8; i++)
+                {
+                    cabac.WritePrevIntraNxNPredModeFlag(i % 2 == 0 ? 1 : 0);
+                    cabac.WriteRemIntraNxNPredMode(i + 1);
+                }
+
+                cabac.WriteMvdL0(50);
+                cabac.WriteMvdL1(25);
+                cabac.WriteMvdL1(25);
+                cabac.WriteMvdL0(50);
             });
 
-        var cabac = new CabacContext(70, 0, false, false, 26);
-        var arithmeticDecoder = new ArithmeticDecoder(reader);
-
-        Assert.Equal(0b01011010, ReadByte(ref cabac));
-        Assert.Equal(0b11010101, ReadByte(ref cabac));
-        Assert.Equal(0b10111011, ReadByte(ref cabac));
-        Assert.Equal(0b00101101, ReadByte(ref cabac));
-        Assert.Equal(0b11100011, ReadByte(ref cabac));
-
-        byte ReadByte(ref CabacContext ctx)
+        var cabac = new CabacReader(reader, MacroblockUtilityBase.Dummy)
         {
-            int result = 0;
-            for (int i = 0; i < 8; i++)
-                result = (result << 1) | Int32Boolean.I32(arithmeticDecoder.ReadBin(ref ctx));
-            return (byte)result;
+            SliceType = GeneralSliceType.P
+        };
+
+        Assert.Equal(15, cabac.ParseMbType());
+        for (int i = 0; i < 8; i++)
+        {
+            Assert.Equal(i % 2 == 0 ? 1 : 0, cabac.ParsePrevIntraNxNPredModeFlag());
+            Assert.Equal(i + 1, cabac.ParseRemIntraNxNPredMode());
         }
+
+        Assert.Equal(50, cabac.ParseMvdL0());
+        Assert.Equal(25, cabac.ParseMvdL1());
+        Assert.Equal(25, cabac.ParseMvdL1());
+        Assert.Equal(50, cabac.ParseMvdL0());
     }
 }
