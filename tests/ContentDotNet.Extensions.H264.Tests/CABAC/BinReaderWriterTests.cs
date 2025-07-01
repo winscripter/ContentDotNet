@@ -75,10 +75,10 @@ public class BinReaderWriterTests
     }
 
     /// <summary>
-    ///   Tests an internal component.
+    ///   Tests CABAC values.
     /// </summary>
     [Fact]
-    public void TestWriteBitString()
+    public void TestCabacValues()
     {
         var reader = UseWriter(
             enc =>

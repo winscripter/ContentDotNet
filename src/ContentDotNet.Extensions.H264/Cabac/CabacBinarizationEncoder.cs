@@ -200,16 +200,16 @@ public static class CabacBinarizationEncoder
         switch (sliceType)
         {
             case GeneralSliceType.I:
-                WriteBitString(encoder, ref symbols, s_mbTypeInISlices[value]);
+                WriteBitString(encoder, ref symbols, s_mbTypeInISlices.GetValueOrDefault(value));
                 break;
 
             case GeneralSliceType.P:
             case GeneralSliceType.SP:
-                WriteBitString(encoder, ref symbols, s_mbTypeInPSPSlices[value]);
+                WriteBitString(encoder, ref symbols, s_mbTypeInPSPSlices.GetValueOrDefault(value));
                 break;
 
             case GeneralSliceType.B:
-                WriteBitString(encoder, ref symbols, s_mbTypeInBSlices[value]);
+                WriteBitString(encoder, ref symbols, s_mbTypeInBSlices.GetValueOrDefault(value));
                 break;
         }
     }
@@ -227,11 +227,11 @@ public static class CabacBinarizationEncoder
         {
             case GeneralSliceType.P:
             case GeneralSliceType.SP:
-                WriteBitString(encoder, ref symbols, s_subMbTypeInPSPSlices[value]);
+                WriteBitString(encoder, ref symbols, s_subMbTypeInPSPSlices.GetValueOrDefault(value));
                 break;
 
             case GeneralSliceType.B:
-                WriteBitString(encoder, ref symbols, s_subMbTypeInBSlices[value]);
+                WriteBitString(encoder, ref symbols, s_subMbTypeInBSlices.GetValueOrDefault(value));
                 break;
         }
     }
