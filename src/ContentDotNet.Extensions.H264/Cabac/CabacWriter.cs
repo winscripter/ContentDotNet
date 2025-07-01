@@ -33,6 +33,31 @@ public sealed class CabacWriter
     }
 
     /// <summary>
+    ///   Initializes a new instance of the <see cref="CabacWriter"/> class.
+    /// </summary>
+    /// <param name="boundWriter">The <see cref="BitStreamWriter"/> to use for writing CABAC bits.</param>
+    /// <param name="util">The <see cref="IMacroblockUtility"/> implementation for macroblock operations.</param>
+    /// <param name="encoder">The arithmetic encoder.</param>
+    public CabacWriter(BitStreamWriter boundWriter, IMacroblockUtility util, ArithmeticEncoder encoder)
+    {
+        _boundReader = boundWriter;
+        Utility = util;
+        _arithmeticEncodingEngine = encoder;
+    }
+
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="CabacWriter"/> class.
+    /// </summary>
+    /// <param name="boundWriter">The <see cref="BitStreamWriter"/> to use for writing CABAC bits.</param>
+    /// <param name="util">The <see cref="IMacroblockUtility"/> implementation for macroblock operations.</param>
+    /// <param name="codIRange">CodIRange</param>
+    /// <param name="codILow">CodILow</param>
+    public CabacWriter(BitStreamWriter boundWriter, IMacroblockUtility util, uint codILow, uint codIRange)
+        : this(boundWriter, util, new ArithmeticEncoder(boundWriter, codILow, codIRange))
+    {
+    }
+
+    /// <summary>
     ///   Gets the arithmetic encoding engine.
     /// </summary>
     public ArithmeticEncoder Encoder => _arithmeticEncodingEngine;

@@ -33,6 +33,31 @@ public sealed partial class CabacReader
     }
 
     /// <summary>
+    ///   Initializes a new instance of the <see cref="CabacReader"/> class.
+    /// </summary>
+    /// <param name="boundReader">The <see cref="BitStreamReader"/> to use for reading CABAC bits.</param>
+    /// <param name="util">The <see cref="IMacroblockUtility"/> implementation for macroblock operations.</param>
+    /// <param name="decoder">The decoder.</param>
+    public CabacReader(BitStreamReader boundReader, IMacroblockUtility util, ArithmeticDecoder decoder)
+    {
+        _boundReader = boundReader;
+        Utility = util;
+        _arithmeticDecodingEngine = decoder;
+    }
+
+    /// <summary>
+    ///   Initializes a new instance of the <see cref="CabacReader"/> class.
+    /// </summary>
+    /// <param name="boundReader">The <see cref="BitStreamReader"/> to use for reading CABAC bits.</param>
+    /// <param name="util">The <see cref="IMacroblockUtility"/> implementation for macroblock operations.</param>
+    /// <param name="codIOffset">CodIOffset</param>
+    /// <param name="codIRange">CodIRange</param>
+    public CabacReader(BitStreamReader boundReader, IMacroblockUtility util, uint codIOffset, uint codIRange)
+        : this(boundReader, util, new ArithmeticDecoder(boundReader, codIOffset, codIRange))
+    {
+    }
+
+    /// <summary>
     ///   Gets the arithmetic decoding engine.
     /// </summary>
     public ArithmeticDecoder Decoder => _arithmeticDecodingEngine;

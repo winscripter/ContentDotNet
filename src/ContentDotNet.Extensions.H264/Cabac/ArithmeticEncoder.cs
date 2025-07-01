@@ -32,6 +32,22 @@ public sealed class ArithmeticEncoder
     }
 
     /// <summary>
+    ///   Initializes a new instance of the <see cref="ArithmeticEncoder"/> class.
+    /// </summary>
+    /// <param name="boundWriter">The bound writer.</param>
+    /// <param name="codILow">CodILow</param>
+    /// <param name="codIRange">CodIRange</param>
+    public ArithmeticEncoder(BitStreamWriter boundWriter, uint codILow, uint codIRange)
+    {
+        this.codILow = codILow;
+        this.codIRange = codIRange;
+        firstBitFlag = true;
+        bitsOutstanding = 0;
+        _boundWriter = boundWriter;
+        BinCountsInNALunits = 0;
+    }
+
+    /// <summary>
     ///   The base bitstream writer.
     /// </summary>
     public BitStreamWriter BaseWriter => _boundWriter;

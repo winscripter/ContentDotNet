@@ -38,6 +38,19 @@ public sealed class ArithmeticDecoder
     }
 
     /// <summary>
+    ///   Initializes a new instance of the <see cref="ArithmeticDecoder"/> class.
+    /// </summary>
+    /// <param name="boundReader">The bitstream reader.</param>
+    /// <param name="codIOffset">CodIOffset</param>
+    /// <param name="codIRange">CodIRange</param>
+    public ArithmeticDecoder(BitStreamReader boundReader, uint codIOffset, uint codIRange)
+    {
+        _boundReader = boundReader;
+        this.CodIOffset = codIOffset;
+        this.CodIRange = codIRange;
+    }
+
+    /// <summary>
     ///   Bins that were decoded previously.
     /// </summary>
     public BitString PreviouslyDecodedBins => _previouslyDecodedBins;
