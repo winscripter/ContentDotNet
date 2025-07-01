@@ -88,7 +88,7 @@ public class BinReaderWriterTests
                     SliceType = GeneralSliceType.P
                 };
 
-                cabac.WriteMbType(3);
+                cabac.WriteMbType(5);
                 for (int i = 0; i < 8; i++)
                 {
                     cabac.WritePrevIntraNxNPredModeFlag(i % 2 == 0 ? 1 : 0);
@@ -101,7 +101,7 @@ public class BinReaderWriterTests
             SliceType = GeneralSliceType.P
         };
 
-        Assert.Equal(3, cabac.ParseMbType());
+        Assert.Equal(5, cabac.ParseMbType());
         for (int i = 0; i < 8; i++)
         {
             Assert.Equal(i % 2 == 0 ? 1 : 0, cabac.ParsePrevIntraNxNPredModeFlag());
