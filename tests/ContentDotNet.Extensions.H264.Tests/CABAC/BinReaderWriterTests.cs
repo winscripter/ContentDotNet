@@ -88,7 +88,12 @@ public class BinReaderWriterTests
         var cabac = new CabacContext(0, 0, false, false, 0);
         var dec = new ArithmeticDecoder(bsr);
         for (int i = 0; i < 10000; i++)
-            Assert.Equal(i % 2 == 0, dec.ReadBin(ref cabac));
+        {
+            bool expected = i % 2 == 0;
+            bool actual = dec.ReadBin(ref cabac);
+            if (expected != actual)
+                throw new InvalidOperationException($"Expected {expected} got {actual}. Index: {i}");
+        }
     }
 
     ///// <summary>
