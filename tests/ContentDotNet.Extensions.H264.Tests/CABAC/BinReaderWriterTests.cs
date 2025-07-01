@@ -85,6 +85,8 @@ public class BinReaderWriterTests
                     writer.WriteBin(ref cabac, i % 2 == 0);
             });
 
+        throw new InvalidOperationException("... " + bsr.Length);
+
         var cabac = new CabacContext(0, 0, false, false, 0);
         var dec = new ArithmeticDecoder(bsr);
         for (int i = 0; i < 10000; i++)
