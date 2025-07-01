@@ -104,7 +104,7 @@ public class BinReaderWriterTests
         Assert.Equal(5, cabac.ParseMbType());
         for (int i = 0; i < 8; i++)
         {
-            Assert.Equal(i % 2 == 0 ? 1 : 0, cabac.ParsePrevIntraNxNPredModeFlag());
+            Assert.Equal(i % 2 == 0 ? 0 : 1, cabac.ParsePrevIntraNxNPredModeFlag());
             Assert.Equal(i + 1, cabac.ParseRemIntraNxNPredMode());
         }
     }
