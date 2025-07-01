@@ -18,6 +18,24 @@ public sealed class ArithmeticEncoder
     private BitString _previouslyWrittenBins = default;
 
     /// <summary>
+    ///   The CodILow variable.
+    /// </summary>
+    public uint CodILow
+    {
+        get => codILow;
+        set => codILow = value;
+    }
+
+    /// <summary>
+    ///   The CodIRange variable.
+    /// </summary>
+    public uint CodIRange
+    {
+        get => codIRange;
+        set => codIRange = value;
+    }
+
+    /// <summary>
     ///   Initializes a new instance of the <see cref="ArithmeticEncoder"/> class.
     /// </summary>
     /// <param name="boundWriter">The bound writer.</param>

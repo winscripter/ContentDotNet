@@ -80,10 +80,14 @@ public class BinReaderWriterTests
         using var bsr = UseArithmeticWriter(
             writer =>
             {
+                WriterState prevState = writer.BaseWriter.GetState();
+                writer.BaseWriter.WriteBits(0, 9);
                 var cabac = new CabacContext(0, 0, false, false, 0);
                 for (int i = 0; i < 10000; i++)
                     writer.WriteBin(ref cabac, i % 2 == 0);
                 writer.EncodeTerminate(true);
+                writer.BaseWriter.GoTo(prevState);
+                writer.BaseWriter.WriteBits(writer.CodILow, 9);
             });
 
         var cabac = new CabacContext(0, 0, false, false, 0);
