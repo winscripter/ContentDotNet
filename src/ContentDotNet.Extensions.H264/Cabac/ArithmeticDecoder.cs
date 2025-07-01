@@ -11,6 +11,7 @@ public sealed class ArithmeticDecoder
 {
     private readonly BitStreamReader _boundReader;
     private BitString _previouslyDecodedBins = default;
+    private int _binIdx = 0;
 
     /// <summary>
     ///   CodIRange
@@ -65,6 +66,11 @@ public sealed class ArithmeticDecoder
     }
 
     /// <summary>
+    ///   The bin index.
+    /// </summary>
+    public int BinIndex => _binIdx;
+
+    /// <summary>
     ///   Reads a CABAC bin.
     /// </summary>
     /// <returns>The bin.</returns>
@@ -76,6 +82,7 @@ public sealed class ArithmeticDecoder
         CodIRange = codIRange;
         CodIOffset = codIOffset;
         _previouslyDecodedBins += new BitString(Int32Boolean.I32(retVal), 1);
+        _binIdx++;
         return retVal;
     }
 

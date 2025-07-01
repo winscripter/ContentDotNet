@@ -165,7 +165,7 @@ public sealed partial class CabacReader
         Span<int> s = stackalloc int[1];
         int ctxIdx = CabacCtxIdxDerivation.AssignCtxIdxInc(
             ctxIdxOffset,
-            0,
+            _arithmeticDecodingEngine.BinIndex,
             s,
             _arithmeticDecodingEngine.PreviouslyDecodedBins,
             Utility,
