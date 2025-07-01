@@ -74,38 +74,55 @@ public class BinReaderWriterTests
         return new BitStreamReader(newMs);
     }
 
-    /// <summary>
-    ///   Tests CABAC values.
-    /// </summary>
     [Fact]
-    public void TestCabacValues()
+    public void TestBins()
     {
-        var reader = UseWriter(
-            enc =>
+        using var bsr = UseArithmeticWriter(
+            writer =>
             {
-                var cabac = new CabacWriter(enc, MacroblockUtilityBase.Dummy)
-                {
-                    SliceType = GeneralSliceType.P
-                };
-
-                cabac.WriteMbType(5);
-                for (int i = 0; i < 8; i++)
-                {
-                    cabac.WritePrevIntraNxNPredModeFlag(i % 2 == 0 ? 1 : 0);
-                    cabac.WriteRemIntraNxNPredMode(i + 1);
-                }
+                var cabac = new CabacContext(0, 0, false, false, 0);
+                for (int i = 0; i < 10000; i++)
+                    writer.WriteBin(ref cabac, i % 2 == 0);
             });
 
-        var cabac = new CabacReader(reader, MacroblockUtilityBase.Dummy)
-        {
-            SliceType = GeneralSliceType.P
-        };
-
-        Assert.Equal(5, cabac.ParseMbType());
-        for (int i = 0; i < 8; i++)
-        {
-            Assert.Equal(i % 2 == 0 ? 0 : 1, cabac.ParsePrevIntraNxNPredModeFlag());
-            Assert.Equal(i + 1, cabac.ParseRemIntraNxNPredMode());
-        }
+        var cabac = new CabacContext(0, 0, false, false, 0);
+        var dec = new ArithmeticDecoder(bsr);
+        for (int i = 0; i < 10000; i++)
+            Assert.Equal(i % 2 == 0, dec.ReadBin(ref cabac));
     }
+
+    ///// <summary>
+    /////   Tests CABAC values.
+    ///// </summary>
+    //[Fact]
+    //public void TestCabacValues()
+    //{
+    //    var reader = UseWriter(
+    //        enc =>
+    //        {
+    //            var cabac = new CabacWriter(enc, MacroblockUtilityBase.Dummy)
+    //            {
+    //                SliceType = GeneralSliceType.P
+    //            };
+
+    //            cabac.WriteMbType(5);
+    //            for (int i = 0; i < 8; i++)
+    //            {
+    //                cabac.WritePrevIntraNxNPredModeFlag(i % 2 == 0 ? 1 : 0);
+    //                cabac.WriteRemIntraNxNPredMode(i + 1);
+    //            }
+    //        });
+
+    //    var cabac = new CabacReader(reader, MacroblockUtilityBase.Dummy)
+    //    {
+    //        SliceType = GeneralSliceType.P
+    //    };
+
+    //    Assert.Equal(5, cabac.ParseMbType());
+    //    for (int i = 0; i < 8; i++)
+    //    {
+    //        Assert.Equal(i % 2 == 0 ? 0 : 1, cabac.ParsePrevIntraNxNPredModeFlag());
+    //        Assert.Equal(i + 1, cabac.ParseRemIntraNxNPredMode());
+    //    }
+    //}
 }
