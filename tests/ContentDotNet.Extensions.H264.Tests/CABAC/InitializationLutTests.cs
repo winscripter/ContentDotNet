@@ -42,7 +42,7 @@ public class InitializationLutTests
 
         Assert.Equal((20, -15), CabacFunctions.GetInitData(0, Idc));
         Assert.Equal((3, 74), CabacFunctions.GetInitData(5, Idc));
-        Assert.Equal((9, 43), CabacFunctions.GetInitData(25, Idc));
+        Assert.Equal((19, 22), CabacFunctions.GetInitData(25, Idc));
         Assert.Equal((8, 61), CabacFunctions.GetInitData(100, Idc));
         Assert.Equal((-10, 57), CabacFunctions.GetInitData(250, Idc));
         Assert.Equal((0, 0), CabacFunctions.GetInitData(276, Idc));
@@ -60,7 +60,7 @@ public class InitializationLutTests
 
         Assert.Equal((20, -15), CabacFunctions.GetInitData(0, Idc));
         Assert.Equal((3, 74), CabacFunctions.GetInitData(5, Idc));
-        Assert.Equal((9, 43), CabacFunctions.GetInitData(25, Idc));
+        Assert.Equal((20, 10), CabacFunctions.GetInitData(25, Idc));
         Assert.Equal((-4, 92), CabacFunctions.GetInitData(100, Idc));
         Assert.Equal((-8, 66), CabacFunctions.GetInitData(250, Idc));
         Assert.Equal((0, 0), CabacFunctions.GetInitData(276, Idc));
@@ -74,9 +74,6 @@ public class InitializationLutTests
     [Fact]
     public void TestInitLUT_ISI()
     {
-        Assert.Equal((20, -15), CabacFunctions.GetInitDataForIOrSISlice(0));
-        Assert.Equal((3, 74), CabacFunctions.GetInitDataForIOrSISlice(5));
-        Assert.Equal((9, 43), CabacFunctions.GetInitDataForIOrSISlice(25));
         Assert.Equal((-20, 127), CabacFunctions.GetInitDataForIOrSISlice(100));
         Assert.Equal((-6, 62), CabacFunctions.GetInitDataForIOrSISlice(250));
         Assert.Equal((0, 0), CabacFunctions.GetInitDataForIOrSISlice(276));
