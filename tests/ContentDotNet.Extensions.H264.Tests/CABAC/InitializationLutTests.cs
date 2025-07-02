@@ -15,9 +15,10 @@ namespace ContentDotNet.Extensions.H264.Tests.CABAC;
 // 1000
 // 1023
 
-internal static class InitializationLutTests
+public class InitializationLutTests
 {
-    public static void TestInitLUT_IDC0_PSP()
+    [Fact]
+    public void TestInitLUT_IDC0_PSP()
     {
         const int Idc = 0;
 
@@ -34,7 +35,8 @@ internal static class InitializationLutTests
         Assert.Equal((-23, 126), CabacFunctions.GetInitData(1023, Idc));
     }
 
-    public static void TestInitLUT_IDC1_PSP()
+    [Fact]
+    public void TestInitLUT_IDC1_PSP()
     {
         const int Idc = 1;
 
@@ -51,7 +53,8 @@ internal static class InitializationLutTests
         Assert.Equal((-31, 127), CabacFunctions.GetInitData(1023, Idc));
     }
 
-    public static void TestInitLUT_IDC2_PSP()
+    [Fact]
+    public void TestInitLUT_IDC2_PSP()
     {
         const int Idc = 2;
 
@@ -68,7 +71,8 @@ internal static class InitializationLutTests
         Assert.Equal((-30, 127), CabacFunctions.GetInitData(1023, Idc));
     }
 
-    public static void TestInitLUT_ISI()
+    [Fact]
+    public void TestInitLUT_ISI()
     {
         Assert.Equal((20, -15), CabacFunctions.GetInitDataForIOrSISlice(0));
         Assert.Equal((3, 74), CabacFunctions.GetInitDataForIOrSISlice(5));
