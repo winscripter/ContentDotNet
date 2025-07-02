@@ -56,7 +56,7 @@ public class InitializationLutTests
     [Fact]
     public void TestInitLUT_IDC2_PSP()
     {
-        const int Idc = 2;
+        const int Idc = 2; 
 
         Assert.Equal((20, -15), CabacFunctions.GetInitData(0, Idc));
         Assert.Equal((3, 74), CabacFunctions.GetInitData(5, Idc));
