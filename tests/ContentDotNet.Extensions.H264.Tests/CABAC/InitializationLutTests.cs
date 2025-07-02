@@ -27,7 +27,7 @@ public class InitializationLutTests
         Assert.Equal((9, 43), CabacFunctions.GetInitData(25, Idc));
         Assert.Equal((6, 69), CabacFunctions.GetInitData(100, Idc));
         Assert.Equal((1, 38), CabacFunctions.GetInitData(250, Idc));
-        Assert.Equal((0, 0), CabacFunctions.GetInitData(276, Idc));
+        Assert.Equal((255, 255), CabacFunctions.GetInitData(276, Idc));
         Assert.Equal((2, 59), CabacFunctions.GetInitData(450, Idc));
         Assert.Equal((-1, 84), CabacFunctions.GetInitData(600, Idc));
         Assert.Equal((5, 61), CabacFunctions.GetInitData(800, Idc));
@@ -45,7 +45,7 @@ public class InitializationLutTests
         Assert.Equal((19, 22), CabacFunctions.GetInitData(25, Idc));
         Assert.Equal((8, 61), CabacFunctions.GetInitData(100, Idc));
         Assert.Equal((-10, 57), CabacFunctions.GetInitData(250, Idc));
-        Assert.Equal((0, 0), CabacFunctions.GetInitData(276, Idc));
+        Assert.Equal((255, 255), CabacFunctions.GetInitData(276, Idc));
         Assert.Equal((2, 58), CabacFunctions.GetInitData(450, Idc));
         Assert.Equal((27, 36), CabacFunctions.GetInitData(600, Idc));
         Assert.Equal((1, 67), CabacFunctions.GetInitData(800, Idc));
@@ -63,7 +63,7 @@ public class InitializationLutTests
         Assert.Equal((20, 10), CabacFunctions.GetInitData(25, Idc));
         Assert.Equal((-4, 92), CabacFunctions.GetInitData(100, Idc));
         Assert.Equal((-8, 66), CabacFunctions.GetInitData(250, Idc));
-        Assert.Equal((0, 0), CabacFunctions.GetInitData(276, Idc));
+        Assert.Equal((255, 255), CabacFunctions.GetInitData(276, Idc));
         Assert.Equal((-11, 68), CabacFunctions.GetInitData(450, Idc));
         Assert.Equal((8, 63), CabacFunctions.GetInitData(600, Idc));
         Assert.Equal((-1, 73), CabacFunctions.GetInitData(800, Idc));
@@ -76,7 +76,7 @@ public class InitializationLutTests
     {
         Assert.Equal((-20, 127), CabacFunctions.GetInitDataForIOrSISlice(100));
         Assert.Equal((-6, 62), CabacFunctions.GetInitDataForIOrSISlice(250));
-        Assert.Equal((0, 0), CabacFunctions.GetInitDataForIOrSISlice(276));
+        Assert.Equal((255, 255), CabacFunctions.GetInitDataForIOrSISlice(276));
         Assert.Equal((2, 59), CabacFunctions.GetInitDataForIOrSISlice(450));
         Assert.Equal((0, 89), CabacFunctions.GetInitDataForIOrSISlice(600));
         Assert.Equal((5, 42), CabacFunctions.GetInitDataForIOrSISlice(800));
