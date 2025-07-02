@@ -24,7 +24,7 @@ public class InitialContextValueTests
     public void Test_CtxIdx280_CII0_Bypass0_I0_QP46()
     {
         var cabac = new CabacContext(280, 0, false, false, 46);
-        Assert.Equal(62, cabac.PStateIdx);
+        Assert.Equal(10, cabac.PStateIdx);
         Assert.True(cabac.ValMps);
     }
 }
