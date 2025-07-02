@@ -133,14 +133,14 @@ public sealed class ArithmeticDecoder
 
     static void Renormalize(BitStreamReader reader, ref uint codIOffset, ref uint codIRange)
     {
+    start:
         if (codIRange < 256)
         {
-            while (codIRange < 256)
-            {
-                codIRange <<= 1;
-                codIOffset <<= 1;
-                codIOffset |= Int32Boolean.U32(reader.ReadBit());
-            }
+            codIRange <<= 1;
+            codIOffset <<= 1;
+            codIOffset |= (uint)Int32Boolean.I32(reader.ReadBit());
+
+            goto start;
         }
     }
 
@@ -160,7 +160,7 @@ public sealed class ArithmeticDecoder
 
             if (cabac.PStateIdx == 0)
             {
-                cabac.ValMps = Int32Boolean.B(1 - Int32Boolean.I32(cabac.ValMps));
+                cabac.ValMps = !cabac.ValMps;
             }
 
             cabac.PStateIdx = StateTransitioning.GetLps(cabac.PStateIdx);
