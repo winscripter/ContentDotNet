@@ -131,7 +131,7 @@ public sealed class ArithmeticDecoder
         }
     }
 
-    static void Renormalize(BitStreamReader reader, ref uint codIOffset, ref uint codIRange)
+    private static void Renormalize(BitStreamReader reader, ref uint codIOffset, ref uint codIRange)
     {
     start:
         if (codIRange < 256)
