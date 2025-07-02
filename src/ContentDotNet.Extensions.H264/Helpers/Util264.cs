@@ -125,7 +125,12 @@ internal static class Util264
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public static int Clip3(int a, int b, int c) => c < a ? a : c > b ? b : c;
+    public static int Clip3(int a, int b, int c)
+    {
+        if (c < a) return a;
+        else if (c > b) return b;
+        else return c;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Clip1Y(int e, int bitDepthY) => Clip3(0, 1 << bitDepthY, e);
