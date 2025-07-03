@@ -192,7 +192,7 @@ public sealed class ArithmeticEncoder
 
     private void PutBit(bool b)
     {
-        if (Int32Boolean.I32(this.firstBitFlag) != 0)
+        if (this.firstBitFlag == true)
         {
             this.firstBitFlag = false;
         }
