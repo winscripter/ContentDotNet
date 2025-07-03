@@ -157,20 +157,13 @@ public sealed class ArithmeticDecoder
             binVal = !cabac.ValMps;
             codIOffset -= codIRange;
             codIRange = (uint)codIRangeLPS;
-
-            if (cabac.PStateIdx == 0)
-            {
-                cabac.ValMps = !cabac.ValMps;
-            }
-
-            cabac.PStateIdx = StateTransitioning.GetLps(cabac.PStateIdx);
         }
         else
         {
             binVal = cabac.ValMps;
-            cabac.PStateIdx = StateTransitioning.GetMps(cabac.PStateIdx);
         }
 
+        StateTransitioning.Apply(ref cabac, binVal);
         Renormalize(reader, ref codIOffset, ref codIRange);
 
         return binVal;
