@@ -25,6 +25,6 @@ public class InitialContextValueTests
     {
         var cabac = new CabacContext(280, 0, false, false, 46);
         Assert.Equal(10, cabac.PStateIdx);
-        Assert.True(cabac.ValMps);
+        Assert.False(cabac.ValMps);
     }
 }
