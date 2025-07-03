@@ -36,7 +36,7 @@ internal static class StateTransitioning
         else
         {
             if (cabac.PStateIdx == 0)
-                cabac.ValMps = Int32Boolean.B(1 - Int32Boolean.I32(cabac.ValMps));
+                cabac.ValMps = !cabac.ValMps;
             cabac.PStateIdx = GetLps(cabac.PStateIdx);
         }
     }

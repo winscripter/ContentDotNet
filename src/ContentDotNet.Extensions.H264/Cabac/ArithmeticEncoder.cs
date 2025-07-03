@@ -107,18 +107,11 @@ public sealed class ArithmeticEncoder
         {
             this.codILow += this.codIRange;
             this.codIRange = (uint)codIRangeLPS;
-
-            if (symbols.PStateIdx != 0)
-                symbols.ValMps = !symbols.ValMps;
-
-            symbols.PStateIdx = StateTransitioning.GetLps(symbols.PStateIdx);
-        }
-        else
-        {
-            symbols.PStateIdx = StateTransitioning.GetMps(symbols.PStateIdx);
         }
 
+        StateTransitioning.Apply(ref symbols, binVal);
         Renormalize();
+
         this.BinCountsInNALunits++;
     }
 
