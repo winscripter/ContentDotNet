@@ -30,10 +30,9 @@ def process_document() -> None:
                 builder = "        /*"
                 builder += str(element.idx)
                 builder += "*/ "
-                for entry in element.data:
-                    builder += str(entry) + ", "
+                builder += f"{{ {element.idx}, new[] {{ {element.data[0]}, {element.data[1]}, {element.data[2]}, {element.data[3]} }} }},"
                 output.write(builder + "\n")
-
+                
 print("Working...")
 process_document()
 print("SUCCESS!")
