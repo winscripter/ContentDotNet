@@ -8,8 +8,8 @@ public class BinReaderWriterTests
     [Fact]
     public void DoTest()
     {
-        using var writerData = new MemoryStream();
-        using var writerBs = new BitStreamWriter(writerData);
+        var writerData = new MemoryStream();
+        var writerBs = new BitStreamWriter(writerData);
         var writer = new ArithmeticEncoder(writerBs);
 
         var context = new CabacContext(0, 0, false, false, 0);
@@ -18,7 +18,7 @@ public class BinReaderWriterTests
 
         writerData.Position = 0;
 
-        using var reader = new BitStreamReader(writerData);
+        var reader = new BitStreamReader(writerData);
         var readerBs = new ArithmeticDecoder(reader);
         var readerContext = new CabacContext(0, 0, false, false, 0);
 
