@@ -1,6 +1,7 @@
 ﻿using ContentDotNet.BitStream;
 using ContentDotNet.Containers;
 using ContentDotNet.Extensions.H264.Cabac.Internal;
+using ContentDotNet.Extensions.H264.Cabac.Uegk;
 using ContentDotNet.Extensions.H264.Macroblocks;
 using ContentDotNet.Extensions.H264.Models;
 using ContentDotNet.Extensions.H264.Utilities;
@@ -147,6 +148,10 @@ public sealed partial class CabacReader
     /// </summary>
     public int NumC8x8 { get; set; }
 
+    internal PossiblyPrefixSuffix CtxIdxOffset { get; set; } = default!;
+    internal UegkPrefixSuffix PrefixSuffix { get; set; } = UegkPrefixSuffix.Prefix;
+    internal bool UegkMode { get; set; } = false;
+
     private void InitializeOrUpdate(SyntaxElement se)
     {
         var (ctxIdx, bypassFlag) = GetCtxIdxAndBypassFlag(se);
@@ -158,13 +163,15 @@ public sealed partial class CabacReader
         }
     }
 
-    private (int ctxIdx, bool bypassFlag) GetCtxIdxAndBypassFlag(SyntaxElement se)
+    private int GetCtxIdx(PossiblyPrefixSuffix ctxIdxOffset, ref bool bypassFlag)
     {
-        var (maxBinIdxCtx, ctxIdxOffset, bypassFlag) = Binarization.GetFields(se, SliceType, BlockType, NumC8x8, IsFrameMacroblock);
-
         Span<int> s = stackalloc int[1];
-        int ctxIdx = CabacCtxIdxDerivation.AssignCtxIdxInc(
-            ctxIdxOffset,
+        int ctxIdx = CabacCtxIdxDerivation.DeriveCtxIdx(
+            ctxIdxOffset.IsUegk
+            ? this.PrefixSuffix == UegkPrefixSuffix.Prefix
+              ? ctxIdxOffset.UegkValue.Prefix
+              : ctxIdxOffset.UegkValue.Suffix
+            : ctxIdxOffset.IntegerValue,
             _arithmeticDecodingEngine.BinIndex,
             s,
             _arithmeticDecodingEngine.PreviouslyDecodedBins,
@@ -180,17 +187,56 @@ public sealed partial class CabacReader
             MvdLX,
             L0Mode,
             out _,
-            out _
+            out bypassFlag
         );
 
+        return ctxIdx;
+    }
+
+    private (int ctxIdx, bool bypassFlag) GetCtxIdxAndBypassFlag(SyntaxElement se)
+    {
+        var (_, ctxIdxOffset, bypassFlag) = Binarization.GetFields(se, SliceType, BlockType, NumC8x8, IsFrameMacroblock, this._arithmeticDecodingEngine.BinIndex);
+
+        int ctxIdx = this.GetCtxIdx(ctxIdxOffset, ref bypassFlag);
+
         return (ctxIdx, bypassFlag);
+    }
+
+    internal UegkPrefixSuffixSwitcher PrefixSuffixSwitcher => SwitchPrefixSuffix;
+
+    private void SwitchPrefixSuffix(UegkPrefixSuffix prefixSuffix)
+    {
+        if (this.PrefixSuffix != prefixSuffix)
+        {
+            this.Decoder.BinIndex = 0;
+            this.PrefixSuffix = prefixSuffix;
+        }
+    }
+
+    internal Func<bool> BinReader => ReadBin;
+
+    internal bool ReadBin()
+    {
+        bool bypassFlag = false;
+        int ctxIdx = this.GetCtxIdx(this.CtxIdxOffset, ref bypassFlag);
+
+        if (!this._init[ctxIdx])
+        {
+            this._init[ctxIdx] = true;
+            this._cabacs[ctxIdx] = new CabacContext(ctxIdx, this.CabacInitIdc, this.SliceType is GeneralSliceType.I or GeneralSliceType.SI, bypassFlag, this.SliceQPY);
+        }
+        else
+        {
+            this._cabacs[ctxIdx].BypassFlag = bypassFlag;
+        }
+
+        return this._arithmeticDecodingEngine.ReadBin(ref this._cabacs[ctxIdx], bypassFlag);
     }
 
     private int Parse(SyntaxElement se)
     {
         InitializeOrUpdate(se);
-        var (ctxIdx, _) = GetCtxIdxAndBypassFlag(se);
-        return Binarization.Binarize(_arithmeticDecodingEngine, ref _cabacs[ctxIdx], SliceType, se, ChromaArrayType);
+        return Binarization.Binarize(this, SliceType, se, ChromaArrayType);
     }
 
     /// <summary>

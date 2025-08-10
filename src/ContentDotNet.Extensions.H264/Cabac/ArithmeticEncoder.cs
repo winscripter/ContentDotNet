@@ -129,14 +129,14 @@ public sealed class ArithmeticEncoder
 
         if (this.codILow >= 1024)
         {
-            PutBit(true);
+            PutBit(1);
             this.codILow -= 1024;
         }
         else
         {
             if (this.codILow < 512)
             {
-                PutBit(false);
+                PutBit(0);
             }
             else
             {
@@ -159,7 +159,7 @@ public sealed class ArithmeticEncoder
         {
             if (this.codILow < 256)
             {
-                PutBit(false);
+                PutBit(0);
                 goto finishThenLoop;
             }
             else
@@ -167,7 +167,7 @@ public sealed class ArithmeticEncoder
                 if (this.codILow >= 512)
                 {
                     this.codILow -= 512;
-                    PutBit(true);
+                    PutBit(1);
 
                     goto finishThenLoop;
                 }
@@ -190,7 +190,7 @@ public sealed class ArithmeticEncoder
         goto start;
     }
 
-    private void PutBit(bool b)
+    private void PutBit(int b)
     {
         if (this.firstBitFlag == true)
         {
@@ -198,7 +198,7 @@ public sealed class ArithmeticEncoder
         }
         else
         {
-            this.BaseWriter.WriteBit(b);
+            this.BaseWriter.WriteBit(Int32Boolean.B(b));
         }
 
         RecursionCounter rc = new(8192);
@@ -207,7 +207,7 @@ public sealed class ArithmeticEncoder
         rc.Increment();
         if (this.bitsOutstanding > 0)
         {
-            this.BaseWriter.WriteBit(!b);
+            this.BaseWriter.WriteBit(!Int32Boolean.B(b));
             this.bitsOutstanding--;
 
             goto loop;
@@ -218,7 +218,7 @@ public sealed class ArithmeticEncoder
     {
         this.codIRange = 2;
         Renormalize();
-        PutBit(Int32Boolean.B((this.codILow >> 9) & 1));
+        PutBit((int)((this.codILow >> 9) & 1));
         this._boundWriter.WriteBits(((this.codILow >> 7) & 3) | 1, 2);
     }
 

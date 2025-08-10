@@ -68,7 +68,11 @@ public sealed class ArithmeticDecoder
     /// <summary>
     ///   The bin index.
     /// </summary>
-    public int BinIndex => _binIdx;
+    public int BinIndex
+    {
+        get => _binIdx;
+        set => _binIdx = value;
+    }
 
     /// <summary>
     ///   Reads a CABAC bin.
