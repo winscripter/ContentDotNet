@@ -29,7 +29,7 @@
             bsw.WriteBit(false); // vui_parameters_present_flag
 
             // Do some alignment. These bits won't be read.
-            bsw.WriteBits(0, 8);
+            bsw.WriteBits(0, 32);
 
             // Decoding & assertion time
             stream.Position = 0;
