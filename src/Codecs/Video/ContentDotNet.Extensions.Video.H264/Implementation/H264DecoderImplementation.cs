@@ -120,6 +120,7 @@
         {
             RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
             int stream = 0;
+            long prevPos = this.BitStreamReader.BaseStream.Position;
             while (true)
             {
                 try
@@ -145,10 +146,12 @@
                 }
                 catch (EndOfStreamException)
                 {
+                    this.BitStreamReader.BaseStream.Position = prevPos;
                     return false;
                 }
                 catch (InfiniteLoopException)
                 {
+                    this.BitStreamReader.BaseStream.Position = prevPos;
                     throw;
                 }
             }
