@@ -133,5 +133,36 @@
             Assert.False(dcd.SkipToNalStart());
             // H.264 stream ends here
         }
+
+        [Fact]
+        public void Misaligned_Byte_Search_Nal_Should_Still_Work()
+        {
+            var bytes = new byte[]
+            {
+                // Bogus byte
+                0x0E,
+
+                // SC of NAL
+                0x00, 0x00, 0x00, 0x01,
+
+                // No more data; should be length of 0
+            };
+
+            var ms = new MemoryStream(bytes)
+            {
+                Position = 0
+            };
+            var bsr = new BitStreamReader(ms);
+
+            var dcd = new H264Service().CreateDecoder(bsr);
+
+            dcd.BitStreamReader.ReadBit(); // Misalign
+
+            Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(0, dcd.ProcessNalLength());
+
+            Assert.False(dcd.SkipToNalStart());
+            // H.264 stream ends here
+        }
     }
 }
