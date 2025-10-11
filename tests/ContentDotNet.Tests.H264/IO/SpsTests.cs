@@ -32,6 +32,8 @@
             bsw.WriteBits(0, 8);
 
             // Decoding & assertion time
+            stream.Position = 0;
+
             var service = new H264Service();
             AbstractH264Decoder h264Dec = service
                 .CreateDecoder(new BitStreamReader(stream));
