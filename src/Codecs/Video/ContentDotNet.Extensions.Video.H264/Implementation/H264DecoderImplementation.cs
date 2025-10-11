@@ -3,6 +3,7 @@
     using ContentDotNet.BitStream;
     using ContentDotNet.Colors;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions;
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Rbsp;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
     using ContentDotNet.Pictures;
@@ -14,6 +15,7 @@
 
         public H264DecoderImplementation(BitStreamReader bsr) : base(bsr)
         {
+            this.IOReader = new DefaultRbspReader();
         }
 
         public override NalType DecodeNal(bool skipToNalStart = true)

@@ -73,6 +73,8 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "theory", "theory\theory.shp
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "todo", "todo\todo.shproj", "{45F57B0C-C413-46A1-AE8D-397303EE3ACE}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Tests.H264", "tests\ContentDotNet.Tests.H264\ContentDotNet.Tests.H264.csproj", "{B68584A1-EEC5-4328-87E4-48D59591042F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -135,6 +137,10 @@ Global
 		{9F3A2CDF-B366-4105-9D34-F8FC7CD08800}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9F3A2CDF-B366-4105-9D34-F8FC7CD08800}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9F3A2CDF-B366-4105-9D34-F8FC7CD08800}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B68584A1-EEC5-4328-87E4-48D59591042F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B68584A1-EEC5-4328-87E4-48D59591042F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B68584A1-EEC5-4328-87E4-48D59591042F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B68584A1-EEC5-4328-87E4-48D59591042F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -161,6 +167,7 @@ Global
 		{3AEE3F3B-8A17-4709-AAA7-3D4FE3FF23FA} = {9E3D6880-FDE6-4A41-930B-A77F44F9D91F}
 		{4BC08BB0-B31E-407D-9A5B-10E32C1BC32E} = {E69A62AA-B5DA-48D1-B473-3565AB4371C0}
 		{9F3A2CDF-B366-4105-9D34-F8FC7CD08800} = {4BC08BB0-B31E-407D-9A5B-10E32C1BC32E}
+		{B68584A1-EEC5-4328-87E4-48D59591042F} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}
