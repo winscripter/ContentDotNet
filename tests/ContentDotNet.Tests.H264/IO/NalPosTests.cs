@@ -31,7 +31,7 @@
             if (!dcd.SkipToNalStart())
                 Assert.Fail("Could not find NAL start!!!");
 
-            Assert.Equal(Array.IndexOf(bytes, 0x55), (int)ms.Position);
+            Assert.Equal(8, (int)ms.Position);
         }
     }
 }
