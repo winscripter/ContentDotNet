@@ -334,7 +334,7 @@ public class BitStreamTests
     [Fact]
     public void SEGolomb_3()
     {
-        const int VALUE = 63631;
+        const int VALUE = 17429;
 
         UseBSWriterThenReader(
             writer =>
