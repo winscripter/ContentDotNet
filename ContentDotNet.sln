@@ -75,6 +75,10 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "todo", "todo\todo.shproj", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Tests.H264", "tests\ContentDotNet.Tests.H264\ContentDotNet.Tests.H264.csproj", "{B68584A1-EEC5-4328-87E4-48D59591042F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Video", "Video", "{168FF1F0-86C5-49C4-8998-3DAA96440E22}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Video.Mp4", "src\FileFormats\Video\ContentDotNet.Extensions.Video.Mp4\ContentDotNet.Extensions.Video.Mp4.csproj", "{E43ACAE2-E9CF-49DE-A314-F62C84C54384}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -141,6 +145,10 @@ Global
 		{B68584A1-EEC5-4328-87E4-48D59591042F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{B68584A1-EEC5-4328-87E4-48D59591042F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{B68584A1-EEC5-4328-87E4-48D59591042F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E43ACAE2-E9CF-49DE-A314-F62C84C54384}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E43ACAE2-E9CF-49DE-A314-F62C84C54384}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E43ACAE2-E9CF-49DE-A314-F62C84C54384}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E43ACAE2-E9CF-49DE-A314-F62C84C54384}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -168,6 +176,8 @@ Global
 		{4BC08BB0-B31E-407D-9A5B-10E32C1BC32E} = {E69A62AA-B5DA-48D1-B473-3565AB4371C0}
 		{9F3A2CDF-B366-4105-9D34-F8FC7CD08800} = {4BC08BB0-B31E-407D-9A5B-10E32C1BC32E}
 		{B68584A1-EEC5-4328-87E4-48D59591042F} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
+		{168FF1F0-86C5-49C4-8998-3DAA96440E22} = {F26D88B1-BBD9-4CC2-966C-D2EA500199D8}
+		{E43ACAE2-E9CF-49DE-A314-F62C84C54384} = {168FF1F0-86C5-49C4-8998-3DAA96440E22}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}
