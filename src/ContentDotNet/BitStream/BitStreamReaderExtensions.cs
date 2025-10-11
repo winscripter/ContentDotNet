@@ -31,7 +31,7 @@ public static class BitStreamReaderExtensions
     {
         uint codeNum = reader.ReadUE();
         int val = (int)((codeNum + 1) >> 1);
-        return (codeNum & 1) == 0 ? -val : val;
+        return (codeNum & 1) == 0 ? val : -val;
     }
 
     /// <summary>
@@ -60,7 +60,7 @@ public static class BitStreamReaderExtensions
     {
         uint codeNum = await reader.ReadUEAsync();
         int val = (int)((codeNum + 1) >> 1);
-        return (codeNum & 1) == 0 ? -val : val;
+        return (codeNum & 1) == 0 ? val : -val;
     }
 
     /// <summary>
