@@ -124,7 +124,7 @@ public class BitStreamWriter(Stream output) : IDisposable
         WriteBit(true);
         WriteBits(value + 1 - (1u << (int)leadingZeros), leadingZeros);
 
-        WriteBit(true);
+        //WriteBit(true);
     }
 
     /// <summary>
@@ -154,10 +154,10 @@ public class BitStreamWriter(Stream output) : IDisposable
         await WriteBitAsync(true);
         await WriteBitsAsync(value + 1 - (1u << (int)leadingZeros), leadingZeros);
 
-        while (bitPosition > 0)
-        {
-            await WriteBitAsync(false);
-        }
+        //while (bitPosition > 0)
+        //{
+        //    await WriteBitAsync(false);
+        //}
     }
 
     /// <summary>
