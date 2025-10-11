@@ -6,6 +6,64 @@
 public static class BitStreamReaderExtensions
 {
     /// <summary>
+    /// Reads an Unsigned Exponential Golomb.
+    /// </summary>
+    /// <param name="reader">The reader</param>
+    /// <returns>Unsigned Exponential Golomb.</returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public static uint ReadUE(this BitStreamReader reader)
+    {
+        uint zeroCount = 0;
+        while (!reader.ReadBit() && zeroCount <= 31)
+            zeroCount++;
+
+        uint result = (1u << (int)zeroCount) - 1 + (zeroCount < 1 ? 0 : reader.ReadBits(zeroCount));
+        return result;
+    }
+
+    /// <summary>
+    /// Reads an Signed Exponential Golomb.
+    /// </summary>
+    /// <param name="reader">The reader</param>
+    /// <returns>Signed Exponential Golomb.</returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public static int ReadSE(this BitStreamReader reader)
+    {
+        uint codeNum = reader.ReadUE();
+        int val = (int)((codeNum + 1) >> 1);
+        return (codeNum & 1) == 0 ? -val : val;
+    }
+
+    /// <summary>
+    /// Reads an Unsigned Exponential Golomb.
+    /// </summary>
+    /// <param name="reader">The reader</param>
+    /// <returns>Unsigned Exponential Golomb.</returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public static async Task<uint> ReadUEAsync(this BitStreamReader reader)
+    {
+        uint zeroCount = 0;
+        while (!await reader.ReadBitAsync() && zeroCount <= 31)
+            zeroCount++;
+
+        uint result = (1u << (int)zeroCount) - 1 + (zeroCount < 1 ? 0 : await reader.ReadBitsAsync(zeroCount));
+        return result;
+    }
+
+    /// <summary>
+    /// Reads an Signed Exponential Golomb.
+    /// </summary>
+    /// <param name="reader">The reader</param>
+    /// <returns>Signed Exponential Golomb.</returns>
+    /// <exception cref="InvalidDataException"></exception>
+    public static async Task<int> ReadSEAsync(this BitStreamReader reader)
+    {
+        uint codeNum = await reader.ReadUEAsync();
+        int val = (int)((codeNum + 1) >> 1);
+        return (codeNum & 1) == 0 ? -val : val;
+    }
+
+    /// <summary>
     ///   Moves the bitstream reader's position to the specified one.
     /// </summary>
     /// <param name="reader">Bitstream reader.</param>

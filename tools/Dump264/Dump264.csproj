@@ -8,8 +8,4 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\src\ContentDotNet.Extensions.H264\ContentDotNet.Extensions.H264.csproj" />
-  </ItemGroup>
-
 </Project>

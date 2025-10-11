@@ -1,0 +1,73 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".cs" #>
+namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ResidualBlocks.BlockTypes
+{
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ResidualBlocks.Dimensional;
+    using ContentDotNet.Extensions.Video.H264.RbspModels;
+
+    <#
+        // Type: string, (string, bool)
+        // Key - the name of the property in the RbspResidual record
+        // Value - a tuple:
+        //    Item1 - class name
+        //    Item2 - dimensions
+        const int D3 = 3;
+        const int D2 = 2;
+        const int D1 = 1;
+
+        var blockTypes = new Dictionary<string, (string, int)> {
+            { "Intra16x16DCLevel", ("IntraDcResidualBlock", D1) },
+            { "CbIntra16x16DCLevel", ("CbDcResidualBlock", D1) },
+            { "CrIntra16x16DCLevel", ("CrDcResidualBlock", D1) },
+            { "ChromaDCLevel", ("ChromaDcResidualBlock", D2) },
+            { "Intra16x16ACLevel", ("IntraAcResidualBlock", D2) },
+            { "CbIntra16x16ACLevel", ("CbAcResidualBlock", D2) },
+            { "CrIntra16x16ACLevel", ("CrAcResidualBlock", D2) },
+            { "ChromaACLevel", ("ChromaAcResidualBlock", D3) },
+            { "LumaLevel8x8", ("LumaLevel8x8", D2) },
+            { "CbLevel8x8", ("CbLevel8x8", D2) },
+            { "CrLevel8x8", ("CrLevel8x8", D2) },
+            { "LumaLevel4x4", ("LumaLevel4x4", D2) },
+            { "CbLevel4x4", ("CbLevel4x4", D2) },
+            { "CrLevel4x4", ("CrLevel4x4", D2) }
+        };
+
+        foreach (var kvp in blockTypes) {
+            var propertyName = kvp.Key;
+            var className = kvp.Value.Item1;
+            int dimensions = kvp.Value.Item2;
+            string listType = string.Join("", Enumerable.Repeat(0, dimensions).Select(x => "List<")) + "int" + string.Join("", Enumerable.Repeat(0, dimensions).Select(x => ">"));
+            string baseClass = $"ResidualBlock{dimensions}D";
+    #>
+
+    /// <summary>
+    ///    Represents the <#= propertyName #> residual block type.
+    /// </summary>
+    internal class <#= className #> : <#= baseClass #>
+    {
+        /// <summary>
+        ///    Initializes a new instance of the <see cref="<#= className #>" /> class.
+        /// </summary>
+        /// <param name="residual">The RBSP residual data.</param>
+        /// <param name="coefficients">The coefficients for the residual block.</param>
+        public <#= className #>(RbspResidual residual, <#= listType #> coefficients)
+            : base(residual, coefficients)
+        {
+        }
+
+        /// <summary>
+        ///    Initializes a new instance of the <see cref="<#= className #>" /> class.
+        /// </summary>
+        /// <param name="residual">The RBSP residual data.</param>
+        public <#= className #>(RbspResidual residual)
+            : this(residual, residual.<#= propertyName #> ?? throw ResidualBlockThrowHelper.MissingResidualBlock())
+        {
+        }
+    }
+
+    <# } #>
+}

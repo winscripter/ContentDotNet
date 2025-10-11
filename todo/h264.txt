@@ -1,0 +1,9 @@
+﻿1. Implement CABAC encoding
+2. Implement NAL Unit Parsing Code into the IH264IOReader and IH264IOWriter interfaces
+3. Implement better async support
+4. Implement better paralellism
+5. Implement SVC, MVC, MVCD, and 3D-AVC
+6. Make use of the Configuration class
+7. SEI support
+8. CAVLC support
+

@@ -29,6 +29,27 @@ public class BitStreamReader(Stream input) : IDisposable
     }
 
     /// <summary>
+    /// Reads a single bit from the bitstream.
+    /// </summary>
+    /// <returns>Bit from the bitstream.</returns>
+    /// <exception cref="EndOfStreamException"></exception>
+    public virtual async Task<bool> ReadBitAsync()
+    {
+        if (BitPosition == 0)
+        {
+            Memory<byte> buffer = new(new byte[1]);
+            await Stream.ReadAsync(buffer);
+            CurrentByte = buffer.Span[0];
+            if (CurrentByte == -1)
+                throw new EndOfStreamException();
+        }
+
+        bool bit = (CurrentByte >> 7 - BitPosition & 1) == 1;
+        BitPosition = (BitPosition + 1) % 8; // Reset to 0 after 8 bits
+        return bit;
+    }
+
+    /// <summary>
     /// Reads the specified number of bits from the bitstream.
     /// </summary>
     /// <param name="count">Number of bits to read.</param>
@@ -51,30 +72,25 @@ public class BitStreamReader(Stream input) : IDisposable
     }
 
     /// <summary>
-    /// Reads an Unsigned Exponential Golomb.
+    /// Reads the specified number of bits from the bitstream.
     /// </summary>
-    /// <returns>Unsigned Exponential Golomb.</returns>
-    /// <exception cref="InvalidDataException"></exception>
-    public virtual uint ReadUE()
+    /// <param name="count">Number of bits to read.</param>
+    /// <returns>A 32-bit unsigned integer representing bits read.</returns>
+    /// <exception cref="ArgumentOutOfRangeException"></exception>
+    public virtual async Task<uint> ReadBitsAsync(uint count)
     {
-        uint zeroCount = 0;
-        while (!ReadBit() && zeroCount <= 31)
-            zeroCount++;
+        ArgumentOutOfRangeException.ThrowIfLessThan(count, 1u);
 
-        uint result = (1u << (int)zeroCount) - 1 + (zeroCount < 1 ? 0 : ReadBits(zeroCount));
+        uint result = 0;
+        for (int i = 0; i < count; i++)
+        {
+            result <<= 1;
+            if (await ReadBitAsync())
+            {
+                result |= 1;
+            }
+        }
         return result;
-    }
-
-    /// <summary>
-    /// Reads an Signed Exponential Golomb.
-    /// </summary>
-    /// <returns>Signed Exponential Golomb.</returns>
-    /// <exception cref="InvalidDataException"></exception>
-    public virtual int ReadSE()
-    {
-        uint codeNum = ReadUE();
-        int val = (int)((codeNum + 1) >> 1);
-        return (codeNum & 1) == 0 ? -val : val;
     }
 
     /// <summary>

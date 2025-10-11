@@ -1,0 +1,12 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project>
+  <PropertyGroup>
+      <Copyright>Copyright (c) 2023-2025, winscripter</Copyright>
+      <Tags>ContentDotNet;video;audio;processing;multimedia;imaging;decoder;encoder;codec;h264;png;vp8;vp9;lossy;lossless;graphics;xplat;cross platform;performance;speed;efficiency;big project;big projects</Tags>
+      <RepositoryUrl>https://github.com/winscripter/ContentDotNet</RepositoryUrl>
+      <PackageProjectUrl>https://github.com/winscripter/ContentDotNet</PackageProjectUrl>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
+      <Company>winscripter</Company>
+  </PropertyGroup>
+</Project>

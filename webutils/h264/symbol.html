@@ -1,0 +1,169 @@
+﻿<!--
+    
+    About Symbol
+
+    Defines the semantics like RawMbBits and their algorithms,
+    with a quick search tool.
+
+-->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Symbol264</title>
+    <style>
+        * {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .selectable {
+            width: 50%;
+            background-color: white;
+            color: black;
+        }
+        .selectable:hover {
+            background-color: blueviolet;
+            color: white;
+        }
+
+        textarea {
+            resize: none;
+            outline: none;
+            border: none;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        code {
+            white-space: pre;
+            border: 1px solid black;
+            font-family: Consolas;
+        }
+
+        .items-box {
+            height: 500px;
+            overflow: auto;
+            outline: 1px solid black;
+        }
+    </style>
+</head>
+<body>
+    <textarea id="search" placeholder="Search..."></textarea>
+    <div id="itemsBox" class="items-box">
+
+    </div>
+
+    <p>Defined as:</p>
+    <code id="code">Nothing!</code>
+
+    <script>
+        const theSearch = document.getElementById('search');
+        const itemsBox = document.getElementById('itemsBox');
+        const code = document.getElementById('code');
+
+        const normMap = new Map();
+        normMap.set("nal_unit", "NAL Unit");
+        normMap.set("sequence_parameter_set_data", "SPS");
+        normMap.set("picture_parameter_set", "PPS");
+        normMap.set("slice_header", "Slice Header");
+
+        theSearch.addEventListener('keyup', () => {
+            refreshIB();
+        });
+
+        function refreshIB() {
+            clearIB();
+            if (theSearch.value == "") {
+                Algorithms.db.forEach((algo) => {
+                    addAlgo(algo);
+                })
+            }
+            else {
+                Algorithms.db.sort(x => x.structure).forEach((algo) => {
+                    if (algo.name.includes(theSearch.value)) {
+                        addAlgo(algo);
+                    }
+                });
+            }
+        }
+
+        function clearIB() {
+            Array.from(itemsBox.childNodes).forEach((e) => e.remove());
+        }
+
+        function addAlgo(algo) {
+            const algoE = document.createElement('div');
+            algoE.className = "selectable";
+            algoE.innerHTML = `${normMap.get(algo.structure)}: ${algo.name}`;
+            algoE.onclick = () => {
+                code.innerHTML = algo.algo;
+            };
+            itemsBox.appendChild(algoE);
+        }
+
+        const Algorithms = {
+            db: [],
+            add: (structure, name, algo) => {
+                Algorithms.db.push({ structure, name, algo });
+            }
+        }
+
+        // NAL unit
+        Algorithms.add("nal_unit", "IdrPicFlag", " ((nal_unit_type == 5) ? 1 : 0 )");
+        Algorithms.add("nal_unit", "DepthFlag", "(nal_unit_type != 21) ? 0 : (avc_3d_extension_flag ? depth_flag : 1)");
+        
+        Algorithms.add("sequence_parameter_set_data", "ChromaArrayType", "separate_colour_plane_flag == 0 ? chroma_format_idc : 0");
+        Algorithms.add("sequence_parameter_set_data", "BitDepthY", "8 + bit_depth_luma_minus8");
+        Algorithms.add("sequence_parameter_set_data", "QpBdOffsetY", "6 * bit_depth_luma_minus8");
+        Algorithms.add("sequence_parameter_set_data", "BitDepthC", "8 + bit_depth_chroma_minus8");
+        Algorithms.add("sequence_parameter_set_data", "QpBdOffsetC", "6 * bit_depth_chroma_minus8");
+        Algorithms.add("sequence_parameter_set_data", "RawMbBits", "256 * BitDepthY + 2 * MbWidthC * MbHeightC * BitDepthC");
+        Algorithms.add("sequence_parameter_set_data", "MaxFrameNum", "pow(2, log2_max_frame_num_minus4 + 4)");
+        Algorithms.add("sequence_parameter_set_data", "MaxPicOrderCntLsb", "pow(2, log2_max_pic_order_cnt_lsb_minus4 + 4)");
+        Algorithms.add("sequence_parameter_set_data", "ExpectedDeltaPicOrderCntPerCycle",
+            `ExpectedDeltaPerPicOrderCntCycle = 0 
+for(i = 0; i < num_ref_frames_in_pic_order_cnt_cycle; i++) 
+    ExpectedDeltaPerPicOrderCntCycle += offset_for_ref_frame[i]`
+        );
+        Algorithms.add("sequence_parameter_set_data", "PicWidthInMbs", "pic_width_in_mbs_minus1 + 1");
+        Algorithms.add("sequence_parameter_set_data", "PicHeightInMapUnits", "pic_height_in_map_units_minus1 + 1");
+        Algorithms.add("sequence_parameter_set_data", "PicWidthInSamplesL", "PicWidthInMbs * 16");
+        Algorithms.add("sequence_parameter_set_data", "PicWidthInSamplesC", "PicWidthInMbs * MbWidthC");
+        Algorithms.add("sequence_parameter_set_data", "PicSizeInMapUnits", "PicWidthInMbs * PicHeightInMapUnits");
+        Algorithms.add("sequence_parameter_set_data", "FrameHeightInMbs", " (2 - frame_mbs_only_flag) * PicHeightInMapUnits")
+        Algorithms.add("sequence_parameter_set_data", "CropUnitX",
+            `CropUnitX = 0
+if(ChromaArrayType == 1 || ChromaArrayType == 2 || ChromaArrayType == 3)
+    CropUnitX = SubWidthC`
+        );
+        Algorithms.add("sequence_parameter_set_data", "CropUnitY",
+            `CropUnitY = 2 - frame_mbs_only_flag
+if(ChromaArrayType == 1 || ChromaArrayType == 2 || ChromaArrayType == 3)
+    CropUnitY = SubHeightC * (2 - frame_mbs_only_flag)`
+        );
+        Algorithms.add("sequence_parameter_set_data", "CropWidth",
+            `PicWidthInSamples - 
+CropUnitX * (frame_crop_left_offset + frame_crop_right_offset)`
+        );
+        Algorithms.add("sequence_parameter_set_data", "CropHeight",
+            `16 * FrameHeightInMbs - 
+CropUnitY * (frame_crop_top_offset + frame_crop_bottom_offset)`
+        );
+
+        Algorithms.add("picture_parameter_set", "SliceChangeGroupRate", "slice_group_change_rate_minus1 + 1");
+
+        Algorithms.add("slice_header", "MbaffFrameFlag", "(mb_adaptive_frame_field_flag && !field_pic_flag)");
+        Algorithms.add("slice_header", "PicHeightInMbs", "FrameHeightInMbs / (1 + field_pic_flag)");
+        Algorithms.add("slice_header", "PicHeightInSamplesL", "PicHeightInMbs * 16");
+        Algorithms.add("slice_header", "PicHeightInSamplesC", "PicHeightInMbs * MbHeightC");
+        Algorithms.add("slice_header", "PicSizeInMbs", " PicWidthInMbs * PicHeightInMbs");
+        Algorithms.add("slice_header", "SliceQPY", "26 + pic_init_qp_minus26 + slice_qp_delta");
+        Algorithms.add("slice_header", "QSY", "26 + pic_init_qs_minus26 + slice_qs_delta");
+        Algorithms.add("slice_header", "FilterOffsetA", "slice_alpha_c0_offset_div2 << 1");
+        Algorithms.add("slice_header", "FilterOffsetB", "slice_beta_offset_div2 << 1");
+        Algorithms.add("slice_header", "MapUnitsInSliceGroup0", "Min(slice_group_change_cycle * SliceGroupChangeRate, PicSizeInMapUnits)");
+    
+        refreshIB();
+    </script>
+</body>
+</html>

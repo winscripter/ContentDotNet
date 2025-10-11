@@ -1,0 +1,379 @@
+﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Binarization
+{
+    using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Utilities;
+    using ContentDotNet.Primitives;
+
+    internal static class H264Binarization
+    {
+        public static int U(IH264CabacDecoder decoder)
+        {
+            // Allows preventing runaway infinite loop
+            RecursionCounter rc = new(Limits.LargestUBinarization);
+
+            // Actual value to return
+            int uValue = 0;
+
+            while (decoder.ReadBin())
+            {
+                uValue++;
+                rc.Increment();
+            }
+            return uValue;
+        }
+
+        public static TuResult TU(IH264CabacDecoder decoder, int cMax)
+        {
+            // Principles are same as U, except, if uValue == cMax, abort and return.
+
+            // Allows preventing runaway infinite loop
+            RecursionCounter rc = new(Limits.LargestUBinarization);
+
+            // Actual value to return.
+            int tuValue = 0;
+            int bitsRead = 0;
+
+            while (decoder.ReadBin() && tuValue < cMax)
+            {
+                tuValue++;
+                bitsRead++;
+                rc.Increment();
+            }
+
+            if (tuValue >= cMax)
+                bitsRead++;
+
+            return new(tuValue, bitsRead);
+        }
+
+        public static int Uegk(IH264CabacDecoder decoder, bool signedValFlag, int uCoff, int k)
+        {
+            ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(uCoff, 0, nameof(uCoff));
+
+            decoder.Affix = H264Affix.Prefix;
+
+            TuResult prefix = TU(decoder, uCoff);
+
+            if ((!signedValFlag && !(prefix.BinsRead == uCoff && IntrinsicFunctions.AllBitsAreOne(prefix.Value, prefix.BinsRead))) ||
+                (signedValFlag && prefix.BinsRead == 1 && prefix.Value == 0) ||
+                decoder.ForcePrefix)
+            {
+                return prefix.Value;
+            }
+
+            int synElVal = prefix.Value;
+
+            void put(int i)
+            {
+                synElVal = synElVal << 1 | i;
+            }
+
+            decoder.Affix = H264Affix.Suffix;
+
+            if (Math.Abs(synElVal) >= uCoff)
+            {
+                int sufS = Math.Abs(synElVal) - uCoff;
+                bool stopLoop = false;
+                do
+                {
+                    if (sufS >= (1 << k))
+                    {
+                        put(1);
+                        sufS -= (1 << k);
+                        k++;
+                    }
+                    else
+                    {
+                        put(0);
+                        while (Int32Boolean.B(k--))
+                            put((sufS >> k) & 1);
+                        stopLoop = true;
+                    }
+                } while (!stopLoop);
+            }
+
+            if (signedValFlag && synElVal != 0)
+            {
+                if (synElVal > 0)
+                {
+                    put(0);
+                }
+                else
+                {
+                    put(1);
+                }
+            }
+
+            decoder.Affix = H264Affix.Prefix;
+
+            return synElVal;
+        }
+
+        public static int FL(IH264CabacDecoder decoder, int cMax)
+        {
+            int fixedLength = (int)Math.Ceiling(Math.Log2(cMax + 1));
+            int value = 0;
+            for (int i = 0; i < fixedLength; i++)
+                value <<= 1 | decoder.ReadBin().AsInt32();
+            return value;
+        }
+
+        private static int MbTypeInternal(IH264CabacDecoder decoder, H264SliceType slice, bool subMbType)
+        {
+            decoder.Affix = H264Affix.Prefix;
+            int prefix = slice == H264SliceType.SI ? 0 : 1;
+            if (prefix == 0)
+            {
+                return prefix;
+            }
+            else
+            {
+                decoder.Affix = H264Affix.Suffix;
+
+                if (!subMbType)
+                {
+                    if (slice == H264SliceType.I)
+                    {
+                        int b0 = decoder.ReadBin().AsInt32();
+                        if (b0 == 0)
+                        {
+                            return 0;
+                        }
+                        else
+                        {
+                            int b1 = decoder.ReadBin().AsInt32();
+                            if (b1 == 1)
+                            {
+                                return 25;
+                            }
+                            else
+                            {
+                                int b2 = decoder.ReadBin().AsInt32();
+                                int b3 = decoder.ReadBin().AsInt32();
+                                int b4 = decoder.ReadBin().AsInt32();
+                                int b5 = decoder.ReadBin().AsInt32();
+
+                                if (b5 == 0)
+                                {
+                                    int b6 = decoder.ReadBin().AsInt32();
+                                    if (b2 == 0 && b3 == 0 && b4 == 0 && b6 == 0) return 1;
+                                    if (b2 == 0 && b3 == 0 && b4 == 0 && b6 == 1) return 2;
+                                    if (b2 == 0 && b3 == 0 && b4 == 1 && b6 == 0) return 3;
+                                    if (b2 == 0 && b3 == 0 && b4 == 1 && b6 == 1) return 4;
+                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 0) return 5;
+                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 1) return 6;
+                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 0) return 7;
+                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 1) return 8;
+                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 0) return 9;
+                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 1) return 10;
+                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 0) return 11;
+                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 1) return 12;
+                                }
+                                else
+                                {
+                                    int b6 = decoder.ReadBin().AsInt32();
+                                    int b7 = decoder.ReadBin().AsInt32();
+                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 0) return 13;
+                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 1) return 14;
+                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 0) return 15;
+                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 1) return 16;
+                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 0 && b7 == 0) return 17;
+                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 0 && b7 == 1) return 18;
+                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 0 && b7 == 0) return 19;
+                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 0 && b7 == 1) return 20;
+                                    if (b2 == 1 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 0) return 21;
+                                    if (b2 == 1 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 1) return 22;
+                                    if (b2 == 1 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 0) return 23;
+                                    if (b2 == 1 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 1) return 24;
+                                }
+                            }
+                        }
+                    }
+                    if (slice is H264SliceType.P or H264SliceType.SP)
+                    {
+                        int b0 = decoder.ReadBin().AsInt32();
+                        if (b0 == 1)
+                        {
+                            // TODO: Meaningful exception?
+                            throw new InvalidOperationException(); // Entries 5–30: Intra, handled separately
+                        }
+                        else
+                        {
+                            int b1 = decoder.ReadBin().AsInt32();
+                            int b2 = decoder.ReadBin().AsInt32();
+
+                            if (b1 == 0 && b2 == 0) return 0; // P_L0_16x16
+                            if (b1 == 1 && b2 == 1) return 1; // P_L0_L0_16x8
+                            if (b1 == 1 && b2 == 0) return 2; // P_L0_L0_8x16
+                            if (b1 == 0 && b2 == 1) return 3; // P_8x8
+
+                            // TODO: Meaningful exception?
+                            throw new InvalidOperationException();
+                        }
+                    }
+                    if (slice == H264SliceType.B)
+                    {
+                        int b0 = decoder.ReadBin().AsInt32();
+                        if (b0 == 0)
+                        {
+                            return 0; // B_Direct_16x16
+                        }
+                        else
+                        {
+                            int b1 = decoder.ReadBin().AsInt32();
+                            if (b1 == 0)
+                            {
+                                int b2 = decoder.ReadBin().AsInt32();
+                                if (b2 == 0) return 1; // B_L0_16x16
+                                else return 2;         // B_L1_16x16
+                            }
+                            else
+                            {
+                                int b2 = decoder.ReadBin().AsInt32();
+                                int b3 = decoder.ReadBin().AsInt32();
+                                int b4 = decoder.ReadBin().AsInt32();
+                                int b5 = decoder.ReadBin().AsInt32();
+
+                                if (b2 == 0 && b3 == 0 && b4 == 0 && b5 == 0) return 3;
+                                if (b2 == 0 && b3 == 0 && b4 == 0 && b5 == 1) return 4;
+                                if (b2 == 0 && b3 == 0 && b4 == 1 && b5 == 0) return 5;
+                                if (b2 == 0 && b3 == 0 && b4 == 1 && b5 == 1) return 6;
+                                if (b2 == 0 && b3 == 1 && b4 == 0 && b5 == 0) return 7;
+                                if (b2 == 0 && b3 == 1 && b4 == 0 && b5 == 1) return 8;
+                                if (b2 == 0 && b3 == 1 && b4 == 1 && b5 == 0) return 9;
+                                if (b2 == 0 && b3 == 1 && b4 == 1 && b5 == 1) return 10;
+                                if (b2 == 1 && b3 == 1 && b4 == 1 && b5 == 0) return 11;
+
+                                int b6 = decoder.ReadBin().AsInt32();
+                                int b7 = decoder.ReadBin().AsInt32();
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0 && b7 == 0) return 12;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0 && b7 == 1) return 13;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 1 && b7 == 0) return 14;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 1 && b7 == 1) return 15;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 0 && b7 == 0) return 16;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 0 && b7 == 1) return 17;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1 && b7 == 0) return 18;
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1 && b7 == 1) return 19;
+                                if (b2 == 1 && b3 == 0 && b4 == 1 && b5 == 0 && b6 == 0 && b7 == 0) return 20;
+                                if (b2 == 1 && b3 == 0 && b4 == 1 && b5 == 0 && b6 == 0 && b7 == 1) return 21;
+                                if (b2 == 1 && b3 == 1 && b4 == 1 && b5 == 1 && b6 == 1) return 22;
+
+                                // Entries 23–48: Intra, prefix only
+                                if (b2 == 1 && b3 == 1 && b4 == 1 && b5 == 0 && b6 == 1)
+                                {
+                                    throw new InvalidOperationException(); // Delegate to intra decoder
+                                }
+                            }
+                        }
+
+                    }
+                    throw new InvalidOperationException();
+                }
+                else
+                {
+                    if (slice is H264SliceType.P or H264SliceType.SP)
+                    {
+                        int b0 = decoder.ReadBin().AsInt32();
+                        if (b0 == 1)
+                        {
+                            return 0; // P_L0_8x8
+                        }
+                        else
+                        {
+                            int b1 = decoder.ReadBin().AsInt32();
+                            if (b1 == 0)
+                            {
+                                return 1; // P_L0_8x4
+                            }
+                            else
+                            {
+                                int b2 = decoder.ReadBin().AsInt32();
+                                if (b2 == 1)
+                                {
+                                    return 2; // P_L0_4x8
+                                }
+                                else
+                                {
+                                    return 3; // P_L0_4x4
+                                }
+                            }
+                        }
+                    }
+                    else if (slice == H264SliceType.B)
+                    {
+                        int b0 = decoder.ReadBin().AsInt32();
+                        if (b0 == 0)
+                        {
+                            return 0; // B_Direct_8x8
+                        }
+                        else
+                        {
+                            int b1 = decoder.ReadBin().AsInt32();
+                            if (b1 == 0)
+                            {
+                                int b2 = decoder.ReadBin().AsInt32();
+                                if (b2 == 0) return 1; // B_L0_8x8
+                                else return 2;         // B_L1_8x8
+                            }
+                            else
+                            {
+                                int b2 = decoder.ReadBin().AsInt32();
+                                int b3 = decoder.ReadBin().AsInt32();
+                                int b4 = decoder.ReadBin().AsInt32();
+
+                                if (b2 == 0 && b3 == 0 && b4 == 0) return 3; // B_Bi_8x8
+                                if (b2 == 0 && b3 == 0 && b4 == 1) return 4; // B_L0_8x4
+                                if (b2 == 0 && b3 == 1 && b4 == 0) return 5; // B_L0_4x8
+                                if (b2 == 0 && b3 == 1 && b4 == 1) return 6; // B_L1_8x4
+
+                                int b5 = decoder.ReadBin().AsInt32();
+                                int b6 = decoder.ReadBin().AsInt32();
+
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0) return 7;  // B_L1_4x8
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 1) return 8;  // B_Bi_8x4
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 0) return 9;  // B_Bi_4x8
+                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1) return 10; // B_L0_4x4
+                                if (b2 == 1 && b3 == 1 && b4 == 0) return 11; // B_L1_4x4
+                                if (b2 == 1 && b3 == 1 && b4 == 1) return 12; // B_Bi_4x4
+                            }
+                        }
+                    }
+                }
+
+                throw new InvalidOperationException();
+            }
+        }
+
+        public static int MbType(IH264CabacDecoder decoder, H264SliceType slice, bool subMbType)
+        {
+            int retval = MbTypeInternal(decoder, slice, subMbType);
+            decoder.Affix = H264Affix.Prefix;
+            return retval;
+        }
+
+        public static int CodedBlockPattern(IH264CabacDecoder decoder, int chromaArrayType)
+        {
+            decoder.Affix = H264Affix.Prefix;
+            int prefix = FL(decoder, 15);
+            if (chromaArrayType is not (0 or 3))
+            {
+                decoder.Affix = H264Affix.Suffix;
+                int suffix = TU(decoder, 2).Value;
+                decoder.Affix = H264Affix.Prefix;
+
+                return CbpUtils.GetCodedBlockPattern(prefix, suffix);
+            }
+            else
+            {
+                return prefix;
+            }
+        }
+
+        public static int MbQpDelta(IH264CabacDecoder decoder)
+        {
+            int codeNum = U(decoder);
+            int val = (codeNum + 1) >> 1;
+            return (codeNum & 1) == 0 ? -val : val;
+        }
+    }
+}

@@ -2,3 +2,7 @@
 
 # IDE0290: Use primary constructor
 csharp_style_prefer_primary_constructors = false
+
+csharp_using_directive_placement = inside_namespace
+dotnet_diagnostic.IDE0065.severity = suggestion
+

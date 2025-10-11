@@ -10,4 +10,8 @@
     <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Internal\Components\Decoder\" />
+  </ItemGroup>
+
 </Project>
