@@ -2090,7 +2090,7 @@
             {
                 log2_max_pic_order_cnt_lsb_minus4 = reader.ReadUE();
             }
-            else if (pic_order_cnt_type == 2)
+            else if (pic_order_cnt_type == 1)
             {
                 delta_pic_order_always_zero_flag = reader.ReadBit();
                 offset_for_non_ref_pic = reader.ReadSE();
@@ -2335,7 +2335,7 @@
             {
                 log2_max_pic_order_cnt_lsb_minus4 = await reader.ReadUEAsync();
             }
-            else if (pic_order_cnt_type == 2)
+            else if (pic_order_cnt_type == 1)
             {
                 delta_pic_order_always_zero_flag = await reader.ReadBitAsync();
                 offset_for_non_ref_pic = reader.ReadSE();
