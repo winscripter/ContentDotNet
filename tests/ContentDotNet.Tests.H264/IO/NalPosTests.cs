@@ -62,5 +62,50 @@
 
             Assert.Equal(1, (int)ms.Position);
         }
+
+        [Fact]
+        public void Detect_Nal_Length()
+        {
+            var bytes = new byte[]
+            {
+                // SC of first NAL
+                0x00, 0x00, 0x00, 0x01,
+
+                // Bogus data of first NAL (5 bytes, remember!)
+                0x31, 0x74, 0x83, 0x95, 0x32,
+
+                // SC of second NAL
+                0x00, 0x00, 0x00, 0x01,
+
+                // Bogus data of second NAL (2 bytes)
+                0xA5, 0x8B,
+
+                // SC of third NAL
+                0x00, 0x00, 0x00, 0x01,
+
+                // Bogus data of third NAL
+                0x23, 0x76
+            };
+
+            var ms = new MemoryStream(bytes)
+            {
+                Position = 0
+            };
+            var bsr = new BitStreamReader(ms);
+
+            var dcd = new H264Service().CreateDecoder(bsr);
+
+            Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(5, dcd.ProcessNalLength());
+
+            Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(2, dcd.ProcessNalLength());
+
+            Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(2, dcd.ProcessNalLength());
+
+            Assert.False(dcd.SkipToNalStart());
+            // H.264 stream ends here
+        }
     }
 }
