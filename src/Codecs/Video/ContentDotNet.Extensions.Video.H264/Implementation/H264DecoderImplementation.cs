@@ -16,6 +16,10 @@
         public H264DecoderImplementation(BitStreamReader bsr) : base(bsr)
         {
             this.IOReader = new DefaultRbspReader();
+            this.State = new H264State(null!) // MacroblockUtility will be set in the H264State constructor
+            {
+                H264RbspState = new H264RbspState()
+            };
         }
 
         public override NalType DecodeNal(bool skipToNalStart = true)
