@@ -15,7 +15,7 @@
             bsw.WriteBits(66, 8); // profile_idc
             bsw.WriteBits(0, 8); // constraint_setx_flag, with x being 0..5, + reserved_zero2bits
             bsw.WriteBits(42, 8); // level_idc
-            bsw.WriteBits(69, 8); // seq_parameter_set_id
+            bsw.WriteUE(69); // seq_parameter_set_id
 
             bsw.WriteUE(4); // log2_max_frame_num_minus4
             bsw.WriteUE(2); // pic_order_cnt_type
