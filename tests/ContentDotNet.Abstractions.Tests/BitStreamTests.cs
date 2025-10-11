@@ -219,7 +219,7 @@ public class BitStreamTests
             reader =>
             {
                 uint b = reader.ReadUE();
-                Assert.Equal(VALUE - 1, b);
+                Assert.Equal(VALUE, b);
             });
     }
 
@@ -237,7 +237,7 @@ public class BitStreamTests
             reader =>
             {
                 uint b = reader.ReadUE();
-                Assert.Equal(VALUE + 1, b);
+                Assert.Equal(VALUE, b);
             });
     }
 
@@ -255,7 +255,7 @@ public class BitStreamTests
             reader =>
             {
                 uint b = reader.ReadUE();
-                Assert.Equal(VALUE - 1, b);
+                Assert.Equal(VALUE, b);
             });
     }
 
@@ -273,7 +273,7 @@ public class BitStreamTests
             reader =>
             {
                 uint b = reader.ReadUE();
-                Assert.Equal(VALUE - 1, b);
+                Assert.Equal(VALUE, b);
             });
     }
 
@@ -291,7 +291,7 @@ public class BitStreamTests
             reader =>
             {
                 uint b = reader.ReadUE();
-                Assert.Equal(VALUE - 1, b);
+                Assert.Equal(VALUE, b);
             });
     }
 
