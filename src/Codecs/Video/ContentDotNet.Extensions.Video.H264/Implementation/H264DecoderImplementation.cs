@@ -127,44 +127,42 @@
         public override bool SkipToNalStart()
         {
             RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
+            int stream = 0;
             long prevPos = this.BitStreamReader.BaseStream.Position;
-
-            while (this.BitStreamReader.BaseStream.Position < this.BitStreamReader.BaseStream.Length)
+            while (true)
             {
-                recursionCounter.Increment();
-
                 try
                 {
-                    if (this.BitStreamReader.PeekBits(32) == 0x00000001u)
-                    {
-                        _ = this.BitStreamReader.ReadBits(32);
-                        _lastStartCodeLength = 4;
-                        return true;
-                    }
-                }
-                catch { }
+                    recursionCounter.Increment();
 
-                try
-                {
-                    if (this.BitStreamReader.PeekBits(24) == 0x000001u)
+                    byte current = (byte)this.BitStreamReader.ReadByte();
+                    if (stream != 2 && current == 0)
                     {
-                        _lastStartCodeLength = 3;
-                        _ = this.BitStreamReader.ReadBits(24);
+                        stream++;
+                        continue;
+                    }
+                    else if (stream == 2 && current == 1)
+                    {
                         return true;
                     }
+                    else if (current != 0)
+                    {
+                        stream = 0;
+                        continue;
+                    }
+                    // else { }
                 }
-                catch
+                catch (EndOfStreamException)
                 {
                     this.BitStreamReader.BaseStream.Position = prevPos;
-                    _lastStartCodeLength = 0;
                     return false;
                 }
-
-                _ = this.BitStreamReader.ReadByte();
+                catch (InfiniteLoopException)
+                {
+                    this.BitStreamReader.BaseStream.Position = prevPos;
+                    throw;
+                }
             }
-
-            _lastStartCodeLength = 0;
-            return false;
         }
 
         private RbspNalUnit ParseNal(int nBytes)
