@@ -59,7 +59,7 @@
             Stream stream = reader.BaseStream;
             long originalPosition = stream.Position;
 
-            int b1 = -1, b2 = -1, b3 = -1, b4;
+            int b1, b2 = -1, b3 = -1, b4;
 
             while ((b4 = stream.ReadByte()) != -1)
             {
@@ -70,9 +70,6 @@
                 // Check for 4-byte start code first
                 if (b1 == 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
                 {
-                    long target = stream.Position;
-                    while (reader.BaseStream.Position < target)
-                        _ = reader.ReadByte();
                     return true;
                 }
 
@@ -80,9 +77,6 @@
                 // This avoids matching the tail of a 4-byte start code
                 if (b1 != 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
                 {
-                    long target = stream.Position;
-                    while (reader.BaseStream.Position < target)
-                        _ = reader.ReadByte();
                     return true;
                 }
             }
