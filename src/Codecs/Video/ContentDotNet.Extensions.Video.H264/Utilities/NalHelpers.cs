@@ -71,10 +71,9 @@
                 b3 = b4;
                 b4 = byteRead;
 
-                if ((b2 == 0x00 && b3 == 0x00 && b4 == 0x01) ||
-                    (b1 == 0x00 && b2 == 0x00 && b3 == 0x01))
+                if ((b2 == 0x00 && b3 == 0x00 && b4 == 0x01))
                 {
-                    _ = reader.ReadByte();
+                    //_ = reader.ReadByte();
 
                     return true;
                 }
