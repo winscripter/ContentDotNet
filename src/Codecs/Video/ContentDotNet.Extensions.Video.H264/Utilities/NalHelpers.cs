@@ -58,11 +58,11 @@
 
             long originalPosition = reader.BaseStream.Position;
 
-            int b1, b2 = -1, b3 = -1, b4;
+            int b1, b2 = -1, b3 = -1, b4 = -1;
 
             while (true)
             {
-                int byteRead = b4 = reader.BaseStream.ReadByte();
+                int byteRead = reader.BaseStream.ReadByte();
                 if (byteRead == -1)
                     break;
 
