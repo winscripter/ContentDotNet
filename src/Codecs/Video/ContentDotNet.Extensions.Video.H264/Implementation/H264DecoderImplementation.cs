@@ -150,23 +150,27 @@
             long prevOffset = this.BitStreamReader.BaseStream.Position;
             Span<byte> span = stackalloc byte[4];
             int read = this.BitStreamReader.BaseStream.Read(span);
-            Restore();
-
             if (read < 3)
             {
-                return -2; // Not enough data to check
-            }
-            else if (read >= 4 && span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
-            {
-                return 4;
-            }
-            else if (span[0] == 0 && span[1] == 0 && span[2] == 1)
-            {
-                return 3;
+                Restore();
+                return -2;
             }
             else
             {
-                return -1;
+                Restore();
+                if (span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
+                {
+                    return 4;
+                }
+                else if ((span[0] == 0 && span[1] == 0 && span[2] == 1) ||
+                    (span[1] == 0 && span[2] == 0 && span[3] == 1))
+                {
+                    return 3;
+                }
+                else
+                {
+                    return -1;
+                }
             }
 
             void Restore()
