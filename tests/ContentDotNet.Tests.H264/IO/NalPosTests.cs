@@ -206,13 +206,13 @@
             var dcd = new H264Service().CreateDecoder(bsr);
 
             Assert.True(dcd.SkipToNalStart());
-            Assert.Equal(1, dcd.ProcessNalLength());
-
-            Assert.True(dcd.SkipToNalStart());
             Assert.Equal(2, dcd.ProcessNalLength());
 
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(3, dcd.ProcessNalLength());
+
+            Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(4, dcd.ProcessNalLength());
         }
     }
 }
