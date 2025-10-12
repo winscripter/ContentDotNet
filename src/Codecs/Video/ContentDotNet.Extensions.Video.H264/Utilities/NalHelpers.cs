@@ -60,7 +60,7 @@
 
             int b1, b2 = -1, b3 = -1, b4;
 
-            while ((b4 = (int)reader.ReadByte()) != -1)
+            while ((b4 = reader.BaseStream.ReadByte()) != -1)
             {
                 b1 = b2;
                 b2 = b3;
