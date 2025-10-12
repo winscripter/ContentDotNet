@@ -34,6 +34,8 @@
             this.State!.H264RbspState!.RbspEndOffset = this.BitStreamReader.BaseStream.Position + nalLength;
 
             RbspNalUnit nal = ParseNal((int)nalLength);
+            this.State!.H264RbspState!.NalUnit = nal;
+
             using var bitstreamReader = new BitStreamReader(nal.RbspByte);
 
             NalType nalType = GetNalType((int)nal.NalUnitType);
