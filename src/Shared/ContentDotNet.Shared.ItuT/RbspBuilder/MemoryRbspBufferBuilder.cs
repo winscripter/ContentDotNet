@@ -21,6 +21,7 @@
         /// <inheritdoc cref="IItuRbspBufferBuilder.CreateStream" />
         public Stream CreateStream()
         {
+            this.memoryStream.Position = 0;
             return this.memoryStream;
         }
 

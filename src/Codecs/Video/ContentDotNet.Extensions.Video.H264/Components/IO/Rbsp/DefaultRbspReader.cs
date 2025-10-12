@@ -743,9 +743,9 @@
 
         public RbspPictureParameterSet ReadPPSData(H264RbspState rbspState, BitStreamReader reader)
         {
-            if (rbspState.SequenceParameterSetData == null)
-                throw new H264Exception("Cannot decode PPS without SPS");
-            int chroma_format_idc = (int)rbspState.SequenceParameterSetData.ChromaFormatIdc;
+            // Just take the risk and parse even if the SPS isn't available :D
+            //if (rbspState.SequenceParameterSetData == null)
+            //    throw new H264Exception("Cannot decode PPS without SPS");
 
             uint pic_parameter_set_id = reader.ReadUE();
             uint seq_parameter_set_id = reader.ReadUE();
@@ -829,7 +829,7 @@
                 pic_scaling_matrix_present_flag = reader.ReadBit();
                 if (pic_scaling_matrix_present_flag == true)
                 {
-                    for (int i = 0; i < 6 + ((chroma_format_idc != 3) ? 2 : 6) * (transform_8x8_mode_flag == true ? 1 : 0); i++)
+                    for (int i = 0; i < 6 + (((int)rbspState.SequenceParameterSetData!.ChromaFormatIdc != 3) ? 2 : 6) * (transform_8x8_mode_flag == true ? 1 : 0); i++)
                     {
                         pic_scaling_list_present_flag[i] = reader.ReadBit();
                         if (pic_scaling_list_present_flag[i])

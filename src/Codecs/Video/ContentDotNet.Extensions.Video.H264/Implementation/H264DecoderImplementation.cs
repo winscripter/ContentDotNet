@@ -260,11 +260,9 @@
                 this.BitStreamReader.ReadBit());
         }
 
-        private RbspAccessUnitDelimiter ReadAud(BitStreamReader bsi)
+        private static RbspAccessUnitDelimiter ReadAud(BitStreamReader bsi)
         {
             uint primary_pic_type = bsi.ReadBits(3);
-            while (bsi.GetState().BitPosition != 0)
-                _ = this.BitStreamReader.ReadBit();
             return new(primary_pic_type);
         }
     }
