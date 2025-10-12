@@ -1,0 +1,226 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+#nullable enable
+
+namespace ContentDotNet.Rtsp.Sdp.Lines
+{
+	using ContentDotNet.Rtsp.Sdp.Abstractions;
+
+	<#
+		AddEntry("Version", "v", Pi("Version"));
+		AddEntry("Origin", "o",
+			Ps("Username"),
+			Pi("SessionId"),
+			Pi("SessionVersion"),
+			Ps("NetworkType"),
+			Ps("AddressType"),
+			Ps("UnicastAddress"));
+		AddEntry("SessionName", "s", Ps("Name"));
+		AddEntry("SessionInformation", "i", Ps("Information"));
+		AddEntry("Uri", "u", Ps("Uri"));
+		AddEntry("EmailAddress", "e", Ps("Address"));
+		AddEntry("PhoneNumber", "p", Ps("Number"));
+		AddEntry("ConnectionInformation", "c",
+			Ps("NetworkType"),
+			Ps("AddressType"),
+			Ps("ConnectionAddress"));
+		AddEntry("BandwidthInformation", "b", Ps("ColonSeparatedInformation"));
+		AddEntry("TimeActive", "t",
+			Pi("StartTime"),
+			Pi("StopTime"));
+		AddEntry("RepeatTimes", "r",
+			Ps("Days"),
+			Ps("Hours"),
+			Ps("Minutes"),
+			Ps("Seconds"));
+		AddEntry("TimeZoneAdjustment", "z",
+			Ps("StartAdjustmentTime"),
+			Ps("StartOffset"),
+			Ps("EndAdjustmentTime"),
+			Ps("EndOffset"));
+		AddEntry("EncryptionKeys", "k", Ps("Keys"));
+		AddEntry("Attributes", "a", Ps("Value"));
+		AddEntry("MediaDescriptors", "m", Ps("Media"), Ps("Port"), Ps("Proto"), Pi("Format"));
+
+		foreach (var item in _db)
+		{
+	#>
+
+	/// <summary>
+	///   Represents an SDP line that represents <#= item.Name #> with the character '<#= item.Char #>'.
+	/// </summary>
+	public class Sdp<#= item.Name #>Line : ISdpLineModel
+	{
+		private string? _rawText;
+
+		private string? _value;
+		private string[]? _whitespaceSeparatedValue;
+
+		/// <summary>
+		///   Initializes a new instance of the <see cref="Sdp<#= item.Name #>Line" /> class with the specified
+		///   raw SDP line string provided as the SDP line to parse.
+		/// </summary>
+		/// <param name="rawText">The SDP line, including the character and equals sign prefix.</param>
+		public Sdp<#= item.Name #>Line(string? rawText)
+		{
+			this._rawText = rawText;
+			this.Initialize();
+		}
+
+		/// <summary>
+		///   The character used to identify an SDP line as this one. Always returns
+		///   the character '<#= item.Char #>'.
+		/// </summary>
+		public char Character => '<#= item.Char #>';
+
+		/// <summary>
+		///   Represents the actual raw SDP line string backing this class.
+		/// </summary>
+		public string? RawText
+		{
+			get
+			{
+				return this._rawText;
+			}
+
+			set
+			{
+				string? previousValue = this._rawText;
+				this._rawText = value;
+				try
+				{
+					this.Initialize();
+				}
+				catch
+				{
+					this._rawText = previousValue;
+					throw;
+				}
+			}
+		}
+
+		/// <summary>
+		///   Applies parsing routines.
+		/// </summary>
+		private void Initialize()
+		{
+			if (this._rawText != null)
+			{
+				int offsetOfEqualsChar = this._rawText.IndexOf('=');
+				if (offsetOfEqualsChar == -1)
+					throw new InvalidOperationException("The provided SDP line has no equals character");
+
+				if (!this._rawText.StartsWith(this.Character.ToString()))
+					throw new InvalidOperationException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
+
+				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._whitespaceSeparatedValue = this._value.Split(' ');
+			}
+		}
+
+		<#
+			int i = 0;
+			foreach (var parameter in item.Parameters)
+			{
+				string csType = parameter.Type == ParameterType.String ? "string?" : "int";
+				string assign = parameter.Type == ParameterType.String ? "null" : "0";
+		#>
+
+		/// <summary>
+		///   Attempts to parse and return the item at index <#= i #> of whitespace-separated
+		///   parts in the line.
+		/// </summary>
+		/// <param name="result">Output is placed here.</param>
+		/// <returns>
+		///   <see langword="true" /> if parsing was successful, <see langword="false" /> otherwise.
+		/// </returns>
+		public bool TryGet<#= parameter.Name #>(out <#= csType #> result)
+		{
+			if (this._whitespaceSeparatedValue == null ||
+				this._whitespaceSeparatedValue.Length < <#= (i + 1) #>)
+			{
+				result = <#= assign #>;
+				return false;
+			}
+
+			<#
+				if (parameter.Type == ParameterType.String)
+				{
+			#>
+
+			result = this._whitespaceSeparatedValue[<#= i #>];
+			return true;
+
+			<#
+				}
+				else if (parameter.Type == ParameterType.Int32)
+				{
+			#>
+
+			return int.TryParse(this._whitespaceSeparatedValue[<#= i #>], out result);
+
+			<# } #>
+
+		}
+
+		<# i++; } #>
+
+		/// <summary>
+		///   Returns a boolean indicating if this SDP line is syntactically correct.
+		/// </summary>
+		/// <returns>
+		///   <see langword="true" /> if all items in this SDP line are valid and can be decoded meaningfully.
+		///   Otherwise, <see langword="false" /> if there's at least one incorrect part of this line.
+		/// </returns>
+		public bool IsValid()
+		{
+		<#
+			string result =
+				string.Join(" && ",
+					item.Parameters.Select(x => $"this.TryGet{x.Name}(out _)"));
+		#>
+
+			return <#= result #>;
+		}
+	}
+
+	<# } #>
+}
+
+<#+
+class Entry
+{
+	public string Name { get; set; }
+	public string Char { get; set; }
+	public List<Parameter> Parameters { get; set; }
+}
+
+class Parameter
+{
+	public string Name { get; set; }
+	public ParameterType Type { get; set; }
+}
+
+enum ParameterType
+{
+	String,
+	Int32
+}
+
+private readonly List<Entry> _db = new List<Entry>();
+
+private void AddEntry(string name, string @char, params Parameter[] parameters) {
+	_db.Add(new Entry() {
+		Name = name,
+		Char = @char,
+		Parameters = new List<Parameter>(parameters)
+	});
+}
+
+private static Parameter Ps(string name) => new() { Name = name, Type = ParameterType.String };
+private static Parameter Pi(string name) => new() { Name = name, Type = ParameterType.Int32 };
+#>
