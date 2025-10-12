@@ -98,20 +98,19 @@
         public override long ProcessNalLength()
         {
             ReaderState originalState = this.BitStreamReader.GetState();
+            long originalPos = this.BitStreamReader.BaseStream.Position;
 
             if (!SkipToNalStart())
             {
                 this.BitStreamReader.GoTo(originalState);
-                return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
+                return this.BitStreamReader.BaseStream.Length - originalPos;
             }
 
-            this.BitStreamReader.Backtrack(_lastStartCodeLength);
-
-            ReaderState activeState = this.BitStreamReader.GetState();
-            long result = activeState.ByteOffset - originalState.ByteOffset;
+            long nalEndPos = this.BitStreamReader.BaseStream.Position - _lastStartCodeLength;
+            long nalLength = nalEndPos - originalPos;
 
             this.BitStreamReader.GoTo(originalState);
-            return result;
+            return nalLength;
         }
 
         public override Picture<YCbCr> ReadPicture()
@@ -129,7 +128,6 @@
             RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
             long prevPos = this.BitStreamReader.BaseStream.Position;
 
-            // Align to byte boundary
             while (this.BitStreamReader.GetState().BitPosition != 0)
                 _ = this.BitStreamReader.ReadBit();
 
@@ -152,8 +150,8 @@
                 {
                     if (this.BitStreamReader.PeekBits(24) == 0x000001u)
                     {
-                        _ = this.BitStreamReader.ReadBits(24);
                         _lastStartCodeLength = 3;
+                        _ = this.BitStreamReader.ReadBits(24);
                         return true;
                     }
                 }
