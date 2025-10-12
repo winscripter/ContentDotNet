@@ -97,13 +97,14 @@
         public override long ProcessNalLength()
         {
             ReaderState originalState = this.BitStreamReader.GetState();
+            long originalPos = this.BitStreamReader.BaseStream.Position;
             if (!SkipToNalStart())
             {
                 this.BitStreamReader.GoTo(originalState);
                 return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
             }
 
-            this.BitStreamReader.Backtrack(3);
+            this.BitStreamReader.Backtrack(this.BitStreamReader.BaseStream.Position - originalPos);
 
             ReaderState activeState = this.BitStreamReader.GetState();
             long result = activeState.ByteOffset - originalState.ByteOffset;
