@@ -209,9 +209,11 @@
             var dcd = new H264Service().CreateDecoder(bsr);
 
             Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(3, dcd.BitStreamReader.BaseStream.Position);
             Assert.Equal(2, dcd.ProcessNalLength());
 
             Assert.True(dcd.SkipToNalStart());
+            Assert.Equal(9, dcd.BitStreamReader.BaseStream.Position);
             Assert.Equal(3, dcd.ProcessNalLength());
 
             Assert.True(dcd.SkipToNalStart());
