@@ -23,7 +23,7 @@
         private long cfi = 0;
         private BitStreamReader bsr;
         private Configuration cfg = new();
-
+        
         /// <summary>
         ///   Initializes a new instance of the <see cref="AbstractH264Decoder"/> class with the specified bit-stream reader for
         ///   the backing H.264 I/O decoding.

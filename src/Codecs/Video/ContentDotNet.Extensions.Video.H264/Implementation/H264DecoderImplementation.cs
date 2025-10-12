@@ -7,12 +7,13 @@
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
     using ContentDotNet.Pictures;
-    using System.Runtime.Intrinsics;
     using System.Threading.Tasks;
 
     internal class H264DecoderImplementation : AbstractH264Decoder
     {
         private const int StartCodeFindingRecursionLimit = 4 * 1024 * 1024;
+
+        private int _lastStartCodeLength = 0;
 
         public H264DecoderImplementation(BitStreamReader bsr) : base(bsr)
         {
@@ -97,19 +98,19 @@
         public override long ProcessNalLength()
         {
             ReaderState originalState = this.BitStreamReader.GetState();
+
             if (!SkipToNalStart())
             {
                 this.BitStreamReader.GoTo(originalState);
                 return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
             }
 
-            this.BitStreamReader.Backtrack(3);
+            this.BitStreamReader.Backtrack(_lastStartCodeLength);
 
             ReaderState activeState = this.BitStreamReader.GetState();
             long result = activeState.ByteOffset - originalState.ByteOffset;
 
             this.BitStreamReader.GoTo(originalState);
-
             return result;
         }
 
@@ -138,33 +139,35 @@
 
                 try
                 {
-                    if (this.BitStreamReader.PeekBits(32) == 0b00000000_00000000_00000000_00000001u)
+                    if (this.BitStreamReader.PeekBits(32) == 0x00000001u)
                     {
                         _ = this.BitStreamReader.ReadBits(32);
+                        _lastStartCodeLength = 4;
                         return true;
                     }
                 }
-                catch
-                {
-                }
+                catch { }
 
                 try
                 {
-                    if (this.BitStreamReader.PeekBits(24) == 0b00000000_00000000_00000001u)
+                    if (this.BitStreamReader.PeekBits(24) == 0x000001u)
                     {
                         _ = this.BitStreamReader.ReadBits(24);
+                        _lastStartCodeLength = 3;
                         return true;
                     }
                 }
                 catch
                 {
                     this.BitStreamReader.BaseStream.Position = prevPos;
+                    _lastStartCodeLength = 0;
                     return false;
                 }
 
                 _ = this.BitStreamReader.ReadByte();
             }
 
+            _lastStartCodeLength = 0;
             return false;
         }
 
