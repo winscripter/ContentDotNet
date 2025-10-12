@@ -56,27 +56,26 @@
             while (reader.GetState().BitPosition != 0)
                 _ = reader.ReadBit();
 
-            Stream stream = reader.BaseStream;
-            long originalPosition = stream.Position;
+            long originalPosition = reader.BaseStream.Position;
 
             int b1, b2 = -1, b3 = -1, b4;
 
-            while ((b4 = stream.ReadByte()) != -1)
+            while ((b4 = (int)reader.ReadByte()) != -1)
             {
                 b1 = b2;
                 b2 = b3;
                 b3 = b4;
 
                 if ((b2 == 0x00 && b3 == 0x00 && b4 == 0x01) ||
-                    (b1 == 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x00))
+                    (b1 == 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x01))
                 {
-                    _ = stream.ReadByte();
+                    _ = reader.ReadByte();
 
                     return true;
                 }
             }
 
-            stream.Position = originalPosition;
+            reader.BaseStream.Position = originalPosition;
             return false;
         }
     }
