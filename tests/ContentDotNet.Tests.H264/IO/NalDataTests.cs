@@ -17,7 +17,7 @@
                 // Header 1
                 0x29, // type = 9 (AUD), nal_ref_idc = 1
 
-                0x03, // 3 for AUD data
+                0x03, 0xE0, // 3 for AUD data
 
                 // SC 2
                 0x00, 0x00, 0x01,
