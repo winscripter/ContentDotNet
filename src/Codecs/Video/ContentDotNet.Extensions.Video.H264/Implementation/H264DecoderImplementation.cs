@@ -96,17 +96,19 @@
 
         public override long ProcessNalLength()
         {
-            ReaderState nalStartState = this.BitStreamReader.GetState();
+            ReaderState nalStart = this.BitStreamReader.GetState();
 
             if (!SkipToNalStart())
             {
-                return this.BitStreamReader.BaseStream.Length - nalStartState.ByteOffset;
+                return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
             }
 
-            this.BitStreamReader.Backtrack(3);
-            ReaderState nextNalState = this.BitStreamReader.GetState();
+            ReaderState nextNal = this.BitStreamReader.GetState();
 
-            return nextNalState.ByteOffset - nalStartState.ByteOffset;
+            long size = nextNal.ByteOffset - nalStart.ByteOffset - 3;
+
+            this.BitStreamReader.GoTo(nalStart);
+            return size;
         }
 
         public override Picture<YCbCr> ReadPicture()
