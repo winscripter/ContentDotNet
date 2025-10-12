@@ -6,14 +6,13 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Rbsp;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
+    using ContentDotNet.Extensions.Video.H264.Utilities;
     using ContentDotNet.Pictures;
     using System.Threading.Tasks;
 
     internal class H264DecoderImplementation : AbstractH264Decoder
     {
         private const int StartCodeFindingRecursionLimit = 4 * 1024 * 1024;
-
-        private int _lastStartCodeLength = 0;
 
         public H264DecoderImplementation(BitStreamReader bsr) : base(bsr)
         {
@@ -126,45 +125,7 @@
 
         public override bool SkipToNalStart()
         {
-            RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
-            int stream = 0;
-            long prevPos = this.BitStreamReader.BaseStream.Position;
-            while (this.BitStreamReader.GetState().BitPosition != 0)
-                _ = this.BitStreamReader.ReadBit();
-            while (true)
-            {
-                try
-                {
-                    recursionCounter.Increment();
-
-                    byte current = (byte)this.BitStreamReader.ReadByte();
-                    if (stream != 2 && current == 0)
-                    {
-                        stream++;
-                        continue;
-                    }
-                    else if (stream == 2 && current == 1)
-                    {
-                        return true;
-                    }
-                    else if (current != 0)
-                    {
-                        stream = 0;
-                        continue;
-                    }
-                    // else { }
-                }
-                catch (EndOfStreamException)
-                {
-                    this.BitStreamReader.BaseStream.Position = prevPos;
-                    return false;
-                }
-                catch (InfiniteLoopException)
-                {
-                    this.BitStreamReader.BaseStream.Position = prevPos;
-                    throw;
-                }
-            }
+            return NalHelpers.SkipToStartOfNalUnit(this.BitStreamReader);
         }
 
         private RbspNalUnit ParseNal(int nBytes)
