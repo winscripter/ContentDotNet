@@ -129,6 +129,8 @@
             RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
             int stream = 0;
             long prevPos = this.BitStreamReader.BaseStream.Position;
+            while (this.BitStreamReader.GetState().BitPosition != 0)
+                _ = this.BitStreamReader.ReadBit();
             while (true)
             {
                 try
