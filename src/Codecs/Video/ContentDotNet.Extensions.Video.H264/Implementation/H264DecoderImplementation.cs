@@ -100,14 +100,8 @@
             ReaderState originalState = this.BitStreamReader.GetState();
             long originalPos = this.BitStreamReader.BaseStream.Position;
 
-            if (!SkipToNalStart())
-            {
-                this.BitStreamReader.GoTo(originalState);
-                return this.BitStreamReader.BaseStream.Length - originalPos;
-            }
-
-            long nalEndPos = this.BitStreamReader.BaseStream.Position - _lastStartCodeLength;
-            long nalLength = nalEndPos - originalPos;
+            long nextStartCodeOffset = FindNextStartCodeOffset();
+            long nalLength = nextStartCodeOffset - originalPos;
 
             this.BitStreamReader.GoTo(originalState);
             return nalLength;
@@ -274,6 +268,29 @@
         {
             uint primary_pic_type = bsi.ReadBits(3);
             return new(primary_pic_type);
+        }
+
+        private long FindNextStartCodeOffset()
+        {
+            long currentPos = this.BitStreamReader.BaseStream.Position;
+            while (currentPos < this.BitStreamReader.BaseStream.Length - 3)
+            {
+                this.BitStreamReader.BaseStream.Position = currentPos;
+                byte b1 = (byte)this.BitStreamReader.ReadByte();
+                byte b2 = (byte)this.BitStreamReader.ReadByte();
+                byte b3 = (byte)this.BitStreamReader.ReadByte();
+
+                if (b1 == 0x00 && b2 == 0x00 && b3 == 0x01)
+                    return currentPos;
+
+                byte b4 = (byte)this.BitStreamReader.ReadByte();
+                if (b1 == 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
+                    return currentPos;
+
+                currentPos++;
+            }
+
+            return this.BitStreamReader.BaseStream.Length;
         }
     }
 }
