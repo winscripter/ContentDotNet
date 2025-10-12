@@ -200,7 +200,10 @@
                 0xAB, 0xCD, 0xEF
             };
 
-            var ms = new MemoryStream(bytes);
+            var ms = new MemoryStream(bytes)
+            {
+                Position = 0
+            };
             var bsr = new BitStreamReader(ms);
 
             var dcd = new H264Service().CreateDecoder(bsr);
