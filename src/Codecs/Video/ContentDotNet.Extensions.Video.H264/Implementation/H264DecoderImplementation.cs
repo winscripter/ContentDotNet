@@ -100,58 +100,79 @@
 
             if (!SkipToNalStart())
             {
-                // No next start code, size = remaining bytes
                 return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
             }
 
             ReaderState nextNal = this.BitStreamReader.GetState();
 
-            // Save current position to peek bytes safely
-            long originalPos = this.BitStreamReader.BaseStream.Position;
-
-            this.BitStreamReader.BaseStream.Position = nextNal.ByteOffset;
-
-            // Read up to 4 bytes to detect start code length
-            Span<byte> peekBytes = stackalloc byte[4];
-            int bytesRead = this.BitStreamReader.BaseStream.Read(peekBytes);
-
-            // Restore position
-            this.BitStreamReader.BaseStream.Position = originalPos;
-
-            int startCodeLength = 3; // Default start code length
-
-            if (bytesRead >= 4)
-            {
-                // Check for 4-byte start code 00 00 00 01
-                if (peekBytes[0] == 0x00 && peekBytes[1] == 0x00 && peekBytes[2] == 0x00 && peekBytes[3] == 0x01)
-                {
-                    startCodeLength = 4;
-                }
-                else if (peekBytes[0] == 0x00 && peekBytes[1] == 0x00 && peekBytes[2] == 0x01)
-                {
-                    startCodeLength = 3;
-                }
-                else
-                {
-                    // Not a start code? Could throw or handle gracefully.
-                }
-            }
-            else if (bytesRead == 3)
-            {
-                if (peekBytes[0] == 0x00 && peekBytes[1] == 0x00 && peekBytes[2] == 0x01)
-                {
-                    startCodeLength = 3;
-                }
-            }
-            else
-            {
-                // Handle shorter peek (e.g. end of stream)
-            }
+            int startCodeLength = PeekStartCodeLength();
 
             long size = nextNal.ByteOffset - nalStart.ByteOffset - startCodeLength;
 
             this.BitStreamReader.GoTo(nalStart);
             return size;
+        }
+
+        private int PeekStartCodeLength()
+        {
+            var rc = new RecursionCounter(4 * 1024 * 1024);
+            long offset = this.BitStreamReader.BaseStream.Position;
+            while (true)
+            {
+                int scl = GetStartCodeLength();
+                if (scl == -2)
+                {
+                    break;
+                }
+                else if (scl != -1)
+                {
+                    Restore();
+                    return scl;
+                }
+                else
+                {
+                    this.BitStreamReader.BaseStream.ReadByte();
+                }
+
+                rc.Increment();
+            }
+
+            throw new InvalidOperationException("Could not find NAL start code length");
+
+            void Restore()
+            {
+                this.BitStreamReader.BaseStream.Position = offset;
+            }
+        }
+
+        private int GetStartCodeLength()
+        {
+            long prevOffset = this.BitStreamReader.BaseStream.Position;
+            Span<byte> span = stackalloc byte[4];
+            int read = this.BitStreamReader.BaseStream.Read(span);
+            Restore();
+
+            if (read < 3)
+            {
+                return -2; // Not enough data to check
+            }
+            else if (read >= 4 && span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
+            {
+                return 4;
+            }
+            else if (span[0] == 0 && span[1] == 0 && span[2] == 1)
+            {
+                return 3;
+            }
+            else
+            {
+                return -1;
+            }
+
+            void Restore()
+            {
+                this.BitStreamReader.BaseStream.Position = prevOffset;
+            }
         }
 
         public override Picture<YCbCr> ReadPicture()
