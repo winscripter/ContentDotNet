@@ -7,6 +7,7 @@
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
     using ContentDotNet.Pictures;
+    using System.Runtime.Intrinsics;
     using System.Threading.Tasks;
 
     internal class H264DecoderImplementation : AbstractH264Decoder
@@ -125,48 +126,46 @@
         public override bool SkipToNalStart()
         {
             RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
-            int zeroCount = 0;
             long prevPos = this.BitStreamReader.BaseStream.Position;
 
             // Align to byte boundary
             while (this.BitStreamReader.GetState().BitPosition != 0)
                 _ = this.BitStreamReader.ReadBit();
 
-            while (true)
+            while (this.BitStreamReader.BaseStream.Position < this.BitStreamReader.BaseStream.Length)
             {
+                recursionCounter.Increment();
+
                 try
                 {
-                    recursionCounter.Increment();
-
-                    byte current = (byte)this.BitStreamReader.ReadByte();
-
-                    if (current == 0x00)
+                    if (this.BitStreamReader.PeekBits(32) == 0b00000000_00000000_00000000_00000001u)
                     {
-                        zeroCount++;
-                        continue;
-                    }
-                    else if (current == 0x01 && zeroCount >= 2)
-                    {
-                        // Found start code: either 00 00 01 or 00 00 00 01
+                        _ = this.BitStreamReader.ReadBits(32);
                         return true;
                     }
-                    else
+                }
+                catch
+                {
+                }
+
+                try
+                {
+                    if (this.BitStreamReader.PeekBits(24) == 0b00000000_00000000_00000001u)
                     {
-                        // Reset if pattern breaks
-                        zeroCount = 0;
+                        _ = this.BitStreamReader.ReadBits(24);
+                        return true;
                     }
                 }
-                catch (EndOfStreamException)
+                catch
                 {
                     this.BitStreamReader.BaseStream.Position = prevPos;
                     return false;
                 }
-                catch (InfiniteLoopException)
-                {
-                    this.BitStreamReader.BaseStream.Position = prevPos;
-                    throw;
-                }
+
+                _ = this.BitStreamReader.ReadByte();
             }
+
+            return false;
         }
 
         private RbspNalUnit ParseNal(int nBytes)
