@@ -67,15 +67,8 @@
                 b2 = b3;
                 b3 = b4;
 
-                // Check for 4-byte start code first
-                if (b1 == 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
-                {
-                    return true;
-                }
-
-                // Only check for 3-byte start code if b1 != 0x00
-                // This avoids matching the tail of a 4-byte start code
-                if (b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
+                if ((b2 == 0x00 && b3 == 0x00 && b4 == 0x01) ||
+                    (b1 == 0x00 && b2 == 0x00 && b3 == 0x00))
                 {
                     return true;
                 }
