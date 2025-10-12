@@ -60,11 +60,16 @@
 
             int b1, b2 = -1, b3 = -1, b4;
 
-            while ((b4 = reader.BaseStream.ReadByte()) != -1)
+            while (true)
             {
+                int byteRead = b4 = reader.BaseStream.ReadByte();
+                if (byteRead == -1)
+                    break;
+
                 b1 = b2;
                 b2 = b3;
                 b3 = b4;
+                b4 = byteRead;
 
                 if ((b2 == 0x00 && b3 == 0x00 && b4 == 0x01))
                 {
