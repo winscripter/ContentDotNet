@@ -125,10 +125,13 @@
         public override bool SkipToNalStart()
         {
             RecursionCounter recursionCounter = new(StartCodeFindingRecursionLimit);
-            int stream = 0;
+            int zeroCount = 0;
             long prevPos = this.BitStreamReader.BaseStream.Position;
+
+            // Align to byte boundary
             while (this.BitStreamReader.GetState().BitPosition != 0)
                 _ = this.BitStreamReader.ReadBit();
+
             while (true)
             {
                 try
@@ -136,21 +139,22 @@
                     recursionCounter.Increment();
 
                     byte current = (byte)this.BitStreamReader.ReadByte();
-                    if (stream != 2 && current == 0)
+
+                    if (current == 0x00)
                     {
-                        stream++;
+                        zeroCount++;
                         continue;
                     }
-                    else if (stream == 2 && current == 1)
+                    else if (current == 0x01 && zeroCount >= 2)
                     {
+                        // Found start code: either 00 00 01 or 00 00 00 01
                         return true;
                     }
-                    else if (current != 0)
+                    else
                     {
-                        stream = 0;
-                        continue;
+                        // Reset if pattern breaks
+                        zeroCount = 0;
                     }
-                    // else { }
                 }
                 catch (EndOfStreamException)
                 {
