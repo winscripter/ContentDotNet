@@ -148,8 +148,8 @@
         private int GetStartCodeLength()
         {
             long prevOffset = this.BitStreamReader.BaseStream.Position;
-            Span<byte> span = stackalloc byte[4];
-            int read = this.BitStreamReader.BaseStream.Read(span);
+            byte[] span = new byte[4];
+            int read = this.BitStreamReader.BaseStream.Read(span, 0, 4);
             if (read < 3)
             {
                 Restore();
