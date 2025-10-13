@@ -1,8 +1,8 @@
 ﻿#nullable enable
 
-namespace ContentDotNet.Rtsp.Sdp.Lines
+namespace ContentDotNet.Protocols.Sdp.Lines
 {
-	using ContentDotNet.Rtsp.Sdp.Abstractions;
+	using ContentDotNet.Protocols.Sdp.Abstractions;
 
 	
 	/// <summary>

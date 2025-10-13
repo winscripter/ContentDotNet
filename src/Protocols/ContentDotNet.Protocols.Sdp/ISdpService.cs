@@ -1,7 +1,7 @@
-﻿namespace ContentDotNet.Rtsp.Sdp
+﻿namespace ContentDotNet.Protocols.Sdp
 {
-    using ContentDotNet.Rtsp.Sdp.Abstractions;
-    using ContentDotNet.Rtsp.Sdp.EventArguments;
+    using ContentDotNet.Protocols.Sdp.Abstractions;
+    using ContentDotNet.Protocols.Sdp.EventArguments;
     using System;
     using System.IO;
     using System.Threading.Tasks;

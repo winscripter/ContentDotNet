@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Rtsp.Sdp
+﻿namespace ContentDotNet.Protocols.Sdp
 {
     /// <summary>
     ///   General SDP exception.

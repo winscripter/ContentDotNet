@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Rtsp.Sdp.Abstractions
+﻿namespace ContentDotNet.Protocols.Sdp.Abstractions
 {
     /// <summary>
     ///   Abstract, non-generic SDP line serializer.

@@ -8,30 +8,26 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Lines\Lines.g.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <None Include="Lines\Lines.g.cs">
+      <DependentUpon>Lines.tt</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
-      <DependentUpon>Lines.tt</DependentUpon>
     </None>
   </ItemGroup>
 
   <ItemGroup>
     <None Update="Lines\Lines.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Lines.g.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
     </None>
   </ItemGroup>
 
   <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Compile Update="Lines\Lines.g.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Lines.tt</DependentUpon>
-    </Compile>
   </ItemGroup>
 
 </Project>

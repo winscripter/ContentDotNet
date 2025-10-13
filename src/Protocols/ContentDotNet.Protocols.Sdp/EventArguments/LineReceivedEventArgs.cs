@@ -1,6 +1,6 @@
-﻿namespace ContentDotNet.Rtsp.Sdp.EventArguments
+﻿namespace ContentDotNet.Protocols.Sdp.EventArguments
 {
-    using ContentDotNet.Rtsp.Sdp.Abstractions;
+    using ContentDotNet.Protocols.Sdp.Abstractions;
 
     /// <summary>
     ///   Event arguments for the 'line received' event.

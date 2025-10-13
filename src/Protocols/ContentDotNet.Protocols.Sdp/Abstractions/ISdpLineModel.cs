@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Rtsp.Sdp.Abstractions
+﻿namespace ContentDotNet.Protocols.Sdp.Abstractions
 {
     /// <summary>
     ///   Abstracts a model for an SDP line.

@@ -1,6 +1,6 @@
-﻿namespace ContentDotNet.Rtsp.Sdp
+﻿namespace ContentDotNet.Protocols.Sdp
 {
-    using ContentDotNet.Rtsp.Sdp.Abstractions;
+    using ContentDotNet.Protocols.Sdp.Abstractions;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -24,6 +24,10 @@
         /// </summary>
         static BuiltInLineSerializer()
         {
+            // Here we just get all the classes that inherit from ISdpLineModel
+            // throughout the entire assembly and instantiate them using the
+            // 'Activator.CreateInstance' method. They're located in the Lines folder.
+
             s_models =
                 [.. typeof(BuiltInLineSerializer)
                 .Assembly
