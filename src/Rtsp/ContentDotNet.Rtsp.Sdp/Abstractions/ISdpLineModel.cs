@@ -11,7 +11,7 @@
         char Character { get; }
 
         /// <summary>
-        ///   The raw text that appears after the equals character.
+        ///   The actual raw SDP line, including the character and the equal sign.
         /// </summary>
         string? RawText { get; set; }
 

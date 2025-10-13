@@ -112,14 +112,30 @@ namespace ContentDotNet.Rtsp.Sdp.Lines
 			{
 				int offsetOfEqualsChar = this._rawText.IndexOf('=');
 				if (offsetOfEqualsChar == -1)
-					throw new InvalidOperationException("The provided SDP line has no equals character");
+					throw new SdpException("The provided SDP line has no equals character");
 
 				if (!this._rawText.StartsWith(this.Character.ToString()))
-					throw new InvalidOperationException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
+					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
 				this._value = this._rawText.Substring(offsetOfEqualsChar);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
+		}
+
+		/// <summary>
+		///   Changes the slot <paramref name="i" /> to be <paramref name="value" />.
+		/// </summary>
+		/// <param name="i">The index of the slot.</param>
+		/// <param name="value">The value to alter the slot with.</param>
+		/// <returns>Success status</returns>
+		private bool TrySetSlot(int i, string value)
+		{
+			if (this._whitespaceSeparatedValue == null ||
+				this._whitespaceSeparatedValue.Length < (i + 1))
+				return false;
+
+			this._whitespaceSeparatedValue[i] = value;
+			return true;
 		}
 
 		<#
@@ -128,7 +144,21 @@ namespace ContentDotNet.Rtsp.Sdp.Lines
 			{
 				string csType = parameter.Type == ParameterType.String ? "string?" : "int";
 				string assign = parameter.Type == ParameterType.String ? "null" : "0";
+				string nonNullableCsType = parameter.Type == ParameterType.String ? "string" : "int";
+				string toStringCall = parameter.Type == ParameterType.Int32 ? ".ToString()" : string.Empty;
 		#>
+
+		/// <summary>
+		///   Attempts to mutate the <#= parameter.Name #> with the value <paramref name="value" />.
+		/// </summary>
+		/// <param name="value">What to muate with</param>
+		/// <returns>
+		///   <see langword="true" /> if mutation was successful, <see langword="false" /> otherwise.
+		/// </returns>
+		public bool TryMutate<#= parameter.Name #>(<#= nonNullableCsType #> value)
+		{
+			return TrySetSlot(<#= i #>, value<#= toStringCall #>);
+		}
 
 		/// <summary>
 		///   Attempts to parse and return the item at index <#= i #> of whitespace-separated
