@@ -134,11 +134,6 @@
             }
 
             throw new InvalidOperationException("Could not find NAL start code length");
-
-            void Restore()
-            {
-                
-            }
         }
 
         private int GetStartCodeLength()
@@ -151,8 +146,7 @@
             {
                 return 4;
             }
-            else if ((span[0] == 0 && span[1] == 0 && span[2] == 1) ||
-                (span[1] == 0 && span[2] == 0 && span[3] == 1))
+            else if (span[0] == 0 && span[1] == 0 && span[2] == 1)
             {
                 return 3;
             }

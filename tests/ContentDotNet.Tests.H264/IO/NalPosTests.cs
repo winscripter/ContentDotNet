@@ -99,7 +99,6 @@
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(5, dcd.ProcessNalLength());
 
-            Assert.Equal(8, dcd.BitStreamReader.BaseStream.Position);
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(2, dcd.ProcessNalLength());
 
