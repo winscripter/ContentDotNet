@@ -127,7 +127,8 @@
                 }
                 else
                 {
-                    this.BitStreamReader.BaseStream.ReadByte();
+                    if (this.BitStreamReader.BaseStream.ReadByte() == -1)
+                        throw new EndOfStreamException();
                 }
 
                 rc.Increment();
