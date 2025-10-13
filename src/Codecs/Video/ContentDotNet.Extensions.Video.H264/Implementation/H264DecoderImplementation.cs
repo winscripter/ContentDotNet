@@ -120,11 +120,7 @@
             while (true)
             {
                 int scl = GetStartCodeLength();
-                if (scl == -2)
-                {
-                    break;
-                }
-                else if (scl != -1)
+                if (scl != -1)
                 {
                     Restore();
                     return scl;
@@ -149,28 +145,20 @@
         {
             long prevOffset = this.BitStreamReader.BaseStream.Position;
             Span<byte> span = stackalloc byte[4];
-            int read = this.BitStreamReader.BaseStream.Read(span);
-            if (read < 3)
+            this.BitStreamReader.BaseStream.ReadExactly(span);
+            Restore();
+            if (span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
             {
-                Restore();
-                return -2;
+                return 4;
+            }
+            else if ((span[0] == 0 && span[1] == 0 && span[2] == 1) ||
+                (span[1] == 0 && span[2] == 0 && span[3] == 1))
+            {
+                return 3;
             }
             else
             {
-                Restore();
-                if (span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
-                {
-                    return 4;
-                }
-                else if ((span[0] == 0 && span[1] == 0 && span[2] == 1) ||
-                    (span[1] == 0 && span[2] == 0 && span[3] == 1))
-                {
-                    return 3;
-                }
-                else
-                {
-                    return -1;
-                }
+                return -1;
             }
 
             void Restore()
