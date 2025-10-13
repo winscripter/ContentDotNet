@@ -122,7 +122,7 @@
                 int scl = GetStartCodeLength();
                 if (scl != -1)
                 {
-                    Restore();
+                    this.BitStreamReader.BaseStream.Position = offset;
                     return scl;
                 }
                 else
@@ -137,7 +137,7 @@
 
             void Restore()
             {
-                this.BitStreamReader.BaseStream.Position = offset;
+                
             }
         }
 
@@ -146,7 +146,7 @@
             long prevOffset = this.BitStreamReader.BaseStream.Position;
             Span<byte> span = stackalloc byte[4];
             this.BitStreamReader.BaseStream.ReadExactly(span);
-            Restore();
+            this.BitStreamReader.BaseStream.Position = prevOffset;
             if (span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
             {
                 return 4;
@@ -159,11 +159,6 @@
             else
             {
                 return -1;
-            }
-
-            void Restore()
-            {
-                this.BitStreamReader.BaseStream.Position = prevOffset;
             }
         }
 
