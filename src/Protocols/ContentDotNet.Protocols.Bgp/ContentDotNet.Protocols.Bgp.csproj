@@ -12,6 +12,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Data.tt</DependentUpon>
     </None>
+    <None Include="MessageFormats\Serializers\Serializers.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Serializers.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +27,10 @@
     <None Update="MessageFormats\Data\Data.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Data.g.cs</LastGenOutput>
+    </None>
+    <None Update="MessageFormats\Serializers\Serializers.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>Serializers.g.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -35,10 +44,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Data.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="MessageFormats\Serializers\" />
+    <Compile Update="MessageFormats\Serializers\Serializers.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>Serializers.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>

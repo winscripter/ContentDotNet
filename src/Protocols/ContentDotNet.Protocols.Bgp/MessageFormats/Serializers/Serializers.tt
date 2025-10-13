@@ -1,0 +1,179 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+namespace ContentDotNet.Protocols.Bgp.MessageFormats.Serializers
+{
+	using ContentDotNet.Protocols.Bgp.Abstractions;
+	using ContentDotNet.Protocols.Bgp.Models;
+	using ContentDotNet.Protocols.Bgp.MessageFormats.Data;
+
+	<#
+		Elem("BgpMessageHeaderFormat",
+			ByteArray("Marker"),
+			ValueType("Length", "ushort"),
+			ValueType("Type", "byte"));
+		Elem("BgpOpenMessageFormat",
+			ValueType("Version", "byte"),
+			ValueType("MyAutonomousSystem", "ushort"),
+			ValueType("HoldTime", "ushort"),
+			ValueType("BgpIdentifier", "uint"),
+			Enumerable("OptionalParameters", "List<BgpOpenOptionalParameterModel>"));
+		Elem("BgpUpdateMessageFormat",
+			ValueType("WithdrawnRoutesLength", "ushort"),
+			Enumerable("WithdrawnRoutes", "List<string>"),
+			ValueType("TotalPathAttributeLength", "ushort"),
+			Enumerable("PathAttributes", "List<BgpPathAttributeModel>"),
+			Enumerable("NetworkLayerReachabilityInformation", "List<string>"));
+		Elem("BgpKeepAliveMessageFormat");
+		Elem("BgpNotificationMessageFormat",
+			ValueType("ErrorCode", "byte"),
+			ValueType("ErrorSubCode", "byte"),
+			ByteArray("Data"));
+
+		for (int i = 0; i < _elements.Count; i++)
+		{
+			var e = _elements[i];
+			if (e.Name != "BgpNotificationMessageFormat")
+			{
+	#>
+
+	/// <summary>
+	///   Represents the BGP message format serializer.
+	/// </summary>
+	public class <#= e.Name #>Serializer : IMessageFormatSerializer
+	{
+		/// <summary>
+		///   Singleton instane of the <see cref="<#= e.Name #>Serializer" /> class.
+		/// </summary>
+		public static readonly <#= e.Name #>Serializer Instance = new();
+
+		/// <inheritdoc cref="IMessageFormatSerializer.TypeOfModel" />
+		public Type TypeOfModel => typeof(<#= e.Name #>);
+
+		/// <inheritdoc cref="IMessageFormatSerializer.Read(BinaryReader)" />
+		public IMessageFormatData Read(BinaryReader reader)
+		{
+<#
+		for (int j = 0; j < e.Fields.Count; j++)
+		{
+			var f = e.Fields[j];
+			var readerCode = $"CommonIOUtilities.Read<{f.InnerType}>(reader)";
+#>
+			<#= f.InnerType #> _<#= f.Name #> = <#= readerCode #>;
+<# } #>
+			return new <#= e.Name #>(<#= string.Join(", ", e.Fields.Select(x => $"_{x.Name}")) #>);
+		}
+		
+		/// <inheritdoc cref="IMessageFormatSerializer.ReadAsync(BinaryReader)" />
+		public async Task<IMessageFormatData> ReadAsync(BinaryReader reader)
+		{
+<#
+		for (int j = 0; j < e.Fields.Count; j++)
+		{
+			var f = e.Fields[j];
+			var readerCode = $"await CommonIOUtilities.ReadAsync<{f.InnerType}>(reader)";
+#>
+			<#= f.InnerType #> _<#= f.Name #> = <#= readerCode #>;
+<# } #>
+			return new <#= e.Name #>(<#= string.Join(", ", e.Fields.Select(x => $"_{x.Name}")) #>);
+		}
+
+		/// <inheritdoc cref="IMessageFormatSerializer.Write(IMessageFormatData, BinaryWriter)" />
+		public void Write(IMessageFormatData data, BinaryWriter writer)
+		{
+			if (data is not <#= e.Name #> actualData)
+				throw new ArgumentException($"Input must be <#= e.Name #>; it is {data.GetType().FullName}", nameof(data));
+
+
+<#
+		for (int j = 0; j < e.Fields.Count; j++)
+		{
+			var f = e.Fields[j];
+#>
+			CommonIOUtilities.Write<<#= f.InnerType #>>(actualData.<#= f.Name #>, writer);
+<# } #>
+		}
+
+		/// <inheritdoc cref="IMessageFormatSerializer.Write(IMessageFormatData, BinaryWriter)" />
+		public async Task WriteAsync(IMessageFormatData data, BinaryWriter writer)
+		{
+			if (data is not <#= e.Name #> actualData)
+				throw new ArgumentException($"Input must be <#= e.Name #>; it is {data.GetType().FullName}", nameof(data));
+
+
+<#
+		for (int j = 0; j < e.Fields.Count; j++)
+		{
+			var f = e.Fields[j];
+#>
+			await CommonIOUtilities.WriteAsync<<#= f.InnerType #>>(actualData.<#= f.Name #>, writer);
+<# } #>
+		}
+	}
+
+	<# } } #>
+}
+
+<#+
+public class Element
+{
+	public string Name { get; set; }
+	public List<Field> Fields { get; set; } = new List<Field>();
+}
+
+public class Field
+{
+	public string Name { get; set; }
+	public FieldType Type { get; set; }
+	public string InnerType { get; set; }
+}
+
+public enum FieldType
+{
+	ValueType,
+	Enumerable
+}
+
+private readonly List<Element> _elements = new List<Element>();
+
+public void Elem(string name, params Field[] fields)
+{
+	var e = new Element() {
+		Name = name,
+		Fields = new List<Field>(fields)
+	};
+	_elements.Add(e);
+}
+
+public Field ValueType(string name, string type)
+{
+	return new Field() {
+		Name = name,
+		Type = FieldType.ValueType,
+		InnerType = type
+	};
+}
+
+public Field Enumerable(string name, string type)
+{
+	return new Field() {
+		Name = name,
+		Type = FieldType.Enumerable,
+		InnerType = type
+	};
+}
+
+public Field ByteArray(string name) => Enumerable(name, "List<byte>");
+
+public static string FirstCharToLowerCase(string str)
+{
+	// https://stackoverflow.com/a/21755803/21072788
+	string newString = str;
+	if (!String.IsNullOrEmpty(newString))
+		newString = Char.ToLower(newString[0]) + newString.Substring(1);
+	return newString;
+}
+#>
