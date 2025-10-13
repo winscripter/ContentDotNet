@@ -53,7 +53,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents <#= item.Name #> with the character '<#= item.Char #>'.
 	/// </summary>
-	public class Sdp<#= item.Name #>Line : ISdpLineModel
+	public record Sdp<#= item.Name #>Line : ISdpLineModel
 	{
 		private string? _rawText;
 

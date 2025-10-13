@@ -8,7 +8,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents Version with the character 'v'.
 	/// </summary>
-	public class SdpVersionLine : ISdpLineModel
+	public record SdpVersionLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -148,7 +148,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents Origin with the character 'o'.
 	/// </summary>
-	public class SdpOriginLine : ISdpLineModel
+	public record SdpOriginLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -472,7 +472,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents SessionName with the character 's'.
 	/// </summary>
-	public class SdpSessionNameLine : ISdpLineModel
+	public record SdpSessionNameLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -613,7 +613,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents SessionInformation with the character 'i'.
 	/// </summary>
-	public class SdpSessionInformationLine : ISdpLineModel
+	public record SdpSessionInformationLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -754,7 +754,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents Uri with the character 'u'.
 	/// </summary>
-	public class SdpUriLine : ISdpLineModel
+	public record SdpUriLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -895,7 +895,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents EmailAddress with the character 'e'.
 	/// </summary>
-	public class SdpEmailAddressLine : ISdpLineModel
+	public record SdpEmailAddressLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -1036,7 +1036,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents PhoneNumber with the character 'p'.
 	/// </summary>
-	public class SdpPhoneNumberLine : ISdpLineModel
+	public record SdpPhoneNumberLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -1177,7 +1177,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents ConnectionInformation with the character 'c'.
 	/// </summary>
-	public class SdpConnectionInformationLine : ISdpLineModel
+	public record SdpConnectionInformationLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -1392,7 +1392,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents BandwidthInformation with the character 'b'.
 	/// </summary>
-	public class SdpBandwidthInformationLine : ISdpLineModel
+	public record SdpBandwidthInformationLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -1533,7 +1533,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents TimeActive with the character 't'.
 	/// </summary>
-	public class SdpTimeActiveLine : ISdpLineModel
+	public record SdpTimeActiveLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -1709,7 +1709,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents RepeatTimes with the character 'r'.
 	/// </summary>
-	public class SdpRepeatTimesLine : ISdpLineModel
+	public record SdpRepeatTimesLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -1961,7 +1961,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents TimeZoneAdjustment with the character 'z'.
 	/// </summary>
-	public class SdpTimeZoneAdjustmentLine : ISdpLineModel
+	public record SdpTimeZoneAdjustmentLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -2213,7 +2213,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents EncryptionKeys with the character 'k'.
 	/// </summary>
-	public class SdpEncryptionKeysLine : ISdpLineModel
+	public record SdpEncryptionKeysLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -2354,7 +2354,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents Attributes with the character 'a'.
 	/// </summary>
-	public class SdpAttributesLine : ISdpLineModel
+	public record SdpAttributesLine : ISdpLineModel
 	{
 		private string? _rawText;
 
@@ -2495,7 +2495,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 	/// <summary>
 	///   Represents an SDP line that represents MediaDescriptors with the character 'm'.
 	/// </summary>
-	public class SdpMediaDescriptorsLine : ISdpLineModel
+	public record SdpMediaDescriptorsLine : ISdpLineModel
 	{
 		private string? _rawText;
 

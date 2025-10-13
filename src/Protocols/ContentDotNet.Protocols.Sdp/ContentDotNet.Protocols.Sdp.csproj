@@ -8,10 +8,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="Lines\Lines.g.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <None Include="Lines\Lines.g.cs">
       <DependentUpon>Lines.tt</DependentUpon>
       <DesignTime>True</DesignTime>
