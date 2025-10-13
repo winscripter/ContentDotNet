@@ -1,0 +1,258 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+#nullable enable
+
+namespace ContentDotNet.Protocols.Rtsp.Headers
+{
+	using ContentDotNet.Protocols.Rtsp.Headers.Enumerations;
+	using ContentDotNet.Protocols.Rtsp.Headers.Records;
+	
+<#
+	Hdr("Accept", Obj("List<AcceptRecord>", "Value"));
+	Hdr("AcceptCredentials", Obj("AcceptCredentialsPolicy", "Policy"), Obj("List<AcceptCredentialsRecord>", "Value"));
+	Hdr("AcceptEncoding", Obj("List<AcceptEncodingRecord>", "Value"));
+	Hdr("AcceptLanguage", Obj("List<AcceptLanguageRecord>", "Value"));
+	Hdr("AcceptRanges", Obj("List<string>", "Ranges"));
+	Hdr("Allow", Obj("List<string>", "Methods"));
+	Hdr("AuthenticationInfo",
+		Obj("string?", "NextNonce"),
+		Obj("string?", "QualityOfProtection"),
+		Obj("string?", "ResponseAuthenticationDigest"),
+		Obj("string?", "ClientNonce"),
+		Obj("int?", "NonceCount"));
+	Hdr("Authorization",
+		Obj("string?", "DigestUsername"),
+		Obj("string?", "Realm"),
+		Obj("string?", "Nonce"),
+		Obj("string?", "Uri"),
+		Obj("string?", "Response"),
+		Obj("string?", "QualityOfProtection"),
+		Obj("int?", "NonceCount"),
+		Obj("string?", "ClientNonce"));
+	Hdr("Bandwidth", Obj("long?", "BandwidthValue"));
+	Hdr("BlockSize", Obj("int?", "Value"));
+	Hdr("CacheControl",
+		Obj("bool", "NoCache"),
+		Obj("bool", "NoStore"),
+		Obj("bool", "MustRevalidate"),
+		Obj("bool", "Public"),
+		Obj("bool", "Private"),
+		Obj("int?", "MaxAge"));
+	Hdr("Connection", Obj("List<string>", "Directives"));
+	Hdr("ConnectionCredentials", Obj("string?", "Uri"), Obj("string?", "CertificateBase64"));
+	Hdr("ContentBase", Obj("string?", "Uri"));
+	Hdr("ContentEncoding", Obj("string?", "Encoding"));
+	Hdr("ContentLanguage", Obj("List<string>", "Languages"));
+	Hdr("ContentLength", Obj("int", "Length"));
+	Hdr("ContentLocation", Obj("string?", "Location"));
+	Hdr("CSeq", Obj("int?", "SequenceNumber"));
+	Hdr("Date", Obj("string?", "Time"));
+	Hdr("Expires", Obj("string?", "Time"));
+	Hdr("From", Obj("string?", "EmailAddress"));
+	Hdr("IfMatch", Obj("List<string>", "ETags"));
+	Hdr("IfModifiedSince", Obj("string?", "Time"));
+	Hdr("IfNoneMatch", Obj("List<string>", "ETags"));
+	Hdr("LastModified", Obj("string?", "Time"));
+	Hdr("Location", Obj("string?", "Uri"));
+	Hdr("MediaProperties",
+		Obj("double?", "RandomAccess"),
+		Obj("bool", "BeginningOnly"),
+		Obj("bool", "NoSeeking"),
+		Obj("bool", "Immutable"),
+		Obj("bool", "Dynamic"),
+		Obj("bool", "TimeProgressing"),
+		Obj("bool", "Unlimited"),
+		Obj("bool", "TimeLimited"),
+		Obj("bool", "TimeDuration"),
+		Obj("string?", "Scales"));
+	Hdr("MediaRange", Obj("string?", "NormalPlayTime"));
+	Hdr("MTag", Obj("string?", "Value"));
+	Hdr("NotifyReason", Obj("string?", "ReasonToken"));
+	Hdr("PipelinedRequests", Obj("string?", "Token"));
+	Hdr("ProxyAuthenticate", Obj("string?", "AuthScheme"), Obj("string?", "Realm"), Obj("string?", "Nonce"), Obj("string?", "Algorithm"));
+	Hdr("ProxyAuthenticationInfo", Obj("string?", "NextNonce"), Obj("string?", "QualityOfProtection"), Obj("string?", "RspAuth"));
+	Hdr("ProxyAuthorization", Obj("string?", "DigestUsername"), Obj("string?", "Realm"), Obj("string?", "Nonce"), Obj("string?", "Uri"), Obj("string?", "Response"));
+	Hdr("ProxyRequire", Obj("string?", "Require"));
+	Hdr("ProxySupported", Obj("List<string>", "Values"));
+	Hdr("Public", Obj("List<string>", "Methods"));
+	Hdr("Range", Obj("string?", "Clock"), Obj("string?", "NormalPlayTime"));
+	Hdr("Referrer", Obj("string?", "Uri"));
+	Hdr("RequestStatus", Obj("int?", "CSeq"), Obj("int?", "Status"), Obj("string?", "Reason"));
+	Hdr("Require", Obj("string?", "Feature"));
+	Hdr("RetryAfter", Obj("string?", "DateOrTime"));
+	Hdr("RtpInfo", Obj("List<RtpInfoRecord>", "Value"));
+	Hdr("Scale", Obj("double?", "ScaleValue"));
+	Hdr("SeekStyle", Obj("string?", "Value"));
+	Hdr("Server", Obj("string?", "ServerValue"));
+	Hdr("Session", Obj("int?", "SessionId"), Obj("int?", "Timeout"));
+	Hdr("Speed", Obj("string?", "SpeedRange"));
+	Hdr("Supported", Obj("List<string>", "SupportedExtensions"));
+	Hdr("TerminateReason", Obj("string?", "Reason"));
+	Hdr("Timestamp", Obj("string?", "DateTime"));
+	Hdr("Transport", Obj("string?", "MediaDeliveryProtocol"), Obj("string?", "TransportMethod"), Obj("string?", "Ssrc"),
+		Obj("string?", "SourceAddress"), Obj("string?", "DestinationAddress"), Obj("string?", "TimeToLive"), Obj("string?", "Mode"),
+		Obj("bool", "Interleaved"));
+	Hdr("Unsupported", Obj("List<string>", "UnsupportedExtensions"));
+	Hdr("UserAgent", Obj("string?", "Value"));
+	Hdr("Via", Obj("List<ViaRecord>", "Value"));
+	Hdr("WwwAuthenticate", Obj("string?", "DigestRealm"), Obj("string?", "Nonce"), Obj("string?", "Algorithm"));
+
+	foreach (Header hdr in _headers)
+	{
+#>
+
+	/// <summary>
+	///   Represents the <#= hdr.Name #> RTSP header.
+	/// </summary>
+	public interface IRtsp<#= hdr.Name #>Header : IRtspHeader
+	{
+		<#
+			foreach (Parameter p in hdr.Parameters)
+			{
+		#>
+		
+		/// <summary>
+		///   The value named <#= p.Name #>.
+		/// </summary>
+	    <#= p.Type #> <#= p.Name #>
+		{
+			get;
+			set;
+		}
+
+		<# } #>
+	}
+
+<# } #>
+
+	/// <summary>
+	///   Extensions for various RTSP headers.
+	/// </summary>
+	public static class RtspHeaderExtensions
+	{
+<#
+	foreach (Header hdr in _headers)
+	{
+		foreach (Parameter p in hdr.Parameters)
+		{
+#>
+		
+		/// <summary>
+		///   Sets the <see cref="IRtsp<#= hdr.Name #>Header.<#= p.Name #>" /> property
+		///   inside <paramref name="header" /> to be equal to <paramref name="valueToReplaceWith" />
+		///   and returns the mutated <paramref name="header" />.
+		/// </summary>
+		/// <param name="header">The source RTSP header.</header>
+		/// <param name="valueToReplaceWith">The value to mutate with.</param>
+		/// <returns>
+		///   The mutated <paramref name="header" />.
+		/// </returns>
+		public static IRtsp<#= hdr.Name #>Header With<#= p.Name #>(
+			this IRtsp<#= hdr.Name #>Header header,
+			<#= p.Type #> valueToReplaceWith)
+		{
+			header.<#= p.Name #> = valueToReplaceWith;
+			return header;
+		}
+
+<# } } #>
+	}
+
+	/// <summary>
+	///   Factory for creating RTSP headers.
+	/// </summary>
+	public interface IRtspHeaderFactory
+	{
+		<#
+			foreach (Header hdr in _headers)
+			{
+		#>
+
+		/// <summary>
+		///   Creates a blank <see cref="IRtsp<#= hdr.Name #>Header" /> instance.
+		/// </summary>
+		/// <returns>
+		///   <see cref="IRtsp<#= hdr.Name #>Header" /> without any actual values.
+		/// </returns>
+		IRtsp<#= hdr.Name #>Header Create<#= hdr.Name #>();
+
+		<# } #>
+	}
+
+	/// <summary>
+	///   Extensions for <see cref="IRtspHeaderFactory" />.
+	/// </summary>
+	public static class RtspHeaderFactoryExtensions
+	{
+<#
+			foreach (Header hdr in _headers)
+			{
+				string args = string.Join(", ", hdr.Parameters.Select(x => $"{x.Type} @{FirstCharToLowerCase(x.Name)}"));
+#>
+		/// <summary>
+		///   Creates an <see cref="IRtsp<#= hdr.Name #>Header" /> instance and populates it with given value..
+		/// </summary>
+<#
+			foreach (Parameter p in hdr.Parameters)
+			{
+#>
+		/// <param name="<#= FirstCharToLowerCase(p.Name) #>">The parameter.</param>
+<# } #>
+		/// <returns>
+		///   <see cref="IRtsp<#= hdr.Name #>Header" /> with populated values.
+		/// </returns>
+		public static IRtsp<#= hdr.Name #>Header Create<#= hdr.Name #>(
+			this IRtspHeaderFactory headerFactory,
+			<#= args #>)
+		{
+			var theCreatedInterface = headerFactory.Create<#= hdr.Name #>();
+			<#
+			foreach (Parameter p in hdr.Parameters)
+			{
+#>
+			theCreatedInterface.<#= p.Name #> = @<#= FirstCharToLowerCase(p.Name) #>;
+<# } #>
+			return theCreatedInterface;
+		}
+
+		<# } #>
+	}
+}
+
+<#+
+class Header
+{
+	public string Name;
+	public List<Parameter> Parameters = new List<Parameter>();
+}
+
+class Parameter
+{
+	public string Type;
+	public string Name;
+}
+
+private readonly List<Header> _headers = new List<Header>();
+
+private void Hdr(string name, params Parameter[] parameters)
+	=> _headers.Add(new Header() {
+			Name = name,
+			Parameters = new List<Parameter>(parameters)
+		});
+
+private Parameter Obj(string type, string name)
+	=> new Parameter() { Type = type, Name = name };
+
+public static string FirstCharToLowerCase(string str)
+{
+	// https://stackoverflow.com/a/21755803/21072788
+	string newString = str;
+	if (!String.IsNullOrEmpty(newString))
+		newString = Char.ToLower(newString[0]) + newString.Substring(1);
+	return newString;
+}
+#>
