@@ -104,6 +104,7 @@
             int len = PeekStartCodeLength();
             if (len == -2)
             {
+                this.BitStreamReader.GoTo(nalStart);
                 return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
             }
 
