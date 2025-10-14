@@ -105,7 +105,7 @@
             if (len == -2)
             {
                 this.BitStreamReader.GoTo(nalStart);
-                return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
+                return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
             }
 
             this.BitStreamReader.GoTo(nalStart);
@@ -113,7 +113,7 @@
             if (!this.SkipToNalStart())
             {
                 this.BitStreamReader.GoTo(nalStart);
-                return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
+                return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
             }
 
             ReaderState nextNal = this.BitStreamReader.GetState();
