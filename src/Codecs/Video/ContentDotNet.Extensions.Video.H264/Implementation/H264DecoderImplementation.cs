@@ -191,7 +191,7 @@
             uint nal_ref_idc = this.BitStreamReader.ReadBits(2);
             uint nal_unit_type = this.BitStreamReader.ReadBits(5);
 
-            int nalUnitHeaderBytes = -1;
+            int nalUnitHeaderBytes = 1;
 
             SvcRbspNalUnitHeaderSvcExtension? svcExt = null;
             MvcNalUnitHeaderMvcExtension? mvcExt = null;
