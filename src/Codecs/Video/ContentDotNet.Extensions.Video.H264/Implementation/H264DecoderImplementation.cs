@@ -98,16 +98,23 @@
         {
             ReaderState nalStart = this.BitStreamReader.GetState();
 
-            if (!SkipToNalStart())
+            int len = PeekStartCodeLength();
+            if (len == -2)
             {
+                return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
+            }
+
+            this.BitStreamReader.GoTo(nalStart);
+
+            if (!this.SkipToNalStart())
+            {
+                this.BitStreamReader.GoTo(nalStart);
                 return this.BitStreamReader.BaseStream.Length - nalStart.ByteOffset;
             }
 
             ReaderState nextNal = this.BitStreamReader.GetState();
 
-            int startCodeLength = PeekStartCodeLength();
-
-            long size = nextNal.ByteOffset - nalStart.ByteOffset - startCodeLength;
+            long size = nextNal.ByteOffset - nalStart.ByteOffset - len;
 
             this.BitStreamReader.GoTo(nalStart);
             return size;
@@ -120,7 +127,11 @@
             while (true)
             {
                 int scl = GetStartCodeLength();
-                if (scl != -1)
+                if (scl == -2)
+                {
+                    return -2;
+                }
+                else if (scl != -1)
                 {
                     this.BitStreamReader.BaseStream.Position = offset;
                     return scl;
@@ -141,7 +152,9 @@
         {
             long prevOffset = this.BitStreamReader.BaseStream.Position;
             Span<byte> span = stackalloc byte[4];
-            this.BitStreamReader.BaseStream.ReadExactly(span);
+            int read = this.BitStreamReader.BaseStream.Read(span);
+            if (read < 3)
+                return -2;
             this.BitStreamReader.BaseStream.Position = prevOffset;
             if (span[0] == 0 && span[1] == 0 && span[2] == 0 && span[3] == 1)
             {
