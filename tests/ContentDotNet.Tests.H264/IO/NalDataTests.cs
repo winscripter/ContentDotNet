@@ -61,6 +61,7 @@
             dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
             Assert.Equal([0x89, 0x74], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
 
+            Assert.Equal(4, dcd.ProcessNalLength());
             Assert.Equal(NalType.Idr, dcd.DecodeNal(true, false));
             Assert.NotNull(dcd.State.H264RbspState.NalUnit);
             Assert.Equal(5u, dcd.State.H264RbspState.NalUnit.NalRefIdc);
