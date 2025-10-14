@@ -23,7 +23,7 @@
             };
         }
 
-        public override NalType DecodeNal(bool skipToNalStart = true)
+        public override NalType DecodeNal(bool skipToNalStart = true, bool decodeRbsp = true)
         {
             if (skipToNalStart)
             {
@@ -45,32 +45,35 @@
 
             NalType nalType = GetNalType((int)nal.NalUnitType);
 
-            if (nalType == NalType.Sps)
+            if (decodeRbsp)
             {
-                RbspSequenceParameterSetData spsData = this.IOReader!.ReadSPSData(this.State!.H264RbspState!, bitstreamReader);
-                this.State!.H264RbspState!.SequenceParameterSetData = spsData;
-            }
-            else if (nalType == NalType.Pps)
-            {
-                RbspPictureParameterSet ppsData = this.IOReader!.ReadPPSData(this.State!.H264RbspState!, bitstreamReader);
-                this.State!.H264RbspState!.PictureParameterSet = ppsData;
-            }
-            else if (nalType == NalType.Aud)
-            {
-                RbspAccessUnitDelimiter aud = ReadAud(bitstreamReader);
-                this.State!.H264RbspState!.AccessUnitDelimiter = aud;
-            }
-            else if (nalType == NalType.Idr || nalType == NalType.NonIdr)
-            {
-                RbspSliceHeader sliceHeader = this.IOReader!.ReadSliceHeader(this.State!.H264RbspState!, bitstreamReader);
-                var slice = new H264Slice(bitstreamReader, State)
+                if (nalType == NalType.Sps)
                 {
-                    IOReader = this.IOReader!,
-                    SyntaxReaderFactory = DefaultSyntaxReaderFactory.Instance
-                };
-                slice.LoadSlice(DecoderFactories.SliceDecoderFactory.CreateSliceDecoder());
-                this.Slice = slice;
-                this.State!.H264RbspState!.SliceHeader = sliceHeader;
+                    RbspSequenceParameterSetData spsData = this.IOReader!.ReadSPSData(this.State!.H264RbspState!, bitstreamReader);
+                    this.State!.H264RbspState!.SequenceParameterSetData = spsData;
+                }
+                else if (nalType == NalType.Pps)
+                {
+                    RbspPictureParameterSet ppsData = this.IOReader!.ReadPPSData(this.State!.H264RbspState!, bitstreamReader);
+                    this.State!.H264RbspState!.PictureParameterSet = ppsData;
+                }
+                else if (nalType == NalType.Aud)
+                {
+                    RbspAccessUnitDelimiter aud = ReadAud(bitstreamReader);
+                    this.State!.H264RbspState!.AccessUnitDelimiter = aud;
+                }
+                else if (nalType == NalType.Idr || nalType == NalType.NonIdr)
+                {
+                    RbspSliceHeader sliceHeader = this.IOReader!.ReadSliceHeader(this.State!.H264RbspState!, bitstreamReader);
+                    var slice = new H264Slice(bitstreamReader, State)
+                    {
+                        IOReader = this.IOReader!,
+                        SyntaxReaderFactory = DefaultSyntaxReaderFactory.Instance
+                    };
+                    slice.LoadSlice(DecoderFactories.SliceDecoderFactory.CreateSliceDecoder());
+                    this.Slice = slice;
+                    this.State!.H264RbspState!.SliceHeader = sliceHeader;
+                }
             }
 
             return nalType;
@@ -89,7 +92,7 @@
             };
         }
 
-        public override Task<NalType> DecodeNalAsync(bool skipToNalStart = true)
+        public override Task<NalType> DecodeNalAsync(bool skipToNalStart = true, bool decodeRbsp = true)
         {
             throw new NotImplementedException();
         }

@@ -142,14 +142,16 @@
         ///   Decodes an H.264 nal unit.
         /// </summary>
         /// <param name="skipToNalStart">When false, you'll have to invoke <see cref="SkipToNalStart"/> prior to invoking this method.</param>
+        /// <param name="decodeRbsp">For example, if the NAL unit is a PPS NAL unit, and this parameter is true, the PPS will be read too, automatically</param>
         /// <returns>The type of the NAL unit that was decoded.</returns>
-        public abstract NalType DecodeNal(bool skipToNalStart = true);
+        public abstract NalType DecodeNal(bool skipToNalStart = true, bool decodeRbsp = true);
 
         /// <summary>
         ///   Decodes an H.264 nal unit (asynchronous version).
         /// </summary>
         /// <param name="skipToNalStart">When false, you'll have to invoke <see cref="SkipToNalStart"/> prior to invoking this method.</param>
+        /// <param name="decodeRbsp">For example, if the NAL unit is a PPS NAL unit, and this parameter is true, the PPS will be read too, automatically</param>
         /// <returns>The type of the NAL unit that was decoded.</returns>
-        public abstract Task<NalType> DecodeNalAsync(bool skipToNalStart = true);
+        public abstract Task<NalType> DecodeNalAsync(bool skipToNalStart = true, bool decodeRbsp = true);
     }
 }

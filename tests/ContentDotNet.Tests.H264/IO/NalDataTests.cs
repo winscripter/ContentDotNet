@@ -45,7 +45,7 @@
 
             var dcd = new H264Service().CreateDecoder(bsr);
 
-            Assert.Equal(NalType.Aud, dcd.DecodeNal());
+            Assert.Equal(NalType.Aud, dcd.DecodeNal(true, false));
             Assert.NotNull(dcd.State);
             Assert.NotNull(dcd.State.H264RbspState);
             Assert.NotNull(dcd.State.H264RbspState.NalUnit);
@@ -54,14 +54,14 @@
             dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
             Assert.Equal([0x03], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
 
-            Assert.Equal(NalType.Pps, dcd.DecodeNal());
+            Assert.Equal(NalType.Pps, dcd.DecodeNal(true, false));
             Assert.NotNull(dcd.State.H264RbspState.NalUnit);
             Assert.Equal(2u, dcd.State.H264RbspState.NalUnit.NalRefIdc);
 
             dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
             Assert.Equal([0x89, 0x74], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
 
-            Assert.Equal(NalType.Idr, dcd.DecodeNal());
+            Assert.Equal(NalType.Idr, dcd.DecodeNal(true, false));
             Assert.NotNull(dcd.State.H264RbspState.NalUnit);
             Assert.Equal(5u, dcd.State.H264RbspState.NalUnit.NalRefIdc);
 
