@@ -39,7 +39,7 @@
         ///   any codec name using the <see langword="set"/> accessor. Likewise, it is not recommended to do so.
         /// </summary>
         public string Name { get => name; set => name = value; }
-
+        
         /// <summary>
         ///   This is the name of the codec that's displayed to the UI. It is, by default, "H.264", and its name can be
         ///   changed to anything using the <see langword="set"/> accessor, though, that isn't recommended.
@@ -121,7 +121,10 @@
         /// <summary>
         ///   The RBSP builder factory.
         /// </summary>
-        public IItuRbspBufferFactory? RbspBuilderFactory { get; set; } = MemoryRbspBufferFactory.Instance;
+        public IItuRbspBufferFactory? RbspBuilderFactory { get; set; } = new CustomRbspBufferFactory(() => new MemoryRbspBufferBuilder()
+        {
+            MaxSize = 2 * 1024 * 1024 // No more than 2MB
+        });
 
         /// <summary>
         ///   Moves to the start code of the next NAL unit.
