@@ -6,7 +6,7 @@
 
     public class NalDataTests
     {
-        //[Fact]
+        [Fact]
         public void Test_Seq_Of_Three_NALs()
         {
             var bytes = new byte[]
