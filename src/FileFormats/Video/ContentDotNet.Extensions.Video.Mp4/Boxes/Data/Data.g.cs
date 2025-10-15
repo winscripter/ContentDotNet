@@ -12,6 +12,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("rssr")]
 	public class Mp4ReceivedSsrcBoxData : IMp4BoxData, IEquatable<Mp4ReceivedSsrcBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Ssrc.
@@ -64,6 +66,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tssy")]
 	public class Mp4TimestampSynchronizationBoxData : IMp4BoxData, IEquatable<Mp4TimestampSynchronizationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Reserved.
@@ -126,6 +130,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tims")]
 	public class Mp4TimescaleEntryBoxData : IMp4BoxData, IEquatable<Mp4TimescaleEntryBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Timescale.
@@ -178,6 +184,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tsro")]
 	public class Mp4TimeOffsetBoxData : IMp4BoxData, IEquatable<Mp4TimeOffsetBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Offset.
@@ -230,6 +238,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("snro")]
 	public class Mp4SequenceOffsetBoxData : IMp4BoxData, IEquatable<Mp4SequenceOffsetBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Offset.
@@ -282,6 +292,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("trpy")]
 	public class Mp4TotalBytesSentIncluding12ByteRtpHeadersBoxData : IMp4BoxData, IEquatable<Mp4TotalBytesSentIncluding12ByteRtpHeadersBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -334,6 +346,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("nump")]
 	public class Mp4TotalPacketsSentBoxData : IMp4BoxData, IEquatable<Mp4TotalPacketsSentBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, PacketsSent.
@@ -386,6 +400,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tpyl")]
 	public class Mp4TotalBytesSentNotIncludingRtpHeadersBoxData : IMp4BoxData, IEquatable<Mp4TotalBytesSentNotIncludingRtpHeadersBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -438,6 +454,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("totl")]
 	public class Mp4TotalBytesSentIncluding12ByteRtpHeaders32BoxData : IMp4BoxData, IEquatable<Mp4TotalBytesSentIncluding12ByteRtpHeaders32BoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -490,6 +508,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("npck")]
 	public class Mp4TotalPacketsSent32BoxData : IMp4BoxData, IEquatable<Mp4TotalPacketsSent32BoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, PacketsSent.
@@ -542,6 +562,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tpay")]
 	public class Mp4TotalBytesSentNotIncludingRtpHeaders32BoxData : IMp4BoxData, IEquatable<Mp4TotalBytesSentNotIncludingRtpHeaders32BoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -594,6 +616,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("maxr")]
 	public class Mp4MaximumDataRateBoxData : IMp4BoxData, IEquatable<Mp4MaximumDataRateBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Period.
@@ -656,6 +680,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("dmed")]
 	public class Mp4TotalBytesSentFromMediaTracksBoxData : IMp4BoxData, IEquatable<Mp4TotalBytesSentFromMediaTracksBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -708,6 +734,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("dimm")]
 	public class Mp4TotalBytesSentImmediateModeBoxData : IMp4BoxData, IEquatable<Mp4TotalBytesSentImmediateModeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -760,6 +788,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("drep")]
 	public class Mp4TotalBytesInRepeatedPacketsBoxData : IMp4BoxData, IEquatable<Mp4TotalBytesInRepeatedPacketsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BytesSent.
@@ -812,6 +842,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tmin")]
 	public class Mp4SmallestRelativeTransmittionTimeMillisecondsBoxData : IMp4BoxData, IEquatable<Mp4SmallestRelativeTransmittionTimeMillisecondsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Time.
@@ -864,6 +896,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tmax")]
 	public class Mp4LargestRelativeTransmittionTimeMillisecondsBoxData : IMp4BoxData, IEquatable<Mp4LargestRelativeTransmittionTimeMillisecondsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Time.
@@ -916,6 +950,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("pmax")]
 	public class Mp4LargestPacketSentIncludingRtpHeaderBoxData : IMp4BoxData, IEquatable<Mp4LargestPacketSentIncludingRtpHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Bytes.
@@ -968,6 +1004,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("dmax")]
 	public class Mp4LongestPacketDurationInMillisecondsBoxData : IMp4BoxData, IEquatable<Mp4LongestPacketDurationInMillisecondsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Time.
@@ -1020,6 +1058,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("payt")]
 	public class Mp4PayloadIdUsedInRtpPacketsBoxData : IMp4BoxData, IEquatable<Mp4PayloadIdUsedInRtpPacketsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, PayloadId.
@@ -1072,6 +1112,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stvi")]
 	public class Mp4StereoVideoInfoBoxData : IMp4FullBoxData, IEquatable<Mp4StereoVideoInfoBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Reserved.
@@ -1194,6 +1236,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("elng")]
 	public class Mp4ExtendedLanguageBoxData : IMp4FullBoxData, IEquatable<Mp4ExtendedLanguageBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ExtendedLanguage.
@@ -1266,6 +1310,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("btrt")]
 	public class Mp4BitRateInformationBoxData : IMp4BoxData, IEquatable<Mp4BitRateInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BufferSizeDb.
@@ -1338,6 +1384,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("pasp")]
 	public class Mp4PixelAspectRatioBoxData : IMp4BoxData, IEquatable<Mp4PixelAspectRatioBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, HSpacing.
@@ -1400,6 +1448,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("clap")]
 	public class Mp4CleanApertureBoxData : IMp4BoxData, IEquatable<Mp4CleanApertureBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, CleanApertureWidthN.
@@ -1522,6 +1572,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("cclv")]
 	public class Mp4ContentColourVolumeBoxData : IMp4BoxData, IEquatable<Mp4ContentColourVolumeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Reserved1.
@@ -1684,6 +1736,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("colr")]
 	public class Mp4ColorInformationBoxData : IMp4BoxData, IEquatable<Mp4ColorInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ColourType.
@@ -1786,6 +1840,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("clli")]
 	public class Mp4ContentLightLevelBoxData : IMp4BoxData, IEquatable<Mp4ContentLightLevelBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, MaxContentLightLevel.
@@ -1848,6 +1904,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mdcv")]
 	public class Mp4MasteringDisplayColourVolumeBoxData : IMp4BoxData, IEquatable<Mp4MasteringDisplayColourVolumeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, DisplayPrimariesX.
@@ -1950,6 +2008,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("scrb")]
 	public class Mp4ScrambleSchemeInfoBoxData : IMp4BoxData, IEquatable<Mp4ScrambleSchemeInfoBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SchemeTypeBox.
@@ -2012,6 +2072,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("srat")]
 	public class Mp4SamplingRateBoxData : IMp4BoxData, IEquatable<Mp4SamplingRateBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SamplingRate.
@@ -2064,6 +2126,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("txtC")]
 	public class Mp4TextStreamConfigurationBoxData : IMp4BoxData, IEquatable<Mp4TextStreamConfigurationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, TextConfig.
@@ -2116,6 +2180,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("uriI")]
 	public class Mp4UriInformationBoxData : IMp4FullBoxData, IEquatable<Mp4UriInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, UriInitializationData.
@@ -2188,6 +2254,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("cprt")]
 	public class Mp4CopyrightBoxData : IMp4FullBoxData, IEquatable<Mp4CopyrightBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Pad.
@@ -2280,6 +2348,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("kind")]
 	public class Mp4TrackKindBoxData : IMp4FullBoxData, IEquatable<Mp4TrackKindBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SchemeUri.
@@ -2362,6 +2432,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tsel")]
 	public class Mp4TrackSelectionBoxData : IMp4FullBoxData, IEquatable<Mp4TrackSelectionBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SwitchGroup.
@@ -2444,6 +2516,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("strk")]
 	public class Mp4SubTrackBoxData : IMp4BoxData, IEquatable<Mp4SubTrackBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -2480,6 +2554,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("hnti")]
 	public class Mp4HintInformationBoxData : IMp4BoxData, IEquatable<Mp4HintInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -2516,6 +2592,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("sdp ")]
 	public class Mp4SdpInformationBoxData : IMp4BoxData, IEquatable<Mp4SdpInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SdpText.
@@ -2568,6 +2646,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("rtp ")]
 	public class Mp4RtpInformationBoxData : IMp4BoxData, IEquatable<Mp4RtpInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, DescriptionFormat.
@@ -2630,6 +2710,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("hinf")]
 	public class Mp4HintStatisticsBoxData : IMp4BoxData, IEquatable<Mp4HintStatisticsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -2666,6 +2748,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("url ")]
 	public class Mp4UrlBoxData : IMp4BoxData, IEquatable<Mp4UrlBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Flags.
@@ -2728,6 +2812,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("urn ")]
 	public class Mp4UrnBoxData : IMp4BoxData, IEquatable<Mp4UrnBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Flags.
@@ -2800,6 +2886,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("imdt")]
 	public class Mp4IdentifiedMediaDataImdtBoxData : IMp4BoxData, IEquatable<Mp4IdentifiedMediaDataImdtBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Flags.
@@ -2862,6 +2950,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("snim")]
 	public class Mp4SequenceNumberIdentifiedMediaDataBoxData : IMp4BoxData, IEquatable<Mp4SequenceNumberIdentifiedMediaDataBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Flags.
@@ -2914,6 +3004,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("ipco")]
 	public class Mp4ItemPropertyContainerBoxData : IMp4BoxData, IEquatable<Mp4ItemPropertyContainerBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Properties.
@@ -2966,6 +3058,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("ipma")]
 	public class Mp4ItemPropertyAssociationBoxData : IMp4FullBoxData, IEquatable<Mp4ItemPropertyAssociationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -3078,6 +3172,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("iprp")]
 	public class Mp4ItemPropertiesBoxData : IMp4BoxData, IEquatable<Mp4ItemPropertiesBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, PropertyContainer.
@@ -3140,6 +3236,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("assp")]
 	public class Mp4ActiveSequenceStartupPropertiesBoxData : IMp4FullBoxData, IEquatable<Mp4ActiveSequenceStartupPropertiesBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, MinInitialStartupOffset.
@@ -3242,6 +3340,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("bxml")]
 	public class Mp4BinaryXmlBoxData : IMp4FullBoxData, IEquatable<Mp4BinaryXmlBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Data.
@@ -3314,6 +3414,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("cinf")]
 	public class Mp4CompleteTrackInformationBoxData : IMp4BoxData, IEquatable<Mp4CompleteTrackInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, OriginalFormat.
@@ -3366,6 +3468,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("co64")]
 	public class Mp4ChunkLargeOffsetBoxData : IMp4FullBoxData, IEquatable<Mp4ChunkLargeOffsetBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -3448,6 +3552,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("cslg")]
 	public class Mp4CompositionToDecodeTimelineMappingBoxData : IMp4FullBoxData, IEquatable<Mp4CompositionToDecodeTimelineMappingBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, CompositionToDtsShift.
@@ -3560,6 +3666,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("ctts")]
 	public class Mp4CompositionTimeToSampleBoxData : IMp4FullBoxData, IEquatable<Mp4CompositionTimeToSampleBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -3652,6 +3760,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("dinf")]
 	public class Mp4DataInformationBoxData : IMp4BoxData, IEquatable<Mp4DataInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -3704,6 +3814,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("dref")]
 	public class Mp4DataReferenceBoxData : IMp4BoxData, IEquatable<Mp4DataReferenceBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -3766,6 +3878,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("edts")]
 	public class Mp4EditListContainerBoxData : IMp4BoxData, IEquatable<Mp4EditListContainerBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -3802,6 +3916,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("elst")]
 	public class Mp4EditListBoxData : IMp4FullBoxData, IEquatable<Mp4EditListBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -3914,6 +4030,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("etyp")]
 	public class Mp4ExtendedTypeBoxData : IMp4BoxData, IEquatable<Mp4ExtendedTypeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, CompatibleCombinations.
@@ -3966,6 +4084,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("fdel")]
 	public class Mp4FileDeliveryInformationBoxData : IMp4BoxData, IEquatable<Mp4FileDeliveryInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ContentLocation.
@@ -4068,6 +4188,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("fecr")]
 	public class Mp4FecReservoirBoxData : IMp4FullBoxData, IEquatable<Mp4FecReservoirBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -4160,6 +4282,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("free")]
 	public class Mp4FreeSpaceBoxData : IMp4BoxData, IEquatable<Mp4FreeSpaceBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Data.
@@ -4212,6 +4336,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("gitn")]
 	public class Mp4GroupIdToNameBoxData : IMp4BoxData, IEquatable<Mp4GroupIdToNameBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -4284,6 +4410,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("grpl")]
 	public class Mp4GroupsListBoxData : IMp4BoxData, IEquatable<Mp4GroupsListBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -4320,6 +4448,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("hdlr")]
 	public class Mp4HandlerBoxData : IMp4FullBoxData, IEquatable<Mp4HandlerBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Predefined.
@@ -4422,6 +4552,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("hmhd")]
 	public class Mp4HintMediaHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4HintMediaHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, MaxPduSize.
@@ -4534,6 +4666,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("idat")]
 	public class Mp4ItemDataBoxData : IMp4BoxData, IEquatable<Mp4ItemDataBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Data.
@@ -4586,6 +4720,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("iinf")]
 	public class Mp4ItemInformationBoxData : IMp4FullBoxData, IEquatable<Mp4ItemInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -4668,6 +4804,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("imda")]
 	public class Mp4IdentifiedMediaDataImdaBoxData : IMp4BoxData, IEquatable<Mp4IdentifiedMediaDataImdaBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ImdaIdentifier.
@@ -4730,6 +4868,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("ipro")]
 	public class Mp4ItemProtectionBoxData : IMp4FullBoxData, IEquatable<Mp4ItemProtectionBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ProtectionCount.
@@ -4812,6 +4952,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("iref")]
 	public class Mp4ItemReferenceBoxData : IMp4FullBoxData, IEquatable<Mp4ItemReferenceBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Boxes.
@@ -4884,6 +5026,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mdat")]
 	public class Mp4MediaDataBoxData : IMp4BoxData, IEquatable<Mp4MediaDataBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, RawData.
@@ -4936,6 +5080,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mdhd")]
 	public class Mp4MediaHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4MediaHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, CreationTime.
@@ -5068,6 +5214,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mdia")]
 	public class Mp4MediaBoxData : IMp4BoxData, IEquatable<Mp4MediaBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -5120,6 +5268,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mehd")]
 	public class Mp4MovieExtendsHeaderBoxData : IMp4BoxData, IEquatable<Mp4MovieExtendsHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, FragmentDuration.
@@ -5172,6 +5322,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("meta")]
 	public class Mp4MetaBoxBoxData : IMp4FullBoxData, IEquatable<Mp4MetaBoxBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Boxes.
@@ -5244,6 +5396,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mfhd")]
 	public class Mp4MovieFragmentHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4MovieFragmentHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SequenceNumber.
@@ -5316,6 +5470,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mfra")]
 	public class Mp4MovieFragmentRandomAccessBoxData : IMp4BoxData, IEquatable<Mp4MovieFragmentRandomAccessBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -5352,6 +5508,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mfro")]
 	public class Mp4MovieFragmentRandomAccessOffsetBoxData : IMp4FullBoxData, IEquatable<Mp4MovieFragmentRandomAccessOffsetBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ParentSize.
@@ -5424,6 +5582,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("minf")]
 	public class Mp4MediaInformationBoxData : IMp4BoxData, IEquatable<Mp4MediaInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -5460,6 +5620,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("moof")]
 	public class Mp4MovieFragmentBoxData : IMp4BoxData, IEquatable<Mp4MovieFragmentBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -5512,6 +5674,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("moov")]
 	public class Mp4MovieBoxData : IMp4BoxData, IEquatable<Mp4MovieBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -5564,6 +5728,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mvex")]
 	public class Mp4MovieExtendsBoxData : IMp4BoxData, IEquatable<Mp4MovieExtendsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -5616,6 +5782,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("mvhd")]
 	public class Mp4MovieHeaderBoxData : IMp4BoxData, IEquatable<Mp4MovieHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -5668,6 +5836,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("nmhd")]
 	public class Mp4NullMediaHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4NullMediaHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Version.
@@ -5730,6 +5900,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("otyp")]
 	public class Mp4OriginalFileTypeBoxBoxData : IMp4BoxData, IEquatable<Mp4OriginalFileTypeBoxBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -5766,6 +5938,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("padb")]
 	public class Mp4SamplePaddingBitsBoxData : IMp4FullBoxData, IEquatable<Mp4SamplePaddingBitsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SampleCount.
@@ -5878,6 +6052,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("pdin")]
 	public class Mp4ProgressiveDownloadInformationBoxData : IMp4FullBoxData, IEquatable<Mp4ProgressiveDownloadInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Rate.
@@ -5960,6 +6136,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("pitm")]
 	public class Mp4PrimaryItemReferenceBoxData : IMp4FullBoxData, IEquatable<Mp4PrimaryItemReferenceBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ItemId.
@@ -6032,6 +6210,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("prft")]
 	public class Mp4ProducerReferenceTimeBoxData : IMp4FullBoxData, IEquatable<Mp4ProducerReferenceTimeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, ReferenceTrackId.
@@ -6124,6 +6304,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("rinf")]
 	public class Mp4RestrictedSchemeInformationBoxData : IMp4BoxData, IEquatable<Mp4RestrictedSchemeInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, OriginalFormat.
@@ -6196,6 +6378,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("saio")]
 	public class Mp4SampleAuxiliaryInformationOffsetsBoxData : IMp4FullBoxData, IEquatable<Mp4SampleAuxiliaryInformationOffsetsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, AuxInfoType.
@@ -6298,6 +6482,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("saiz")]
 	public class Mp4SampleAuxiliaryInformationSizeBoxData : IMp4FullBoxData, IEquatable<Mp4SampleAuxiliaryInformationSizeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, AuxInfoType.
@@ -6410,6 +6596,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("sbgp")]
 	public class Mp4SampleToGroupBoxData : IMp4FullBoxData, IEquatable<Mp4SampleToGroupBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, GroupingType.
@@ -6522,6 +6710,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("schi")]
 	public class Mp4SchemeInformationBoxData : IMp4BoxData, IEquatable<Mp4SchemeInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SchemeSpecificData.
@@ -6574,6 +6764,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("schm")]
 	public class Mp4SchemeTypeBoxData : IMp4FullBoxData, IEquatable<Mp4SchemeTypeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SchemeType.
@@ -6666,6 +6858,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("csch")]
 	public class Mp4CompatibleSchemeTypeBoxData : IMp4FullBoxData, IEquatable<Mp4CompatibleSchemeTypeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SchemeType.
@@ -6758,6 +6952,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("sdtp")]
 	public class Mp4SampleDependencyTypeBoxData : IMp4FullBoxData, IEquatable<Mp4SampleDependencyTypeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, IsLeading.
@@ -6860,6 +7056,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("sidx")]
 	public class Mp4SegmentIndexBoxData : IMp4BoxData, IEquatable<Mp4SegmentIndexBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -6896,6 +7094,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("skip")]
 	public class Mp4FreeSpaceSkipBoxData : IMp4BoxData, IEquatable<Mp4FreeSpaceSkipBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, RawData.
@@ -6948,6 +7148,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("smhd")]
 	public class Mp4SoundMediaHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4SoundMediaHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Balance.
@@ -7030,6 +7232,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("srpp")]
 	public class Mp4StrpProcessBoxData : IMp4FullBoxData, IEquatable<Mp4StrpProcessBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EncryptionAlgorithmRtp.
@@ -7152,6 +7356,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("ssix")]
 	public class Mp4SubsampleIndexBoxData : IMp4BoxData, IEquatable<Mp4SubsampleIndexBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -7188,6 +7394,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stbl")]
 	public class Mp4SampleTableBoxData : IMp4BoxData, IEquatable<Mp4SampleTableBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -7240,6 +7448,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stco")]
 	public class Mp4ChunkOffsetBoxData : IMp4BoxData, IEquatable<Mp4ChunkOffsetBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -7302,6 +7512,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stdp")]
 	public class Mp4SampleDegradationPriorityBoxData : IMp4BoxData, IEquatable<Mp4SampleDegradationPriorityBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Priority.
@@ -7354,6 +7566,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("sthd")]
 	public class Mp4SubtitleMediaHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4SubtitleMediaHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Version.
@@ -7416,6 +7630,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("strd")]
 	public class Mp4SubTrackDefinitionBoxBoxData : IMp4BoxData, IEquatable<Mp4SubTrackDefinitionBoxBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -7452,6 +7668,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stri")]
 	public class Mp4SubTrackInformationBoxData : IMp4FullBoxData, IEquatable<Mp4SubTrackInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SwitchGroup.
@@ -7554,6 +7772,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stsc")]
 	public class Mp4SampleToChunkBoxData : IMp4FullBoxData, IEquatable<Mp4SampleToChunkBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -7656,6 +7876,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stsd")]
 	public class Mp4SampleDescriptionBoxData : IMp4FullBoxData, IEquatable<Mp4SampleDescriptionBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -7738,6 +7960,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stsg")]
 	public class Mp4SubtrackSampleGroupingBoxData : IMp4FullBoxData, IEquatable<Mp4SubtrackSampleGroupingBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, GroupingType.
@@ -7830,6 +8054,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stsh")]
 	public class Mp4ShadowSyncSampleTableBoxData : IMp4FullBoxData, IEquatable<Mp4ShadowSyncSampleTableBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -7922,6 +8148,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stss")]
 	public class Mp4SyncSampleTableBoxData : IMp4FullBoxData, IEquatable<Mp4SyncSampleTableBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -8004,6 +8232,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stsz")]
 	public class Mp4SampleSizeBoxData : IMp4FullBoxData, IEquatable<Mp4SampleSizeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, SampleSize.
@@ -8096,6 +8326,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("stts")]
 	public class Mp4TimeToSampleBoxData : IMp4FullBoxData, IEquatable<Mp4TimeToSampleBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, EntryCount.
@@ -8188,6 +8420,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tfdt")]
 	public class Mp4TrackFrameDecodeTimeBoxData : IMp4FullBoxData, IEquatable<Mp4TrackFrameDecodeTimeBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, BaseMediaDecodeTime.
@@ -8260,6 +8494,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tkhd")]
 	public class Mp4TrackHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4TrackHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, CreationTime.
@@ -8372,6 +8608,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("traf")]
 	public class Mp4TrackFragmentBoxData : IMp4BoxData, IEquatable<Mp4TrackFragmentBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -8424,6 +8662,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("trak")]
 	public class Mp4TrackBoxData : IMp4BoxData, IEquatable<Mp4TrackBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -8476,6 +8716,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tref")]
 	public class Mp4TrackReferenceContainerBoxData : IMp4BoxData, IEquatable<Mp4TrackReferenceContainerBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Boxes.
@@ -8528,6 +8770,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("trep")]
 	public class Mp4TrackExtensionPropertiesBoxData : IMp4FullBoxData, IEquatable<Mp4TrackExtensionPropertiesBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, TrackId.
@@ -8610,6 +8854,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("trex")]
 	public class Mp4TrackExtendsBoxData : IMp4FullBoxData, IEquatable<Mp4TrackExtendsBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, TrackId.
@@ -8722,6 +8968,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("trgr")]
 	public class Mp4TrackGroupingInformationBoxData : IMp4BoxData, IEquatable<Mp4TrackGroupingInformationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 
 
 		/// <summary>
@@ -8758,6 +9006,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("tyco")]
 	public class Mp4TypeAndCombinationBoxData : IMp4BoxData, IEquatable<Mp4TypeAndCombinationBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, CompatibleBrands.
@@ -8810,6 +9060,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("udta")]
 	public class Mp4UserDataBoxData : IMp4BoxData, IEquatable<Mp4UserDataBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Children.
@@ -8862,6 +9114,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("vmhd")]
 	public class Mp4VideoMediaHeaderBoxData : IMp4FullBoxData, IEquatable<Mp4VideoMediaHeaderBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, GraphicsMode.
@@ -8944,6 +9198,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("xml ")]
 	public class Mp4XmlContainerBoxData : IMp4FullBoxData, IEquatable<Mp4XmlContainerBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Xml.
@@ -9016,6 +9272,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("uri ")]
 	public class Mp4UriBoxData : IMp4FullBoxData, IEquatable<Mp4UriBoxData?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
 		///   Represents one of MP4 box properties, named, Uri.

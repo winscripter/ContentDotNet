@@ -171,6 +171,8 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	[FourCC("<#= box.Fcc #>")]
 	public class <#= className #> : <#= baseInterface #>, IEquatable<<#= className #>?>
 	{
+		/// <inheritdoc cref="IMp4BoxData.Parent" />
+		public Mp4Box? Parent { get; set; } = null;
 <#
 	foreach (Field field in box.Fields)
 	{
