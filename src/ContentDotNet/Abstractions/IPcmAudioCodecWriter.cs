@@ -69,24 +69,6 @@ public interface IPcmAudioCodecWriter : ICodecWithNames, IDisposable
     void WriteInterleavedSamples(ReadOnlySpan<byte> samples, int length);
 
     /// <summary>
-    ///   Writes given samples per channel to the stream.
-    /// </summary>
-    /// <param name="channel1">First channel</param>
-    /// <param name="channel2">Second channel</param>
-    /// <param name="channel3">Third channel</param>
-    /// <param name="length">Length of each channel</param>
-    void WriteSamples(ReadOnlySpan<short> channel1, ReadOnlySpan<short> channel2, ReadOnlySpan<short> channel3, int length);
-
-    /// <summary>
-    ///   Writes given samples per channel to the stream.
-    /// </summary>
-    /// <param name="channel1">First channel</param>
-    /// <param name="channel2">Second channel</param>
-    /// <param name="channel3">Third channel</param>
-    /// <param name="length">Length of each channel</param>
-    void WriteSamples(ReadOnlySpan<byte> channel1, ReadOnlySpan<byte> channel2, ReadOnlySpan<byte> channel3, int length);
-
-    /// <summary>
     ///   Writes given samples to the stream.
     /// </summary>
     /// <param name="samples">Samples to write.</param>

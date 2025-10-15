@@ -56,20 +56,14 @@ public interface IPcmAudioCodec : ICodecWithNames, IDisposable
     /// <summary>
     ///   Reads samples one time, storing them into the given buffer.
     /// </summary>
-    /// <param name="channel1">Decoded samples for Channel 1.</param>
-    /// <param name="channel2">Decoded samples for Channel 2.</param>
-    /// <param name="channel3">Decoded samples for Channel 3.</param>
-    /// <param name="length">Length of each channel.</param>
-    void ReadSamples(Span<short> channel1, Span<short> channel2, Span<short> channel3, int length);
+    /// <param name="samplesBuffer">Buffer where samples are stored.</param>
+    Task ReadSamplesAsync(Memory<short> samplesBuffer);
 
     /// <summary>
     ///   Reads samples one time, storing them into the given buffer.
     /// </summary>
-    /// <param name="channel1">Decoded samples for Channel 1.</param>
-    /// <param name="channel2">Decoded samples for Channel 2.</param>
-    /// <param name="channel3">Decoded samples for Channel 3.</param>
-    /// <param name="length">Length of each channel.</param>
-    void ReadSamples(Span<byte> channel1, Span<byte> channel2, Span<byte> channel3, int length);
+    /// <param name="samplesBuffer">Buffer where samples are stored.</param>
+    Task ReadSamplesAsync(Memory<byte> samplesBuffer);
 
     /// <summary>
     ///   Reads samples one time, storing them into the given buffer, with interleaving support
@@ -86,4 +80,20 @@ public interface IPcmAudioCodec : ICodecWithNames, IDisposable
     /// <param name="samplesBuffer">Buffer where samples are stored.</param>
     /// <param name="length">Number of samples per channel.</param>
     void ReadInterleavedSamples(Span<byte> samplesBuffer, int length);
+
+    /// <summary>
+    ///   Reads samples one time, storing them into the given buffer, with interleaving support
+    ///   for multiple channels.
+    /// </summary>
+    /// <param name="samplesBuffer">Buffer where samples are stored.</param>
+    /// <param name="length">Number of samples per channel.</param>
+    Task ReadInterleavedSamplesAsync(Memory<short> samplesBuffer, int length);
+
+    /// <summary>
+    ///   Reads samples one time, storing them into the given buffer, with interleaving support
+    ///   for multiple channels.
+    /// </summary>
+    /// <param name="samplesBuffer">Buffer where samples are stored.</param>
+    /// <param name="length">Number of samples per channel.</param>
+    Task ReadInterleavedSamplesAsync(Memory<byte> samplesBuffer, int length);
 }
