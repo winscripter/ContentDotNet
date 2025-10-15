@@ -202,6 +202,9 @@
             vars.aH1 = (1 - Math.Pow(2, -8)) * prevVars.aH1 + 3 * Math.Pow(2, -8) * pA;
             vars.aH2 = (1 - Math.Pow(2, -7)) * prevVars.aH2 + Math.Pow(2, -7) * pB - Math.Pow(2, -7) * f() * pA;
 
+            _last22Variables[n] = vars;
+            _last22Variables[n - 1] = prevVars;
+
             static double sgn2(double x) => x >= 0 ? +1 : -1;
 
             double f()
