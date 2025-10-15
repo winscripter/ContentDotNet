@@ -281,6 +281,37 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	}
 }
 
+namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data.Utilities
+{
+	using ContentDotNet.Extensions.Video.Mp4.Boxes.Data;
+	
+	/// <summary>
+	///   Create MP4 boxes from just their 4 character code.
+	/// </summary>
+	public static class BuiltInNameToBoxFactory
+	{
+		/// <summary>
+		///   The keys are box four-character-codes and the values are factories to create that box. Example:
+		///   <code>
+		///     IMp4BoxData boxData = BuiltInNameToBoxFactory
+	    ///			.DataFactoryTable["moov"]();
+		///     Mp4MovieBoxData moov = (Mp4MovieBoxData)boxData;
+		///     // ...
+		///   </code>
+		/// </summary>
+		public static readonly Dictionary<string, Func<IMp4BoxData>> DataFactoryTable = new()
+		{
+<#
+	foreach (Box box in _boxes)
+	{
+		string className = $"Mp4{box.Name}BoxData";
+#>
+			["<#= box.Fcc #>"] = () => new <#= className #>(),
+<# } #>
+		};
+	}
+}
+
 <#+
 class Box {
 	public string Name;
