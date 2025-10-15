@@ -92,6 +92,10 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Audio", "Audio", "{8CFE803B
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Audio.G722", "src\Codecs\Audio\ContentDotNet.Extensions.Audio.G722\ContentDotNet.Extensions.Audio.G722.csproj", "{AC843287-A4F0-4A75-9808-7DE876C1C786}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Image", "Image", "{7E05CDAD-144E-48DC-A83D-5E45E606166B}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Image.Jpeg", "src\FileFormats\Image\ContentDotNet.Extensions.Image.Jpeg\ContentDotNet.Extensions.Image.Jpeg.csproj", "{8E68F2C7-559C-4A26-9EF1-DC339AEB771C}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -186,6 +190,10 @@ Global
 		{AC843287-A4F0-4A75-9808-7DE876C1C786}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AC843287-A4F0-4A75-9808-7DE876C1C786}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AC843287-A4F0-4A75-9808-7DE876C1C786}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8E68F2C7-559C-4A26-9EF1-DC339AEB771C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8E68F2C7-559C-4A26-9EF1-DC339AEB771C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8E68F2C7-559C-4A26-9EF1-DC339AEB771C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8E68F2C7-559C-4A26-9EF1-DC339AEB771C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -221,6 +229,8 @@ Global
 		{218A6519-B0C6-4D61-A6D3-8A6F2CA84A86} = {7ECE518A-6DE9-4032-970F-AB253E7EA412}
 		{8CFE803B-86E2-4D46-B1CE-972776568769} = {7ECE0F78-A4BF-4A1A-AC5A-0742BF437D36}
 		{AC843287-A4F0-4A75-9808-7DE876C1C786} = {8CFE803B-86E2-4D46-B1CE-972776568769}
+		{7E05CDAD-144E-48DC-A83D-5E45E606166B} = {F26D88B1-BBD9-4CC2-966C-D2EA500199D8}
+		{8E68F2C7-559C-4A26-9EF1-DC339AEB771C} = {7E05CDAD-144E-48DC-A83D-5E45E606166B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

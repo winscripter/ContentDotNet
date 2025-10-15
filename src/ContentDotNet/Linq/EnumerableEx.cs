@@ -27,5 +27,21 @@
             }
             return -1;
         }
+
+        /// <summary>
+        ///   Computes the sum of all items from the span.
+        /// </summary>
+        /// <param name="span">The source span</param>
+        /// <returns>The span sum</returns>
+        public static int Max(
+            this ReadOnlySpan<int> span)
+        {
+            int limit = 0;
+
+            foreach (int item in span)
+                limit += item;
+
+            return limit;
+        }
     }
 }
