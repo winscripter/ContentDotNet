@@ -106,43 +106,43 @@
             return _internalDecoder.DecodeSample((short)await Stream.ReadBitsAsync(16));
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadSamplesAsync(Memory{short})" />
-        public async Task ReadSamplesAsync(Memory<short> samplesBuffer)
+        /// <inheritdoc cref="IPcmAudioCodec.ReadSamplesAsync(short[])" />
+        public async Task ReadSamplesAsync(short[] samplesBuffer)
         {
             for (int i = 0; i < samplesBuffer.Length; i++)
-                samplesBuffer.Span[i] = await ReadSampleAsync();
+                samplesBuffer[i] = await ReadSampleAsync();
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadSamplesAsync(Memory{byte})" />
-        public async Task ReadSamplesAsync(Memory<byte> samplesBuffer)
+        /// <inheritdoc cref="IPcmAudioCodec.ReadSamplesAsync(byte[])" />
+        public async Task ReadSamplesAsync(byte[] samplesBuffer)
         {
             for (int i = 0; i < samplesBuffer.Length; i++)
-                samplesBuffer.Span[i] = (byte)await ReadSampleAsync();
+                samplesBuffer[i] = (byte)await ReadSampleAsync();
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamplesAsync(Memory{short}, int)" />
-        public async Task ReadInterleavedSamplesAsync(Memory<short> samplesBuffer, int length)
+        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamplesAsync(short[], int)" />
+        public async Task ReadInterleavedSamplesAsync(short[] samplesBuffer, int length)
         {
             int currOffset = 0;
             for (int i = 0; i < length; i++)
             {
                 for (int j = 0; j < ChannelCount; j++)
                 {
-                    samplesBuffer.Span[currOffset] = await ReadSampleAsync();
+                    samplesBuffer[currOffset] = await ReadSampleAsync();
                     currOffset++;
                 }
             }
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamplesAsync(Memory{byte}, int)" />
-        public async Task ReadInterleavedSamplesAsync(Memory<byte> samplesBuffer, int length)
+        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamplesAsync(byte[], int)" />
+        public async Task ReadInterleavedSamplesAsync(byte[] samplesBuffer, int length)
         {
             int currOffset = 0;
             for (int i = 0; i < length; i++)
             {
                 for (int j = 0; j < ChannelCount; j++)
                 {
-                    samplesBuffer.Span[currOffset] = (byte)await ReadSampleAsync();
+                    samplesBuffer[currOffset] = (byte)await ReadSampleAsync();
                     currOffset++;
                 }
             }

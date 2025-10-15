@@ -57,13 +57,13 @@ public interface IPcmAudioCodec : ICodecWithNames, IDisposable
     ///   Reads samples one time, storing them into the given buffer.
     /// </summary>
     /// <param name="samplesBuffer">Buffer where samples are stored.</param>
-    Task ReadSamplesAsync(Memory<short> samplesBuffer);
+    Task ReadSamplesAsync(short[] samplesBuffer);
 
     /// <summary>
     ///   Reads samples one time, storing them into the given buffer.
     /// </summary>
     /// <param name="samplesBuffer">Buffer where samples are stored.</param>
-    Task ReadSamplesAsync(Memory<byte> samplesBuffer);
+    Task ReadSamplesAsync(byte[] samplesBuffer);
 
     /// <summary>
     ///   Reads samples one time, storing them into the given buffer, with interleaving support
@@ -87,7 +87,7 @@ public interface IPcmAudioCodec : ICodecWithNames, IDisposable
     /// </summary>
     /// <param name="samplesBuffer">Buffer where samples are stored.</param>
     /// <param name="length">Number of samples per channel.</param>
-    Task ReadInterleavedSamplesAsync(Memory<short> samplesBuffer, int length);
+    Task ReadInterleavedSamplesAsync(short[] samplesBuffer, int length);
 
     /// <summary>
     ///   Reads samples one time, storing them into the given buffer, with interleaving support
@@ -95,5 +95,5 @@ public interface IPcmAudioCodec : ICodecWithNames, IDisposable
     /// </summary>
     /// <param name="samplesBuffer">Buffer where samples are stored.</param>
     /// <param name="length">Number of samples per channel.</param>
-    Task ReadInterleavedSamplesAsync(Memory<byte> samplesBuffer, int length);
+    Task ReadInterleavedSamplesAsync(byte[] samplesBuffer, int length);
 }

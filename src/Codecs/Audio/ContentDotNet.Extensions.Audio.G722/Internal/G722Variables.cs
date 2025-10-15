@@ -2,6 +2,8 @@
 {
     // Don't care that it's public fields. It's internal anyway. :)
 
+    #pragma warning disable CS0649
+
     internal struct G722Variables
     {
         public int xin;
