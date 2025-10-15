@@ -7,7 +7,7 @@
     /// </summary>
     public class Mp4Box
     {
-        private readonly IMp4BoxData? data;
+        private IMp4BoxData? data;
         private int size;
         private FourCC type;
 
@@ -26,6 +26,11 @@
             get
             {
                 return data;
+            }
+
+            set
+            {
+                data = value;
             }
         }
 

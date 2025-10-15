@@ -141,8 +141,6 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	B("@XmlContainer", "xml ").F("string", "Xml");
 	B("@Uri", "uri ").F("string", "Uri");
 
-	// Last line: 621 out of 1559
-
 	foreach (Box box in _boxes)
 	{
 		bool isFull = box.Name.Contains('@');
