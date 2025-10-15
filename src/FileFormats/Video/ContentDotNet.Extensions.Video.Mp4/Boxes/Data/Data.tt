@@ -41,23 +41,23 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	B("ColorInformation", "colr").F("uint", "ColourType").F("ushort", "ColourPrimaries").F("ushort", "TransferCharacteristics").F("ushort", "MatrixCoefficients").F("bool", "FullRangeFlag").F("uint", "Reserved");
 	B("ContentLightLevel", "clli").F("ushort", "MaxContentLightLevel").F("ushort", "MaxPicAverageLightLevel");
 	B("MasteringDisplayColourVolume", "mdcv").F("ushort[]", "DisplayPrimariesX").F("ushort[]", "DisplayPrimariesY").F("ushort", "WhitePointX").F("ushort", "WhitePointY").F("uint", "MaxDisplayMasteringLuminance").F("uint", "MinDisplayMasteringLuminance");
-	B("ScrambleSchemeInfoBox", "scrb").F("Mp4Box", "SchemeTypeBox").F("Mp4Box", "Info");
+	B("ScrambleSchemeInfo", "scrb").F("Mp4Box", "SchemeTypeBox").F("Mp4Box", "Info");
 	B("SamplingRate", "srat").F("uint", "SamplingRate");
 	B("TextStreamConfiguration", "txtC").F("string", "TextConfig");
 	B("@UriInformation", "uriI").F("byte[]", "UriInitializationData");
 	B("@Copyright", "cprt").F("bool", "Pad").F("byte[]", "Language").F("string", "Notice");
 	B("@TrackKind", "kind").F("string", "SchemeUri").F("string", "Value");
 	B("@TrackSelection", "tsel").F("int", "SwitchGroup").F("uint[]", "AttributeList");
-	B("SubTrackBox", "strk");
+	B("SubTrack", "strk");
 	B("HintInformation", "hnti");
 	B("SdpInformation", "sdp ").F("string", "SdpText");
 	B("RtpInformation", "rtp ").F("uint", "DescriptionFormat").F("string", "SdpText");
 	B("HintStatistics", "hinf");
-	B("UrlBox", "url ").F("uint", "Flags").F("string", "Location");
-	B("UrnBox", "urn ").F("uint", "Flags").F("string", "Name").F("string", "Location");
-	B("IdentifiedMediaData", "imdt").F("uint", "Flags").F("uint", "ImdaRefIdentifier");
+	B("Url", "url ").F("uint", "Flags").F("string", "Location");
+	B("Urn", "urn ").F("uint", "Flags").F("string", "Name").F("string", "Location");
+	B("IdentifiedMediaDataImdt", "imdt").F("uint", "Flags").F("uint", "ImdaRefIdentifier");
 	B("SequenceNumberIdentifiedMediaData", "snim").F("uint", "Flags");
-	B("ItemPropertyContainerBox", "ipco").F("IList<Mp4Box>", "Properties");
+	B("ItemPropertyContainer", "ipco").F("IList<Mp4Box>", "Properties");
 	B("@ItemPropertyAssociation", "ipma").F("uint", "EntryCount").F("IList<uint>", "ItemId").F("IList<byte>", "AssociationCount").F("IList<IList<bool>>", "Essential").F("IList<IList<ushort>>", "PropertyIndex");
 	B("ItemProperties", "iprp").F("IList<Mp4Box>", "PropertyContainer").F("IList<Mp4Box>", "Association");
 	B("@ActiveSequenceStartupProperties", "assp").F("int", "MinInitialStartupOffset").F("uint", "NumEntries").F("uint[]", "GroupingTypeParameter").F("uint[]", "MinInitialStartupOffset2");
@@ -66,7 +66,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	B("@ChunkLargeOffset", "co64").F("uint", "EntryCount").F("IList<ulong>", "ChunkOffset");
 	B("@CompositionToDecodeTimelineMapping", "cslg").F("long", "CompositionToDtsShift").F("long", "LeastDecodeToDisplayDelta").F("long", "GreatestDecodeToDisplayDelta").F("long", "CompositionStartTime").F("long", "CompositionEndTime");
 	B("@CompositionTimeToSample", "ctts").F("uint", "EntryCount").F("IList<uint>", "SampleCount").F("IList<int>", "SampleOffset");
-	B("DataInformation", "dinf");
+	B("!DataInformation", "dinf");
 	B("DataReference", "dref").F("uint", "EntryCount").F("IList<Mp4Box>", "Boxes");
 	B("EditListContainer", "edts");
 	B("@EditList", "elst").F("uint", "EntryCount").F("IList<ulong>", "EditDuration").F("IList<ulong>", "MediaTime").F("IList<short>", "MediaRateInteger").F("IList<short>", "MediaRateFraction");
@@ -74,6 +74,74 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	B("FileDeliveryInformation", "fdel").F("string", "ContentLocation").F("string", "ContentMd5").F("ulong", "ContentLength").F("ulong", "TransferLength").F("byte", "EntryCount").F("IList<uint>", "GroupId");
 	B("@FecReservoir", "fecr").F("uint", "EntryCount").F("IList<uint>", "ItemId").F("IList<uint>", "SymbolCount");
 	B("FreeSpace", "free").F("IList<byte>", "Data");
+	B("GroupIdToName", "gitn").F("ushort", "EntryCount").F("IList<uint>", "GroupId").F("IList<string>", "GroupName");
+	B("GroupsList", "grpl");
+	B("@Handler", "hdlr").F("uint", "Predefined").F("uint", "HandlerType").F("IList<uint>", "Reserved").F("string", "Name");
+	B("@HintMediaHeader", "hmhd").F("ushort", "MaxPduSize").F("ushort", "AvgPduSize").F("uint", "MaxBitRate").F("uint", "AvgBitRate").F("uint", "Reserved");
+	B("ItemData", "idat").F("byte[]", "Data");
+	B("@ItemInformation", "iinf").F("uint", "EntryCount").F("IList<Mp4Box>", "ItemInfos");
+	B("IdentifiedMediaDataImda", "imda").F("uint", "ImdaIdentifier").F("byte[]", "Data");
+	B("@ItemProtection", "ipro").F("ushort", "ProtectionCount").F("IList<Mp4Box>", "ProtectionInformation");
+	B("@ItemReference", "iref").F("IList<Mp4Box>", "Boxes");
+	B("MediaData", "mdat").F("Stream", "RawData");
+	B("@MediaHeader", "mdhd").F("ulong", "CreationTime").F("ulong", "ModificationTime").F("uint", "Timescale").F("ulong", "Duration").F("bool", "Pad").F("IList<uint>", "Language").F("ushort", "Predefined");
+	B("!Media", "mdia");
+	B("MovieExtendsHeader", "mehd").F("ulong", "FragmentDuration");
+	B("@MetaBox", "meta").F("IList<Mp4Box>", "Boxes");
+	B("@MovieFragmentHeader", "mfhd").F("uint", "SequenceNumber");
+	B("MovieFragmentRandomAccess", "mfra");
+	B("@MovieFragmentRandomAccessOffset", "mfro").F("uint", "ParentSize");
+	B("MediaInformation", "minf");
+	B("!MovieFragment", "moof"); // Moo indeed
+	B("!Movie", "moov"); // Moo indeed
+	B("!MovieExtends", "mvex");
+	B("!MovieHeader", "mvhd");
+	B("@NullMediaHeader", "nmhd");
+	B("OriginalFileTypeBox", "otyp");
+	B("@SamplePaddingBits", "padb").F("uint", "SampleCount").F("IList<bool>", "Reserved1").F("IList<byte>", "Pad1").F("IList<bool>", "Reserved2").F("IList<byte>", "Pad2");
+	B("@ProgressiveDownloadInformation", "pdin").F("IList<uint>", "Rate").F("IList<uint>", "InitialDelay");
+	B("@PrimaryItemReference", "pitm").F("uint", "ItemId");
+	B("@ProducerReferenceTime", "prft").F("uint", "ReferenceTrackId").F("ulong", "NtpTimestamp").F("ulong", "MediaTime");
+	B("RestrictedSchemeInformation", "rinf").F("Mp4Box", "OriginalFormat").F("Mp4Box", "SchemeTypeBox").F("Mp4Box", "Info");
+	B("@SampleAuxiliaryInformationOffsets", "saio").F("uint", "AuxInfoType").F("uint", "AuxInfoTypeParameter").F("uint", "EntryCount").F("IList<ulong>", "Offsets");
+	B("@SampleAuxiliaryInformationSize", "saiz").F("uint", "AuxInfoType").F("uint", "AuxInfoTypeParameter").F("byte", "DefaultSampleInfoSize").F("uint", "SampleCount").F("IList<byte>", "SampleInfoSize");
+	B("@SampleToGroup", "sbgp").F("uint", "GroupingType").F("uint", "GroupingTypeParameter").F("uint", "EntryCount").F("IList<uint>", "SampleCount").F("IList<uint>", "GroupDescriptionIndex");
+	B("SchemeInformation", "schi").F("IList<Mp4Box>", "SchemeSpecificData");
+	B("@SchemeType", "schm").F("uint", "SchemeType").F("uint", "SchemeVersion").F("string", "SchemeUri");
+	B("@CompatibleSchemeType", "csch").F("uint", "SchemeType").F("uint", "SchemeVersion").F("string", "SchemeUri");
+	B("@SampleDependencyType", "sdtp").F("IList<byte>", "IsLeading").F("IList<byte>", "SampleDependsOn").F("IList<byte>", "SampleIsDependedOn").F("IList<byte>", "SampleHasRedundancy");
+	B("SegmentIndex", "sidx");
+	B("FreeSpaceSkip", "skip").F("Stream", "RawData");
+	B("@SoundMediaHeader", "smhd").F("ushort", "Balance").F("ushort", "Reserved");
+	B("@StrpProcess", "srpp").F("uint", "EncryptionAlgorithmRtp").F("uint", "EncryptionAlgorithmRtcp").F("uint", "IntegrityAlgorithmRtp").F("uint", "IntegrityAlgorithmRtcp").F("Mp4Box", "SchemeTypeBox").F("Mp4Box", "Info");
+	B("SubsampleIndex", "ssix");
+	B("!SampleTable", "stbl");
+	B("ChunkOffset", "stco").F("uint", "EntryCount").F("IList<uint>", "ChunkOffset");
+	B("SampleDegradationPriority", "stdp").F("IList<ushort>", "Priority");
+	B("@SubtitleMediaHeader", "sthd");
+	B("SubTrackDefinitionBox", "strd");
+	B("@SubTrackInformation", "stri").F("short", "SwitchGroup").F("short", "AlternateGroup").F("uint", "SubTrackId").F("IList<uint>", "AttributeList");
+	B("@SampleToChunk", "stsc").F("uint", "EntryCount").F("IList<uint>", "FirstChunk").F("IList<uint>", "SamplesPerChunk").F("IList<uint>", "SampleDescriptionIndex");
+	B("@SampleDescription", "stsd").F("uint", "EntryCount").F("IList<Mp4Box>", "SampleEntries");
+	B("@SubtrackSampleGrouping", "stsg").F("uint", "GroupingType").F("ushort", "ItemCount").F("IList<uint>", "GroupDescriptionIndex");
+	B("@ShadowSyncSampleTable", "stsh").F("uint", "EntryCount").F("IList<uint>", "ShadowedSampleNumber").F("IList<uint>", "SyncSampleNumber");
+	B("@SyncSampleTable", "stss").F("uint", "EntryCount").F("IList<uint>", "SampleNumber");
+	B("@SampleSize", "stsz").F("uint", "SampleSize").F("uint", "SampleCount").F("IList<uint>", "EntrySize");
+	B("@TimeToSample", "stts").F("uint", "EntryCount").F("IList<uint>", "SampleCount").F("IList<uint>", "SampleDelta");
+	B("@TrackFrameDecodeTime", "tfdt").F("ulong", "BaseMediaDecodeTime");
+	B("@TrackHeader", "tkhd").F("ulong", "CreationTime").F("ulong", "ModificationTime").F("uint", "TrackId").F("uint", "Reserved").F("ulong", "Duration");
+	B("!TrackFragment", "traf");
+	B("!Track", "trak");
+	B("TrackReferenceContainer", "tref").F("IList<Mp4Box>", "Boxes");
+	B("@TrackExtensionProperties", "trep").F("uint", "TrackId").F("IList<Mp4Box>", "Boxes");
+	B("@TrackExtends", "trex").F("uint", "TrackId").F("uint", "DefaultSampleDescriptionIndex").F("uint", "DefaultSampleDuration").F("uint", "DefaultSampleSize").F("uint", "DefaultSampleFlags");
+	B("TrackGroupingInformation", "trgr");
+	B("TypeAndCombination", "tyco").F("IList<uint>", "CompatibleBrands");
+	B("!UserData", "udta");
+	B("@VideoMediaHeader", "vmhd").F("ushort", "GraphicsMode").F("IList<ushort>", "TopColor");
+	B("@XmlContainer", "xml ").F("string", "Xml");
+	B("@Uri", "uri ").F("string", "Uri");
+
 	// Last line: 621 out of 1559
 
 	foreach (Box box in _boxes)
@@ -81,10 +149,17 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		bool isFull = box.Name.Contains('@');
 		if (isFull)
 			box.Name = box.Name.Replace("@", string.Empty);
+		bool hasChildren = box.Name.Contains('!'); // The entire box data consists of just inner boxes?
+		if (hasChildren)
+			box.Name = box.Name.Replace("!", string.Empty);
 		string baseInterface = isFull ? "IMp4FullBoxData" : "IMp4BoxData";
 		if (isFull)
 		{
 			box.F("byte", "Version").F("uint", "Flags");
+		}
+		if (hasChildren)
+		{
+			box.F("IList<Mp4Box>", "Children");
 		}
 		string className = $"Mp4{box.Name}BoxData";
 
@@ -202,6 +277,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 			sourceBox.<#= field.Name #> = valueToReplaceWith;
 			return sourceBox;
 		}
+
 <# } } #>
 	}
 }

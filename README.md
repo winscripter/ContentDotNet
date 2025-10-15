@@ -10,48 +10,49 @@
 >
 > Use at your own risk—you might discover functions that do the opposite of what you'd expect!
 
-ContentDotNet is a library for C# to create videos, audios, images and other multimedia. It allows reading them,
+ContentDotNet is a high-performance & cross-platform framework for C# to create videos, audios, images and other multimedia. It allows reading them,
 creating them, and otherwise inspecting or editing their contents. It provides a user-friendly API, as well as
 extensive documentation and samples. It does not use any native libraries; everything is pure C#, following the
 specification for each format.
 
-Powered by nothing but .NET 8.0, it allows processing multimedia content very quickly and under a memory efficient
-manner, while also being compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, and Embedded/IoT scenarios.
+Powered by .NET 8.0, it allows processing multimedia content very quickly and under a memory efficient
+context, while also being compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, and Embedded/IoT scenarios.
 
 It is cross-platform and platform-independent, allowing ContentDotNet to run on a wide range of systems without
-worrying about compatibility, while also making deployment easier.
+worrying about compatibility, while also making deployment easier. It will work where .NET can run - yes, even Blazor WebAssembly.
 
 ## What's supported?
 ### Formats
 
 - Video:
     - Codecs:
+        - H.261
         - H.264
-    - Formats
+        - MJPEG
+    - Formats:
         - MP4
+        - AVI
 - Image:
     - Formats:
         - PNG
         - BMP
-- Data:
-    - Hashing:
-        - Adler32
-        - CRC32
-        - CRC64
-        - XXHash128
-    - Compression:
-        - LZ77
-        - LZW
+        - JPEG
 - Audio:
     - Codecs:
         - G.711
         - G.722
         - G.726
+- Protocols:
+    - SDP
+    - RTSP
+    - BGP
+    - RTP
+    - IPP
 
 ### Capabilities
 
-H.264:
-  - CAVLC and CABAC
+H.264 (Decoding-only):
+  - CABAC decoding
   - MBAFF
   - Intra and Inter prediction
   - Motion compensation
@@ -64,10 +65,6 @@ H.264:
   - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
   - VUI parameters
   - Weighted Prediction
-
-> [!NOTE]
-> Encoding is not supported because the H.264 spec doesn't provide how to do so.
-> If you find an encoding spec or any other solution, please create a GitHub Issues post and let me know!
 
 MP4:
   - Sample entries
@@ -106,40 +103,8 @@ G.722:
 G.726:
   - Everything that the G.711 encoder/decoder supports
 
-RTSP:
-  - SDP
-    - Parsing packets
-    - Accessing packets
-    - Sending/receiving packets
-    - Async support
-    - Memory efficient
-    - Clean API
-  - RTP
-  - RTCP
-  - Async support
-  - Can utilize any network stream - local, TCP, UDP, or even a custom one
-  - Secure authentication
-
-## Licensing
-The library is free and open-source and licensed under the [MIT License](LICENSE.md).
-You can use ContentDotNet for free, even in commercial projects.
-
-> [!WARNING]
-> Some codecs and formats implemented by this library are patented and/or licensed (f.e. H.264) by the company/companies that owns/own them.
-> In commercial, enterprise, or profit-generating context, you'll have to obtain the license and pay royalties to the company owning those patents yourself.
-
-## Efficiency
-Each codec describes recommended and maximum possible memory usage in its README.
-
-However, ContentDotNet is highly memory efficient. Even if your system has 4GB RAM (which is extremely low in 2025),
-you can play around and experiment with different codecs and formats supported by ContentDotNet. Potential memory
-constraints are likely to be reached on devices with low memory (f.e. IoT) starting with the 1440p video/image resolution.
-
-So yeah, if you want video editing without putting stress on your PC, you might try to do so with ContentDotNet on any IoT
-device you have, like a Raspberry Pi, just sitting next to your computer processing video editing with just 1GB-8GB RAM!
-
-ContentDotNet also doesn't load the user's system aggressively, since it doesn't yet support multithreading,
-hardware acceleration, or SIMD vectorization.
+## Contributing
+See [CONTRIBUTING.md](CONTRIBUTING.md).
 
 ## Other
 
