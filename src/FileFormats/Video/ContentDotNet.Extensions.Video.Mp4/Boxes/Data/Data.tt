@@ -9,7 +9,6 @@
 namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 {
 	using ContentDotNet.Extensions.Video.Mp4.Annotations;
-	using System.ComponentModel;
 
 <#
 	B("ReceivedSsrc", "rssr").F("uint", "Ssrc");
@@ -216,7 +215,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is <#= className #> val

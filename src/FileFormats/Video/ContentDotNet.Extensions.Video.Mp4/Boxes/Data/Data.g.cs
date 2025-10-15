@@ -3,7 +3,6 @@
 namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 {
 	using ContentDotNet.Extensions.Video.Mp4.Annotations;
-	using System.ComponentModel;
 
 
 	/// <summary>
@@ -37,7 +36,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ReceivedSsrcBoxData val
@@ -99,7 +98,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TimestampSynchronizationBoxData val
@@ -155,7 +154,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TimescaleEntryBoxData val
@@ -209,7 +208,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TimeOffsetBoxData val
@@ -263,7 +262,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SequenceOffsetBoxData val
@@ -317,7 +316,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesSentIncluding12ByteRtpHeadersBoxData val
@@ -371,7 +370,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalPacketsSentBoxData val
@@ -425,7 +424,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesSentNotIncludingRtpHeadersBoxData val
@@ -479,7 +478,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesSentIncluding12ByteRtpHeaders32BoxData val
@@ -533,7 +532,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalPacketsSent32BoxData val
@@ -587,7 +586,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesSentNotIncludingRtpHeaders32BoxData val
@@ -649,7 +648,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MaximumDataRateBoxData val
@@ -705,7 +704,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesSentFromMediaTracksBoxData val
@@ -759,7 +758,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesSentImmediateModeBoxData val
@@ -813,7 +812,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TotalBytesInRepeatedPacketsBoxData val
@@ -867,7 +866,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SmallestRelativeTransmittionTimeMillisecondsBoxData val
@@ -921,7 +920,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4LargestRelativeTransmittionTimeMillisecondsBoxData val
@@ -975,7 +974,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4LargestPacketSentIncludingRtpHeaderBoxData val
@@ -1029,7 +1028,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4LongestPacketDurationInMillisecondsBoxData val
@@ -1083,7 +1082,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4PayloadIdUsedInRtpPacketsBoxData val
@@ -1193,7 +1192,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4StereoVideoInfoBoxData val
@@ -1277,7 +1276,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ExtendedLanguageBoxData val
@@ -1351,7 +1350,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4BitRateInformationBoxData val
@@ -1417,7 +1416,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4PixelAspectRatioBoxData val
@@ -1529,7 +1528,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4CleanApertureBoxData val
@@ -1685,7 +1684,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ContentColourVolumeBoxData val
@@ -1801,7 +1800,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ColorInformationBoxData val
@@ -1873,7 +1872,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ContentLightLevelBoxData val
@@ -1969,7 +1968,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MasteringDisplayColourVolumeBoxData val
@@ -2041,7 +2040,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ScrambleSchemeInfoBoxData val
@@ -2097,7 +2096,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SamplingRateBoxData val
@@ -2151,7 +2150,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TextStreamConfigurationBoxData val
@@ -2221,7 +2220,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4UriInformationBoxData val
@@ -2311,7 +2310,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4CopyrightBoxData val
@@ -2397,7 +2396,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackKindBoxData val
@@ -2481,7 +2480,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackSelectionBoxData val
@@ -2527,7 +2526,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SubTrackBoxData val
@@ -2565,7 +2564,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4HintInformationBoxData val
@@ -2617,7 +2616,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SdpInformationBoxData val
@@ -2679,7 +2678,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4RtpInformationBoxData val
@@ -2721,7 +2720,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4HintStatisticsBoxData val
@@ -2781,7 +2780,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4UrlBoxData val
@@ -2853,7 +2852,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4UrnBoxData val
@@ -2919,7 +2918,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4IdentifiedMediaDataImdtBoxData val
@@ -2975,7 +2974,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SequenceNumberIdentifiedMediaDataBoxData val
@@ -3029,7 +3028,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemPropertyContainerBoxData val
@@ -3131,7 +3130,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemPropertyAssociationBoxData val
@@ -3205,7 +3204,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemPropertiesBoxData val
@@ -3301,7 +3300,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ActiveSequenceStartupPropertiesBoxData val
@@ -3381,7 +3380,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4BinaryXmlBoxData val
@@ -3439,7 +3438,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4CompleteTrackInformationBoxData val
@@ -3517,7 +3516,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ChunkLargeOffsetBoxData val
@@ -3625,7 +3624,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4CompositionToDecodeTimelineMappingBoxData val
@@ -3723,7 +3722,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4CompositionTimeToSampleBoxData val
@@ -3785,7 +3784,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4DataInformationBoxData val
@@ -3847,7 +3846,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4DataReferenceBoxData val
@@ -3889,7 +3888,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4EditListContainerBoxData val
@@ -3989,7 +3988,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4EditListBoxData val
@@ -4055,7 +4054,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ExtendedTypeBoxData val
@@ -4149,7 +4148,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4FileDeliveryInformationBoxData val
@@ -4245,7 +4244,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4FecReservoirBoxData val
@@ -4307,7 +4306,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4FreeSpaceBoxData val
@@ -4377,7 +4376,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4GroupIdToNameBoxData val
@@ -4421,7 +4420,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4GroupsListBoxData val
@@ -4513,7 +4512,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4HandlerBoxData val
@@ -4625,7 +4624,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4HintMediaHeaderBoxData val
@@ -4691,7 +4690,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemDataBoxData val
@@ -4769,7 +4768,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemInformationBoxData val
@@ -4837,7 +4836,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4IdentifiedMediaDataImdaBoxData val
@@ -4917,7 +4916,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemProtectionBoxData val
@@ -4993,7 +4992,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ItemReferenceBoxData val
@@ -5051,7 +5050,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MediaDataBoxData val
@@ -5169,7 +5168,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MediaHeaderBoxData val
@@ -5239,7 +5238,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MediaBoxData val
@@ -5293,7 +5292,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieExtendsHeaderBoxData val
@@ -5363,7 +5362,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MetaBoxBoxData val
@@ -5437,7 +5436,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieFragmentHeaderBoxData val
@@ -5481,7 +5480,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieFragmentRandomAccessBoxData val
@@ -5549,7 +5548,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieFragmentRandomAccessOffsetBoxData val
@@ -5593,7 +5592,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MediaInformationBoxData val
@@ -5645,7 +5644,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieFragmentBoxData val
@@ -5699,7 +5698,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieBoxData val
@@ -5753,7 +5752,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieExtendsBoxData val
@@ -5807,7 +5806,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MovieHeaderBoxData val
@@ -5869,7 +5868,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4NullMediaHeaderBoxData val
@@ -5911,7 +5910,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4OriginalFileTypeBoxBoxData val
@@ -6011,7 +6010,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SamplePaddingBitsBoxData val
@@ -6101,7 +6100,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ProgressiveDownloadInformationBoxData val
@@ -6177,7 +6176,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4PrimaryItemReferenceBoxData val
@@ -6267,7 +6266,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ProducerReferenceTimeBoxData val
@@ -6345,7 +6344,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4RestrictedSchemeInformationBoxData val
@@ -6443,7 +6442,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleAuxiliaryInformationOffsetsBoxData val
@@ -6555,7 +6554,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleAuxiliaryInformationSizeBoxData val
@@ -6669,7 +6668,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleToGroupBoxData val
@@ -6735,7 +6734,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SchemeInformationBoxData val
@@ -6821,7 +6820,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SchemeTypeBoxData val
@@ -6915,7 +6914,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4CompatibleSchemeTypeBoxData val
@@ -7017,7 +7016,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleDependencyTypeBoxData val
@@ -7067,7 +7066,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SegmentIndexBoxData val
@@ -7119,7 +7118,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4FreeSpaceSkipBoxData val
@@ -7197,7 +7196,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SoundMediaHeaderBoxData val
@@ -7313,7 +7312,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4StrpProcessBoxData val
@@ -7367,7 +7366,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SubsampleIndexBoxData val
@@ -7419,7 +7418,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleTableBoxData val
@@ -7481,7 +7480,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ChunkOffsetBoxData val
@@ -7537,7 +7536,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleDegradationPriorityBoxData val
@@ -7599,7 +7598,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SubtitleMediaHeaderBoxData val
@@ -7641,7 +7640,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SubTrackDefinitionBoxBoxData val
@@ -7733,7 +7732,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SubTrackInformationBoxData val
@@ -7837,7 +7836,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleToChunkBoxData val
@@ -7925,7 +7924,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleDescriptionBoxData val
@@ -8017,7 +8016,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SubtrackSampleGroupingBoxData val
@@ -8111,7 +8110,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4ShadowSyncSampleTableBoxData val
@@ -8197,7 +8196,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SyncSampleTableBoxData val
@@ -8289,7 +8288,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SampleSizeBoxData val
@@ -8383,7 +8382,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TimeToSampleBoxData val
@@ -8461,7 +8460,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackFrameDecodeTimeBoxData val
@@ -8567,7 +8566,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackHeaderBoxData val
@@ -8633,7 +8632,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackFragmentBoxData val
@@ -8687,7 +8686,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackBoxData val
@@ -8741,7 +8740,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackReferenceContainerBoxData val
@@ -8819,7 +8818,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackExtensionPropertiesBoxData val
@@ -8927,7 +8926,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackExtendsBoxData val
@@ -8979,7 +8978,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TrackGroupingInformationBoxData val
@@ -9031,7 +9030,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4TypeAndCombinationBoxData val
@@ -9085,7 +9084,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4UserDataBoxData val
@@ -9163,7 +9162,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4VideoMediaHeaderBoxData val
@@ -9239,7 +9238,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4XmlContainerBoxData val
@@ -9313,7 +9312,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		{
 		}
 
-		/// <inheritdoc cref="object.Equals" />
+		/// <inheritdoc cref="object.Equals(object?)" />
 		public override bool Equals(object? other)
 		{
 			return other is Mp4UriBoxData val
