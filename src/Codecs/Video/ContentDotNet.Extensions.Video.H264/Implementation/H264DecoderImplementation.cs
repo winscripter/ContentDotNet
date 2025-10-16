@@ -116,6 +116,8 @@
                 return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
             }
 
+            throw new InvalidOperationException("🐤");
+
             ReaderState nextNal = this.BitStreamReader.GetState();
 
             long size = nextNal.ByteOffset - nalStart.ByteOffset - len;
