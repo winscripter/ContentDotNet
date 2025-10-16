@@ -100,6 +100,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Filters.Color
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Filters.Processing", "src\Filters\ContentDotNet.Filters.Processing\ContentDotNet.Filters.Processing.csproj", "{F8E0743C-2EA1-473D-9E41-1C3276BAE82D}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Image.Png", "src\FileFormats\Image\ContentDotNet.Extensions.Image.Png\ContentDotNet.Extensions.Image.Png.csproj", "{F796694C-B41A-4C88-842A-CC47054D7A6B}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -198,6 +200,10 @@ Global
 		{F8E0743C-2EA1-473D-9E41-1C3276BAE82D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F8E0743C-2EA1-473D-9E41-1C3276BAE82D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F8E0743C-2EA1-473D-9E41-1C3276BAE82D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F796694C-B41A-4C88-842A-CC47054D7A6B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F796694C-B41A-4C88-842A-CC47054D7A6B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F796694C-B41A-4C88-842A-CC47054D7A6B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F796694C-B41A-4C88-842A-CC47054D7A6B}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -237,6 +243,7 @@ Global
 		{DA3D2F90-D4F7-4C5A-8430-7D95167D5D67} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{6C43EC48-4320-455B-997F-C6D5C32F0E39} = {DA3D2F90-D4F7-4C5A-8430-7D95167D5D67}
 		{F8E0743C-2EA1-473D-9E41-1C3276BAE82D} = {DA3D2F90-D4F7-4C5A-8430-7D95167D5D67}
+		{F796694C-B41A-4C88-842A-CC47054D7A6B} = {7E05CDAD-144E-48DC-A83D-5E45E606166B}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

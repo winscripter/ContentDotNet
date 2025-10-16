@@ -2,14 +2,14 @@
 {
     using ContentDotNet.Extensions.Image.Jpeg.Exceptions;
 
-    internal class JpegArithmeticDecoder
+    internal class JpegArithmeticDecoder : ContextVariableHost
     {
         private readonly JpegArithmeticDecoderRegisters _registers;
-        private readonly JpegArithmeticContextVariable[] _contextVariables = new JpegArithmeticContextVariable[32];
 
         public JpegArithmeticDecoder(Stream stream)
         {
             _registers = new JpegArithmeticDecoderRegisters(stream);
+            Init();
         }
 
         public bool Decode(int s)
@@ -132,6 +132,23 @@
 
                 _registers.BP = _registers.Stream.Position;
             }
+        }
+
+        private void Init()
+        {
+            _registers.BPST = _registers.Stream.Position;
+            _registers.BP = _registers.BPST - 1L;
+            _registers.A = 0x0000;
+            _registers.C = 0;
+
+            ByteIn();
+
+            _registers.C <<= 8;
+
+            ByteIn();
+
+            _registers.C <<= 8;
+            _registers.CT = 0;
         }
     }
 }
