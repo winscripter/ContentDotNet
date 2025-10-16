@@ -1,0 +1,283 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+#nullable enable
+
+namespace ContentDotNet.Extensions.Image.Bmp.Headers
+{
+<#
+    S("BitmapCoreHeader", @"DWORD bcSize
+WORD bcWidth
+WORD bcHeight
+WORD bcPlanes
+WORD bcBitCount");
+    S("BitmapFileHeader", @"WORD bfType
+DWORD bfSize
+WORD bfReserved1
+WORD bfReserved2
+DWORD bfOffBits");
+    S("BitmapInfoHeader", @"DWORD biSize
+LONG biWidth
+LONG biHeight
+WORD biPlanes
+WORD biBitCount
+DWORD biCompression
+DWORD biSizeImage
+LONG biXPelsPerMeter
+LONG biYPelsPerMeter
+DWORD biClrUsed
+DWORD biClrImportant");
+    S("BitmapV4Header", @"DWORD bV4Size
+LONG bV4Width
+LONG bV4Height
+WORD bV4Planes
+WORD bV4BitCount
+DWORD bV4V4Compression
+DWORD bV4SizeImage
+LONG bV4XPelsPerMeter
+LONG bV4YPelsPerMeter
+DWORD bV4ClrUsed
+DWORD bV4ClrImportant
+DWORD bV4RedMask
+DWORD bV4GreenMask
+DWORD bV4BlueMask
+DWORD bV4AlphaMask
+DWORD bV4CSType
+BmpCieXyzTriple bV4Endpoints
+DWORD bV4GammaRed
+DWORD bV4GammaGreen
+DWORD bV4GammaBlue");
+    S("BitmapV5Header", @"DWORD bV5Size
+LONG bV5Width
+LONG bV5Height
+WORD bV5Planes
+WORD bV5BitCount
+DWORD bV5Compression
+DWORD bV5SizeImage
+LONG bV5XPelsPerMeter
+LONG bV5YPelsPerMeter
+DWORD bV5ClrUsed
+DWORD bV5ClrImportant
+DWORD bV5RedMask
+DWORD bV5GreenMask
+DWORD bV5BlueMask
+DWORD bV5AlphaMask
+DWORD bV5CSType
+BmpCieXyzTriple bV5Endpoints
+DWORD bV5GammaRed
+DWORD bV5GammaGreen
+DWORD bV5GammaBlue
+DWORD bV5Intent
+DWORD bV5ProfileData
+DWORD bV5ProfileSize
+DWORD bV5Reserved");
+    S("Bitmap", @"LONG bmType
+LONG bmWidth
+LONG bmHeight
+LONG bmWidthBytes
+WORD bmPlanes
+WORD bmBitsPixel");
+    S("BmpCieXyzTriple", @"BmpCieXyz ciexyzRed
+BmpCieXyz ciexyzGreen
+BmpCieXyz ciexyzBlue");
+    S("BmpCieXyz", @"DWORD X
+DWORD Y
+DWORD Z");
+
+    foreach (Structure str in _structs)
+    {
+        var f = F(str);
+        string ctrArgs = string.Join(", ", f.Select(x => $"{x.Type} {x.Name}"));
+#>
+    /// <summary>
+    ///   One of BMP file's headers or structures.
+    /// </summary>
+    public struct <#= str.Name #> : IEquatable<<#= str.Name #>?>
+    {
+<#
+    foreach (Field fld in f)
+    {
+#>
+        /// <summary>
+        ///   The field <#= fld.Name #>
+        /// </summary>
+        public <#= fld.Type #> <#= fld.Name #>;
+
+<# } #>
+        /// <summary>
+        ///   Initializes a new instance of the <see cref="<#= str.Name #>" /> struct.
+        /// </summary>
+<#
+    foreach (Field fld in f)
+    {
+#>
+        /// <param name="<#= fld.Name #>">The parameter</param>
+<# } #>
+        public <#= str.Name #>(<#= ctrArgs #>)
+        {
+<#
+    foreach (Field fld in f)
+    {
+#>
+            this.<#= fld.Name #> = <#= fld.Name #>;
+<# } #>
+        }
+
+        /// <summary>
+        ///   Reads the structure from <paramref name="reader" />.
+        /// </summary>
+        /// <param name="reader">The source binary reader</param>
+        /// <returns>
+        ///   The parsed <see cref="<#= str.Name #>" />.
+        /// </returns>
+        public static <#= str.Name #> Read(BinaryReader reader)
+        {
+<#
+    foreach (Field fld in f)
+    {
+#>
+            var <#= fld.Name #> = CommonBitmapIO.Read<#= fld.Type #>(reader);
+<# } #>
+            return new <#= str.Name #>(<#= string.Join(", ", f.Select(x => x.Name)) #>);
+        }
+
+        /// <summary>
+        ///   Reads the structure from <paramref name="reader" />.
+        /// </summary>
+        /// <param name="reader">The source binary reader</param>
+        /// <returns>
+        ///   The parsed <see cref="<#= str.Name #>" />.
+        /// </returns>
+        public static async Task<<#= str.Name #>> ReadAsync(BinaryReader reader)
+        {
+<#
+    foreach (Field fld in f)
+    {
+#>
+            var <#= fld.Name #> = await CommonBitmapIO.Read<#= fld.Type #>Async(reader);
+<# } #>
+            return new <#= str.Name #>(<#= string.Join(", ", f.Select(x => x.Name)) #>);
+        }
+
+        /// <summary>
+        ///   Writes this structure to the specified <paramref name="writer" />.
+        /// </summary>
+        /// <param name="writer">The output writer.</param>
+        public readonly void Write(BinaryWriter writer)
+        {
+<#
+    foreach (Field fld in f)
+    {
+#>
+            CommonBitmapIO.Write<#= fld.Type #>(writer, this.<#= fld.Name #>);
+<# } #>
+        }
+
+        /// <summary>
+        ///   Writes this structure to the specified <paramref name="writer" />.
+        /// </summary>
+        /// <param name="writer">The output writer.</param>
+        public readonly async Task WriteAsync(BinaryWriter writer)
+        {
+<#
+    foreach (Field fld in f)
+    {
+#>
+            await CommonBitmapIO.Write<#= fld.Type #>Async(writer, this.<#= fld.Name #>);
+<# } #>
+        }
+
+        /// <inheritdoc cref="IEquatable{T}.Equals" />
+        public readonly bool Equals(<#= str.Name #>? other)
+        {
+            return other is not null
+<#
+    foreach (Field fld in f)
+    {
+#>
+                && EqualityComparer<<#= fld.Type #>>.Default.Equals(other.Value.<#= fld.Name #>, this.<#= fld.Name #>)
+<# } #>
+                ;
+        }
+
+        /// <inheritdoc cref="object.Equals(object?)" />
+        public override bool Equals(object? other)
+            => other is <#= str.Name #> value && Equals(value);
+
+        /// <inheritdoc cref="object.GetHashCode" />
+        public override int GetHashCode()
+        {
+            unchecked
+			{
+				int hash = 17;
+<#
+	foreach (Field field in f)
+	{
+#>
+				hash = hash * 23 + <#= field.Name #>.GetHashCode();
+<# } #>
+				return hash;
+			}
+        }
+
+        /// <inheritdoc cref="object.ToString" />
+        public override string ToString()
+        {
+            var sb = new System.Text.StringBuilder();
+<#
+    foreach (Field field in f)
+    {
+#>
+            sb.AppendLine("<#= field.Name #>: " + <#= field.Name #>);
+<# } #>
+            return sb.ToString();
+        }
+    }
+<# } #>
+}
+
+<#+
+class Structure {
+    public string Name, Code;
+}
+
+class Field {
+    public string Type, Name;
+    public Field(string type, string name) {
+        Type = type;
+        Name = name;
+    }
+}
+
+private readonly List<Structure> _structs = new List<Structure>();
+
+void S(string name, string code) => _structs.Add(new Structure() {
+    Name = name, Code = code });
+
+private static List<Field> F(Structure s) {
+    return s
+        .Code
+        .Split('\n')
+        .Select(
+            x =>
+            {
+                string[] split = x.Split(' ');
+                return new Field(split[0], FirstCharToUpper(split[1]).Replace("\r", "").Replace("\n", ""));
+            })
+        .ToList();
+}
+
+public static string FirstCharToUpper(string input)
+    {
+        // https://stackoverflow.com/a/4405876/21072788
+        switch (input)
+        {
+            case null: throw new ArgumentNullException(nameof(input));
+            case "": throw new ArgumentException($"{nameof(input)} cannot be empty", nameof(input));
+            default: return input[0].ToString().ToUpper() + input.Substring(1);
+        }
+    }
+#>

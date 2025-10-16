@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Chunks\" />
+    <ProjectReference Include="..\..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
 </Project>

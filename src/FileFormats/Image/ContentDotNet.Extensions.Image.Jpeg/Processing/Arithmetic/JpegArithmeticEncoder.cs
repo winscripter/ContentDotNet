@@ -1,13 +1,12 @@
 ﻿namespace ContentDotNet.Extensions.Image.Jpeg.Processing.Arithmetic
 {
-    internal class JpegArithmeticEncoder
+    internal class JpegArithmeticEncoder : ContextVariableHost
     {
-        private readonly JpegArithmeticRegisters _registers;
-        private readonly JpegArithmeticContextVariable[] _contextVariables = new JpegArithmeticContextVariable[32];
+        private readonly JpegArithmeticEncoderRegisters _registers;
 
         public JpegArithmeticEncoder(Stream stream)
         {
-            _registers = new JpegArithmeticRegisters(stream);
+            _registers = new JpegArithmeticEncoderRegisters(stream);
             InitializeHumbleEncoder();
         }
 
@@ -74,31 +73,6 @@
             }
         }
 
-        private void EstimateQeAfterMps(int s)
-        {
-            int I = _contextVariables[s].Index;
-            NextIndices indices = QeTable.NextIndicesLookup[I];
-            I = indices.Mps;
-            _contextVariables[s].Index = I;
-            _contextVariables[s].Qe = indices.Qe;
-        }
-
-        private void EstimateQeAfterLps(int s)
-        {
-            int I = _contextVariables[s].Index;
-
-            NextIndices indices = QeTable.NextIndicesLookup[I];
-
-            if (indices.SwitchMps)
-            {
-                _contextVariables[s].MPS = 1 - _contextVariables[s].MPS;
-            }
-
-            I = indices.Lps;
-            _contextVariables[s].Index = I;
-            _contextVariables[s].Qe = indices.Qe;
-        }
-
         private void Renormalize()
         {
         start:
@@ -122,11 +96,16 @@
             _registers.T = _registers.C >> 19;
             if (_registers.T > 0xFF)
             {
-                _registers.B++;
+                // B++
+                _registers.Stream.Position--;
+                int curr = _registers.Stream.ReadByte();
+                _registers.Stream.Position--;
+                _registers.Stream.WriteByte((byte)curr);
+
                 Stuff0();
                 OutputStackedZeros();
-                _registers.BP++;
-                _registers.B = _registers.T;
+
+                _registers.Stream.WriteByte((byte)_registers.T);
             }
             else
             {
@@ -137,8 +116,7 @@
                 else
                 {
                     OutputStackedFFs();
-                    _registers.BP++;
-                    _registers.B = _registers.T;
+                    _registers.Stream.WriteByte((byte)_registers.T);
                 }
             }
 
@@ -154,8 +132,7 @@
             }
             else
             {
-                _registers.BP++;
-                _registers.B = 0;
+                _registers.Stream.WriteByte(0);
                 _registers.ST--;
                 goto start;
             }
@@ -170,10 +147,8 @@
             }
             else
             {
-                _registers.BP++;
-                _registers.B = 0xFF;
-                _registers.BP++;
-                _registers.B = 0;
+                _registers.Stream.WriteByte(0xFF);
+                _registers.Stream.WriteByte(0);
                 _registers.ST--;
                 goto start;
             }
@@ -181,10 +156,9 @@
 
         private void Stuff0()
         {
-            if (_registers.B == 0xFF)
+            if (_registers.Stream.GetCurrentByte() == 0xFF)
             {
-                _registers.BP++;
-                _registers.B = 0;
+                _registers.Stream.WriteByte(0);
             }
         }
 
@@ -194,7 +168,60 @@
             _registers.A = 0x10000;
             _registers.C = 0;
             _registers.CT = 11;
-            _registers.BP = _registers.BPST - 1;
+            _registers.BPST = _registers.Stream.Position;
+            _registers.BP = _registers.Stream.Position - 1L;
+            _registers.Stream.Position = _registers.BP;
+        }
+        
+        public void Flush()
+        {
+            ClearFinalBits();
+            _registers.C <<= _registers.CT;
+            ByteOut();
+            _registers.C <<= 8;
+            ByteOut();
+            DiscardFinalZeros();
+        }
+
+        private void ClearFinalBits()
+        {
+            _registers.T = _registers.C + _registers.A - 1;
+            _registers.T = (int)(_registers.T & 0xFFFF0000);
+
+            if (_registers.T < _registers.C)
+            {
+                _registers.T += 0x8000;
+            }
+
+            _registers.C = _registers.T;
+        }
+
+        private void DiscardFinalZeros()
+        {
+        start:
+            if (_registers.BP < _registers.BPST)
+            {
+                return;
+            }
+            else
+            {
+                if (JpegStreamUtils.GetCurrentByte(_registers.Stream) == 0)
+                {
+                    _registers.BP--;
+                    _registers.Stream.Position--;
+                    goto start;
+                }
+                else
+                {
+                    if (JpegStreamUtils.GetCurrentByte(_registers.Stream) == 0xFF)
+                    {
+                        _registers.BP++;
+                        _registers.Stream.Position++;
+                    }
+
+                    return;
+                }
+            }
         }
     }
 }

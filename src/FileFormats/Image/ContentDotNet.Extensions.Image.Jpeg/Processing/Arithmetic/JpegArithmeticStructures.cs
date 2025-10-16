@@ -10,19 +10,38 @@
         public int Index { get; set; }
     }
 
-    internal class JpegArithmeticRegisters
+    internal class JpegArithmeticEncoderRegisters
     {
         private readonly Stream stream;
 
-        public JpegArithmeticRegisters(Stream stream) => this.stream = stream;
+        public JpegArithmeticEncoderRegisters(Stream stream) => this.stream = stream;
+
+        public Stream Stream => stream;
 
         public int A;
         public int C;
         public int CT;
         public int T;
-        public int B;
-        public int BPST;
-        public int BP;
+        public long BPST;
+        public long BP;
+        public int ST;
+    }
+
+    internal class JpegArithmeticDecoderRegisters
+    {
+        private readonly Stream stream;
+
+        public JpegArithmeticDecoderRegisters(Stream stream) => this.stream = stream;
+
+        public Stream Stream => stream;
+
+        public int A;
+        public int C;
+        public int CT;
+        public int Cx;
+        public int T;
+        public long BPST;
+        public long BP;
         public int ST;
     }
 }
