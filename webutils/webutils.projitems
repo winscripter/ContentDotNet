@@ -10,6 +10,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)h264\symbol.html" />
+    <Content Include="$(MSBuildThisFileDirectory)json-string-extract.html" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)h264\README.md" />

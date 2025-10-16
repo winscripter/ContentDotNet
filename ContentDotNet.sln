@@ -100,6 +100,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Im
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Video.Webp", "src\FileFormats\Video\ContentDotNet.Extensions.Video.Webp\ContentDotNet.Extensions.Video.Webp.csproj", "{F1C321F5-7D13-42DD-B0FC-B7AACB6B7460}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Mp4", "Mp4", "{E33540D0-53E9-448B-B26E-4E12EDDC239C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SerializersGenerator", "generators\Mp4\SerializersGenerator\SerializersGenerator.csproj", "{C02C6ED9-E49D-4BD2-B032-EC95B6E21758}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -206,6 +210,10 @@ Global
 		{F1C321F5-7D13-42DD-B0FC-B7AACB6B7460}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F1C321F5-7D13-42DD-B0FC-B7AACB6B7460}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F1C321F5-7D13-42DD-B0FC-B7AACB6B7460}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C02C6ED9-E49D-4BD2-B032-EC95B6E21758}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C02C6ED9-E49D-4BD2-B032-EC95B6E21758}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C02C6ED9-E49D-4BD2-B032-EC95B6E21758}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C02C6ED9-E49D-4BD2-B032-EC95B6E21758}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -245,6 +253,8 @@ Global
 		{8E68F2C7-559C-4A26-9EF1-DC339AEB771C} = {7E05CDAD-144E-48DC-A83D-5E45E606166B}
 		{D8F6A4C8-E3BE-4BAB-A4FB-208C5B3D58B0} = {7E05CDAD-144E-48DC-A83D-5E45E606166B}
 		{F1C321F5-7D13-42DD-B0FC-B7AACB6B7460} = {168FF1F0-86C5-49C4-8998-3DAA96440E22}
+		{E33540D0-53E9-448B-B26E-4E12EDDC239C} = {E69A62AA-B5DA-48D1-B473-3565AB4371C0}
+		{C02C6ED9-E49D-4BD2-B032-EC95B6E21758} = {E33540D0-53E9-448B-B26E-4E12EDDC239C}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

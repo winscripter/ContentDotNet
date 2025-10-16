@@ -1,0 +1,50 @@
+﻿<!--
+    json-string-extract
+
+    Convert JSON strings into actual strings
+-->
+<!DOCTYPE html>
+<html>
+    <head>
+        <title>JSON String extract</title>
+        <style>
+            textarea {
+                resize: none;
+                outline: none;
+                width: 400px;
+                height: 300px;
+            }
+        </style>
+    </head>
+    <body>
+        <textarea id="input" placeholder="Input JSON string (excluding double quotes)"></textarea>
+        <textarea id="output" placeholder="Output is placed here" readonly></textarea>
+        <button id="compute">Compute</button>
+
+        <script>
+            function $(id) {
+                return document.getElementById(id);
+            }
+
+            const input = $("input");
+            const output = $("output");
+            const compute = $("compute");
+
+            compute.addEventListener('click', () => {
+                const inputText = input.value;
+
+                const raw = getRawValue(inputText);
+
+                output.value = raw;
+            });
+
+            function getRawValue(inputText) {
+                return inputText
+                    .replace(/\\\\/g, "\\")
+                    .replace(/\\n/g, "\n")
+                    .replace(/\\r/g, "\r")
+                    .replace(/\\t/g, "    ");
+            }
+        </script>
+    </body>
+</html>
