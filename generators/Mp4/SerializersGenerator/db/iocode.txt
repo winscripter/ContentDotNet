@@ -298,3 +298,362 @@ IOC BEGIN assp
         }
     }
 IOC END
+
+IOC BEGIN bxml
+    uint(8) version
+    uint(24) flags
+    unsigned int(8) data[]
+IOC END
+
+IOC BEGIN cinf
+    Box original_format
+IOC END
+
+IOC BEGIN co64
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    entry_count
+    for (i=1; i <= entry_count; i++) {
+        unsigned int(64)    chunk_offset
+    }
+IOC END
+
+IOC BEGIN cslg
+    if (version==0) {
+        signed int(32)    compositionToDTSShift
+        signed int(32)    leastDecodeToDisplayDelta
+        signed int(32)    greatestDecodeToDisplayDelta
+        signed int(32)    compositionStartTime
+        signed int(32)    compositionEndTime
+    } else {
+        signed int(64)    compositionToDTSShift
+        signed int(64)    leastDecodeToDisplayDelta
+        signed int(64)    greatestDecodeToDisplayDelta
+        signed int(64)    compositionStartTime
+        signed int(64)    compositionEndTime
+    }
+IOC END
+
+IOC BEGIN ctts
+    unsigned int(32)    entry_count
+    for (i=0; i < entry_count; i++) {
+        unsigned int(32)    sample_count
+        unsigned int(32)    sample_offset
+    }
+IOC END
+
+IOC BEGIN dinf
+    Box children[]
+IOC END
+
+IOC BEGIN dref
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    entry_count
+    for (i=1; i <= entry_count; i++) {
+        Box    data_entry
+    }
+IOC END
+
+IOC BEGIN edts
+    Box children[]
+IOC END
+
+IOC BEGIN elst
+    unsigned int(32)    entry_count;
+    for (i=1; i <= entry_count; i++) {
+        if (version==1) {
+            unsigned int(64) edit_duration
+            int(64) media_time;
+        } else {
+            unsigned int(32) edit_duration
+            int(32)    media_time
+        }
+        int(16) media_rate_integer
+        int(16) media_rate_fraction
+    }
+IOC END
+
+IOC BEGIN etyp
+    Box children[]
+IOC END
+
+IOC BEGIN fecr
+    if (version == 0) {
+        unsigned int(16)    entry_count
+    } else {
+        unsigned int(32)    entry_count
+    }
+    for (i=1; i <= entry_count; i++) {
+        if (version == 0) {
+            unsigned int(16)    item_ID
+        } else {
+            unsigned int(32)    item_ID
+        }
+        unsigned int(32)    symbol_count
+    }
+IOC END
+
+IOC BEGIN free
+    unsigned int(8) data[]
+IOC END
+
+IOC BEGIN ftyp
+IOC END
+
+IOC BEGIN gitn
+    uint(8) version
+    uint(24) flags
+    unsigned int(16)    entry_count
+    for (i=1; i <= entry_count; i++) {
+        unsigned int(32)    group_ID
+        utf8string            group_name
+    }
+IOC END
+
+IOC BEGIN hdlr
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    pre_defined
+    unsigned int(32)    handler_type
+    unsigned int(32)[3]    reserved
+    utf8string    name
+IOC END
+
+IOC BEGIN hmhd
+    uint(8) version
+    uint(24) flags
+    unsigned int(16)    maxPDUsize
+    unsigned int(16)    avgPDUsize
+    unsigned int(32)    maxbitrate
+    unsigned int(32)    avgbitrate
+    unsigned int(32)    reserved
+IOC END
+
+IOC BEGIN idat
+    uint(8) data[]
+IOC END
+
+IOC BEGIN mdat
+    uint(8) data[]
+IOC END
+
+IOC BEGIN mdia
+    Box children[]
+IOC END
+
+IOC BEGIN mehd
+    uint(8) version
+    uint(24) flags
+    if (version == 1) {
+        unsigned int(64)    fragment_duration
+    } else {
+        unsigned int(32)    fragment_duration
+    }
+IOC END
+
+IOC BEGIN mfhd
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    sequence_number
+IOC END
+
+IOC BEGIN mfro
+    uint(8) version
+    uint(24) flags
+    unsigned int(32) parent_size
+IOC END
+
+IOC BEGIN minf
+    Box children[]
+IOC END
+
+IOC BEGIN moof
+    Box children[]
+IOC END
+
+IOC BEGIN moov
+    Box children[]
+IOC END
+
+IOC BEGIN mvex
+    Box children[]
+IOC END
+
+IOC BEGIN prft
+    uint(8) version
+    uint(24) flags
+    unsigned int(32) reference_track_ID
+    unsigned int(64) ntp_timestamp
+    if (version==0) {
+        unsigned int(32) media_time
+    } else {
+        unsigned int(64) media_time
+    }
+IOC END
+
+IOC BEGIN saio
+    uint(8) version
+    uint(24) flags
+    if (flags & 1) {
+        unsigned int(32) aux_info_type
+        unsigned int(32) aux_info_type_parameter
+    }
+    unsigned int(32) entry_count
+    if ( version == 0 ) {
+        unsigned int(32) offset[ entry_count ]
+    }
+    else {
+        unsigned int(64) offset[ entry_count ]
+    }
+IOC END
+
+IOC BEGIN saiz
+    uint(8) version
+    uint(24) flags
+    if (flags & 1) {
+        unsigned int(32) aux_info_type
+        unsigned int(32) aux_info_type_parameter
+    }
+    unsigned int(8) default_sample_info_size
+    unsigned int(32) sample_count
+    if (default_sample_info_size == 0) {
+        unsigned int(8) sample_info_size[ sample_count ]
+    }
+IOC END
+
+IOC BEGIN sbgp
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    grouping_type
+    if (version == 1) {
+        unsigned int(32) grouping_type_parameter
+    }
+    unsigned int(32)    entry_count
+    for (i=1; i <= entry_count; i++) {
+        unsigned int(32)    sample_count
+        unsigned int(32)    group_description_index
+    }
+IOC END
+
+IOC BEGIN schi
+    Box children[]
+IOC END
+
+IOC BEGIN schm
+    uint(8) version
+    uint(24) flags
+    unsigned int(32) scheme_type
+    unsigned int(32) scheme_version
+    if (flags & 0x000001) {
+        utf8string scheme_uri
+    }
+IOC END
+
+IOC BEGIN csch
+    uint(8) version
+    uint(24) flags
+    unsigned int(32) scheme_type
+    unsigned int(32) scheme_version
+    if (flags & 0x000001) {
+        utf8string scheme_uri
+    }
+IOC END
+
+IOC BEGIN skip
+    unsigned int(8) data[]
+IOC END
+
+IOC BEGIN smhd
+    uint(8) version
+    uint(24) flags
+    int(16) balance
+    unsigned int(16)    reserved
+IOC END
+
+IOC BEGIN srpp
+    unsigned int(32)        encryption_algorithm_rtp
+    unsigned int(32)        encryption_algorithm_rtcp
+    unsigned int(32)        integrity_algorithm_rtp
+    unsigned int(32)        integrity_algorithm_rtcp
+    SchemeTypeBox            scheme_type_box
+    SchemeInformationBox    info
+IOC END
+
+IOC BEGIN stbl
+    Box children[]
+IOC END
+
+IOC BEGIN stco
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    entry_count
+    for (i=1; i <= entry_count; i++) {
+        unsigned int(32)    chunk_offset
+    }
+IOC END
+
+IOC BEGIN sthd
+    uint(8) version
+    uint(24) flags
+IOC END
+
+IOC BEGIN stsc
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    entry_count
+    for (i=1; i <= entry_count; i++) {
+        unsigned int(32)    first_chunk
+        unsigned int(32)    samples_per_chunk
+        unsigned int(32)    sample_description_index
+    }
+IOC END
+
+IOC BEGIN stsd
+    uint(8) version
+    uint(24) flags
+    unsigned int(32) entry_count;
+    for (i = 1 ; i <= entry_count ; i++){
+        Box sample_entry
+    }
+IOC END
+
+IOC BEGIN stts
+    uint(8) version
+    uint(24) flags
+    unsigned int(32)    entry_count
+    for (i=0; i < entry_count; i++) {
+        unsigned int(32)    sample_count
+        unsigned int(32)    sample_delta
+    }
+IOC END
+
+IOC BEGIN tfdt
+    uint(8) version
+    uint(24) flags
+    if (version==1) {
+        unsigned int(64) baseMediaDecodeTime
+    } else {
+        unsigned int(32) baseMediaDecodeTime
+    }
+IOC END
+
+IOC BEGIN traf
+    Box children[]
+IOC END
+
+IOC BEGIN trak
+    Box children[]
+IOC END
+
+IOC BEGIN xml 
+    uint(8) version
+    uint(24) flags
+    utf8string xml
+IOC END
+
+IOC BEGIN uri 
+    uint(8) version
+    uint(24) flags
+    utf8string uri
+IOC END
