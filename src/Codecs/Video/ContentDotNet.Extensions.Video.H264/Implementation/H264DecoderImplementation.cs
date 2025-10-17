@@ -119,7 +119,7 @@
             ReaderState nextNal = this.BitStreamReader.GetState();
 
             // Peek to see if there's any 0x00 0x00 0x01 further
-            if (!this.SkipToNalStart())
+            if (PeekStartCodeLength() == -2)
             {
                 this.BitStreamReader.GoTo(nextNal);
                 return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
