@@ -61,14 +61,23 @@
             dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
             Assert.Equal([0x89, 0x74], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
 
-            dcd.Debug = true;
-            Assert.Equal(4, dcd.ProcessNalLength());
-            Assert.Equal(NalType.Idr, dcd.DecodeNal(true, false));
-            Assert.NotNull(dcd.State.H264RbspState.NalUnit);
-            Assert.Equal(5u, dcd.State.H264RbspState.NalUnit.NalRefIdc);
+            try
+            {
+                dcd.Debug = true;
+                Assert.Equal(4, dcd.ProcessNalLength());
+                Assert.Equal(NalType.Idr, dcd.DecodeNal(true, false));
+                Assert.NotNull(dcd.State.H264RbspState.NalUnit);
+                Assert.Equal(5u, dcd.State.H264RbspState.NalUnit.NalRefIdc);
 
-            dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
-            Assert.Equal([0xAB, 0xCD, 0xEF], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
+                dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
+                Assert.Equal([0xAB, 0xCD, 0xEF], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
+                dcd.Debug = false;
+            }
+            catch
+            {
+                dcd.Debug = false;
+                throw;
+            }
         }
 
         private static byte[] ReadFully(Stream input)
