@@ -17,6 +17,9 @@ internal class Program
         {
             NalType nt = dcd.DecodeNal();
             Console.WriteLine(nt);
+
+            if (i == 1)
+                Console.WriteLine(dcd.State!.H264RbspState!.SequenceParameterSetData);
         }
     }
 }
