@@ -118,6 +118,14 @@
 
             ReaderState nextNal = this.BitStreamReader.GetState();
 
+            // Peek to see if there's any 0x00 0x00 0x01 further
+            if (!this.SkipToNalStart())
+            {
+                this.BitStreamReader.GoTo(nextNal);
+                return this.BitStreamReader.BaseStream.Length - this.BitStreamReader.BaseStream.Position;
+            }
+            this.BitStreamReader.GoTo(nextNal);
+
 #if DEBUG_NALS
             if (this.DebugNals)
                 throw new InvalidOperationException($"{nextNal.ByteOffset}, {nalStart.ByteOffset}, {len}");
@@ -126,7 +134,8 @@
             long size = nextNal.ByteOffset - nalStart.ByteOffset - len;
 
             this.BitStreamReader.GoTo(nalStart);
-            return size;        }
+            return size;
+        }
 
         private int PeekStartCodeLength()
         {
