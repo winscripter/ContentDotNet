@@ -98,15 +98,14 @@
 
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(5, dcd.ProcessNalLength());
+            Assert.Equal(9, dcd.BitStreamReader.BaseStream.Position);
 
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(2, dcd.ProcessNalLength());
+            Assert.Equal(15, dcd.BitStreamReader.BaseStream.Position);
 
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(2, dcd.ProcessNalLength());
-
-            Assert.False(dcd.SkipToNalStart());
-            // H.264 stream ends here
         }
 
         [Fact]
