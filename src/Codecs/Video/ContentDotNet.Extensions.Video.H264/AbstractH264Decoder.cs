@@ -52,6 +52,13 @@
         /// </summary>
         public long CurrentFrameIndex { get => cfi; set => cfi = value; }
 
+#if DEBUG_NALS
+        /// <summary>
+        ///   Should NAL debugging be enabled?
+        /// </summary>
+        public bool DebugNals { get; set; }
+#endif
+
         /// <summary>
         ///   This returns the bit-stream reader that backs this H.264 codec. H.264 bit-stream data is read from here.
         /// </summary>
@@ -61,13 +68,6 @@
         ///   This returns the memory allocation configuration, however, it's unimplemented.
         /// </summary>
         public Configuration Configuration { get => cfg; set => cfg = value; }
-
-#if DEBUG_NALS
-        /// <summary>
-        ///   Debug?
-        /// </summary>
-        public bool Debug { get; set; } = false;
-#endif
 
         /// <summary>
         ///   This decodes a single H.264 picture. When this happens, the data is read off of the <see cref="BitStreamReader"/>

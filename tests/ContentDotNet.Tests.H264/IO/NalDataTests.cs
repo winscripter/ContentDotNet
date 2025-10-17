@@ -63,7 +63,7 @@
 
             try
             {
-                dcd.Debug = true;
+                dcd.DebugNals = true;
                 Assert.Equal(4, dcd.ProcessNalLength());
                 Assert.Equal(NalType.Idr, dcd.DecodeNal(true, false));
                 Assert.NotNull(dcd.State.H264RbspState.NalUnit);
@@ -71,11 +71,11 @@
 
                 dcd.State.H264RbspState.NalUnit.RbspByte.Position = 0;
                 Assert.Equal([0xAB, 0xCD, 0xEF], ReadFully(dcd.State.H264RbspState.NalUnit.RbspByte));
-                dcd.Debug = false;
+                dcd.DebugNals = false;
             }
             catch
             {
-                dcd.Debug = false;
+                dcd.DebugNals = false;
                 throw;
             }
         }
