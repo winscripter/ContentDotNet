@@ -64,7 +64,7 @@
             Assert.True(dcd.SkipToNalStart());
             Assert.Equal(14, dcd.BitStreamReader.BaseStream.Position);
             Assert.Equal(4, dcd.ProcessNalLength());
-            Assert.Equal(NalType.Idr, dcd.DecodeNal(true, false));
+            Assert.Equal(NalType.Idr, dcd.DecodeNal(false, false));
             Assert.NotNull(dcd.State.H264RbspState.NalUnit);
             Assert.Equal(5u, dcd.State.H264RbspState.NalUnit.NalRefIdc);
 
