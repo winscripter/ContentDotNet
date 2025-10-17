@@ -21,6 +21,14 @@ public static class BitStreamReaderExtensions
         return result;
     }
 
+    public static int ReadByteOrMinus1(this BitStreamReader reader)
+    {
+        if (reader.BaseStream.Length >= reader.BaseStream.Position)
+            return -1;
+
+        return (int)reader.ReadByte();
+    }
+
     public static int Read(this BitStreamReader reader, Span<byte> byteBuffer)
     {
         int bytesRead = 0;

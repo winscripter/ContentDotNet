@@ -62,7 +62,7 @@
 
             while (true)
             {
-                int byteRead = reader.BaseStream.ReadByte();
+                int byteRead = reader.ReadByteOrMinus1();
                 if (byteRead == -1)
                     break;
 
@@ -117,15 +117,15 @@
             while (reader.GetState().BitPosition != 0)
                 _ = reader.ReadBit();
 
-            var stream = reader.BaseStream;
-            long startPosition = stream.Position;
+            var state = reader.GetState();
+            long startPosition = state.ByteOffset;
 
             int b1, b2 = -1, b3 = -1, b4 = -1;
             long currentPosition = startPosition;
 
             while (true)
             {
-                int byteRead = stream.ReadByte();
+                int byteRead = reader.ReadByteOrMinus1();
                 if (byteRead == -1)
                     break;
 
@@ -139,21 +139,21 @@
                 // Check for 4-byte start code
                 if (b1 == 0x00 && b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
                 {
-                    stream.Position = startPosition;
+                    reader.GoTo(state);
                     return currentPosition - startPosition - 4;
                 }
 
                 // Check for 3-byte start code
                 if (b2 == 0x00 && b3 == 0x00 && b4 == 0x01)
                 {
-                    stream.Position = startPosition;
+                    reader.GoTo(state);
                     return currentPosition - startPosition - 3;
                 }
             }
 
             // No further start code found; return until end of stream
-            long endPosition = stream.Position;
-            stream.Position = startPosition;
+            long endPosition = reader.GetState().ByteOffset;
+            reader.GoTo(state);
             return endPosition - startPosition;
         }
     }
