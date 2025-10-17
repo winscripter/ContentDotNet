@@ -62,6 +62,13 @@
         /// </summary>
         public Configuration Configuration { get => cfg; set => cfg = value; }
 
+#if DEBUG_NALS
+        /// <summary>
+        ///   Debug?
+        /// </summary>
+        public bool Debug { get; set; } = false;
+#endif
+
         /// <summary>
         ///   This decodes a single H.264 picture. When this happens, the data is read off of the <see cref="BitStreamReader"/>
         ///   property, and the <see cref="CurrentFrameIndex"/> property is incremented by one. The resulting picture is

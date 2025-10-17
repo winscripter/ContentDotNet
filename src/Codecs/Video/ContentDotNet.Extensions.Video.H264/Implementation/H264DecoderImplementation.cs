@@ -118,12 +118,18 @@
 
             ReaderState nextNal = this.BitStreamReader.GetState();
 
+#if DEBUG_NALS
+
             throw new InvalidOperationException($"{nextNal.ByteOffset}, {nalStart.ByteOffset}, {len}");
+
+#else
 
             long size = nextNal.ByteOffset - nalStart.ByteOffset - len;
 
             this.BitStreamReader.GoTo(nalStart);
             return size;
+
+#endif
         }
 
         private int PeekStartCodeLength()
