@@ -12,8 +12,6 @@
 
     internal class H264DecoderImplementation : AbstractH264Decoder
     {
-        private const int StartCodeFindingRecursionLimit = 4 * 1024 * 1024;
-
         public H264DecoderImplementation(BitStreamReader bsr) : base(bsr)
         {
             this.IOReader = new DefaultRbspReader();
@@ -65,6 +63,7 @@
                 else if (nalType == NalType.Idr || nalType == NalType.NonIdr)
                 {
                     RbspSliceHeader sliceHeader = this.IOReader!.ReadSliceHeader(this.State!.H264RbspState!, bitstreamReader);
+                    this.State!.H264RbspState!.SliceHeader = sliceHeader;
                     var slice = new H264Slice(bitstreamReader, State)
                     {
                         IOReader = this.IOReader!,
@@ -72,7 +71,6 @@
                     };
                     slice.LoadSlice(DecoderFactories.SliceDecoderFactory.CreateSliceDecoder());
                     this.Slice = slice;
-                    this.State!.H264RbspState!.SliceHeader = sliceHeader;
                 }
             }
 
@@ -97,10 +95,7 @@
             throw new NotImplementedException();
         }
 
-        public override long ProcessNalLength()
-        {
-            return NalHelpers.GetNalUnitLength(BitStreamReader);
-        }
+        public override long ProcessNalLength() => NalHelpers.GetNalUnitLength(BitStreamReader);
 
         public override Picture<YCbCr> ReadPicture()
         {
@@ -112,10 +107,7 @@
             throw new NotImplementedException();
         }
 
-        public override bool SkipToNalStart()
-        {
-            return NalHelpers.SkipToStartOfNalUnit(this.BitStreamReader);
-        }
+        public override bool SkipToNalStart() => NalHelpers.SkipToStartOfNalUnit(this.BitStreamReader);
 
         private RbspNalUnit ParseNal(int nBytes)
         {
