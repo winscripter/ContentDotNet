@@ -21,6 +21,23 @@ public static class BitStreamReaderExtensions
         return result;
     }
 
+    public static int Read(this BitStreamReader reader, Span<byte> byteBuffer)
+    {
+        int bytesRead = 0;
+        for (int i = 0; i < byteBuffer.Length; i++)
+        {
+            if (reader.BaseStream.Position >= reader.BaseStream.Length)
+            {
+                break;
+            }
+
+            byteBuffer[i] = (byte)reader.ReadByte();
+            bytesRead++;
+        }
+
+        return bytesRead;
+    }
+
     /// <summary>
     /// Reads an Signed Exponential Golomb.
     /// </summary>

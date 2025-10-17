@@ -155,8 +155,10 @@
                 }
                 else
                 {
-                    if (this.BitStreamReader.BaseStream.ReadByte() == -1)
+                    if (this.BitStreamReader.BaseStream.Position >= this.BitStreamReader.BaseStream.Length)
                         throw new EndOfStreamException();
+                    else
+                        _ = this.BitStreamReader.ReadByte();
                 }
 
                 rc.Increment();
@@ -169,7 +171,7 @@
         {
             long prevOffset = this.BitStreamReader.BaseStream.Position;
             Span<byte> span = stackalloc byte[4];
-            int read = this.BitStreamReader.BaseStream.Read(span);
+            int read = this.BitStreamReader.Read(span);
             if (read < 3)
                 return -2;
             this.BitStreamReader.BaseStream.Position = prevOffset;
