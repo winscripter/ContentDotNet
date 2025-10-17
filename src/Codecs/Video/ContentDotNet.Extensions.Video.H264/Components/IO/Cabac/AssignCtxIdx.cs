@@ -37,6 +37,8 @@
 
         public static int Assign(IH264CabacDecoder decoder, H264State state, H264MacroblockInfo? currMB, H264SyntaxElement se, int ctxIdxOffset, int binIdx)
         {
+            ArgumentNullException.ThrowIfNull(currMB, nameof(currMB));
+
             if (IncludedCtxIdxOffsets.Contains(ctxIdxOffset))
             {
                 return Core(decoder, state, currMB, binIdx, ctxIdxOffset);

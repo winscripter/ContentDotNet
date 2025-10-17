@@ -125,6 +125,9 @@
 
         public void ReadMacroblockLayer(IH264SyntaxReader syntaxReader, H264MacroblockInfo mb, H264RbspState rbspState)
         {
+            CurrentMacroblock = mb;
+            syntaxReader.MacroblockInfo = CurrentMacroblock;
+
             H264SliceType sliceType = (H264SliceType)(((int?)rbspState.SliceHeader?.SliceType ?? 0) % 5);
 
             uint mb_type = syntaxReader.ReadMbType();
@@ -186,7 +189,10 @@
                 }
                 else
                 {
-                    if (Grabber.GetTransform8x8ModeFlag(rbspState) && mb == I_NxN)
+                    // NOTE: The PPS might not always have transform_8x8_mode_flag, so
+                    // if it doesn't exist, default to 0.
+
+                    if (Grabber.FetchTransform8x8ModeFlag(rbspState) == true && mb == I_NxN)
                     {
                         transform_size_8x8_flag = syntaxReader.ReadTransformSize8X8Flag();
                         mb.Rbsp.TransformSize8x8Flag = transform_size_8x8_flag;
@@ -225,6 +231,9 @@
 
         public async Task ReadMacroblockLayerAsync(IH264SyntaxReader syntaxReader, H264MacroblockInfo mb, H264RbspState rbspState)
         {
+            CurrentMacroblock = mb;
+            syntaxReader.MacroblockInfo = CurrentMacroblock;
+
             H264SliceType sliceType = (H264SliceType)(((int?)rbspState.SliceHeader?.SliceType ?? 0) % 5);
 
             uint mb_type = await syntaxReader.ReadMbTypeAsync();
@@ -286,7 +295,10 @@
                 }
                 else
                 {
-                    if (Grabber.GetTransform8x8ModeFlag(rbspState) && mb == I_NxN)
+                    // NOTE: The PPS might not always have transform_8x8_mode_flag, so
+                    // if it doesn't exist, default to 0.
+
+                    if (Grabber.FetchTransform8x8ModeFlag(rbspState) == true && mb == I_NxN)
                     {
                         transform_size_8x8_flag = await syntaxReader.ReadTransformSize8X8FlagAsync();
                         mb.Rbsp.TransformSize8x8Flag = transform_size_8x8_flag;
@@ -334,22 +346,20 @@
 
             uint? intra_chroma_pred_mode = null;
 
-            List<uint> sub_mb_type = [];
             List<uint> ref_idx_l0 = [];
             List<uint> ref_idx_l1 = [];
             H264MotionVectorDifference mvd_l0 = new();
             H264MotionVectorDifference mvd_l1 = new();
 
-            int num_ref_idx_l0_active_minus1 = (int)Grabber.GetNumRefIdxL0ActiveMinus1(rbspState);
-            int num_ref_idx_l1_active_minus1 = (int)Grabber.GetNumRefIdxL1ActiveMinus1(rbspState);
+            int num_ref_idx_l0_active_minus1 = (int?)Grabber.FetchNumRefIdxL0ActiveMinus1(rbspState) ?? 0;
+            int num_ref_idx_l1_active_minus1 = (int?)Grabber.FetchNumRefIdxL1ActiveMinus1(rbspState) ?? 0;
             bool mb_field_decoding_flag = CurrentMacroblock!.MbFieldDecodingFlag;
-            bool field_pic_flag = Grabber.GetFieldPicFlag(rbspState);
+            bool field_pic_flag = Grabber.FetchFieldPicFlag(rbspState) ?? false;
 
             H264DecodingVariables? variables = GetDecodingVariables(syntaxReader);
 
             if (variables != null)
             {
-                variables.SubMbType = sub_mb_type;
                 variables.RefIdxL0 = ref_idx_l0;
                 variables.RefIdxL1 = ref_idx_l1;
                 variables.MvdL0 = mvd_l0;
@@ -480,7 +490,6 @@
 
             uint? intra_chroma_pred_mode = null;
 
-            List<uint> sub_mb_type = [];
             List<uint> ref_idx_l0 = [];
             List<uint> ref_idx_l1 = [];
             H264MotionVectorDifference mvd_l0 = new();
@@ -495,7 +504,6 @@
 
             if (variables != null)
             {
-                variables.SubMbType = sub_mb_type;
                 variables.RefIdxL0 = ref_idx_l0;
                 variables.RefIdxL1 = ref_idx_l1;
                 variables.MvdL0 = mvd_l0;
@@ -823,7 +831,7 @@
 
             #endregion
 
-            if (rbspState.MoreRbspData(reader))
+            if (rbspState.MoreRbspData())
             {
                 transform_8x8_mode_flag = reader.ReadBit();
                 pic_scaling_matrix_present_flag = reader.ReadBit();
@@ -844,7 +852,7 @@
                 second_chroma_qp_index_offset = reader.ReadSE();
             }
 
-            while (rbspState.MoreRbspData(reader))
+            while (rbspState.MoreRbspData())
                 _ = reader.ReadBit();
 
             return new RbspPictureParameterSet(
@@ -938,7 +946,7 @@
 
             #endregion
 
-            if (rbspState.MoreRbspData(reader))
+            if (rbspState.MoreRbspData())
             {
                 transform_8x8_mode_flag = await reader.ReadBitAsync();
                 pic_scaling_matrix_present_flag = await reader.ReadBitAsync();
@@ -959,7 +967,7 @@
                 second_chroma_qp_index_offset = await reader.ReadSEAsync();
             }
 
-            while (rbspState.MoreRbspData(reader))
+            while (rbspState.MoreRbspData())
                 _ = await reader.ReadBitAsync();
 
             return new RbspPictureParameterSet(
@@ -1818,7 +1826,7 @@
                 decRefPicMarking = ReadDecRefPicMarking(rbspState!, reader);
 
             uint? cabac_init_idc = null;
-            if (entropy_coding_mode_flag && H264SliceTypes.IsI(slice_type) && H264SliceTypes.IsSI(slice_type))
+            if (entropy_coding_mode_flag && !H264SliceTypes.IsI(slice_type) && !H264SliceTypes.IsSI(slice_type))
                 cabac_init_idc = reader.ReadUE();
 
             int slice_qp_delta = reader.ReadSE();
@@ -1975,7 +1983,7 @@
                 decRefPicMarking = ReadDecRefPicMarking(rbspState!, reader);
 
             uint? cabac_init_idc = null;
-            if (entropy_coding_mode_flag && H264SliceTypes.IsI(slice_type) && H264SliceTypes.IsSI(slice_type))
+            if (entropy_coding_mode_flag && !H264SliceTypes.IsI(slice_type) && !H264SliceTypes.IsSI(slice_type))
                 cabac_init_idc = await reader.ReadUEAsync();
 
             int slice_qp_delta = await reader.ReadSEAsync();
@@ -2764,7 +2772,7 @@
                 }
             }
 
-            LimitedList<int> mapUnitToSliceGroupMap = new(state.DerivePicSizeInMbs() * (1 + state.DeriveMbaffFrameFlag().AsInt32()));
+            int[] mapUnitToSliceGroupMap = new int[state.DerivePicSizeInMbs() * (1 + state.DeriveMbaffFrameFlag().AsInt32())];
             sliceDecoder.PopulateWithMapUnitToSliceGroupMap(state, mapUnitToSliceGroupMap);
 
             LimitedList<int> mbToSliceGroupMap = new(state.DerivePicSizeInMbs() * (1 + state.DeriveMbaffFrameFlag().AsInt32()));
@@ -2785,6 +2793,7 @@
             do
             {
                 H264MacroblockInfo mb = new(slice_type, new(), false);
+                syntaxReader.MacroblockInfo = mb;
                 receiveMacroblock(mb);
 
                 if (slice_type is not (H264SliceType.I or H264SliceType.SI))
@@ -2798,7 +2807,7 @@
                         for (int i = 0; i < mb_skip_run; i++)
                             state.CurrMbAddr = sliceDecoder.NextMbAddress(state, mbToSliceGroupMap, state.CurrMbAddr);
                         if (mb_skip_run > 0)
-                            moreDataFlag = state.H264RbspState!.MoreRbspData(bitStream).AsInt32();
+                            moreDataFlag = state.H264RbspState!.MoreRbspData().AsInt32();
                     }
                     else
                     {
@@ -2819,12 +2828,12 @@
                         mb.MbFieldDecodingFlag = mb_field_decoding_flag;
                     }
 
-                    ReadMacroblockLayer(syntaxReader, mb, state.H264RbspState!);
+                    ReadMacroblockLayer(syntaxReader, mb, state.H264RbspState ?? throw new InvalidOperationException("Missing RBSP state"));
                 }
 
                 if (!Grabber.GetEntropyCodingModeFlag(state.H264RbspState))
                 {
-                    moreDataFlag = state.H264RbspState!.MoreRbspData(bitStream).AsInt32();
+                    moreDataFlag = state.H264RbspState!.MoreRbspData().AsInt32();
                 }
                 else
                 {
@@ -2882,6 +2891,7 @@
             do
             {
                 H264MacroblockInfo mb = new(slice_type, new(), false);
+                syntaxReader.MacroblockInfo = mb;
                 receiveMacroblock(mb);
 
                 if (slice_type is not (H264SliceType.I or H264SliceType.SI))
@@ -2895,7 +2905,7 @@
                         for (int i = 0; i < mb_skip_run; i++)
                             state.CurrMbAddr = sliceDecoder.NextMbAddress(state, mbToSliceGroupMap, state.CurrMbAddr);
                         if (mb_skip_run > 0)
-                            moreDataFlag = state.H264RbspState!.MoreRbspData(bitStream).AsInt32();
+                            moreDataFlag = state.H264RbspState!.MoreRbspData().AsInt32();
                     }
                     else
                     {
@@ -2921,7 +2931,7 @@
 
                 if (!Grabber.GetEntropyCodingModeFlag(state.H264RbspState))
                 {
-                    moreDataFlag = state.H264RbspState!.MoreRbspData(bitStream).AsInt32();
+                    moreDataFlag = state.H264RbspState!.MoreRbspData().AsInt32();
                 }
                 else
                 {

@@ -41,8 +41,7 @@
         /// <summary>
         ///   Is there more RBSP data?
         /// </summary>
-        /// <param name="reader">The source bitstream reader</param>
         /// <returns>A boolean indicating if there's more RBSP data</returns>
-        public bool MoreRbspData(BitStreamReader reader) => reader.BaseStream.Position < RbspEndOffset;
+        public bool MoreRbspData() => this.NalUnit?.RbspByte?.Position + 1 < this.NalUnit?.RbspByte?.Length;
     }
 }

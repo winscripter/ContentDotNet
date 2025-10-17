@@ -46,7 +46,7 @@
         /// <summary>
         ///   Sub-macroblock type
         /// </summary>
-        public List<uint> SubMbType { get; set; } = [];
+        public List<uint> SubMbType { get; set; } = [0u, 0u, 0u, 0u];
 
         /// <summary>
         ///   Coded block flag options

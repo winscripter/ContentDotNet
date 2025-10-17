@@ -19,8 +19,6 @@
         private readonly int cabacInitIdc;
         private readonly H264State state;
 
-        private readonly bool[] initializedTracker = new bool[1024];
-
         public H264CabacReader(IH264CabacDecoder decoder, int sliceQPY, H264SliceType sliceType, int cabacInitIdc, H264State h264)
         {
             this.decoder = decoder;
@@ -39,27 +37,24 @@
             IBinTracker binTracker = binTrackerFactory.Create();
             int offset = (int)reader.ReadBits(9);
             IH264ArithmeticReader ar = arithmeticReaderFactory.Create(reader, 510, offset, binTracker);
-            IH264CabacDecoder decoder = cabacService.CreateDecoder(ar);
+            IH264CabacDecoder decoder = cabacService.CreateDecoder(ar, h264);
 
             return new H264CabacReader(decoder, h264.DeriveSliceQpy(), h264.GetSliceType(), (int?)h264.H264RbspState?.SliceHeader?.CabacInitIdc ?? 0, h264);
         }
 
         public bool IsFrameMacroblock { get; set; }
-        public H264MacroblockInfo? MacroblockInfo { get; set; } = null;
+        public override H264MacroblockInfo? MacroblockInfo { get; set; } = null;
 
         [DoesNotReturn]
-        private static void ThrowNullParserFailure()
+        private static void ThrowNullParserFailure(H264SyntaxElement se)
         {
-            throw new InvalidOperationException("Could not parse CABAC");
+            throw new InvalidOperationException($"Could not parse CABAC. Syntax element: {se}");
         }
 
         private void InitializeContextIndex(int ctxIdx)
         {
-            if (!initializedTracker[ctxIdx])
-            {
-                initializedTracker[ctxIdx] = true;
+            if (!decoder.IsContextInitialized(ctxIdx))
                 decoder.InitializeContext(ctxIdx, sliceQPY, cabacInitIdc, sliceType, false);
-            }
         }
 
         private int GetContextIndex(H264SyntaxElement se, ContextIndexAndParser cip)
@@ -81,7 +76,7 @@
 
             if (parser == null)
             {
-                ThrowNullParserFailure();
+                ThrowNullParserFailure(se);
             }
 
             int ctxIdx = GetContextIndex(se, parser);
@@ -110,7 +105,7 @@
 
             if (parser == null)
             {
-                ThrowNullParserFailure();
+                ThrowNullParserFailure(se);
             }
 
             int ctxIdx = GetContextIndex(se, parser);
@@ -171,6 +166,16 @@
         }
 
         public override Task<bool> ReadCoeffSignFlagAsync()
+        {
+            throw new NotImplementedException();
+        }
+
+        public override bool ReadMbSkipFlag()
+        {
+            return ParseBooleanSimple(H264SyntaxElement.MacroblockSkipFlag);
+        }
+
+        public override Task<bool> ReadMbSkipFlagAsync()
         {
             throw new NotImplementedException();
         }

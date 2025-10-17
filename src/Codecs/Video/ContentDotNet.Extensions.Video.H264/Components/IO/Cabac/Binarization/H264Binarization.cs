@@ -221,53 +221,40 @@
                         else
                         {
                             int b1 = decoder.ReadBin().AsInt32();
-                            if (b1 == 0)
-                            {
-                                int b2 = decoder.ReadBin().AsInt32();
-                                if (b2 == 0) return 1; // B_L0_16x16
-                                else return 2;         // B_L1_16x16
-                            }
+                            int b2 = decoder.ReadBin().AsInt32();
+
+                            if (b1 == 0 && b2 == 0) return 1;
+                            else if (b1 == 0 && b2 == 1) return 2;
                             else
                             {
-                                int b2 = decoder.ReadBin().AsInt32();
                                 int b3 = decoder.ReadBin().AsInt32();
                                 int b4 = decoder.ReadBin().AsInt32();
                                 int b5 = decoder.ReadBin().AsInt32();
 
-                                if (b2 == 0 && b3 == 0 && b4 == 0 && b5 == 0) return 3;
-                                if (b2 == 0 && b3 == 0 && b4 == 0 && b5 == 1) return 4;
-                                if (b2 == 0 && b3 == 0 && b4 == 1 && b5 == 0) return 5;
-                                if (b2 == 0 && b3 == 0 && b4 == 1 && b5 == 1) return 6;
-                                if (b2 == 0 && b3 == 1 && b4 == 0 && b5 == 0) return 7;
-                                if (b2 == 0 && b3 == 1 && b4 == 0 && b5 == 1) return 8;
-                                if (b2 == 0 && b3 == 1 && b4 == 1 && b5 == 0) return 9;
-                                if (b2 == 0 && b3 == 1 && b4 == 1 && b5 == 1) return 10;
-                                if (b2 == 1 && b3 == 1 && b4 == 1 && b5 == 0) return 11;
-
-                                int b6 = decoder.ReadBin().AsInt32();
-                                int b7 = decoder.ReadBin().AsInt32();
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0 && b7 == 0) return 12;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0 && b7 == 1) return 13;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 1 && b7 == 0) return 14;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 1 && b7 == 1) return 15;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 0 && b7 == 0) return 16;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 0 && b7 == 1) return 17;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1 && b7 == 0) return 18;
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1 && b7 == 1) return 19;
-                                if (b2 == 1 && b3 == 0 && b4 == 1 && b5 == 0 && b6 == 0 && b7 == 0) return 20;
-                                if (b2 == 1 && b3 == 0 && b4 == 1 && b5 == 0 && b6 == 0 && b7 == 1) return 21;
-                                if (b2 == 1 && b3 == 1 && b4 == 1 && b5 == 1 && b6 == 1) return 22;
-
-                                // Entries 23–48: Intra, prefix only
-                                if (b2 == 1 && b3 == 1 && b4 == 1 && b5 == 0 && b6 == 1)
+                                if (b2 == 0)
                                 {
-                                    throw new InvalidOperationException(); // Delegate to intra decoder
+                                    return ((b3 << 2) | (b4 << 1) | b5) + 3;
+                                }
+                                else
+                                {
+                                    int b6 = decoder.ReadBin().AsInt32();
+
+                                    if (b3 == 0)
+                                    {
+                                        return 12 + ((b6 << 2) | (b5 << 1) | b4);
+                                    }
+                                    else
+                                    {
+                                        if (b4 == 0)
+                                            return 20 + b6;
+                                        else
+                                            return 22;
+                                    }
                                 }
                             }
                         }
-
                     }
-                    throw new InvalidOperationException();
+                    throw new InvalidOperationException($"Unknown slice type: {slice}");
                 }
                 else
                 {

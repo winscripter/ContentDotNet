@@ -209,6 +209,11 @@
             int[] bottom_right = h264.H264RbspState?.PictureParameterSet?.BottomRight?.CastAsInt32() ?? [];
             int PicHeightInMapUnits = h264.H264RbspState?.PicHeightInMapUnits() ?? 0;
 
+            if (num_slice_groups_minus1 == 0)
+            {
+                return; // Leave all values in mapUnitToSliceGroupMap equal to 0
+            }
+
             if (slice_group_map_type == 0)
             {
                 int i = 0;

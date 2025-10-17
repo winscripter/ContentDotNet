@@ -25,19 +25,7 @@ namespace ContentDotNet.Extensions.Video.H264.Components.IO.Presets
 			return Task.FromResult<uint>(default);
 		}
 
-		public override bool ReadMbSkipFlag()
-		{
-			StrictThrowHelper.ThrowCavlcOnCabac();
-			return default;
-		}
-
-		public override Task<bool> ReadMbSkipFlagAsync()
-		{
-			StrictThrowHelper.ThrowCavlcOnCabac();
-			return Task.FromResult<bool>(default);
-		}
-
-																		public override uint ReadCoeffToken()
+																			public override uint ReadCoeffToken()
 		{
 			StrictThrowHelper.ThrowCavlcOnCabac();
 			return default;
@@ -114,7 +102,19 @@ namespace ContentDotNet.Extensions.Video.H264.Components.IO.Presets
 	internal abstract class StrictlyCavlcReader : H264ReaderBase
 	{
 		public override bool UsesCabac => false;
-				public override bool ReadEndOfSliceFlag()
+		public override bool ReadMbSkipFlag()
+		{
+			StrictThrowHelper.ThrowCabacOnCavlc();
+			return default;
+		}
+
+		public override Task<bool> ReadMbSkipFlagAsync()
+		{
+			StrictThrowHelper.ThrowCavlcOnCabac();
+			return Task.FromResult<bool>(default);
+		}
+
+			public override bool ReadEndOfSliceFlag()
 		{
 			StrictThrowHelper.ThrowCabacOnCavlc();
 			return default;

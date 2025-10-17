@@ -48,7 +48,7 @@
         {
             this.rawBitStream = rawBitStream;
             this.h264State = h264State;
-            this.macroblocks = new LimitedList<H264MacroblockInfo>(h264State.DerivePicSizeInMbs());
+            this.macroblocks = new LimitedList<H264MacroblockInfo>(h264State.DerivePicSizeInMbs() + 1);
 
             h264State.MacroblockUtility = new MacroblockUtilityImpl(this);
         }
@@ -117,9 +117,12 @@
             await this.ioReader!.ReadSliceDataAsync(syntaxReaderFactory!, rawBitStream, ReceiveMb, this.h264State, sliceDecoder);
         }
 
+        //private int mbCounter = 0;
         private void ReceiveMb(H264MacroblockInfo layer)
         {
             this.macroblocks.Add(layer);
+            //Console.WriteLine(++mbCounter);
+            //Thread.Sleep(1); // Slow allocation to give a chance to close Command Prompt if memory leaks out
         }
 
         private void EnsureComponentsForLoadingSlicesAreLoaded()

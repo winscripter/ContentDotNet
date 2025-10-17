@@ -30,7 +30,8 @@
 		["coeff_abs_level_minus1"] = UInt32,
 		["coeff_sign_flag"] = Boolean,
 		["coeff_abs_level_minus1"] = UInt32,
-		["coeff_sign_flag"] = Boolean
+		["coeff_sign_flag"] = Boolean,
+		["mb_skip_flag"] = Boolean,
 	};
 
 	// string - raw H.264 name
@@ -38,7 +39,6 @@
 	var seCAVLC = new Dictionary<string, int>()
 	{
 		["mb_skip_run"] = UInt32,
-		["mb_skip_flag"] = Boolean,
 		["coeff_token"] = UInt32,
 		["trailing_ones_sign_flag"] = Boolean,
 		["level_prefix"] = UInt32,

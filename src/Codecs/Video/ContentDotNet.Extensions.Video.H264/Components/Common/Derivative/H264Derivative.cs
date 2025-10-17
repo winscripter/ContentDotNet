@@ -766,9 +766,13 @@
                         predPartWidth = MacroblockTraits.SubMbPartWidth(mb, (int)mb.Rbsp.SubMbPred!.SubMbType[mbPartIdx]);
                     }
                 }
-                else
+                else if (mb.Rbsp.SubMbPred != null)
                 {
                     predPartWidth = MacroblockTraits.SubMbPartWidth(mb, (int)mb.Rbsp.SubMbPred!.SubMbType[mbPartIdx]);
+                }
+                else
+                {
+                    predPartWidth = 0;
                 }
 
                 LumaLocations ll = abcd switch

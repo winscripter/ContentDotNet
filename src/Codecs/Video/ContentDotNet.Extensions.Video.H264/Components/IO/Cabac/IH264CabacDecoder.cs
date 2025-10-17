@@ -12,6 +12,11 @@
     public interface IH264CabacDecoder
     {
         /// <summary>
+        ///   The H.264 state.
+        /// </summary>
+        H264State State { get; }
+
+        /// <summary>
         ///   Decoding variables.
         /// </summary>
         H264DecodingVariables DecodingVariables { get; }
@@ -84,5 +89,12 @@
         /// variable gets reset with the given values accordingly.
         /// </param>
         void InitializeContext(int ctxIdx, int sliceQPY, int cabacInitIdc, H264SliceType sliceType, bool reinitialize = false);
+
+        /// <summary>
+        ///   Is the context variable <paramref name="ctxIdx"/> already initialized?
+        /// </summary>
+        /// <param name="ctxIdx">The context variable index.</param>
+        /// <returns>A boolean, indicating if the context variable <paramref name="ctxIdx"/> is already initialized.</returns>
+        bool IsContextInitialized(int ctxIdx);
     }
 }

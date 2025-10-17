@@ -1,6 +1,5 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
 {
-    using ContentDotNet.BitStream;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
 
     /// <summary>
@@ -11,7 +10,9 @@
         /// <summary>
         ///   Creates a new CABAC Decoder instance.
         /// </summary>
+        /// <param name="rawBitStream">The bit stream</param>
+        /// <param name="state">The H.264 state</param>
         /// <returns>A CABAC decoder</returns>
-        IH264CabacDecoder CreateDecoder(IH264ArithmeticReader rawBitStream);
+        IH264CabacDecoder CreateDecoder(IH264ArithmeticReader rawBitStream, H264State state);
     }
 }

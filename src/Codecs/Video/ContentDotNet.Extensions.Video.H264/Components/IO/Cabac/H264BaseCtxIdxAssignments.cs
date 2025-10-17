@@ -94,7 +94,7 @@
                 {
                     H264SliceType.P or H264SliceType.SP => mb_skip_flag_PSP,
                     H264SliceType.B => mb_skip_flag_B,
-                    _ => null
+                    _ => throw new InvalidOperationException($"{sliceType} is not a valid slice type for MacroblockSkipFlag; expected P, SP or B")
                 },
                 H264SyntaxElement.SubMacroblockType => sliceType switch
                 {

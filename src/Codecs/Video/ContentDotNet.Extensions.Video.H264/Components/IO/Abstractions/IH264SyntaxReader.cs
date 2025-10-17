@@ -1,6 +1,7 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions
 {
     using ContentDotNet.BitStream;
+    using ContentDotNet.Extensions.Video.H264.Models;
 
     /// <summary>
     ///   Reads syntax elements for <c>slice_data</c>, <c>macroblock_layer</c>, <c>mb_pred</c>, <c>sub_mb_pred</c>,
@@ -27,5 +28,10 @@
         ///   RBSP state
         /// </summary>
         H264RbspState RbspState { get; set; }
+
+        /// <summary>
+        ///   Current macroblock
+        /// </summary>
+        H264MacroblockInfo? MacroblockInfo { get; set; }
     }
 }

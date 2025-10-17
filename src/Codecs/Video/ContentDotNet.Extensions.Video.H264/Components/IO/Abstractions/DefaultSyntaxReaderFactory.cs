@@ -4,7 +4,6 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine.Implementation;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Implementation;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.IOImplementation;
-    using ContentDotNet.Extensions.Video.H264.Enumerations;
 
     /// <summary>
     ///   The default syntax reader factory.
@@ -22,9 +21,9 @@
             if (state.H264RbspState?.PictureParameterSet?.EntropyCodingModeFlag == true)
             {
                 var arithmeticDecoder = new ArithmeticDecodingEngine(reader, new BinTrackerImpl(), 510, (int)reader.ReadBits(9));
-                var cabacDecoder = new H264CabacDecoder(arithmeticDecoder);
+                var cabacDecoder = new H264CabacDecoder(arithmeticDecoder, state);
                 return new H264CabacReader(cabacDecoder, state.DeriveSliceQpy(),
-                    (H264SliceType)((int?)state.H264RbspState?.SliceHeader?.SliceType ?? 0),
+                    state.GetSliceType(),
                     (int?)state.H264RbspState?.SliceHeader?.CabacInitIdc ?? 0,
                     state);
             }

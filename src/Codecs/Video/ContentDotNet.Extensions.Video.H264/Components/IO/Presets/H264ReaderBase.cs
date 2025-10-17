@@ -2,12 +2,14 @@
 {
     using ContentDotNet.BitStream;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions;
+    using ContentDotNet.Extensions.Video.H264.Models;
     using System.Collections.Generic;
     using System.Threading.Tasks;
 
     internal abstract class H264ReaderBase : IH264SyntaxReader
     {
         public abstract bool UsesCabac { get; }
+        public abstract H264MacroblockInfo? MacroblockInfo { get; set; }
 
         public BitStreamReader Reader { get; set; } = null!;
         public H264RbspState RbspState { get; set; } = null!;

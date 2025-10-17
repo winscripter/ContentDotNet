@@ -122,7 +122,7 @@
                 {
                     return I_MbPartPredMode_0(transformSize8x8Flag, mbType);
                 }
-                throw new InvalidOperationException();
+                return NotAn.na;
             }
             else if (sliceType == H264SliceType.P || sliceType == H264SliceType.SP)
             {
@@ -146,7 +146,7 @@
                 {
                     return P_MbPartPredMode_1(transformSize8x8Flag, mbPartIdx) ?? throw new InvalidOperationException();
                 }
-                throw new InvalidOperationException();
+                return NotAn.na;
             }
             else if (sliceType == H264SliceType.B)
             {
@@ -170,11 +170,11 @@
                 {
                     return B_MbPartPredMode_1(transformSize8x8Flag, mbPartIdx) ?? throw new InvalidOperationException();
                 }
-                throw new InvalidOperationException();
+                return NotAn.na;
             }
             else /* SI */
             {
-                throw new InvalidOperationException();
+                return NotAn.na;
             }
         }
 
