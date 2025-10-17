@@ -30,7 +30,11 @@
             }
 
             long nalLength = ProcessNalLength();
-            this.State!.H264RbspState!.RbspEndOffset = this.BitStreamReader.BaseStream.Position + nalLength;
+
+            // NOTE: Subtract 1 from NAL length so we account for RBSP bytes and exclude the NAL Unit Header.
+            // Also account for Emulation Prevention 3 Bytes since we account for positions in the byte stream,
+            // not bytes read in the RBSP.
+            this.State!.H264RbspState!.RbspEndOffset = this.BitStreamReader.BaseStream.Position + (nalLength - 1);
 
             RbspNalUnit nal = ParseNal((int)nalLength);
 
