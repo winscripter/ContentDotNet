@@ -226,7 +226,7 @@
                     else if (slice is H264SliceType.P or H264SliceType.SP)
                     {
                         bool b0 = decoder.ReadBin();
-                        if (b0)
+                        if (!b0)
                         {
                             bool b1 = decoder.ReadBin();
                             bool b2 = decoder.ReadBin();
