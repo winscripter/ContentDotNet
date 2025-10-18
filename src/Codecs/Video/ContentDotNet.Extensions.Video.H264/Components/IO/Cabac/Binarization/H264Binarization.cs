@@ -134,84 +134,117 @@
                 {
                     if (slice == H264SliceType.I)
                     {
-                        int b0 = decoder.ReadBin().AsInt32();
-                        if (b0 == 0)
+                        //0(I_NxN)          0
+                        //1(I_16x16_0_0_0)  1 0 0 0 0 0
+                        //2(I_16x16_1_0_0)  1 0 0 0 0 1
+                        //3(I_16x16_2_0_0)  1 0 0 0 1 0
+                        //4(I_16x16_3_0_0)  1 0 0 0 1 1
+                        //5(I_16x16_0_1_0)  1 0 0 1 0 0 0
+                        //6(I_16x16_1_1_0)  1 0 0 1 0 0 1
+                        //7(I_16x16_2_1_0)  1 0 0 1 0 1 0
+                        //8(I_16x16_3_1_0)  1 0 0 1 0 1 1
+                        //9(I_16x16_0_2_0)  1 0 0 1 1 0 0
+                        //10(I_16x16_1_2_0) 1 0 0 1 1 0 1
+                        //11(I_16x16_2_2_0) 1 0 0 1 1 1 0
+                        //12(I_16x16_3_2_0) 1 0 0 1 1 1 1
+                        //13(I_16x16_0_0_1) 1 0 1 0 0 0
+                        //14(I_16x16_1_0_1) 1 0 1 0 0 1
+                        //15(I_16x16_2_0_1) 1 0 1 0 1 0
+                        //16(I_16x16_3_0_1) 1 0 1 0 1 1
+                        //17(I_16x16_0_1_1) 1 0 1 1 0 0 0
+                        //18(I_16x16_1_1_1) 1 0 1 1 0 0 1
+                        //19(I_16x16_2_1_1) 1 0 1 1 0 1 0
+                        //20(I_16x16_3_1_1) 1 0 1 1 0 1 1
+                        //21(I_16x16_0_2_1) 1 0 1 1 1 0 0
+                        //22(I_16x16_1_2_1) 1 0 1 1 1 0 1
+                        //23(I_16x16_2_2_1) 1 0 1 1 1 1 0
+                        //24(I_16x16_3_2_1) 1 0 1 1 1 1 1
+                        //25(I_PCM)         1 1
+
+                        bool b0 = decoder.ReadBin();
+                        if (!b0)
                         {
                             return 0;
                         }
                         else
                         {
-                            int b1 = decoder.ReadBin().AsInt32();
-                            if (b1 == 1)
+                            bool b1 = decoder.ReadBin();
+                            if (b1)
                             {
                                 return 25;
                             }
                             else
                             {
-                                int b2 = decoder.ReadBin().AsInt32();
-                                int b3 = decoder.ReadBin().AsInt32();
-                                int b4 = decoder.ReadBin().AsInt32();
-                                int b5 = decoder.ReadBin().AsInt32();
-
-                                if (b5 == 0)
+                                bool b2 = decoder.ReadBin();
+                                if (!b2)
                                 {
-                                    int b6 = decoder.ReadBin().AsInt32();
-                                    if (b2 == 0 && b3 == 0 && b4 == 0 && b6 == 0) return 1;
-                                    if (b2 == 0 && b3 == 0 && b4 == 0 && b6 == 1) return 2;
-                                    if (b2 == 0 && b3 == 0 && b4 == 1 && b6 == 0) return 3;
-                                    if (b2 == 0 && b3 == 0 && b4 == 1 && b6 == 1) return 4;
-                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 0) return 5;
-                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 1) return 6;
-                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 0) return 7;
-                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 1) return 8;
-                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 0) return 9;
-                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 1) return 10;
-                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 0) return 11;
-                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 1) return 12;
+                                    bool b3 = decoder.ReadBin();
+                                    if (!b3)
+                                    {
+                                        // Starting with 1
+                                        bool b4 = decoder.ReadBin();
+                                        bool b5 = decoder.ReadBin();
+
+                                        return 1 + ((b4.AsInt32() << 1) | b5.AsInt32());
+                                    }
+                                    else
+                                    {
+                                        // Starting with 5
+                                        bool b4 = decoder.ReadBin();
+                                        bool b5 = decoder.ReadBin();
+                                        bool b6 = decoder.ReadBin();
+
+                                        return 5 + ((b4.AsInt32() << 2) | (b5.AsInt32() << 1) | b6.AsInt32());
+                                    }
                                 }
                                 else
                                 {
-                                    int b6 = decoder.ReadBin().AsInt32();
-                                    int b7 = decoder.ReadBin().AsInt32();
-                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 0) return 13;
-                                    if (b2 == 0 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 1) return 14;
-                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 0) return 15;
-                                    if (b2 == 0 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 1) return 16;
-                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 0 && b7 == 0) return 17;
-                                    if (b2 == 1 && b3 == 0 && b4 == 0 && b6 == 0 && b7 == 1) return 18;
-                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 0 && b7 == 0) return 19;
-                                    if (b2 == 1 && b3 == 0 && b4 == 1 && b6 == 0 && b7 == 1) return 20;
-                                    if (b2 == 1 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 0) return 21;
-                                    if (b2 == 1 && b3 == 1 && b4 == 0 && b6 == 0 && b7 == 1) return 22;
-                                    if (b2 == 1 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 0) return 23;
-                                    if (b2 == 1 && b3 == 1 && b4 == 1 && b6 == 0 && b7 == 1) return 24;
+                                    bool b3 = decoder.ReadBin();
+                                    if (!b3)
+                                    {
+                                        // Starting with 13
+                                        bool b4 = decoder.ReadBin();
+                                        bool b5 = decoder.ReadBin();
+
+                                        return 13 + ((b4.AsInt32() << 1) | b5.AsInt32());
+                                    }
+                                    else
+                                    {
+                                        // Starting with 17
+                                        bool b4 = decoder.ReadBin();
+                                        bool b5 = decoder.ReadBin();
+                                        bool b6 = decoder.ReadBin();
+
+                                        return 17 + ((b4.AsInt32() << 2) | (b5.AsInt32() << 1) | b6.AsInt32());
+                                    }
                                 }
                             }
                         }
                     }
-                    if (slice is H264SliceType.P or H264SliceType.SP)
+                    else if (slice is H264SliceType.P or H264SliceType.SP)
                     {
-                        int b0 = decoder.ReadBin().AsInt32();
-                        if (b0 == 1)
+                        bool b0 = decoder.ReadBin();
+                        if (b0)
                         {
-                            // TODO: Meaningful exception?
-                            throw new InvalidOperationException(); // Entries 5–30: Intra, handled separately
+                            bool b1 = decoder.ReadBin();
+                            bool b2 = decoder.ReadBin();
+                            if (!b1)
+                            {
+                                if (!b2) return 0;
+                                else return 3;
+                            }
+                            else
+                            {
+                                if (!b2) return 2;
+                                else return 1;
+                            }
                         }
                         else
                         {
-                            int b1 = decoder.ReadBin().AsInt32();
-                            int b2 = decoder.ReadBin().AsInt32();
-
-                            if (b1 == 0 && b2 == 0) return 0; // P_L0_16x16
-                            if (b1 == 1 && b2 == 1) return 1; // P_L0_L0_16x8
-                            if (b1 == 1 && b2 == 0) return 2; // P_L0_L0_8x16
-                            if (b1 == 0 && b2 == 1) return 3; // P_8x8
-
-                            // TODO: Meaningful exception?
-                            throw new InvalidOperationException();
+                            return 5; // Intra, prefix only
                         }
                     }
-                    if (slice == H264SliceType.B)
+                    else if (slice == H264SliceType.B)
                     {
                         int b0 = decoder.ReadBin().AsInt32();
                         if (b0 == 0)
@@ -254,7 +287,6 @@
                             }
                         }
                     }
-                    throw new InvalidOperationException($"Unknown slice type: {slice}");
                 }
                 else
                 {
