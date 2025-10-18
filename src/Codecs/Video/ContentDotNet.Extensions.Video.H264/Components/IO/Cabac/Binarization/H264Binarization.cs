@@ -270,21 +270,13 @@
                                 int b4 = decoder.ReadBin().AsInt32();
                                 int b5 = decoder.ReadBin().AsInt32();
 
-                                if (b0 == 1 && b1 == 1 && b2 == 0 && b3 == 1 && b4 == 0 && b5 == 0) return 16;
-                                if (b0 == 1 && b1 == 1 && b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1) return 13;
-
                                 if (b2 == 0)
                                 {
                                     return ((b3 << 2) | (b4 << 1) | b5) + 3;
                                 }
                                 else
                                 {
-                                    if (b3 == 1 && b4 == 1 && b5 == 0) return 11;
-
                                     int b6 = decoder.ReadBin().AsInt32();
-
-                                    if (b0 == 1 && b1 == 1 && b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1) return 15;
-                                    if (b0 == 1 && b1 == 1 && b2 == 1 && b3 == 0 && b4 == 1 && b5 == 1 && b6 == 0) return 18;
 
                                     if (b3 == 0)
                                     {
