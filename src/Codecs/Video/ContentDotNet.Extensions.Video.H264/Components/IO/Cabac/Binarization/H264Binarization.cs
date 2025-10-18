@@ -344,6 +344,8 @@
 
                                 if (b2 == 1)
                                 {
+                                    if (b3 == 1 && b5 == 1) return 22 + b4;
+
                                     int b6 = decoder.ReadBin().AsInt32();
 
                                     return 12 + ((b3 << 3) | (b4 << 2) | (b5 << 1) | b6);
