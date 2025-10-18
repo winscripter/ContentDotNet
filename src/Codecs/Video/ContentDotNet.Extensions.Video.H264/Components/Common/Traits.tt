@@ -463,6 +463,8 @@ namespace ContentDotNet.Extensions.Video.H264.Components.Common {
 		}
 
 		private static int? B_MbPartPredMode_0(bool transformSize8x8Flag, int mbType) {
+			if (mbType >= 23)
+				return I_MbPartPredMode_0(transformSize8x8Flag, mbType - 23);
 		<#
 			foreach (string line in BTraits.Split([Environment.NewLine], StringSplitOptions.None)) {
 				if (string.IsNullOrWhiteSpace(line)) continue;
@@ -478,10 +480,12 @@ namespace ContentDotNet.Extensions.Video.H264.Components.Common {
 				return <#= splitted[3] #>;
 			}
 		<# } #>
-			throw new InvalidOperationException("Invalid or unrecognizable input");
+			throw new InvalidOperationException("Invalid or unrecognizable input: " + mbType);
 		}
 
 		private static int? B_MbPartPredMode_1(bool transformSize8x8Flag, int mbType) {
+			if (mbType >= 23)
+				return I_MbPartPredMode_0(transformSize8x8Flag, mbType - 23);
 		<#
 			foreach (string line in BTraits.Split([Environment.NewLine], StringSplitOptions.None)) {
 				if (string.IsNullOrWhiteSpace(line)) continue;

@@ -25,7 +25,10 @@
                 return new H264CabacReader(cabacDecoder, state.DeriveSliceQpy(),
                     state.GetSliceType(),
                     (int?)state.H264RbspState?.SliceHeader?.CabacInitIdc ?? 0,
-                    state);
+                    state)
+                {
+                    Reader = reader
+                };
             }
             else
             {

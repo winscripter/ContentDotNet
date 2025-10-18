@@ -130,7 +130,7 @@
             }
             else
             {
-                decoder.Affix = H264Affix.Suffix;
+                decoder.Affix = H264Affix.Prefix;
 
                 if (!subMbType)
                 {
@@ -268,7 +268,23 @@
 
                                 if (b2 == 1)
                                 {
-                                    if (b3 == 1 && b5 == 1) return 23 - b4;
+                                    if (b3 == 1 && b5 == 1)
+                                    {
+                                        if (b4 == 1) return 22;
+                                        else
+                                        {
+                                            // Special case: 1 1 1 1 0  1 
+                                            // In this context, 111101 is the prefix.
+                                            // Following it is the same mb_type binarization, except, it's B slice. It's
+                                            // the suffix value.
+                                            //
+                                            // Finally, the result is the suffix
+
+                                            decoder.Affix = H264Affix.Suffix;
+
+                                            return MbTypeInternal(decoder, H264SliceType.I, false);
+                                        }
+                                    }
 
                                     int b6 = decoder.ReadBin().AsInt32();
 

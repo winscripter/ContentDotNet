@@ -1318,6 +1318,8 @@ namespace ContentDotNet.Extensions.Video.H264.Components.Common {
 		}
 
 		private static int? B_MbPartPredMode_0(bool transformSize8x8Flag, int mbType) {
+			if (mbType >= 23)
+				return I_MbPartPredMode_0(transformSize8x8Flag, mbType - 23);
 					// B_Direct_16x16
 			if (mbType == 0) {
 				return Direct;
@@ -1410,10 +1412,12 @@ namespace ContentDotNet.Extensions.Video.H264.Components.Common {
 			if (mbType == 22) {
 				return na;
 			}
-					throw new InvalidOperationException("Invalid or unrecognizable input");
+					throw new InvalidOperationException("Invalid or unrecognizable input: " + mbType);
 		}
 
 		private static int? B_MbPartPredMode_1(bool transformSize8x8Flag, int mbType) {
+			if (mbType >= 23)
+				return I_MbPartPredMode_0(transformSize8x8Flag, mbType - 23);
 					// B_Direct_16x16
 			if (mbType == 0) {
 				return na;

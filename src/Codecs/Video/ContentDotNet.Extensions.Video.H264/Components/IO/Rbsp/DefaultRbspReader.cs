@@ -133,6 +133,16 @@
             uint mb_type = syntaxReader.ReadMbType();
             mb.Rbsp.MbType = mb_type;
 
+            if (Grabber.GetEntropyCodingModeFlag(rbspState))
+            {
+                if (mb.Rbsp.MbType >= 23)
+                {
+                    mb.SliceType = H264SliceType.I;
+                    sliceType = H264SliceType.I;
+                    CurrentMacroblock.SliceType = H264SliceType.I;
+                }
+            }
+
             if (sliceType == H264SliceType.I /*I slice*/ &&
                 mb_type == 25 /*I_PCM*/)
             {

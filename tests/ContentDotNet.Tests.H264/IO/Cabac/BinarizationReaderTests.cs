@@ -42,6 +42,11 @@
             return H264Binarization.MbType(bcd, H264SliceType.B, true);
         }
 
+        private static int TestCBP(BinCustomDecoder bcd)
+        {
+            return H264Binarization.CodedBlockPattern(bcd, 1);
+        }
+
         [Fact]
         public void U_0()
         {
@@ -175,6 +180,58 @@
             var tuResult = TestTU(new BinCustomDecoder(bc), 3);
             Assert.Equal(3, tuResult.Value);
             Assert.Equal(3, tuResult.BinsRead);
+        }
+        
+        // Algorithm for CBP binarization:
+        //
+        // l=0
+        // c=0
+        // for i in range(4):
+        //  l = (l << 1) | bin()
+        // for i in range(2):
+        //  c = (c << 1) | bin()
+        // result = (l << 4) | c
+
+        [Fact]
+        public void CBP() // CodedBlockPattern
+        {
+            var cbpExample = new[]
+            {
+                false, false, false, true, false, true
+            };
+            // Luma: 1
+            // Chroma: 1
+
+            var cbp = TestCBP(new BinCustomDecoder(cbpExample));
+            Assert.Equal((1 << 4) | 1, cbp);
+        }
+
+        [Fact]
+        public void CBP_2() // CodedBlockPattern
+        {
+            var cbpExample = new[]
+            {
+                false, true, false, true, true, false
+            };
+            // Luma: 5
+            // Chroma: 2
+
+            var cbp = TestCBP(new BinCustomDecoder(cbpExample));
+            Assert.Equal((5 << 4) | 2, cbp);
+        }
+
+        [Fact]
+        public void CBP_3() // CodedBlockPattern
+        {
+            var cbpExample = new[]
+            {
+                true, false, false, true, true, true
+            };
+            // Luma: 9
+            // Chroma: 3
+
+            var cbp = TestCBP(new BinCustomDecoder(cbpExample));
+            Assert.Equal((9 << 4) | 3, cbp);
         }
     }
 }
