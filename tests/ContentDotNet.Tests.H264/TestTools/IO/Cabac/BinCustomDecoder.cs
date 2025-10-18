@@ -22,7 +22,7 @@
         public int CtxIdxPrefix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool ForcePrefix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int BinIndex { get; set; }
-        public H264Affix Affix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public H264Affix Affix { get; set; }
         public RecomputeCallback Recompute { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
 
         public void InitializeContext(int ctxIdx, int sliceQPY, int cabacInitIdc, H264SliceType sliceType, bool reinitialize = false)
