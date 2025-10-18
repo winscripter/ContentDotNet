@@ -17,5 +17,6 @@
     <None Include="$(MSBuildThisFileDirectory)h264\sei\examples.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\sei\sei-abstractions.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\slice-decoder.md" />
+    <None Include="$(MSBuildThisFileDirectory)pcmaudio\decoding.md" />
   </ItemGroup>
 </Project>
