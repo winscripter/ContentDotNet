@@ -214,10 +214,10 @@
                 false, true, false, true, true, false
             };
             // Luma: 5
-            // Chroma: 2
+            // Chroma: 1
 
             var cbp = TestCBP(new BinCustomDecoder(cbpExample));
-            Assert.Equal((2 << 4) | 5, cbp);
+            Assert.Equal((1 << 4) | 5, cbp);
         }
 
         [Fact]
