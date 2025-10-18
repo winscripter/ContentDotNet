@@ -264,6 +264,8 @@
                                 int b4 = decoder.ReadBin().AsInt32();
                                 int b5 = decoder.ReadBin().AsInt32();
 
+                                if (b0 == 1 && b1 == 1 && b2 == 1 && b3 == 1 && b4 == 1 && b5 == 0) return 11;
+
                                 if (b2 == 1)
                                 {
                                     if (b3 == 1 && b5 == 1) return 22 + b4;
