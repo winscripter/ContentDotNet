@@ -255,6 +255,8 @@
                         }
                         else
                         {
+                            // b0 is 1 here
+
                             int b1 = decoder.ReadBin().AsInt32();
                             int b2 = decoder.ReadBin().AsInt32();
 
@@ -262,6 +264,8 @@
                             else if (b1 == 0 && b2 == 1) return 2;
                             else
                             {
+                                // b1 is 1 here
+
                                 int b3 = decoder.ReadBin().AsInt32();
                                 int b4 = decoder.ReadBin().AsInt32();
                                 int b5 = decoder.ReadBin().AsInt32();
@@ -272,6 +276,8 @@
                                 }
                                 else
                                 {
+                                    if (b3 == 0 && b4 == 0) return 11;
+
                                     int b6 = decoder.ReadBin().AsInt32();
 
                                     if (b3 == 0)
