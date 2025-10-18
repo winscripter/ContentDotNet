@@ -278,7 +278,7 @@
                                 }
                                 else
                                 {
-                                    if (b3 == 1 && b4 == 1) return 11;
+                                    if (b3 == 1 && b4 == 1 && b5 == 0) return 11;
 
                                     int b6 = decoder.ReadBin().AsInt32();
 
