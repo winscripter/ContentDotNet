@@ -329,7 +329,7 @@
                         int b0 = decoder.ReadBin().AsInt32();
                         if (b0 == 0)
                         {
-                            return 0; // B_Direct_8x8
+                            return 0;
                         }
                         else
                         {
@@ -338,28 +338,19 @@
                             else
                             {
                                 int b2 = decoder.ReadBin().AsInt32();
-                                if (b2 == 0)
-                                {
-                                    int b3 = decoder.ReadBin().AsInt32();
-                                    int b4 = decoder.ReadBin().AsInt32();
+                                int b3 = decoder.ReadBin().AsInt32();
+                                int b4 = decoder.ReadBin().AsInt32();
+                                int b5 = decoder.ReadBin().AsInt32();
 
-                                    return 3 + ((b3 << 1) | b4);
+                                if (b2 == 1)
+                                {
+                                    int b6 = decoder.ReadBin().AsInt32();
+
+                                    return 12 + ((b3 << 3) | (b4 << 2) | (b5 << 1) | b6);
                                 }
                                 else
                                 {
-                                    int b3 = decoder.ReadBin().AsInt32();
-
-                                    if (b3 == 0)
-                                    {
-                                        int b4 = decoder.ReadBin().AsInt32();
-                                        int b5 = decoder.ReadBin().AsInt32();
-
-                                        return 7 + ((b4 << 1) | b5);
-                                    }
-                                    else
-                                    {
-                                        return 11 + decoder.ReadBin().AsInt32();
-                                    }
+                                    return 3 + ((b3 << 2) | (b4 << 2) | b5);
                                 }
                             }
                         }
