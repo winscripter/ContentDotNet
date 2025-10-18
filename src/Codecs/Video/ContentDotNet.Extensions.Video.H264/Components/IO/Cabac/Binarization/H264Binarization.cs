@@ -251,44 +251,30 @@
                         int b0 = decoder.ReadBin().AsInt32();
                         if (b0 == 0)
                         {
-                            return 0; // B_Direct_16x16
+                            return 0;
                         }
                         else
                         {
-                            // b0 is 1 here
-
                             int b1 = decoder.ReadBin().AsInt32();
-                            int b2 = decoder.ReadBin().AsInt32();
-
-                            if (b1 == 0 && b2 == 0) return 1;
-                            else if (b1 == 0 && b2 == 1) return 2;
+                            if (b1 == 0) return decoder.ReadBin().AsInt32() + 1;
                             else
                             {
-                                // b1 is 1 here
-
+                                int b2 = decoder.ReadBin().AsInt32();
                                 int b3 = decoder.ReadBin().AsInt32();
                                 int b4 = decoder.ReadBin().AsInt32();
                                 int b5 = decoder.ReadBin().AsInt32();
 
-                                if (b2 == 0)
+                                if (b2 == 1)
                                 {
-                                    return ((b3 << 2) | (b4 << 1) | b5) + 3;
+                                    if (b3 == 1 && b5 == 1) return 22 + b4;
+
+                                    int b6 = decoder.ReadBin().AsInt32();
+
+                                    return 12 + ((b3 << 3) | (b4 << 2) | (b5 << 1) | b6);
                                 }
                                 else
                                 {
-                                    int b6 = decoder.ReadBin().AsInt32();
-
-                                    if (b3 == 0)
-                                    {
-                                        return 12 + ((b6 << 2) | (b5 << 1) | b4);
-                                    }
-                                    else
-                                    {
-                                        if (b4 == 0)
-                                            return 20 + b6;
-                                        else
-                                            return 22;
-                                    }
+                                    return 3 + ((b3 << 2) | (b4 << 2) | b5);
                                 }
                             }
                         }
@@ -329,7 +315,7 @@
                         int b0 = decoder.ReadBin().AsInt32();
                         if (b0 == 0)
                         {
-                            return 0;
+                            return 0; // B_Direct_8x8
                         }
                         else
                         {
@@ -338,21 +324,28 @@
                             else
                             {
                                 int b2 = decoder.ReadBin().AsInt32();
-                                int b3 = decoder.ReadBin().AsInt32();
-                                int b4 = decoder.ReadBin().AsInt32();
-                                int b5 = decoder.ReadBin().AsInt32();
-
-                                if (b2 == 1)
+                                if (b2 == 0)
                                 {
-                                    if (b3 == 1 && b5 == 1) return 22 + b4;
+                                    int b3 = decoder.ReadBin().AsInt32();
+                                    int b4 = decoder.ReadBin().AsInt32();
 
-                                    int b6 = decoder.ReadBin().AsInt32();
-
-                                    return 12 + ((b3 << 3) | (b4 << 2) | (b5 << 1) | b6);
+                                    return 3 + ((b3 << 1) | b4);
                                 }
                                 else
                                 {
-                                    return 3 + ((b3 << 2) | (b4 << 2) | b5);
+                                    int b3 = decoder.ReadBin().AsInt32();
+
+                                    if (b3 == 0)
+                                    {
+                                        int b4 = decoder.ReadBin().AsInt32();
+                                        int b5 = decoder.ReadBin().AsInt32();
+
+                                        return 7 + ((b4 << 1) | b5);
+                                    }
+                                    else
+                                    {
+                                        return 11 + decoder.ReadBin().AsInt32();
+                                    }
                                 }
                             }
                         }
