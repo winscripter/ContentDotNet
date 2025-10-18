@@ -280,6 +280,8 @@
 
                                     int b6 = decoder.ReadBin().AsInt32();
 
+                                    if (b3 == 1 && b4 == 0 && b5 == 0 && b6 == 1) return 15;
+
                                     if (b3 == 0)
                                     {
                                         return 12 + ((b6 << 2) | (b5 << 1) | b4);
