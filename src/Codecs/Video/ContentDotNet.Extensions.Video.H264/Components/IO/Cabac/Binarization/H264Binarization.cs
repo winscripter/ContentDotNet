@@ -33,9 +33,9 @@
             int tuValue = 0;
             int bitsRead = 0;
 
-            bool last;
+            bool last = false;
 
-            while ((last = decoder.ReadBin()) && tuValue < cMax)
+            while (tuValue < cMax && (last = decoder.ReadBin()))
             {
                 tuValue++;
                 bitsRead++;
