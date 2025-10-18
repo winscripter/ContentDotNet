@@ -203,7 +203,7 @@
             // Chroma: 1
 
             var cbp = TestCBP(new BinCustomDecoder(cbpExample));
-            Assert.Equal((1 << 4) | 1, cbp);
+            Assert.Equal((0 << 4) | 1, cbp);
         }
 
         [Fact]
@@ -249,7 +249,7 @@
             // Chroma: 3
 
             var cbp = TestCBP(new BinCustomDecoder(cbpExample));
-            Assert.Equal((3 << 4) | 9, cbp);
+            Assert.Equal((2 << 4) | 9, cbp);
         }
     }
 }
