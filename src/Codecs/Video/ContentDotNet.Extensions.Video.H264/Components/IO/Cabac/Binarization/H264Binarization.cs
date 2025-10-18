@@ -336,32 +336,33 @@
                         else
                         {
                             int b1 = decoder.ReadBin().AsInt32();
-                            if (b1 == 0)
-                            {
-                                int b2 = decoder.ReadBin().AsInt32();
-                                if (b2 == 0) return 1; // B_L0_8x8
-                                else return 2;         // B_L1_8x8
-                            }
+                            if (b1 == 0) return decoder.ReadBin().AsInt32() + 1;
                             else
                             {
                                 int b2 = decoder.ReadBin().AsInt32();
-                                int b3 = decoder.ReadBin().AsInt32();
-                                int b4 = decoder.ReadBin().AsInt32();
+                                if (b2 == 0)
+                                {
+                                    int b3 = decoder.ReadBin().AsInt32();
+                                    int b4 = decoder.ReadBin().AsInt32();
 
-                                if (b2 == 0 && b3 == 0 && b4 == 0) return 3; // B_Bi_8x8
-                                if (b2 == 0 && b3 == 0 && b4 == 1) return 4; // B_L0_8x4
-                                if (b2 == 0 && b3 == 1 && b4 == 0) return 5; // B_L0_4x8
-                                if (b2 == 0 && b3 == 1 && b4 == 1) return 6; // B_L1_8x4
+                                    return 3 + ((b3 << 1) | b4);
+                                }
+                                else
+                                {
+                                    int b3 = decoder.ReadBin().AsInt32();
 
-                                int b5 = decoder.ReadBin().AsInt32();
-                                int b6 = decoder.ReadBin().AsInt32();
+                                    if (b3 == 0)
+                                    {
+                                        int b4 = decoder.ReadBin().AsInt32();
+                                        int b5 = decoder.ReadBin().AsInt32();
 
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 0) return 7;  // B_L1_4x8
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 0 && b6 == 1) return 8;  // B_Bi_8x4
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 0) return 9;  // B_Bi_4x8
-                                if (b2 == 1 && b3 == 0 && b4 == 0 && b5 == 1 && b6 == 1) return 10; // B_L0_4x4
-                                if (b2 == 1 && b3 == 1 && b4 == 0) return 11; // B_L1_4x4
-                                if (b2 == 1 && b3 == 1 && b4 == 1) return 12; // B_Bi_4x4
+                                        return 7 + ((b4 << 1) | b5);
+                                    }
+                                    else
+                                    {
+                                        return 11 + decoder.ReadBin().AsInt32();
+                                    }
+                                }
                             }
                         }
                     }
