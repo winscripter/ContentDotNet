@@ -9,6 +9,7 @@
     <Import_RootNamespace>Docs</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)g722\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\cabac\arithmetic-reader-writer.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\cabac\common.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\common\macroblock-tools.md" />
