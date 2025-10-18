@@ -221,6 +221,24 @@
         }
 
         [Fact]
+        public void CBP_2_Disassembled()
+        {
+            var cbpExample = new[]
+            {
+                false, true, false, true, true, false
+            };
+            // Luma: 5
+            // Chroma: 1
+
+            var bcd = new BinCustomDecoder(cbpExample);
+            int fl = H264Binarization.FL(bcd, 15);
+            int tu = H264Binarization.TU(bcd, 2).Value;
+
+            Assert.Equal(5, fl);
+            Assert.Equal(1, tu);
+        }
+
+        [Fact]
         public void CBP_3() // CodedBlockPattern
         {
             var cbpExample = new[]
