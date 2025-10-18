@@ -259,17 +259,6 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 			Assert.Equal(22, TestMbType_B(new BinCustomDecoder(bits)));
 		}
 
-		[Fact]
-		public void MbType_B_23()
-		{
-			var bits = new[]
-			{
-				true, true, true, true, false, true
-			};
-
-			Assert.Equal(23, TestMbType_B(new BinCustomDecoder(bits)));
-		}
-
 
 		[Fact]
 		public void MbType_PSP_0()

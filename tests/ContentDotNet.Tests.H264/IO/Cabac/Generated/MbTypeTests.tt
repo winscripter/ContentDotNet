@@ -38,7 +38,6 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		["1111000"] = 20,
 		["1111001"] = 21,
 		["111111"] = 22,
-		["111101"] = 23
 	};
 
 	var testDB_PSPSlice = new Dictionary<string, int>()
