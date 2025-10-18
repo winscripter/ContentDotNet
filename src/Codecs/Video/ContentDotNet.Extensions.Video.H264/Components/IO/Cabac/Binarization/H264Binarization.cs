@@ -33,14 +33,16 @@
             int tuValue = 0;
             int bitsRead = 0;
 
-            while (decoder.ReadBin() && tuValue < cMax)
+            bool last;
+
+            while ((last = decoder.ReadBin()) && tuValue < cMax)
             {
                 tuValue++;
                 bitsRead++;
                 rc.Increment();
             }
 
-            if (tuValue >= cMax)
+            if (!last)
                 bitsRead++;
 
             return new(tuValue, bitsRead);
