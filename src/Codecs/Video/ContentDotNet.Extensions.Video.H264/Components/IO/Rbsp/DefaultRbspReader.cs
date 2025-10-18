@@ -133,7 +133,7 @@
             uint mb_type = syntaxReader.ReadMbType();
             mb.Rbsp.MbType = mb_type;
 
-            if (Grabber.GetEntropyCodingModeFlag(rbspState))
+            if (Grabber.FetchEntropyCodingModeFlag(rbspState) == true)
             {
                 if (mb.Rbsp.MbType >= 23)
                 {
@@ -218,7 +218,7 @@
                     mb.Rbsp.CodedBlockPattern = (int)coded_block_pattern;
 
                     if (mb.Rbsp.GetCodedBlockPatternLuma() > 0 &&
-                        Grabber.GetTransform8x8ModeFlag(rbspState) && mb != I_NxN &&
+                        Grabber.FetchTransform8x8ModeFlag(rbspState) == true && mb != I_NxN &&
                         noSubMbPartSizeLessThan8x8Flag.AsBoolean() &&
                         (mb != B_Direct_16x16 || Grabber.GetDirect8x8InferenceFlag(rbspState)))
                     {
