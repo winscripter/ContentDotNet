@@ -8,7 +8,7 @@
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using System.Threading.Tasks;
 
-    internal class BinCustomDecoder(IBitCollection binSequence) : IH264CabacDecoder
+    internal class BinCustomDecoder(bool[] binSequence) : IH264CabacDecoder
     {
         public H264State State => throw new NotImplementedException();
 

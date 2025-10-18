@@ -9,7 +9,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_0()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false
 			};
@@ -20,7 +20,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_1()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false
 			};
@@ -31,7 +31,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_2()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true
 			};
@@ -42,7 +42,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_3()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, false, false, false
 			};
@@ -53,7 +53,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_4()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, false, false, true
 			};
@@ -64,7 +64,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_5()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, false, true, false
 			};
@@ -75,7 +75,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_6()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, false, true, true
 			};
@@ -86,7 +86,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_7()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, true, false, false
 			};
@@ -97,7 +97,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_8()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, true, false, true
 			};
@@ -108,7 +108,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_9()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, true, true, false
 			};
@@ -119,7 +119,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_10()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, true, true, true
 			};
@@ -130,7 +130,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_11()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, true, false
 			};
@@ -141,7 +141,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_12()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, false, false, false
 			};
@@ -152,7 +152,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_13()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, false, false, true
 			};
@@ -163,7 +163,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_14()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, false, true, false
 			};
@@ -174,7 +174,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_15()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, false, true, true
 			};
@@ -185,7 +185,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_16()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, true, false, false
 			};
@@ -196,7 +196,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_17()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, true, false, true
 			};
@@ -207,7 +207,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_18()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, true, true, false
 			};
@@ -218,7 +218,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_19()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, true, true, true
 			};
@@ -229,7 +229,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_20()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, false, false, false
 			};
@@ -240,7 +240,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_21()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, false, false, true
 			};
@@ -251,7 +251,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_22()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, true, true
 			};
@@ -262,7 +262,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_23()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, false, true
 			};
@@ -274,7 +274,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_PSP_0()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, false, false
 			};
@@ -285,7 +285,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_PSP_1()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, true, true
 			};
@@ -296,7 +296,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_PSP_2()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, true, false
 			};
@@ -307,7 +307,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_PSP_3()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, false, true
 			};
@@ -318,7 +318,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_PSP_5()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true
 			};
@@ -330,7 +330,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_0()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false
 			};
@@ -341,7 +341,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_1()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, false, false, false
 			};
@@ -352,7 +352,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_2()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, false, false, true
 			};
@@ -363,7 +363,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_3()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, false, true, false
 			};
@@ -374,7 +374,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_4()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, false, true, true
 			};
@@ -385,7 +385,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_5()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, false, false, false
 			};
@@ -396,7 +396,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_6()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, false, false, true
 			};
@@ -407,7 +407,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_7()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, false, true, false
 			};
@@ -418,7 +418,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_8()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, false, true, true
 			};
@@ -429,7 +429,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_9()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, true, false, false
 			};
@@ -440,7 +440,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_10()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, true, false, true
 			};
@@ -451,7 +451,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_11()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, true, true, false
 			};
@@ -462,7 +462,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_12()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false, true, true, true, true
 			};
@@ -473,7 +473,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_13()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, false, false, false
 			};
@@ -484,7 +484,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_14()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, false, false, true
 			};
@@ -495,7 +495,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_15()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, false, true, false
 			};
@@ -506,7 +506,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_16()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, false, true, true
 			};
@@ -517,7 +517,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_17()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, false, false, false
 			};
@@ -528,7 +528,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_18()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, false, false, true
 			};
@@ -539,7 +539,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_19()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, false, true, false
 			};
@@ -550,7 +550,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_20()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, false, true, true
 			};
@@ -561,7 +561,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_21()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, true, false, false
 			};
@@ -572,7 +572,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_22()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, true, false, true
 			};
@@ -583,7 +583,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_23()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, true, true, false
 			};
@@ -594,7 +594,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_24()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true, true, true, true, true
 			};
@@ -605,7 +605,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_25()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true
 			};
@@ -617,7 +617,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_P_0()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true
 			};
@@ -628,7 +628,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_P_1()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, false
 			};
@@ -639,7 +639,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_P_2()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, true, true
 			};
@@ -650,7 +650,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_P_3()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false, true, false
 			};
@@ -662,7 +662,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_0()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				false
 			};
@@ -673,7 +673,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_1()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, false
 			};
@@ -684,7 +684,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_2()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, false, true
 			};
@@ -695,7 +695,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_3()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, false, false
 			};
@@ -706,7 +706,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_4()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, false, true
 			};
@@ -717,7 +717,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_5()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, true, false
 			};
@@ -728,7 +728,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_6()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, false, true, true
 			};
@@ -739,7 +739,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_7()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, false, false
 			};
@@ -750,7 +750,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_8()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, false, true
 			};
@@ -761,7 +761,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_9()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, true, false
 			};
@@ -772,7 +772,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_10()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, false, true, true
 			};
@@ -783,7 +783,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_11()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, false
 			};
@@ -794,7 +794,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_12()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				true, true, true, true, true
 			};

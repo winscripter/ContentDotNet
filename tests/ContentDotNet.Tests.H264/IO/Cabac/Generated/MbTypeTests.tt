@@ -111,7 +111,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_B_<#= kvp.Value #>()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				<#= string.Join(", ", kvp.Key.ToCharArray().Select(x => x == '1' ? "true" : "false")) #>
 			};
@@ -128,7 +128,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_PSP_<#= kvp.Value #>()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				<#= string.Join(", ", kvp.Key.ToCharArray().Select(x => x == '1' ? "true" : "false")) #>
 			};
@@ -145,7 +145,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void MbType_I_<#= kvp.Value #>()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				<#= string.Join(", ", kvp.Key.ToCharArray().Select(x => x == '1' ? "true" : "false")) #>
 			};
@@ -162,7 +162,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_P_<#= kvp.Value #>()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				<#= string.Join(", ", kvp.Key.ToCharArray().Select(x => x == '1' ? "true" : "false")) #>
 			};
@@ -179,7 +179,7 @@ namespace ContentDotNet.Tests.H264.IO.Cabac
 		[Fact]
 		public void SubMbType_B_<#= kvp.Value #>()
 		{
-			var bits = new ContentDotNet.Collections.Bits.BitCollection()
+			var bits = new[]
 			{
 				<#= string.Join(", ", kvp.Key.ToCharArray().Select(x => x == '1' ? "true" : "false")) #>
 			};

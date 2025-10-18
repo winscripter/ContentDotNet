@@ -45,7 +45,7 @@
         [Fact]
         public void U_0()
         {
-            var bc = new BitCollection
+            var bc = new[]
             {
                 false
             };
@@ -56,7 +56,7 @@
         [Fact]
         public void U_1()
         {
-            var bc = new BitCollection
+            var bc = new[]
             {
                 true, false
             };
@@ -67,7 +67,7 @@
         [Fact]
         public void U_2()
         {
-            var bc = new BitCollection
+            var bc = new[]
             {
                 true, true, false
             };
@@ -78,7 +78,7 @@
         [Fact]
         public void U_3()
         {
-            var bc = new BitCollection
+            var bc = new[]
             {
                 true, true, true, false
             };
@@ -89,7 +89,7 @@
         [Fact]
         public void TU_0_Within_CMax_Of_3()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 false
             };
@@ -102,7 +102,7 @@
         [Fact]
         public void TU_1_Within_CMax_Of_3()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 true, false
             };
@@ -115,7 +115,7 @@
         [Fact]
         public void TU_2_Within_CMax_Of_3()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 true, true, false
             };
@@ -128,7 +128,7 @@
         [Fact]
         public void TU_3_Not_Within_CMax_Of_3()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 true, true, true, false
             };
@@ -141,7 +141,7 @@
         [Fact]
         public void TU_3_Not_Within_CMax_Of_3_V2()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 true, true, true
             };
@@ -154,7 +154,7 @@
         [Fact]
         public void TU_5_Not_Within_CMax_Of_3()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 true, true, true, true, true, false
             };
@@ -167,7 +167,7 @@
         [Fact]
         public void TU_5_Not_Within_CMax_Of_3_V2()
         {
-            var bc = new BitCollection()
+            var bc = new[]
             {
                 true, true, true, true, true
             };
