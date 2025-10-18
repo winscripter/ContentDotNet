@@ -268,7 +268,7 @@
 
                                 if (b2 == 1)
                                 {
-                                    if (b3 == 1 && b5 == 1) return 22 + b4;
+                                    if (b3 == 1 && b5 == 1) return 23 - b4;
 
                                     int b6 = decoder.ReadBin().AsInt32();
 
