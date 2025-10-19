@@ -1275,6 +1275,9 @@
             const int startIdx = 0;
             const int endIdx = 15;
 
+            ResidualBlockType blockType = ResidualBlockType.Intra16x16DCLevel;
+            ResidualBlockType blockBase = ResidualBlockType.Intra16x16DCLevel;
+
             ResidualBlockProcessor residual_block;
 
             H264DecodingVariables? dv = GetDecodingVariables(syntaxReader);
@@ -1331,6 +1334,9 @@
 
             if (rbspState.ChromaArrayType() is 1 or 2)
             {
+                blockType = ResidualBlockType.ChromaDCLevel;
+                blockBase = blockType;
+
                 H264ChromaFormat cf = rbspState.ChromaFormat();
                 int NumC8x8 = 4 / (cf.ChromaWidth * cf.ChromaHeight);
 
@@ -1359,7 +1365,12 @@
             }
             else if (rbspState.ChromaArrayType() == 3)
             {
+                blockBase = ResidualBlockType.Cb16x16DCLevel;
+                blockType = blockBase;
                 ResidualLuma(CbIntra16x16DCLevel, CbIntra16x16ACLevel, CbLevel4x4, CbLevel8x8, startIdx, endIdx);
+
+                blockType = ResidualBlockType.Cr16x16DCLevel;
+                blockBase = blockType;
                 ResidualLuma(CrIntra16x16DCLevel, CrIntra16x16ACLevel, CrLevel4x4, CrLevel8x8, startIdx, endIdx);
             }
 
@@ -1382,63 +1393,70 @@
 
             void ResidualLuma(DcLevel16x16 i16x16DClevel, AcLevel16x16 i16x16AClevel, Level4x4 level4x4, Level8x8 level8x8,
                     int startIdx, int endIdx)
-                {
-                    if (startIdx == 0 && MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
-                        residual_block(i16x16DClevel.Value, 0, 15, 16);
+            {
+                if (startIdx == 0 && MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
+                    residual_block(i16x16DClevel.Value, 0, 15, 16);
 
-                    for (int i8x8 = 0; i8x8 < 4; i8x8++)
+                for (int i8x8 = 0; i8x8 < 4; i8x8++)
+                {
+                    if (!mb.Rbsp.TransformSize8x8Flag || !Grabber.GetEntropyCodingModeFlag(rbspState))
                     {
-                        if (!mb.Rbsp.TransformSize8x8Flag || !Grabber.GetEntropyCodingModeFlag(rbspState))
+                        for (int i4x4 = 0; i4x4 < 4; i4x4++)
                         {
-                            for (int i4x4 = 0; i4x4 < 4; i4x4++)
+                            if ((mb.Rbsp.GetCodedBlockPatternLuma() & (1 << i8x8)).AsBoolean())
                             {
-                                if ((mb.Rbsp.GetCodedBlockPatternLuma() & (1 << i8x8)).AsBoolean())
+                                if (MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
                                 {
-                                    if (MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
-                                    {
-                                        residual_block(i16x16AClevel.Value[i8x8 * 4 + i4x4], Math.Max(0, startIdx - 1), endIdx - 1, 15);
-                                    }
-                                    else
-                                    {
-                                        residual_block(level4x4.Value[i8x8 * 4 + i4x4], startIdx, endIdx, 16);
-                                    }
-                                }
-                                else if (MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
-                                {
-                                    for (int i = 0; i < 15; i++)
-                                    {
-                                        i16x16AClevel.Value[i8x8 * 4 + i4x4][i] = 0;
-                                    }
+                                    blockType = blockBase + 1;
+                                    residual_block(i16x16AClevel.Value[i8x8 * 4 + i4x4], Math.Max(0, startIdx - 1), endIdx - 1, 15);
                                 }
                                 else
                                 {
-                                    for (int i = 0; i < 16; i++)
-                                    {
-                                        level4x4.Value[i8x8 * 4 + i4x4][i] = 0;
-                                    }
-                                }
-
-                                if (!Grabber.GetEntropyCodingModeFlag(rbspState) && mb.Rbsp.TransformSize8x8Flag)
-                                {
-                                    for (int i = 0; i < 16; i++)
-                                    {
-                                        level8x8.Value[i8x8][4 * i + i4x4] = level4x4.Value[i8x8 * 4 + i4x4][i];
-                                    }
+                                    blockType = blockBase + 2;
+                                    residual_block(level4x4.Value[i8x8 * 4 + i4x4], startIdx, endIdx, 16);
                                 }
                             }
-                        }
-                        else if ((mb.Rbsp.GetCodedBlockPatternLuma() & (1 << i8x8)).AsBoolean())
-                        {
-                            residual_block(level8x8.Value[i8x8], 4 * startIdx, 4 * endIdx + 3, 64);
-                        }
-                        else
-                        {
-                            for (int i = 0; i < 64; i++)
+                            else if (MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
                             {
-                                level8x8.Value[i8x8][i] = 0;
+                                for (int i = 0; i < 15; i++)
+                                {
+                                    blockType = blockBase + 1;
+                                    i16x16AClevel.Value[i8x8 * 4 + i4x4][i] = 0;
+                                }
+                            }
+                            else
+                            {
+                                for (int i = 0; i < 16; i++)
+                                {
+                                    blockType = blockBase + 2;
+                                    level4x4.Value[i8x8 * 4 + i4x4][i] = 0;
+                                }
+                            }
+
+                            if (!Grabber.GetEntropyCodingModeFlag(rbspState) && mb.Rbsp.TransformSize8x8Flag)
+                            {
+                                for (int i = 0; i < 16; i++)
+                                {
+                                    blockType = blockBase + 3;
+                                    level8x8.Value[i8x8][4 * i + i4x4] = level4x4.Value[i8x8 * 4 + i4x4][i];
+                                }
                             }
                         }
                     }
+                    else if ((mb.Rbsp.GetCodedBlockPatternLuma() & (1 << i8x8)).AsBoolean())
+                    {
+                        blockType = blockBase + 3;
+                        residual_block(level8x8.Value[i8x8], 4 * startIdx, 4 * endIdx + 3, 64);
+                    }
+                    else
+                    {
+                        blockType = blockBase + 3;
+                        for (int i = 0; i < 64; i++)
+                        {
+                            level8x8.Value[i8x8][i] = 0;
+                        }
+                    }
+                }
 
                 if (dv != null)
                     dv.LevelListIndex++;
@@ -1480,6 +1498,13 @@
                         i++;
                     }
 
+                    if (dv != null)
+                    {
+                        dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
+                        dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
+                        dv.ResidualBlockType = blockType;
+                    }
+
                     uint coeff_abs_level_minus1 = syntaxReader.ReadCoeffAbsLevelMinus1();
                     bool coeff_sign_flag = syntaxReader.ReadCoeffSignFlag();
 
@@ -1489,6 +1514,12 @@
                     {
                         if (significant_coeff_flag[i])
                         {
+                            if (dv != null)
+                            {
+                                dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
+                                dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
+                            }
+
                             coeff_abs_level_minus1 = syntaxReader.ReadCoeffAbsLevelMinus1();
                             coeff_sign_flag = syntaxReader.ReadCoeffSignFlag();
 
@@ -1713,6 +1744,12 @@
                         i++;
                     }
 
+                    if (dv != null)
+                    {
+                        dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
+                        dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
+                    }
+
                     uint coeff_abs_level_minus1 = await syntaxReader.ReadCoeffAbsLevelMinus1Async();
                     bool coeff_sign_flag = await syntaxReader.ReadCoeffSignFlagAsync();
 
@@ -1722,6 +1759,12 @@
                     {
                         if (significant_coeff_flag[i])
                         {
+                            if (dv != null)
+                            {
+                                dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
+                                dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
+                            }
+
                             coeff_abs_level_minus1 = await syntaxReader.ReadCoeffAbsLevelMinus1Async();
                             coeff_sign_flag = await syntaxReader.ReadCoeffSignFlagAsync();
 
