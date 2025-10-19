@@ -1339,6 +1339,8 @@
 
                 H264ChromaFormat cf = rbspState.ChromaFormat();
                 int NumC8x8 = 4 / (cf.ChromaWidth * cf.ChromaHeight);
+                if (dv != null)
+                    dv.NumC8x8 = NumC8x8;
 
                 for (int iCbCr = 0; iCbCr < 2; iCbCr++)
                 {
@@ -1485,6 +1487,13 @@
                     int numCoeff = end + 1;
                     int i = start;
 
+                    if (dv != null)
+                    {
+                        dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
+                        dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
+                        dv.ResidualBlockType = blockType;
+                    }
+
                     while (i < numCoeff - 1)
                     {
                         significant_coeff_flag[i] = syntaxReader.ReadSignificantCoeffFlag();
@@ -1496,13 +1505,6 @@
                         }
 
                         i++;
-                    }
-
-                    if (dv != null)
-                    {
-                        dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
-                        dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
-                        dv.ResidualBlockType = blockType;
                     }
 
                     uint coeff_abs_level_minus1 = syntaxReader.ReadCoeffAbsLevelMinus1();
