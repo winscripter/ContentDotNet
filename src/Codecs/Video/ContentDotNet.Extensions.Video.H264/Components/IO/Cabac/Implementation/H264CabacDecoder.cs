@@ -44,7 +44,10 @@
             bool ret = ArithmeticReader.ReadBin(ctxIdx,
                 ContextIndexRecord?.MaxBinIdxCtx.UsesDecodeBypass == true || ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
+
             Recompute();
+
+            BinIndex++;
             return ret;
         }
 
@@ -61,6 +64,8 @@
                 ContextIndexRecord?.MaxBinIdxCtx.UsesDecodeBypass == true || ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
             Recompute();
+
+            BinIndex++;
             return ret;
         }
 
