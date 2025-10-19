@@ -1277,6 +1277,8 @@
 
             ResidualBlockProcessor residual_block;
 
+            H264DecodingVariables? dv = GetDecodingVariables(syntaxReader);
+
             Ref<bool> coded_block_flag = new();
 
             if (!Grabber.GetEntropyCodingModeFlag(rbspState))
@@ -1437,7 +1439,10 @@
                             }
                         }
                     }
-                }
+
+                if (dv != null)
+                    dv.LevelListIndex++;
+            }
 
             void ReadCavlcResidual(List<int> coeffLevel, int start, int end, int maxNumCoeff)
             {
@@ -1491,6 +1496,9 @@
                         }
                     }
                 }
+
+                if (dv != null)
+                    dv.LevelListIndex++;
             }
         }
 
@@ -1507,6 +1515,7 @@
             AsyncResidualBlockProcessor residual_block;
 
             Ref<bool> coded_block_flag = new();
+            H264DecodingVariables? dv = GetDecodingVariables(syntaxReader);
 
             if (!Grabber.GetEntropyCodingModeFlag(rbspState))
                 residual_block = ReadCavlcResidualAsync;
@@ -1720,6 +1729,9 @@
                         }
                     }
                 }
+
+                if (dv != null)
+                    dv.LevelListIndex++;
             }
         }
 
