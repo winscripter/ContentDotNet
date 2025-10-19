@@ -182,7 +182,7 @@
                 int noSubMbPartSizeLessThan8x8Flag = 1;
                 if (mb == I_NxN &&
                     MacroblockTraits.MbPartPredMode(mb, 0) != Intra_16x16 &&
-                    MacroblockTraits.NumMbPart((int)mb_type, false, sliceType) == 4)
+                    MacroblockTraits.NumMbPart((int)mb_type, CurrentMacroblock?.Inferred == true, false, sliceType) == 4)
                 {
                     sub_mb_pred = ReadSubMbPred(syntaxReader, rbspState);
                     mb.Rbsp.SubMbPred = sub_mb_pred;
@@ -291,7 +291,7 @@
                 int noSubMbPartSizeLessThan8x8Flag = 1;
                 if (mb == I_NxN &&
                     MacroblockTraits.MbPartPredMode(mb, 0) != Intra_16x16 &&
-                    MacroblockTraits.NumMbPart((int)mb_type, false, sliceType) == 4)
+                    MacroblockTraits.NumMbPart((int)mb_type, CurrentMacroblock?.Inferred == true, false, sliceType) == 4)
                 {
                     sub_mb_pred = await ReadSubMbPredAsync(syntaxReader, rbspState);
                     mb.Rbsp.SubMbPred = sub_mb_pred;
@@ -437,7 +437,7 @@
             }
             else if (mbpp != Direct)
             {
-                int nmbp = MacroblockTraits.NumMbPart((int?)CurrentMacroblock?.Rbsp.MbType ?? 0, CurrentMacroblock?.Rbsp.TransformSize8x8Flag ?? false, CurrentMacroblock!.SliceType);
+                int nmbp = MacroblockTraits.NumMbPart((int?)CurrentMacroblock?.Rbsp.MbType ?? 0, CurrentMacroblock?.Inferred == true, CurrentMacroblock?.Rbsp.TransformSize8x8Flag ?? false, CurrentMacroblock!.SliceType);
 
                 for (int mbPartIdx = 0; mbPartIdx < nmbp; mbPartIdx++)
                 {
@@ -581,7 +581,7 @@
             }
             else if (mbpp != Direct)
             {
-                int nmbp = MacroblockTraits.NumMbPart((int?)CurrentMacroblock?.Rbsp.MbType ?? 0, CurrentMacroblock?.Rbsp.TransformSize8x8Flag ?? false, CurrentMacroblock!.SliceType);
+                int nmbp = MacroblockTraits.NumMbPart((int?)CurrentMacroblock?.Rbsp.MbType ?? 0, CurrentMacroblock?.Inferred == true, CurrentMacroblock?.Rbsp.TransformSize8x8Flag ?? false, CurrentMacroblock!.SliceType);
 
                 for (int mbPartIdx = 0; mbPartIdx < nmbp; mbPartIdx++)
                 {

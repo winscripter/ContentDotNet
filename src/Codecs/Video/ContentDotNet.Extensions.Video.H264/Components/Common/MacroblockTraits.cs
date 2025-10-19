@@ -18,10 +18,12 @@
         {
             if (mb.SliceType == H264SliceType.P || mb.SliceType == H264SliceType.SP)
             {
+                if (mb.Inferred) return 16;
                 return P_MbPartWidth(mb.Rbsp.TransformSize8x8Flag, (int)mb.Rbsp.MbType) ?? throw new InvalidOperationException();
             }
             else if (mb.SliceType == H264SliceType.B)
             {
+                if (mb.Inferred) return 8;
                 return B_MbPartWidth(mb.Rbsp.TransformSize8x8Flag, (int)mb.Rbsp.MbType) ?? throw new InvalidOperationException();
             }
             throw new InvalidOperationException();
@@ -37,10 +39,12 @@
         {
             if (mb.SliceType == H264SliceType.P || mb.SliceType == H264SliceType.SP)
             {
+                if (mb.Inferred) return 16;
                 return P_MbPartHeight(mb.Rbsp.TransformSize8x8Flag, (int)mb.Rbsp.MbType) ?? throw new InvalidOperationException();
             }
             else if (mb.SliceType == H264SliceType.B)
             {
+                if (mb.Inferred) return 8;
                 return B_MbPartHeight(mb.Rbsp.TransformSize8x8Flag, (int)mb.Rbsp.MbType) ?? throw new InvalidOperationException();
             }
             throw new InvalidOperationException();
@@ -194,14 +198,17 @@
             };
         }
 
-        public static int NumMbPart(int mbType, bool transformSize8x8Flag, H264SliceType sliceType)
+        public static int NumMbPart(int mbType, bool inferred, bool transformSize8x8Flag, H264SliceType sliceType)
         {
-            return sliceType switch
-            {
-                H264SliceType.P => P_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
-                H264SliceType.B => B_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
-                _ => throw new InvalidOperationException("Invalid slice type")
-            };
+            if (inferred && sliceType == H264SliceType.B) return NotAn.na;
+            else if (inferred && (sliceType == H264SliceType.P || sliceType == H264SliceType.SP)) return 1;
+
+                return sliceType switch
+                {
+                    H264SliceType.P => P_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
+                    H264SliceType.B => B_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
+                    _ => throw new InvalidOperationException("Invalid slice type")
+                };
         }
     }
 }
