@@ -128,7 +128,8 @@
             CurrentMacroblock = mb;
             syntaxReader.MacroblockInfo = CurrentMacroblock;
 
-            H264SliceType sliceType = (H264SliceType)(((int?)rbspState.SliceHeader?.SliceType ?? 0) % 5);
+            H264SliceType sliceType = H264SliceTypes.FetchSliceType(rbspState.SliceHeader!);
+            mb.SliceType = sliceType;
 
             uint mb_type = syntaxReader.ReadMbType();
             mb.Rbsp.MbType = mb_type;
@@ -246,7 +247,8 @@
             CurrentMacroblock = mb;
             syntaxReader.MacroblockInfo = CurrentMacroblock;
 
-            H264SliceType sliceType = (H264SliceType)(((int?)rbspState.SliceHeader?.SliceType ?? 0) % 5);
+            H264SliceType sliceType = H264SliceTypes.FetchSliceType(rbspState.SliceHeader!);
+            mb.SliceType = sliceType;
 
             uint mb_type = await syntaxReader.ReadMbTypeAsync();
             mb.Rbsp.MbType = mb_type;
