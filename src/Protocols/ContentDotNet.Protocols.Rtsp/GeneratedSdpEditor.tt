@@ -1,0 +1,58 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+namespace ContentDotNet.Protocols.Rtsp
+{
+	public partial class RtspMessageSdpEditor
+	{
+<#
+	const string SDP_CHARS = "vosiuepcbtrzkam";
+
+	foreach (char c in SDP_CHARS)
+	{
+		char uppercase = Char.ToUpper(c);
+#>
+		/// <summary>
+		///   This method checks if there's a line starting with <c><#= c #>=</c>.
+		/// </summary>
+		/// <returns><c>true</c> if such line exists; otherwise, <c>false</c>.</returns>
+		public bool Contains<#= uppercase #>Line() => ContainsLine('<#= c #>');
+
+		/// <summary>
+		///   If a line starting with <#= c #>= exists, it's deleted and its contents
+		///   are replaced with <paramref name="wholeLineString"/>.
+		/// </summary>
+		/// <param name="wholeLineString">The entire line, including the leading <c><#= c #>=</c>.</param>
+		/// <returns>
+		///   This instance, after modifying.
+		/// </returns>
+		public RtspMessageSdpEditor <#= uppercase #>Line(string wholeLineString)
+		{
+			Line('v', wholeLineString);
+			return this;
+		}
+
+		/// <summary>
+		///   If a line starting with <#= c #>= exists, it's deleted and its contents
+		///   are replaced with <#= c #>=<paramref name="wholeLineString"/>.
+		/// </summary>
+		/// <param name="value">Whatever comes after <#= c #>= in the SDP line.</param>
+		/// <returns>
+		///   This instance, after modifying.
+		/// </returns>
+		/// <remarks>
+		///   This method is identical as follows:
+		///   <code>
+		///     Change<#= uppercase #>Line(x) = <#= uppercase #>Line("<#= c #>=" + x)
+		///   </code>
+		/// </remarks>
+		public RtspMessageSdpEditor Change<#= uppercase #>Line(string value)
+		{
+			return Line('<#= c #>', "<#= c #>=" + value);
+		}
+<# } #>
+	}
+}

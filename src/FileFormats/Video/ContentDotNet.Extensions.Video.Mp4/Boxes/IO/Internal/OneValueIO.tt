@@ -1,0 +1,99 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+namespace ContentDotNet.Extensions.Video.Mp4.Boxes.IO.Internal
+{
+	using ContentDotNet.Binary;
+	using ContentDotNet.Extensions.Video.Mp4.Boxes.Data;
+
+<#
+	Define("ReceivedSsrc").WithField("UInt32", "Ssrc");
+	Define("TimescaleEntry").WithField("UInt32", "Timescale");
+	Define("TimeOffset").WithField("UInt32", "Offset");
+	Define("SequenceOffset").WithField("UInt32", "Offset");
+	Define("TotalBytesSentIncluding12ByteRtpHeaders").WithField("UInt64", "BytesSent");
+	Define("TotalPacketsSent").WithField("UInt64", "PacketsSent");
+	Define("TotalBytesSentNotIncludingRtpHeaders").WithField("UInt64", "BytesSent");
+	Define("TotalBytesSentIncluding12ByteRtpHeaders32").WithField("UInt32", "BytesSent");
+	Define("TotalPacketsSent32").WithField("UInt32", "PacketsSent");
+	Define("TotalBytesSentNotIncludingRtpHeaders32").WithField("UInt32", "BytesSent");
+	Define("TotalBytesSentFromMediaTracks").WithField("UInt64", "BytesSent");
+	Define("TotalBytesSentImmediateMode").WithField("UInt64", "BytesSent");
+	Define("TotalBytesInRepeatedPackets").WithField("UInt64", "BytesSent");
+	Define("SmallestRelativeTransmittionTimeMilliseconds").WithField("UInt32", "Time");
+	Define("LargestRelativeTransmittionTimeMilliseconds").WithField("UInt32", "Time");
+	Define("LargestPacketSentIncludingRtpHeader").WithField("UInt32", "Bytes");
+	Define("LongestPacketDurationInMilliseconds").WithField("UInt32", "Time");
+	Define("SamplingRate").WithField("UInt32", "SamplingRate");
+
+	// Example of output:
+	// internal class InternalReceivedSsrcBoxIO : Mp4BoxIO
+    // {
+    //     public override Type TypeOfBoxData => typeof(Mp4ReceivedSsrcBoxData);
+    //     public override void ReadBoxData(Mp4Box box, BinaryReader stream) => box.Data = new Mp4ReceivedSsrcBoxData(stream.ReadUInt32());
+    //     public override async Task ReadBoxDataAsync(Mp4Box box, BinaryReader stream) => box.Data = new Mp4ReceivedSsrcBoxData(await stream.ReadUInt32Async());
+    //     public override void WriteBoxData(Mp4Box box, BinaryWriter stream)
+    //     {
+    //         Check.DataIs<Mp4ReceivedSsrcBoxData>(box, out var data);
+    //         stream.Write(data!.Ssrc.GetValueOrDefault());
+    //     }
+	//
+    //     public override async Task WriteBoxDataAsync(Mp4Box box, BinaryWriter stream)
+    //     {
+    //         Check.DataIs<Mp4ReceivedSsrcBoxData>(box, out var data);
+    //         await stream.WriteAsync(data!.Ssrc.GetValueOrDefault());
+    //     }
+    // }
+
+	foreach (var item in _items) {
+#>
+
+	internal class Internal<#= item.Name #>BoxIO : Mp4BoxIO
+	{
+		public static readonly Internal<#= item.Name #>BoxIO Instance = new Internal<#= item.Name #>BoxIO();
+
+		public override Type TypeOfBoxData => typeof(Mp4<#= item.Name #>BoxData);
+		public override void ReadBoxData(Mp4Box box, BinaryReader stream) => box.Data = new Mp4<#= item.Name #>BoxData(stream.Read<#= item.FieldType #>());
+		public override async Task ReadBoxDataAsync(Mp4Box box, BinaryReader stream) => box.Data = new Mp4<#= item.Name #>BoxData(await stream.Read<#= item.FieldType #>Async());
+		public override void WriteBoxData(Mp4Box box, BinaryWriter stream)
+		{
+			Check.DataIs<Mp4<#= item.Name #>BoxData>(box, out var data);
+			stream.Write(data!.<#= item.FieldName #>.GetValueOrDefault());
+		}
+		public override async Task WriteBoxDataAsync(Mp4Box box, BinaryWriter stream)
+		{
+			Check.DataIs<Mp4<#= item.Name #>BoxData>(box, out var data);
+			await stream.WriteAsync(data!.<#= item.FieldName #>.GetValueOrDefault());
+		}
+	}
+
+<# } #>
+}
+
+<#+
+
+class Item {
+	public string Name;
+	public string FieldType;
+	public string FieldName;
+
+	public Item WithField(string fieldType, string fieldName) {
+		this.FieldType = fieldType;
+		this.FieldName = fieldName;
+		return this;
+	}
+}
+
+private readonly List<Item> _items = new List<Item>();
+
+private Item Define(string name) {
+	var item = new Item();
+	item.Name = name;
+	_items.Add(item);
+	return item;
+}
+
+#>

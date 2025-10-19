@@ -7,6 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="GeneratedSdpEditor.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GeneratedSdpEditor.tt</DependentUpon>
+    </None>
     <None Include="Headers\Headers.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -15,6 +20,10 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Update="GeneratedSdpEditor.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>GeneratedSdpEditor.g.cs</LastGenOutput>
+    </None>
     <None Update="Headers\Headers.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Headers.g.cs</LastGenOutput>
@@ -26,6 +35,11 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Compile Update="GeneratedSdpEditor.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>GeneratedSdpEditor.tt</DependentUpon>
+    </Compile>
     <Compile Update="Headers\Headers.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

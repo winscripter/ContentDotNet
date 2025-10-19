@@ -13,6 +13,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Data.tt</DependentUpon>
     </None>
+    <None Include="Boxes\IO\Internal\OneValueIO.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OneValueIO.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -23,6 +28,16 @@
     <None Update="Boxes\Data\Data.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Data.g.cs</LastGenOutput>
+    </None>
+    <None Update="Boxes\IO\Internal\OneValueIO.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>OneValueIO.g.cs</LastGenOutput>
+    </None>
+    <None Update="db\iocode.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
+    <None Update="db\__list.txt">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -35,6 +50,11 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>Data.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Boxes\IO\Internal\OneValueIO.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>OneValueIO.tt</DependentUpon>
     </Compile>
   </ItemGroup>
 
