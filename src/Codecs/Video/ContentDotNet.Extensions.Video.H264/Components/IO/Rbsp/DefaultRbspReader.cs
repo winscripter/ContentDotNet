@@ -140,6 +140,8 @@
                     mb.SliceType = H264SliceType.I;
                     sliceType = H264SliceType.I;
                     CurrentMacroblock.SliceType = H264SliceType.I;
+                    CurrentMacroblock.Rbsp.MbType -= 23;
+                    mb_type -= 23;
                 }
             }
 

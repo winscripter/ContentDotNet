@@ -251,5 +251,43 @@
             var cbp = TestCBP(new BinCustomDecoder(cbpExample));
             Assert.Equal((2 << 4) | 9, cbp);
         }
+
+        [Fact]
+        public void Sequence()
+        {
+            var bins = new bool[]
+            {
+                // FL1
+                false,
+
+                // FL1
+                true,
+
+                // FL2
+                false, true,
+
+                // FL15
+                true, false, true, false,
+
+                // mb_type (I_PCM; 25)
+                true, true,
+
+                // U
+                true, true, true, false,
+
+                // TU with cMax=3 (3)
+                true, true, true
+            };
+
+            var bcd = new BinCustomDecoder(bins);
+
+            Assert.Equal(0, H264Binarization.FL(bcd, 1));
+            Assert.Equal(1, H264Binarization.FL(bcd, 1));
+            Assert.Equal(1, H264Binarization.FL(bcd, 2));
+            Assert.Equal(10, H264Binarization.FL(bcd, 15));
+            Assert.Equal(25, TestMbType_I(bcd));
+            Assert.Equal(3, TestU(bcd));
+            Assert.Equal(3, TestTU(bcd, 3).Value);
+        }
     }
 }
