@@ -131,7 +131,9 @@
             H264SliceType sliceType = H264SliceTypes.FetchSliceType(rbspState.SliceHeader!);
             mb.SliceType = sliceType;
 
-            uint mb_type = syntaxReader.ReadMbType();
+            uint mb_type = 0;
+            if (mb != B_Skip && mb != P_Skip)
+                mb_type = syntaxReader.ReadMbType();
             mb.Rbsp.MbType = mb_type;
 
             if (Grabber.FetchEntropyCodingModeFlag(rbspState) == true)
@@ -250,7 +252,9 @@
             H264SliceType sliceType = H264SliceTypes.FetchSliceType(rbspState.SliceHeader!);
             mb.SliceType = sliceType;
 
-            uint mb_type = await syntaxReader.ReadMbTypeAsync();
+            uint mb_type = 0;
+            if (mb != B_Skip && mb != P_Skip)
+                mb_type = syntaxReader.ReadMbType();
             mb.Rbsp.MbType = mb_type;
 
             if (sliceType == H264SliceType.I /*I slice*/ &&
@@ -2889,6 +2893,8 @@
                         mb.MbSkipFlag = !moreDataFlag.AsBoolean();
                     }
                 }
+
+                mb.Inferred = mb_skip_flag;
 
                 if (moreDataFlag.AsBoolean())
                 {
