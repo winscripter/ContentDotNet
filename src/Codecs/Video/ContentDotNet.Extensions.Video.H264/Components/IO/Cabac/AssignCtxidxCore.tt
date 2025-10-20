@@ -227,7 +227,7 @@ namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
         int invkIdx = 0;
         foreach (string s in kvp.Value) {
             string invkString = "";
-            if (s == "na") invkString = "incrementalCtxIdx = na;";
+            if (s == "na") continue;
 
             if (s.StartsWith("."))
             {

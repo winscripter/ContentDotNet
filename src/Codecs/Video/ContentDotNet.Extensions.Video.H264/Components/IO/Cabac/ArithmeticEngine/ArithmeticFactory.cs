@@ -3,7 +3,6 @@
     using ContentDotNet.BitStream;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine.Factories;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine.Factories.Implementation;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine.Implementation;
 
     /// <summary>
     ///   CABAC arithmetic factory

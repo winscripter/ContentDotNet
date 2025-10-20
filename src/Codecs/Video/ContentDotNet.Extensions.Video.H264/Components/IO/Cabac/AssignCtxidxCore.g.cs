@@ -11,30 +11,6 @@
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 3, h264, currMB, binIdx, ctxIdxOffset);
             }
-            else if (ctxIdxOffset == 0 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 0 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 0 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 0 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 0 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 0 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 3 && binIdx == 0)
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 3, h264, currMB, binIdx, ctxIdxOffset);
@@ -67,30 +43,6 @@
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 1, h264, currMB, binIdx, ctxIdxOffset);
             }
-            else if (ctxIdxOffset == 11 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 11 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 11 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 11 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 11 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 11 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 14 && binIdx == 0)
             {
                 incrementalCtxIdx = 0;
@@ -102,22 +54,6 @@
             else if (ctxIdxOffset == 14 && binIdx == 2)
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 22, h264, currMB, binIdx, ctxIdxOffset);
-            }
-            else if (ctxIdxOffset == 14 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 14 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 14 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 14 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
             }
             else if (ctxIdxOffset == 17 && binIdx == 0)
             {
@@ -159,49 +95,9 @@
             {
                 incrementalCtxIdx = 2;
             }
-            else if (ctxIdxOffset == 21 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 21 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 21 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 21 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 24 && binIdx == 0)
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 1, h264, currMB, binIdx, ctxIdxOffset);
-            }
-            else if (ctxIdxOffset == 24 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 24 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 24 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 24 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 24 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 24 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
             }
             else if (ctxIdxOffset == 27 && binIdx == 0)
             {
@@ -282,10 +178,6 @@
             else if (ctxIdxOffset == 36 && binIdx == 5)
             {
                 incrementalCtxIdx = 3;
-            }
-            else if (ctxIdxOffset == 36 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
             }
             else if (ctxIdxOffset == 40 && binIdx == 0)
             {
@@ -411,49 +303,9 @@
             {
                 incrementalCtxIdx = 3;
             }
-            else if (ctxIdxOffset == 64 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 64 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 64 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 64 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 68 && binIdx == 0)
             {
                 incrementalCtxIdx = 0;
-            }
-            else if (ctxIdxOffset == 68 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 68 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 68 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 68 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 68 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 68 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
             }
             else if (ctxIdxOffset == 69 && binIdx == 0)
             {
@@ -467,49 +319,9 @@
             {
                 incrementalCtxIdx = 0;
             }
-            else if (ctxIdxOffset == 69 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 69 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 69 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 69 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 70 && binIdx == 0)
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 2, h264, currMB, binIdx, ctxIdxOffset);
-            }
-            else if (ctxIdxOffset == 70 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 70 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 70 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 70 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 70 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 70 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
             }
             else if (ctxIdxOffset == 73 && binIdx == 0)
             {
@@ -527,18 +339,6 @@
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 4, h264, currMB, binIdx, ctxIdxOffset);
             }
-            else if (ctxIdxOffset == 73 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 73 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 73 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 77 && binIdx == 0)
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 4, h264, currMB, binIdx, ctxIdxOffset);
@@ -547,81 +347,13 @@
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 4, h264, currMB, binIdx, ctxIdxOffset);
             }
-            else if (ctxIdxOffset == 77 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 77 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 77 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 77 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 77 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 276 && binIdx == 0)
             {
                 incrementalCtxIdx = 0;
             }
-            else if (ctxIdxOffset == 276 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 276 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 276 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 276 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 276 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 276 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
-            }
             else if (ctxIdxOffset == 399 && binIdx == 0)
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 10, h264, currMB, binIdx, ctxIdxOffset);
-            }
-            else if (ctxIdxOffset == 399 && binIdx == 1)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 399 && binIdx == 2)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 399 && binIdx == 3)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 399 && binIdx == 4)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 399 && binIdx == 5)
-            {
-                incrementalCtxIdx = na;
-            }
-            else if (ctxIdxOffset == 399 && binIdx >= 6)
-            {
-                incrementalCtxIdx = na;
             }
             return incrementalCtxIdx + ctxIdxOffset;
         }
