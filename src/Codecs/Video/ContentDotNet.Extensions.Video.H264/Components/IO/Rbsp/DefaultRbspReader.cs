@@ -2669,6 +2669,9 @@
 
         public void ReadSliceData(IH264SyntaxReaderFactory syntaxReaderFactory, BitStreamReader bitStream, SliceDataReceiveMacroblockCallback receiveMacroblock, H264State state, ISliceDecoder sliceDecoder)
         {
+            IH264SyntaxReader syntaxReader = syntaxReaderFactory.CreateSyntaxReader(state, bitStream); // will read codIOffset automatically if CABAC
+            state.CurrMbAddr = (int)Grabber.GetFirstMbInSlice(state.H264RbspState) * (1 + state.DeriveMbaffFrameFlag().AsInt32());
+
             if (Grabber.GetEntropyCodingModeFlag(state.H264RbspState))
             {
                 while (bitStream.GetState().BitPosition != 0)
@@ -2684,10 +2687,6 @@
 
             LimitedList<int> mbToSliceGroupMap = new(state.DerivePicSizeInMbs() * (1 + state.DeriveMbaffFrameFlag().AsInt32()));
             sliceDecoder.ConvertMapUnitToSliceGroupMapToMacroblockToSliceGroupMap(state, mapUnitToSliceGroupMap, mbToSliceGroupMap);
-
-            IH264SyntaxReader syntaxReader = syntaxReaderFactory.CreateSyntaxReader(state, bitStream); // will read codIOffset automatically if CABAC
-
-            state.CurrMbAddr = (int)Grabber.GetFirstMbInSlice(state.H264RbspState) * (1 + state.DeriveMbaffFrameFlag().AsInt32());
 
             H264SliceType slice_type = H264SliceTypes.FetchSliceType(Grabber.GetSliceType(state.H264RbspState));
 
