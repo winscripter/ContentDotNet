@@ -1495,8 +1495,8 @@
                                 {
                                     blockType = blockBase + 1;
                                     i16x16AClevel.Value[i8x8 * 4 + i4x4][i] = 0;
-                                    receiveCbfForAC(false);
                                 }
+                                receiveCbfForAC(false);
                             }
                             else
                             {
@@ -1504,8 +1504,8 @@
                                 {
                                     blockType = blockBase + 2;
                                     level4x4.Value[i8x8 * 4 + i4x4][i] = 0;
-                                    receiveCbfForLL4(false);
                                 }
+                                receiveCbfForLL4(false);
                             }
 
                             if (!Grabber.GetEntropyCodingModeFlag(rbspState) && mb.Rbsp.TransformSize8x8Flag)
@@ -1531,8 +1531,8 @@
                         for (int i = 0; i < 64; i++)
                         {
                             level8x8.Value[i8x8][i] = 0;
-                            receiveCbfForLL8(false);
                         }
+                        receiveCbfForLL8(false);
                     }
                 }
 
