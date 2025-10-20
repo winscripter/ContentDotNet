@@ -38,7 +38,9 @@
         public static List<List<int>> GetChroma16x16Ac(
             this RbspResidual residual,
             int iCbCr)
-            => iCbCr == 0 ? residual.CbIntra16x16ACLevel : residual.CrIntra16x16ACLevel;
+            => residual.ChromaACLevel == null
+            ? iCbCr == 0 ? residual.CbIntra16x16ACLevel : residual.CrIntra16x16ACLevel
+            : residual.ChromaACLevel[iCbCr];
 
         /// <summary>
         ///   Returns the chroma level 16x16 (DC) based on iCbCr (0 for Cb, 1 for Cr).
@@ -49,6 +51,34 @@
         public static List<int> GetChroma16x16Dc(
             this RbspResidual residual,
             int iCbCr)
-            => iCbCr == 0 ? residual.CbIntra16x16DCLevel : residual.CrIntra16x16DCLevel;
+             => residual.ChromaDCLevel == null
+            ? iCbCr == 0 ? residual.CbIntra16x16DCLevel : residual.CrIntra16x16DCLevel
+            : residual.ChromaDCLevel[iCbCr];
+
+        /// <summary>
+        ///   Returns the chroma level 16x16 (AC) based on iCbCr (0 for Cb, 1 for Cr).
+        /// </summary>
+        /// <param name="residual">The source residual.</param>
+        /// <param name="iCbCr">The index of the chroma channel.</param>
+        /// <returns>The 16x16 (AC) residual chroma level - either Cb or Cr depending on <paramref name="iCbCr"/>.</returns>
+        public static List<bool> GetCbfChroma16x16Ac(
+            this RbspResidual residual,
+            int iCbCr)
+            => residual.CbfChromaACLevel == null
+            ? iCbCr == 0 ? residual.CbfCbIntra16x16ACLevel : residual.CbfCrIntra16x16ACLevel
+            : residual.CbfChromaACLevel[iCbCr];
+
+        /// <summary>
+        ///   Returns the chroma level 16x16 (DC) based on iCbCr (0 for Cb, 1 for Cr).
+        /// </summary>
+        /// <param name="residual">The source residual.</param>
+        /// <param name="iCbCr">The index of the chroma channel.</param>
+        /// <returns>The 16x16 (DC) residual chroma level - either Cb or Cr depending on <paramref name="iCbCr"/>.</returns>
+        public static bool GetCbfChroma16x16Dc(
+            this RbspResidual residual,
+            int iCbCr)
+             => residual.CbfChromaDCLevel == null
+            ? iCbCr == 0 ? residual.CbfCbIntra16x16DCLevel : residual.CbfCrIntra16x16DCLevel
+            : residual.CbfChromaDCLevel[iCbCr];
     }
 }

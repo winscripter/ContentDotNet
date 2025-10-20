@@ -344,19 +344,19 @@
         // ye this is complex as hell :D
         // NOTE: Make the cbfOptions parameter 'in' because it's an unmanaged struct and we want to avoid copying it unnecessarily.
         //       Can result in minor performance improvements.
-        public static int CodedBlockFlag(H264State h264, H264MacroblockInfo currMb, int ctxBlockCat, in CodedBlockFlagDerivationOptions cbfOptions)
+        public static int CodedBlockFlag(H264State h264, H264MacroblockInfo currMb, int ctxBlockCat, CodedBlockFlagDerivationOptions cbfOptions)
         {
-            ResidualBlockBase? transBlockA;
-            ResidualBlockBase? transBlockB;
-
             AddressAndAvailability mbAddrA;
             AddressAndAvailability mbAddrB;
 
-            DeriveTransBlocks(in cbfOptions);
+            bool? transBlockA;
+            bool? transBlockB;
 
+            DeriveTransBlocks(cbfOptions);
+            
             return GetCondTermFlag(transBlockA, mbAddrA) + 2 * GetCondTermFlag(transBlockB, mbAddrB);
 
-            int GetCondTermFlag(ResidualBlockBase? transBlockN, AddressAndAvailability mbAddrN)
+            int GetCondTermFlag(bool? transBlockN, AddressAndAvailability mbAddrN)
             {
                 if (!mbAddrN.Availability && h264.MacroblockUtility.IsInter(currMb)) return 0;
                 if (mbAddrN.Availability && transBlockN == null && h264.MacroblockUtility.GetMacroblock(mbAddrN.Address) != I_PCM) return 0;
@@ -367,10 +367,10 @@
                 if (!mbAddrN.Availability && h264.MacroblockUtility.IsIntra(currMb)) return 1;
                 if (h264.MacroblockUtility.GetMacroblock(mbAddrN.Address) == I_PCM) return 1;
 
-                return transBlockN?.RbspResidual?.CodedBlockFlag == true ? 1 : 0;
+                return transBlockN.GetValueOrDefault().AsInt32();
             }
 
-            void DeriveTransBlocks(in CodedBlockFlagDerivationOptions options)
+            void DeriveTransBlocks(CodedBlockFlagDerivationOptions options)
             {
                 if (NoAdditionalInputCtxBlockCatForCodedBlockFlag.Contains(ctxBlockCat))
                 {
@@ -384,7 +384,7 @@
                     transBlockA = GetTransBlock(a);
                     transBlockB = GetTransBlock(b);
 
-                    ResidualBlockBase? GetTransBlock(AddressAndAvailability n)
+                    bool? GetTransBlock(AddressAndAvailability n)
                     {
                         if (!n.Availability) return null;
                         H264MacroblockInfo mb = h264.MacroblockUtility.GetMacroblock(n.Address);
@@ -393,9 +393,9 @@
 
                         if (MacroblockTraits.MbPartPredMode(mb, 0) == PredictionModes.Intra_16x16)
                         {
-                            if (ctxBlockCat == 0) return new IntraDcResidualBlock(mb.Rbsp.Residual);
-                            else if (ctxBlockCat == 6) return new CbDcResidualBlock(mb.Rbsp.Residual);
-                            else return new CrDcResidualBlock(mb.Rbsp.Residual);
+                            if (ctxBlockCat == 0) return mb.Rbsp.Residual.CbfIntra16x16DCLevel;
+                            else if (ctxBlockCat == 6) return mb.Rbsp.Residual.CbfCbIntra16x16DCLevel;
+                            else return mb.Rbsp.Residual.CbfCrIntra16x16DCLevel;
                         }
                         else
                         {
@@ -405,7 +405,7 @@
                 }
                 else if (CtxBlockCat12ForCodedBlockFlag.Contains(ctxBlockCat))
                 {
-                    H264Derivative.DeriveNeighboring4x4LumaBlocks(h264, options.luma8x8BlkIdx,
+                    H264Derivative.DeriveNeighboring4x4LumaBlocks(h264, options.Luma8x8BlkIdx,
                         out AddressAnd4x4LumaBlockIndex addrA,
                         out AddressAnd4x4LumaBlockIndex addrB);
 
@@ -415,7 +415,7 @@
                     transBlockA = GetTransBlock(addrA);
                     transBlockB = GetTransBlock(addrB);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd4x4LumaBlockIndex n)
+                    bool? GetTransBlock(AddressAnd4x4LumaBlockIndex n)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
                         H264MacroblockInfo mb = h264.MacroblockUtility.GetMacroblock(n.AddressAndAvailability.Address);
@@ -424,11 +424,11 @@
                         if (!(mb == P_Skip || mb == B_Skip || mb == I_PCM) &&
                             ((mb.Rbsp.GetCodedBlockPatternLuma() >> (n.Luma4x4BlkIdx.BlockIndex >> 2)) & 1) != 0 &&
                             !mb.Rbsp.TransformSize8x8Flag)
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.LumaLevel4x4, n.Luma4x4BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual?.CbfCbLevel4x4[n.Luma4x4BlkIdx.BlockIndex];
                         else if (!(mb == P_Skip || mb == B_Skip) &&
                             ((mb.Rbsp.GetCodedBlockPatternLuma() >> (n.Luma4x4BlkIdx.BlockIndex >> 2)) & 1) != 0 &&
                             mb.Rbsp.TransformSize8x8Flag)
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.LumaLevel8x8, n.Luma4x4BlkIdx.BlockIndex >> 2);
+                            return mb.Rbsp.Residual?.CbfCbLevel8x8[n.Luma4x4BlkIdx.BlockIndex >> 2];
                         else
                             return null;
                     }
@@ -442,10 +442,10 @@
                     mbAddrA = a;
                     mbAddrB = b;
 
-                    transBlockA = GetTransBlock(a, in options);
-                    transBlockB = GetTransBlock(b, in options);
+                    transBlockA = GetTransBlock(a, options);
+                    transBlockB = GetTransBlock(b, options);
 
-                    ResidualBlockBase? GetTransBlock(AddressAndAvailability n, in CodedBlockFlagDerivationOptions options)
+                    bool? GetTransBlock(AddressAndAvailability n, CodedBlockFlagDerivationOptions options)
                     {
                         if (!n.Availability) return null;
 
@@ -456,7 +456,9 @@
 
                         if (!(mb == P_Skip || mb == B_Skip || mb == I_PCM) &&
                             (mb.Rbsp.GetCodedBlockPatternChroma() != 0))
-                            return new ResidualBlock1D(mb.Rbsp.Residual, mb.Rbsp.Residual.GetChroma16x16Dc(options.iCbCr));
+                            return mb.Rbsp.Residual?.ChromaDCLevel != null
+                                ? mb.Rbsp.Residual.CbfChromaDCLevel![options.ICbCr]
+                                : mb.Rbsp.Residual!.GetCbfChroma16x16Dc(options.ICbCr);
 
                         return null;
                     }
@@ -465,17 +467,17 @@
                 {
                     H264Derivative.DeriveNeighboring4x4ChromaBlocks(
                         h264,
-                        options.chroma4x4BlkIdx,
+                        options.Chroma4x4BlkIdx,
                         out AddressAnd4x4ChromaBlockIndex a,
                         out AddressAnd4x4ChromaBlockIndex b);
 
                     mbAddrA = a.AddressAndAvailability;
                     mbAddrB = b.AddressAndAvailability;
 
-                    transBlockA = GetTransBlock(a, in options);
-                    transBlockB = GetTransBlock(b, in options);
+                    transBlockA = GetTransBlock(a, options);
+                    transBlockB = GetTransBlock(b, options);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd4x4ChromaBlockIndex n, in CodedBlockFlagDerivationOptions options)
+                    bool? GetTransBlock(AddressAnd4x4ChromaBlockIndex n, CodedBlockFlagDerivationOptions options)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
 
@@ -485,7 +487,9 @@
 
                         if (!(mb == P_Skip || mb == B_Skip || mb == I_PCM) &&
                             (mb.Rbsp.GetCodedBlockPatternChroma() == 2))
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.GetChromaLevel4x4(options.iCbCr), n.Chroma4x4BlkIdx.BlockIndex);
+                            return options.ICbCr > 0
+                                ? mb.Rbsp.Residual.CbfCrLevel4x4[n.Chroma4x4BlkIdx.BlockIndex]
+                                : mb.Rbsp.Residual.CbfCbLevel4x4[n.Chroma4x4BlkIdx.BlockIndex];
 
                         return null;
                     }
@@ -494,7 +498,7 @@
                 {
                     H264Derivative.DeriveNeighboring8x8LumaBlock(
                         h264,
-                        options.luma8x8BlkIdx,
+                        options.Luma8x8BlkIdx,
                         out var a,
                         out var b);
 
@@ -504,7 +508,7 @@
                     transBlockA = GetTransBlock(a);
                     transBlockB = GetTransBlock(b);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd8x8LumaBlockIndex n)
+                    bool? GetTransBlock(AddressAnd8x8LumaBlockIndex n)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
 
@@ -516,14 +520,14 @@
                         if (!(mb == P_Skip || mb == B_Skip || mb == I_PCM) &&
                             ((mb.Rbsp.GetCodedBlockPatternChroma() >> n.Luma8x8BlkIdx.BlockIndex) & 1) != 0 &&
                             mb.Rbsp.TransformSize8x8Flag)
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.LumaLevel8x8, n.Luma8x8BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual.CbfLumaLevel8x8[n.Luma8x8BlkIdx.BlockIndex];
 
                         return null;
                     }
                 }
                 else if (CtxBlockCat78ForCodedBlockFlag.Contains(ctxBlockCat))
                 {
-                    H264Derivative.DeriveNeighboring4x4ChromaBlocks(h264, options.chroma4x4BlkIdx,
+                    H264Derivative.DeriveNeighboring4x4ChromaBlocks(h264, options.Chroma4x4BlkIdx,
                         out AddressAnd4x4ChromaBlockIndex addrA,
                         out AddressAnd4x4ChromaBlockIndex addrB);
 
@@ -533,7 +537,7 @@
                     transBlockA = GetTransBlock(addrA);
                     transBlockB = GetTransBlock(addrB);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd4x4ChromaBlockIndex n)
+                    bool? GetTransBlock(AddressAnd4x4ChromaBlockIndex n)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
 
@@ -547,7 +551,7 @@
                         {
                             if (mb.Rbsp.Residual.CbLevel4x4 == null) return null;
 
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.CbLevel4x4, n.Chroma4x4BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual?.CbfCbLevel4x4[n.Chroma4x4BlkIdx.BlockIndex];
                         }
                         else if (!(mb == P_Skip || mb == B_Skip) &&
                             ((mb.Rbsp.GetCodedBlockPatternLuma() >> (n.Chroma4x4BlkIdx.BlockIndex >> 2)) & 1) != 0 &&
@@ -555,7 +559,7 @@
                         {
                             if (mb.Rbsp.Residual.CbLevel8x8 == null) return null;
 
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.CbLevel8x8, n.Chroma4x4BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual?.CbfCbLevel8x8[n.Chroma4x4BlkIdx.BlockIndex >> 2];
                         }
 
                         return null;
@@ -565,7 +569,7 @@
                 {
                     H264Derivative.DeriveNeighboring8x8ChromaBlocksCat3(
                         h264,
-                        options.cb8x8BlkIdx,
+                        options.Cb8x8BlkIdx,
                         out var addrA,
                         out var addrB);
 
@@ -575,7 +579,7 @@
                     transBlockA = GetTransBlock(addrA);
                     transBlockB = GetTransBlock(addrB);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd8x8ChromaBlockIndex n)
+                    bool? GetTransBlock(AddressAnd8x8ChromaBlockIndex n)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
 
@@ -589,7 +593,7 @@
                         {
                             if (mb.Rbsp.Residual.CbLevel8x8 == null) return null;
 
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.CbLevel8x8, n.Chroma8x8BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual.CbfCbLevel8x8[n.Chroma8x8BlkIdx.BlockIndex];
                         }
                         
 
@@ -600,7 +604,7 @@
                 {
                     H264Derivative.DeriveNeighboring4x4ChromaBlocks(
                         h264,
-                        options.cr4x4BlkIdx,
+                        options.Cr4x4BlkIdx,
                         out var addrA,
                         out var addrB);
 
@@ -610,7 +614,7 @@
                     transBlockA = GetTransBlock(addrA, in options);
                     transBlockB = GetTransBlock(addrB, in options);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd4x4ChromaBlockIndex n, in CodedBlockFlagDerivationOptions options)
+                    bool? GetTransBlock(AddressAnd4x4ChromaBlockIndex n, in CodedBlockFlagDerivationOptions options)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
 
@@ -619,30 +623,30 @@
                         if (mb.Rbsp.Residual == null) return null;
 
                         if (!(mb == P_Skip || mb == B_Skip || mb == I_PCM) &&
-                            ((mb.Rbsp.GetCodedBlockPatternLuma() >> (options.cr4x4BlkIdx >> 2)) & 1) != 0 &&
+                            ((mb.Rbsp.GetCodedBlockPatternLuma() >> (options.Cr4x4BlkIdx >> 2)) & 1) != 0 &&
                             !mb.Rbsp.TransformSize8x8Flag)
                         {
                             if (mb.Rbsp.Residual.CrLevel4x4 == null) return null;
 
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.CrLevel4x4, n.Chroma4x4BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual.CbfCrLevel4x4[n.Chroma4x4BlkIdx.BlockIndex];
                         }
                         else if (!(mb == P_Skip || mb == B_Skip) &&
-                            ((mb.Rbsp.GetCodedBlockPatternLuma() >> (options.cr4x4BlkIdx >> 2)) & 1) != 0 &&
+                            ((mb.Rbsp.GetCodedBlockPatternLuma() >> (options.Cr4x4BlkIdx >> 2)) & 1) != 0 &&
                             mb.Rbsp.TransformSize8x8Flag)
                         {
                             if (mb.Rbsp.Residual.CrLevel8x8 == null) return null;
 
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.CrLevel8x8, n.Chroma4x4BlkIdx.BlockIndex >> 2);
+                            return mb.Rbsp.Residual.CbfCrLevel8x8[n.Chroma4x4BlkIdx.BlockIndex >> 2];
                         }
 
                         return null;
                     }
                 }
-                else
+                else // ctxBlockCat is 13
                 {
                     H264Derivative.DeriveNeighboring8x8ChromaBlocksCat3(
                         h264,
-                        options.cr8x8BlkIdx,
+                        options.Cr8x8BlkIdx,
                         out var addrA,
                         out var addrB);
 
@@ -652,7 +656,7 @@
                     transBlockA = GetTransBlock(addrA);
                     transBlockB = GetTransBlock(addrB);
 
-                    ResidualBlockBase? GetTransBlock(AddressAnd8x8ChromaBlockIndex n)
+                    bool? GetTransBlock(AddressAnd8x8ChromaBlockIndex n)
                     {
                         if (!n.AddressAndAvailability.Availability) return null;
 
@@ -666,7 +670,7 @@
                         {
                             if (mb.Rbsp.Residual.CbLevel8x8 == null) return null;
 
-                            return new Indexed2DTo1DResidualBlock(mb.Rbsp.Residual, mb.Rbsp.Residual.CrLevel8x8, n.Chroma8x8BlkIdx.BlockIndex);
+                            return mb.Rbsp.Residual.CbfCrLevel8x8[n.Chroma8x8BlkIdx.BlockIndex];
                         }
 
 
