@@ -3,9 +3,6 @@
     using ContentDotNet.Extensions.Video.H264;
     using ContentDotNet.Extensions.Video.H264.Components.Common;
     using ContentDotNet.Extensions.Video.H264.Components.Common.Derivative;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ResidualBlocks;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ResidualBlocks.BlockTypes;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ResidualBlocks.Dimensional;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Extensions;
     using ContentDotNet.Extensions.Video.H264.Models;

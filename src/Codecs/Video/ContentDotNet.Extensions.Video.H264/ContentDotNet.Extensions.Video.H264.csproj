@@ -41,11 +41,6 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>AssignCtxidxCore.tt</DependentUpon>
     </None>
-    <None Include="Components\IO\Cabac\ResidualBlocks\BlockTypes\BlockTypes.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>BlockTypes.tt</DependentUpon>
-    </None>
     <None Include="Utilities\SyntaxElementGrabber.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
@@ -85,10 +80,6 @@
     <None Update="Components\IO\Cabac\AssignCtxidxCore.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssignCtxidxCore.g.cs</LastGenOutput>
-    </None>
-    <None Update="Components\IO\Cabac\ResidualBlocks\BlockTypes\BlockTypes.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>BlockTypes.cs</LastGenOutput>
     </None>
     <None Update="Components\IO\Presets\StrictEntropy.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -143,11 +134,6 @@
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>AssignCtxidxCore.tt</DependentUpon>
-    </Compile>
-    <Compile Update="Components\IO\Cabac\ResidualBlocks\BlockTypes\BlockTypes.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>BlockTypes.tt</DependentUpon>
     </Compile>
     <Compile Update="Components\IO\Presets\StrictEntropy.g.cs">
       <DesignTime>True</DesignTime>
