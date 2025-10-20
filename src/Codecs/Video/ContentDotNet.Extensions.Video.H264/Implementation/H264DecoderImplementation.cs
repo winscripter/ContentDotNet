@@ -115,6 +115,11 @@
 
         private RbspNalUnit ParseNal(int nBytes)
         {
+            while (this.BitStreamReader.GetState().BitPosition != 0)
+            {
+                _ = this.BitStreamReader.ReadBit(); // Align to next byte
+            }
+
             bool forbidden_zero_bit = this.BitStreamReader.ReadBit();
             uint nal_ref_idc = this.BitStreamReader.ReadBits(2);
             uint nal_unit_type = this.BitStreamReader.ReadBits(5);

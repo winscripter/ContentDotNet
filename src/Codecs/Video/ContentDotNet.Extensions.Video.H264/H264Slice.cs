@@ -7,7 +7,6 @@
     using ContentDotNet.Extensions.Video.H264.Components.SliceDecoding;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Models;
-    using ContentDotNet.Extensions.Video.H264.RbspModels;
 
     /// <summary>
     ///   The H.264 slice.

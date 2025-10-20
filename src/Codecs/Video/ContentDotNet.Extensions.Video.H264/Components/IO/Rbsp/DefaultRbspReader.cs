@@ -2669,6 +2669,8 @@
 
         public void ReadSliceData(IH264SyntaxReaderFactory syntaxReaderFactory, BitStreamReader bitStream, SliceDataReceiveMacroblockCallback receiveMacroblock, H264State state, ISliceDecoder sliceDecoder)
         {
+            Console.WriteLine(state.H264RbspState?.NalUnit?.NalUnitType);
+
             if (Grabber.GetEntropyCodingModeFlag(state.H264RbspState))
             {
                 while (bitStream.GetState().BitPosition != 0)

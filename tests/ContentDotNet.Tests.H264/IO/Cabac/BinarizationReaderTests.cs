@@ -289,5 +289,32 @@
             Assert.Equal(3, TestU(bcd));
             Assert.Equal(3, TestTU(bcd, 3).Value);
         }
+
+        [Fact]
+        public void FL_1()
+        {
+            var bytes = new[]
+            {
+                true
+            };
+
+            Assert.Equal(1, H264Binarization.FL(new BinCustomDecoder(bytes), 1));
+        }
+
+        [Fact]
+        public void FL_1_Seq()
+        {
+            var bytes = new[]
+            {
+                true, false, false, true, true
+            };
+
+            var bcd = new BinCustomDecoder(bytes);
+            Assert.Equal(1, H264Binarization.FL(bcd, 1));
+            Assert.Equal(0, H264Binarization.FL(bcd, 1));
+            Assert.Equal(0, H264Binarization.FL(bcd, 1));
+            Assert.Equal(1, H264Binarization.FL(bcd, 1));
+            Assert.Equal(1, H264Binarization.FL(bcd, 1));
+        }
     }
 }
