@@ -8,8 +8,6 @@
     /// </summary>
     public static partial class AssignCtxIdx
     {
-        const int na = -1;
-
         private static ReadOnlySpan<int> IncludedCtxIdxOffsets =>
         [
             0, 3, 11, 14, 17, 21, 24, 27, 32, 36, 40, 47, 54, 60, 64, 68, 69, 70, 73, 77, 276, 399

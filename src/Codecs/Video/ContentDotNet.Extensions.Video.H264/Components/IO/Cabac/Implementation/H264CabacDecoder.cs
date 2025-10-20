@@ -44,9 +44,9 @@
                 ContextIndexRecord?.MaxBinIdxCtx.UsesDecodeBypass == true || ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
 
+            BinIndex++;
             Recompute();
 
-            BinIndex++;
             return ret;
         }
 
@@ -62,9 +62,10 @@
             bool ret = await ArithmeticReader.ReadBinAsync(ctxIdx,
                 ContextIndexRecord?.MaxBinIdxCtx.UsesDecodeBypass == true || ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
-            Recompute();
 
             BinIndex++;
+            Recompute();
+
             return ret;
         }
 
