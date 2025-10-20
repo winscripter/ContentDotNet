@@ -51,7 +51,7 @@
         /// <summary>
         ///   Coded block flag options
         /// </summary>
-        public CodedBlockFlagDerivationOptions CodedBlockFlagOptions { get; set; }
+        public CodedBlockFlagDerivationOptions CodedBlockFlagOptions { get; set; } = new(0, 0, 0, 0, 0, 0, 0, 0);
 
         /// <summary>
         ///   Ctx block cat
