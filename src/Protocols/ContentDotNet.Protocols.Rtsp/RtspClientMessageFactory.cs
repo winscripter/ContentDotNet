@@ -71,14 +71,14 @@
         /// </summary>
         /// <param name="parameter">What comes after the GET_PARAMETER line.</param>
         /// <returns>A new instance of the <see cref="RtspClientMessage"/> class.</returns>
-        public static RtspClientMessage GetParameter(string parameter) => CreateClientMessage(RtspMethodType.GetParameter, parameter);
+        public static RtspClientMessage GetParameter(string parameter) => CreateClientMessage(RtspMethodType.Get_parameter, parameter);
 
         /// <summary>
         ///   Creates a SET_PARAMETER RTSP client message.
         /// </summary>
         /// <param name="parameter">What comes after the SET_PARAMETER line.</param>
         /// <returns>A new instance of the <see cref="RtspClientMessage"/> class.</returns>
-        public static RtspClientMessage SetParameter(string parameter) => CreateClientMessage(RtspMethodType.SetParameter, parameter);
+        public static RtspClientMessage SetParameter(string parameter) => CreateClientMessage(RtspMethodType.Set_parameter, parameter);
 
         /// <summary>
         ///   Creates a REDIRECT RTSP client message.

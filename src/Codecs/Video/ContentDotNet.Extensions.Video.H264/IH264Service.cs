@@ -5,7 +5,7 @@
     /// <summary>
     ///   The H.264 service.
     /// </summary>
-    public interface IH264Service : IService
+    public interface IH264Service
     {
         /// <summary>
         ///   Creates the H.264 decoder.
