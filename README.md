@@ -19,8 +19,7 @@
 > native libraries.
 
 ContentDotNet is a cross-platform, open-source, managed framework for C# to read/write videos, audios, images and other multimedia. It allows reading them,
-creating them, and inspecting or editing their contents. It provides a user-friendly API, as well as
-extensive documentation and samples. It does not use any native libraries; everything is pure C#.
+creating them, and inspecting or editing their contents. It provides a user-friendly API. It does not use any native libraries; everything is pure C#.
 
 It is cross-platform and platform-independent, allowing ContentDotNet to run on a wide range of systems without
 worrying about compatibility, while also making deployment easier. It will work where .NET can run - yes, even Blazor WebAssembly.
