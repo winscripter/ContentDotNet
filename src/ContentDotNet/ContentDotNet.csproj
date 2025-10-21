@@ -10,8 +10,9 @@
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
     <PackageTags>h264;g722;h.264;g.722;rtsp;rtp;rtcp;sdp;bmp;webp;jpeg;h.261;h261;video;audio;image;processing;multimedia;codec;decoder;encoder</PackageTags>
-    <Version>1.0.0-alpha</Version>
+    <Version>1.0.0-alpha2</Version>
     <Description>ContentDotNet abstractions library.</Description>
+    <RepositoryType>Readme fix</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
