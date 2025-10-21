@@ -6,6 +6,7 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using System.Threading.Tasks;
 
     internal class BinCustomDecoder(bool[] binSequence) : IH264CabacDecoder

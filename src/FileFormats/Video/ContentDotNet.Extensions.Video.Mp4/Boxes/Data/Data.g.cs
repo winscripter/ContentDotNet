@@ -5583,7 +5583,21 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	{
 		/// <inheritdoc cref="IMp4BoxData.Parent" />
 		public Mp4Box? Parent { get; set; } = null;
+	
+		/// <summary>
+		///   Represents one of MP4 box properties, named, Children.
+		/// </summary>
+		public IList<Mp4Box>? Children { get; set; }
 
+
+		/// <summary>
+		///   Initializes a new instance of the <see cref="Mp4MediaInformationBoxData" /> class with the specified value.
+		/// </summary>
+		/// <param name="children">The parameter that assigns <see cref="Children" /> directly.</param>
+		public Mp4MediaInformationBoxData(IList<Mp4Box> children)
+		{
+			this.Children = children;
+		}
 
 		/// <summary>
 		///   Initializes a new instance of the <see cref="Mp4MediaInformationBoxData" /> class.
@@ -5596,6 +5610,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		public override bool Equals(object? other)
 		{
 			return other is Mp4MediaInformationBoxData val
+				&& EqualityComparer<IList<Mp4Box>?>.Default.Equals(this.Children, val.Children)
 				;
 		}
 
@@ -5605,6 +5620,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 			unchecked
 			{
 				int hash = 17;
+				hash = hash * 23 + (Children?.GetHashCode() ?? 0);
 				return hash;
 			}
 		}
@@ -6713,18 +6729,18 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		public Mp4Box? Parent { get; set; } = null;
 	
 		/// <summary>
-		///   Represents one of MP4 box properties, named, SchemeSpecificData.
+		///   Represents one of MP4 box properties, named, Children.
 		/// </summary>
-		public IList<Mp4Box>? SchemeSpecificData { get; set; }
+		public IList<Mp4Box>? Children { get; set; }
 
 
 		/// <summary>
 		///   Initializes a new instance of the <see cref="Mp4SchemeInformationBoxData" /> class with the specified value.
 		/// </summary>
-		/// <param name="schemeSpecificData">The parameter that assigns <see cref="SchemeSpecificData" /> directly.</param>
-		public Mp4SchemeInformationBoxData(IList<Mp4Box> schemeSpecificData)
+		/// <param name="children">The parameter that assigns <see cref="Children" /> directly.</param>
+		public Mp4SchemeInformationBoxData(IList<Mp4Box> children)
 		{
-			this.SchemeSpecificData = schemeSpecificData;
+			this.Children = children;
 		}
 
 		/// <summary>
@@ -6738,7 +6754,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		public override bool Equals(object? other)
 		{
 			return other is Mp4SchemeInformationBoxData val
-				&& EqualityComparer<IList<Mp4Box>?>.Default.Equals(this.SchemeSpecificData, val.SchemeSpecificData)
+				&& EqualityComparer<IList<Mp4Box>?>.Default.Equals(this.Children, val.Children)
 				;
 		}
 
@@ -6748,7 +6764,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 			unchecked
 			{
 				int hash = 17;
-				hash = hash * 23 + (SchemeSpecificData?.GetHashCode() ?? 0);
+				hash = hash * 23 + (Children?.GetHashCode() ?? 0);
 				return hash;
 			}
 		}
@@ -13179,6 +13195,24 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		}
 
 		/// <summary>
+		///   Changes the <see cref="Mp4MediaInformationBoxData.Children" /> property inside
+		///   the given <paramref name="sourceBox" /> parameter.
+		/// </summary>
+		/// <param name="sourceBox">Input MP4 box</param>
+		/// <param name="valueToReplaceWith">The value to replace with</param>
+		/// <returns>
+		///   <paramref name="sourceBox" /> with the new <see cref="Mp4MediaInformationBoxData.Children" />
+		///   property.
+		/// </returns>
+		public static Mp4MediaInformationBoxData WithChildren(
+			this Mp4MediaInformationBoxData sourceBox,
+			IList<Mp4Box> valueToReplaceWith)
+		{
+			sourceBox.Children = valueToReplaceWith;
+			return sourceBox;
+		}
+
+		/// <summary>
 		///   Changes the <see cref="Mp4MovieFragmentBoxData.Children" /> property inside
 		///   the given <paramref name="sourceBox" /> parameter.
 		/// </summary>
@@ -14043,20 +14077,20 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 		}
 
 		/// <summary>
-		///   Changes the <see cref="Mp4SchemeInformationBoxData.SchemeSpecificData" /> property inside
+		///   Changes the <see cref="Mp4SchemeInformationBoxData.Children" /> property inside
 		///   the given <paramref name="sourceBox" /> parameter.
 		/// </summary>
 		/// <param name="sourceBox">Input MP4 box</param>
 		/// <param name="valueToReplaceWith">The value to replace with</param>
 		/// <returns>
-		///   <paramref name="sourceBox" /> with the new <see cref="Mp4SchemeInformationBoxData.SchemeSpecificData" />
+		///   <paramref name="sourceBox" /> with the new <see cref="Mp4SchemeInformationBoxData.Children" />
 		///   property.
 		/// </returns>
-		public static Mp4SchemeInformationBoxData WithSchemeSpecificData(
+		public static Mp4SchemeInformationBoxData WithChildren(
 			this Mp4SchemeInformationBoxData sourceBox,
 			IList<Mp4Box> valueToReplaceWith)
 		{
-			sourceBox.SchemeSpecificData = valueToReplaceWith;
+			sourceBox.Children = valueToReplaceWith;
 			return sourceBox;
 		}
 

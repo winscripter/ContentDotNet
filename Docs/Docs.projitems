@@ -11,8 +11,6 @@
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)g722\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\cabac\arithmetic-reader-writer.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\cabac\common.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\common\macroblock-tools.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\productivity\syntax-element-grabber.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\sei\examples.md" />

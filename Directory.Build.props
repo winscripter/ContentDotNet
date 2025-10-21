@@ -8,6 +8,6 @@
       <PackageLicenseExpression>MIT</PackageLicenseExpression>
       <PackageRequireLicenseAcceptance>True</PackageRequireLicenseAcceptance>
       <Company>winscripter</Company>
-      <Description>The most powerful multimedia codec written natively in C# - supports many things, from BMP and RTSP to H.264 and JPEG. Offers great performance.</Description>
+      <Description>Powerful WIP multimedia codec written natively in C# - will support many things, from BMP and RTSP to H.264 and JPEG. Offers great performance.</Description>
   </PropertyGroup>
 </Project>

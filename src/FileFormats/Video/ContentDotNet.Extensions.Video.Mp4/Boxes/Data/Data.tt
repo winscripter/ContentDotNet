@@ -90,7 +90,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	B("@MovieFragmentHeader", "mfhd").F("uint", "SequenceNumber");
 	B("MovieFragmentRandomAccess", "mfra");
 	B("@MovieFragmentRandomAccessOffset", "mfro").F("uint", "ParentSize");
-	B("MediaInformation", "minf");
+	B("MediaInformation", "minf").F("IList<Mp4Box>", "Children");
 	B("!MovieFragment", "moof"); // Moo indeed
 	B("!Movie", "moov"); // Moo indeed
 	B("!MovieExtends", "mvex");
@@ -105,7 +105,7 @@ namespace ContentDotNet.Extensions.Video.Mp4.Boxes.Data
 	B("@SampleAuxiliaryInformationOffsets", "saio").F("uint", "AuxInfoType").F("uint", "AuxInfoTypeParameter").F("uint", "EntryCount").F("IList<ulong>", "Offsets");
 	B("@SampleAuxiliaryInformationSize", "saiz").F("uint", "AuxInfoType").F("uint", "AuxInfoTypeParameter").F("byte", "DefaultSampleInfoSize").F("uint", "SampleCount").F("IList<byte>", "SampleInfoSize");
 	B("@SampleToGroup", "sbgp").F("uint", "GroupingType").F("uint", "GroupingTypeParameter").F("uint", "EntryCount").F("IList<uint>", "SampleCount").F("IList<uint>", "GroupDescriptionIndex");
-	B("SchemeInformation", "schi").F("IList<Mp4Box>", "SchemeSpecificData");
+	B("SchemeInformation", "schi").F("IList<Mp4Box>", "Children");
 	B("@SchemeType", "schm").F("uint", "SchemeType").F("uint", "SchemeVersion").F("string", "SchemeUri");
 	B("@CompatibleSchemeType", "csch").F("uint", "SchemeType").F("uint", "SchemeVersion").F("string", "SchemeUri");
 	B("@SampleDependencyType", "sdtp").F("IList<byte>", "IsLeading").F("IList<byte>", "SampleDependsOn").F("IList<byte>", "SampleIsDependedOn").F("IList<byte>", "SampleHasRedundancy");

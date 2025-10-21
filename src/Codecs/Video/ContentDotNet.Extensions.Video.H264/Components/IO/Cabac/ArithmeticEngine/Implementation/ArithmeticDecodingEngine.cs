@@ -2,6 +2,7 @@
 {
     using ContentDotNet.BitStream;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using System.Threading.Tasks;
 
     internal class ArithmeticDecodingEngine : IH264ArithmeticReader

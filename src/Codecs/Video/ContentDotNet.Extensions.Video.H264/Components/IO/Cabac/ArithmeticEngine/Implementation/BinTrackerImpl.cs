@@ -1,5 +1,7 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine.Implementation
 {
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
+
     internal class BinTrackerImpl : IBinTracker
     {
         public BinHistory RecentBins { get; set; } = default;

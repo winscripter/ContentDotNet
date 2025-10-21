@@ -13,7 +13,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Data.tt</DependentUpon>
     </None>
-    <None Include="Boxes\IO\Internal\OneValueIO.g.cs">
+    <None Include="Boxes\IO\ContainerIO.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContainerIO.tt</DependentUpon>
+    </None>
+    <None Include="Boxes\IO\OneValueIO.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>OneValueIO.tt</DependentUpon>
@@ -29,15 +34,19 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Data.g.cs</LastGenOutput>
     </None>
-    <None Update="Boxes\IO\Internal\OneValueIO.tt">
+    <None Update="Boxes\IO\ContainerIO.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>ContainerIO.g.cs</LastGenOutput>
+    </None>
+    <None Update="Boxes\IO\OneValueIO.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>OneValueIO.g.cs</LastGenOutput>
     </None>
     <None Update="db\iocode.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
     <None Update="db\__list.txt">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 
@@ -51,7 +60,12 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Data.tt</DependentUpon>
     </Compile>
-    <Compile Update="Boxes\IO\Internal\OneValueIO.g.cs">
+    <Compile Update="Boxes\IO\ContainerIO.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>ContainerIO.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Boxes\IO\OneValueIO.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>OneValueIO.tt</DependentUpon>

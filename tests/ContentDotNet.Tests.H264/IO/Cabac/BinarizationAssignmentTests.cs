@@ -6,6 +6,8 @@
 
     public class BinarizationAssignmentTests
     {
+        #region mb_type
+
         [Fact]
         public void TestMbType_SI()
         {
@@ -63,5 +65,7 @@
             Assert.Equal(27, ctxAffixA.Prefix);
             Assert.Equal(32, ctxAffixA.Suffix);
         }
+
+        #endregion
     }
 }

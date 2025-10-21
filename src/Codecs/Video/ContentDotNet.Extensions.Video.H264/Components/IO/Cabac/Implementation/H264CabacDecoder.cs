@@ -4,6 +4,7 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Exceptions;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using ContentDotNet.Extensions.Video.H264.Utilities;
     using System.Threading.Tasks;
 

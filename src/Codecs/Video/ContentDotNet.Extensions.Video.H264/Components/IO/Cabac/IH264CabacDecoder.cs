@@ -5,6 +5,7 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Exceptions;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
 
     /// <summary>
     ///   Abstracts an H.264 CABAC Decoder

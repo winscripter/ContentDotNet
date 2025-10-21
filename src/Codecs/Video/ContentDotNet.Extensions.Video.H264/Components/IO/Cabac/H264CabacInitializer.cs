@@ -1,6 +1,7 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
 {
     using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using System.Runtime.CompilerServices;
 
     internal static class H264CabacInitializer

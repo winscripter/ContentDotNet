@@ -1,5 +1,7 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine
 {
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
+
     /// <summary>
     ///   Tracks recent bins.
     /// </summary>

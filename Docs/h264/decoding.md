@@ -2,6 +2,11 @@
 This article describes how to use ContentDotNet to decode H.264 frames directly within C# code. No native
 dependencies; guaranteed to work wherever .NET can run.
 
+> [!WARNING]
+> Since H.264 decoding is still under development, this feature is not yet available on NuGet,
+> and only reflects the design choice rather than a correct, tested implementation. However,
+> the same API will be used when H.264 decoding is complete.
+
 Start by creating the H.264 service. It provides access to H.264 components, like Intra prediction, Deblocking
 Filter, etc, and the only one we need here - **decoding H.264 streams**.
 

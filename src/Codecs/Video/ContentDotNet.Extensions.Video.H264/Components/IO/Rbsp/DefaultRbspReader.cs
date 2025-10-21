@@ -11,6 +11,7 @@
     using ContentDotNet.Extensions.Video.H264.Exceptions;
     using ContentDotNet.Extensions.Video.H264.Extensions;
     using ContentDotNet.Extensions.Video.H264.Models;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using ContentDotNet.Extensions.Video.H264.Models.ResidualBlocks;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
     using ContentDotNet.Extensions.Video.H264.Utilities;

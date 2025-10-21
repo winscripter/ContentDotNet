@@ -1,22 +1,25 @@
-﻿<p align="center">
-  <img src="resources/logo/ContentDotNet-logo.png" alt="Logo" />
-</p>
+﻿# ContentDotNet
 
-> [!CAUTION]
-> This library **is in development** 🚧. No releases, including alpha, beta, rc, or preview releases were made.
-> At the moment, this library could be incomplete, bizarre, unstable, or just lacking necessary features.
+> [!WARNING]
+> While some components of this library are complete, others are still under development,
+> such as H.264 decoding, and as such, are not yet published on NuGet.
 >
-> However, we highly appreciate any feedback.
+> We have released this library early hoping to get some community support and contributions
+> with components like H.264 and JPEG decoding, writing tests, and finding bugs/sample files
+> for the formats we support.
 >
-> Use at your own risk—you might discover functions that do the opposite of what you'd expect!
+> Please note that this library is not production-ready yet, and should not be used in
+> production environments.
+>
+> We are open to contributions, including but not limited to bug reports, suggestions,
+> writing better tests, and creating Pull Requests. See the CONTRIBUTING.md file.
+> With your help, this framework could eventually unify multimedia processing in C#,
+> and be the first framework ever in the .NET ecosystem for video, image and audio editing without relying on
+> native libraries.
 
-ContentDotNet is a high-performance & cross-platform framework for C# to create videos, audios, images and other multimedia. It allows reading them,
-creating them, and otherwise inspecting or editing their contents. It provides a user-friendly API, as well as
-extensive documentation and samples. It does not use any native libraries; everything is pure C#, following the
-specification for each format.
-
-Powered by .NET 8.0, it allows processing multimedia content very quickly and under a memory efficient
-context, while also being compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, and Embedded/IoT scenarios.
+ContentDotNet is a cross-platform, open-source, managed framework for C# to read/write videos, audios, images and other multimedia. It allows reading them,
+creating them, and inspecting or editing their contents. It provides a user-friendly API, as well as
+extensive documentation and samples. It does not use any native libraries; everything is pure C#.
 
 It is cross-platform and platform-independent, allowing ContentDotNet to run on a wide range of systems without
 worrying about compatibility, while also making deployment easier. It will work where .NET can run - yes, even Blazor WebAssembly.
@@ -26,82 +29,39 @@ worrying about compatibility, while also making deployment easier. It will work 
 
 - Video:
     - Codecs:
-        - H.261
-        - H.264
-        - MJPEG
+        - H.261 (⚠️)
+        - H.264 (⚠️)
     - Formats:
-        - MP4
-        - AVI
+        - MP4 (⚠️)
 - Image:
     - Formats:
-        - PNG
         - BMP
-        - JPEG
+        - WebP
+        - JPEG (⚠️)
 - Audio:
     - Codecs:
-        - G.711
         - G.722
-        - G.726
 - Protocols:
     - SDP
-    - RTSP
-    - BGP
-    - RTP
-    - IPP
+    - RTSP (⚠️)
+    - RTP (⚠️)
 
-### Capabilities
+## Why this project exists?
+With the rise of multimedia content in applications, there is a growing need for robust and efficient libraries to handle various multimedia formats.
+Many social media apps are composed of video, audio and image applications, and developers often need to manipulate multimedia content in their applications.
 
-H.264 (Decoding-only):
-  - CABAC decoding
-  - MBAFF
-  - Intra and Inter prediction
-  - Motion compensation
-  - Deblocking filter
-  - Baseline, Main, High and High10 profiles (pretty much what about 90% of H.264 videos are coded with)
-  - All chroma subsampling types
-  - NAL units, parameter sets, slice header/data, macroblocks, and residuals (both luma and chroma)
-  - Accessing internal data (e.g. macroblocks, residuals, slice header/data, parameter sets and NALs) with raw values directly provided
-  - Low allocation, focusing on high performance while still being platform independent (e.g. no unsafe code or filesystem operations)
-  - Compatible with NativeAOT, ReadyToRun, Mobile/Desktop, Web, Embedded/IoT, and even Blazor WebAssembly
-  - VUI parameters
-  - Weighted Prediction
+.NET began supporting open-source development and cross-platform capabilities with .NET Core, and it gets more powerful with each
+release. C#, when used correctly, offers great performance and memory efficiency (SIMD with System.Runtime.Intrinsics,
+Parallelism with the Parallel class, stackalloc, structs, you name it). Which means .NET can be used to create multimedia
+frameworks and video codec implementations. If we use native libraries like FFmpeg, we lose the cross-platform capabilities and
+we have to use different types of binaries for different architectures (x64, ARM64, RISC-V, ...) **and** platforms (Windows, macOS, Linux, WebAssembly, ...).
+If there's one managed .NET framework to do this, you just need one binary for all platforms and architectures.
 
-MP4:
-  - Sample entries
-  - Raw box editing
-  - Loading direct H.264/audio streams
-  - Editing options in a simple way (e.g. FPS, duration, etc.)
+There are a few powerful image and VoIP libraries in .NET, like SixLabors.ImageSharp or SIPSorcery respectively, yes, but for comprehensive video and audio decoding without
+platform dependencies, there's no library for that, and ContentDotNet could be the first. It will also always be open-source and use the MIT license.
 
-PNG:
-  - Support for decoding/encoding
-  - Direct access to raw PNG chunks (+editing)
-  - Interlace (null/Adam7) support
-  - ICC metadata
-  - RGB, RGBA, and Grayscale pixel formats
-  - Editing
-
-BMP:
-  - No platform dependency (just like with all other supported formats)
-  - All structures predating to OS/2
-  - All compression types
-  - RGB, BGR, BGRA, RGBA, Grayscale pixel formats
-  - Encoding and decoding
-
-G.711:
-  - Async support
-  - Zero allocation (stack-only) for both decode/encode operations (except for async methods)
-  - Encoding and decoding
-  - Writing either a single sample or multiple at once
-  - Interleaving
-  - Support for either a single channel, or up to three channels, either interleaved or not
-  - Clean API design
-  - Blazing fast speed, without any initialization overhead
-
-G.722:
-  - Everything that the G.711 encoder/decoder supports
-
-G.726:
-  - Everything that the G.711 encoder/decoder supports
+As for patents like H.264, we believe that we can use a technique where we delegate the need to obtain licenses and pay royalties
+to the end-user of the library. This applies to profit-generating and enterprise context, while personal and non-profit use legally remains free of charge.
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).

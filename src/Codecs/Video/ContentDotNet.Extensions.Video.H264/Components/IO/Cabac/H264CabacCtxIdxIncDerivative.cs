@@ -6,6 +6,7 @@
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Extensions;
     using ContentDotNet.Extensions.Video.H264.Models;
+    using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using ContentDotNet.Extensions.Video.H264.Models.Internal;
     using ContentDotNet.Extensions.Video.H264.Models.Internal.AddressesAndBlockIndices;
     using static ContentDotNet.Extensions.Video.H264.Components.Common.MacroblockTypes;

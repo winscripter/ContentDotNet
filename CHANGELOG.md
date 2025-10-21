@@ -1,10 +1,16 @@
 # Changelog
 All versions and revisions.
 
-Current: Dev
+Current: 1.0.0-alpha
+
+### 1.0.0-alpha
+
+Released: 10/22/2025
+
+First public alpha release. Supports basic image/audio/protocol reading and writing,
+but is largely undone and seeks community help.
 
 ### Dev
-**CURRENT**
 
 Released: 4/22/2025
 
