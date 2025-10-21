@@ -1,15 +1,15 @@
 ﻿# ContentDotNet
 
 > [!WARNING]
-> While some components of this library are complete, others are still under development,
+> While some components of this framework are complete, others are still under development,
 > such as H.264 decoding, and as such, are not yet published on NuGet.
 >
-> We have released this library early hoping to get some community support and contributions
+> We have released this framework early hoping to get some community support and contributions
 > with components like H.264 and JPEG decoding, writing tests, and finding bugs/sample files
 > for the formats we support. It's really hard to write a framework like this alone, and we
 > would appreciate any help we can get.
 >
-> Please note that this library is not production-ready yet, and should not be used in
+> Please note that this framework is not production-ready yet, and should not be used in
 > production environments.
 >
 > We are open to contributions, including but not limited to bug reports, suggestions,
