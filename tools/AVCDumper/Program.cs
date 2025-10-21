@@ -13,7 +13,7 @@ internal class Program
 
         var dcd = new H264Service().CreateDecoder(bsr);
 
-        for (int i = 0; i < 6; i++)
+        for (int i = 0; i < 4; i++)
         {
             NalType nt = dcd.DecodeNal();
             Console.WriteLine(nt);

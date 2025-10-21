@@ -13,9 +13,9 @@
         {
             return sliceType switch
             {
-                0 or 5 => H264SliceType.I,
-                1 or 6 => H264SliceType.P,
-                2 or 7 => H264SliceType.B,
+                0 or 5 => H264SliceType.P,
+                1 or 6 => H264SliceType.B,
+                2 or 7 => H264SliceType.I,
                 3 or 8 => H264SliceType.SP,
                 4 or 9 => H264SliceType.SI,
                 _ => throw new InvalidOperationException("Invalid/unknown slice type")

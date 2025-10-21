@@ -71,7 +71,7 @@
 
                     // Do not decode non-Intra slices for first frames.
                     if (this.CurrentFrameIndex == 0 &&
-                        this.State?.H264RbspState?.SliceHeader?.SliceType is not (0 or 5))
+                        this.State?.H264RbspState?.SliceHeader?.SliceType is not (2 or 7))
                     {
                         return NalType.Error;
                     }
