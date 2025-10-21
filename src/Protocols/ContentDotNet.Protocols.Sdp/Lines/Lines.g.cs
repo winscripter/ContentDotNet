@@ -72,7 +72,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -212,7 +212,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -536,7 +536,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -677,7 +677,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -818,7 +818,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -959,7 +959,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -1100,7 +1100,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -1241,7 +1241,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -1456,7 +1456,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -1597,7 +1597,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -1773,7 +1773,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -2025,7 +2025,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -2277,7 +2277,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -2418,7 +2418,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
@@ -2559,7 +2559,7 @@ namespace ContentDotNet.Protocols.Sdp.Lines
 				if (!this._rawText.StartsWith(this.Character.ToString()))
 					throw new SdpException($"Provided SDP line is not compatible with this SDP line model: It must start with {this.Character}, but it's {this._rawText[0]}");
 
-				this._value = this._rawText.Substring(offsetOfEqualsChar);
+				this._value = this._rawText.Substring(offsetOfEqualsChar + 1);
 				this._whitespaceSeparatedValue = this._value.Split(' ');
 			}
 		}
