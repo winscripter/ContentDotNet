@@ -36,7 +36,7 @@
             int ctxIdx = Affix == H264Affix.Prefix ? CtxIdxPrefix : CtxIdxSuffix;
             if (!cvInit[ctxIdx])
             {
-                InitializeContext(ctxIdx, State.DeriveSliceQpy(), (int)SyntaxElementGrabber.GetCabacInitIdc(State.H264RbspState), State.GetSliceType());
+                InitializeContext(ctxIdx, State.DeriveSliceQpy(), (int?)SyntaxElementGrabber.FetchCabacInitIdc(State.H264RbspState) ?? 0, State.GetSliceType());
                 cvInit[ctxIdx] = true;
             }
 
@@ -55,7 +55,7 @@
             int ctxIdx = Affix == H264Affix.Prefix ? CtxIdxPrefix : CtxIdxSuffix;
             if (!cvInit[ctxIdx])
             {
-                InitializeContext(ctxIdx, State.DeriveSliceQpy(), (int)SyntaxElementGrabber.GetCabacInitIdc(State.H264RbspState), State.GetSliceType());
+                InitializeContext(ctxIdx, State.DeriveSliceQpy(), (int?)SyntaxElementGrabber.FetchCabacInitIdc(State.H264RbspState) ?? 0, State.GetSliceType());
                 cvInit[ctxIdx] = true;
             }
 

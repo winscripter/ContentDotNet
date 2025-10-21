@@ -13,10 +13,11 @@ internal class Program
 
         var dcd = new H264Service().CreateDecoder(bsr);
 
-        for (int i = 0; i < 4; i++)
+        for (int i = 0; i < 6; i++)
         {
             NalType nt = dcd.DecodeNal();
             Console.WriteLine(nt);
+            Console.WriteLine("Length: " + dcd.State?.H264RbspState?.NalUnit?.RbspByte.Length);
 
             if (i == 1)
                 Console.WriteLine(dcd.State!.H264RbspState!.SequenceParameterSetData);

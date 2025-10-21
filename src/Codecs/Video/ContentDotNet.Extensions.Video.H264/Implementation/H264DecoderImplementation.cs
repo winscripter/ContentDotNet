@@ -68,6 +68,14 @@
                 {
                     RbspSliceHeader sliceHeader = this.IOReader!.ReadSliceHeader(this.State!.H264RbspState!, bitstreamReader);
                     this.State!.H264RbspState!.SliceHeader = sliceHeader;
+
+                    // Do not decode non-Intra slices for first frames.
+                    if (this.CurrentFrameIndex == 0 &&
+                        this.State?.H264RbspState?.SliceHeader?.SliceType is not (0 or 5))
+                    {
+                        return NalType.Error;
+                    }
+
                     var slice = new H264Slice(bitstreamReader, State)
                     {
                         IOReader = this.IOReader!,
@@ -75,6 +83,8 @@
                     };
                     slice.LoadSlice(DecoderFactories.SliceDecoderFactory.CreateSliceDecoder());
                     this.Slice = slice;
+
+                    this.CurrentFrameIndex++;
                 }
             }
 

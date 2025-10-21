@@ -205,9 +205,9 @@
 
                 return sliceType switch
                 {
-                    H264SliceType.P => P_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
+                    H264SliceType.P or H264SliceType.SP => P_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
                     H264SliceType.B => B_GetNumMbPart(transformSize8x8Flag, mbType) ?? -1,
-                    _ => throw new InvalidOperationException("Invalid slice type")
+                    _ => 1
                 };
         }
     }

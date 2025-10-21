@@ -31,13 +31,18 @@
         Aud,
 
         /// <summary>
+        ///   NAL wasn't read
+        /// </summary>
+        DidNotRead,
+
+        /// <summary>
+        ///   Invalid data being read
+        /// </summary>
+        Error,
+
+        /// <summary>
         ///   Unknown NAL unit type
         /// </summary>
         Unknown = 0xFF,
-
-        /// <summary>
-        ///   NAL wasn't read
-        /// </summary>
-        DidNotRead
     }
 }
