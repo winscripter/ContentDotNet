@@ -35,7 +35,7 @@ worrying about compatibility, while also making deployment easier. It will work 
         - MP4 (⚠️)
 - Image:
     - Formats:
-        - BMP
+        - BMP (⚠️)
         - WebP
         - JPEG (⚠️)
 - Audio:
@@ -45,6 +45,12 @@ worrying about compatibility, while also making deployment easier. It will work 
     - SDP
     - RTSP (⚠️)
     - RTP (⚠️)
+ 
+> [!NOTE]
+> We've released this framework **very early** - so early, that even simple components
+> are still in development. Almost all of the work went into the H.264 implementation,
+> though, which is still incomplete. The formats/codecs marked with (⚠️) are undone or unimplemented,
+> and we need community help to finish them.
 
 ## Why this project exists?
 With the rise of multimedia content in applications, there is a growing need for robust and efficient libraries to handle various multimedia formats.
