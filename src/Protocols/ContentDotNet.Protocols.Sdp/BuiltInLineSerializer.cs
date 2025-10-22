@@ -35,7 +35,7 @@
                 .Where(type => type.BaseType == ModelInterface)
                 .Select(x =>
                     {
-                        return (ModelFactory)(() => (ISdpLineModel)Activator.CreateInstance(x, [null])!);
+                        return (ModelFactory)(() => (ISdpLineModel)Activator.CreateInstance(x, null)!);
                     })];
         }
 
