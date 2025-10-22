@@ -2670,8 +2670,6 @@
 
         public void ReadSliceData(IH264SyntaxReaderFactory syntaxReaderFactory, BitStreamReader bitStream, SliceDataReceiveMacroblockCallback receiveMacroblock, H264State state, ISliceDecoder sliceDecoder)
         {
-            Console.WriteLine(state.H264RbspState?.NalUnit?.NalUnitType);
-
             if (Grabber.GetEntropyCodingModeFlag(state.H264RbspState))
             {
                 while (bitStream.GetState().BitPosition != 0)
@@ -2772,8 +2770,6 @@
 
         public async Task ReadSliceDataAsync(IH264SyntaxReaderFactory syntaxReaderFactory, BitStreamReader bitStream, SliceDataReceiveMacroblockCallback receiveMacroblock, H264State state, ISliceDecoder sliceDecoder)
         {
-            IH264SyntaxReader syntaxReader = syntaxReaderFactory.CreateSyntaxReader(state, bitStream); // will read codIOffset automatically if CABAC
-
             if (Grabber.GetEntropyCodingModeFlag(state.H264RbspState))
             {
                 while (bitStream.GetState().BitPosition != 0)
@@ -2783,6 +2779,8 @@
                         throw new H264Exception("cabac_alignment_one_bit must be 1");
                 }
             }
+
+            IH264SyntaxReader syntaxReader = syntaxReaderFactory.CreateSyntaxReader(state, bitStream); // will read codIOffset automatically if CABAC
 
             LimitedList<int> mapUnitToSliceGroupMap = new(state.DerivePicSizeInMbs() * (1 + state.DeriveMbaffFrameFlag().AsInt32()));
             sliceDecoder.PopulateWithMapUnitToSliceGroupMap(state, mapUnitToSliceGroupMap);

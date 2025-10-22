@@ -30,7 +30,7 @@
         /// <summary>
         ///   Context indices
         /// </summary>
-        UnprocessedContextIndexRecord? ContextIndexRecord { get; }
+        UnprocessedContextIndexRecord? ContextIndexRecord { get; set; }
 
         /// <summary>
         ///   Suffix ctxIdx

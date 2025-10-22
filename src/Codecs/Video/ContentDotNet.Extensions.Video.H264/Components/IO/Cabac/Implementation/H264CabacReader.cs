@@ -1,8 +1,5 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.IOImplementation
 {
-    using ContentDotNet.BitStream;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine.Factories;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Presets;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
@@ -29,6 +26,8 @@
 
             this.Miscellaneous["CabacDecodingVariables"] = decoder.DecodingVariables;
         }
+
+        public IH264CabacDecoder CabacDecoder => decoder; // For unit tests
 
         public bool IsFrameMacroblock { get; set; }
         public override H264MacroblockInfo? MacroblockInfo { get; set; } = null;
@@ -61,6 +60,7 @@
             decoder.ArithmeticReader.BinTracker.Reset();
 
             var parser = H264BaseCtxIdxAssignments.GetParserWithCtxIdx(se, decoder.DecodingVariables.CtxBlockCat, IsFrameMacroblock, sliceType);
+            this.decoder.ContextIndexRecord = parser?.Record;
 
             if (parser == null)
             {
@@ -90,6 +90,7 @@
                 decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
                 mode, IsFrameMacroblock, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
             var parser = H264BaseCtxIdxAssignments.GetParserWithCtxIdx(se, decoder.DecodingVariables.CtxBlockCat, IsFrameMacroblock, sliceType);
+            this.decoder.ContextIndexRecord = parser?.Record;
 
             if (parser == null)
             {

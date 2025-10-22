@@ -15,7 +15,7 @@
 
         public H264DecodingVariables DecodingVariables { get; init; } = new();
         public IH264ArithmeticReader ArithmeticReader { get; init; }
-        public UnprocessedContextIndexRecord? ContextIndexRecord { get; init; }
+        public UnprocessedContextIndexRecord? ContextIndexRecord { get; set; }
 
         public H264CabacDecoder(IH264ArithmeticReader arithmeticReader, H264State state)
         {
@@ -42,7 +42,7 @@
             }
 
             bool ret = ArithmeticReader.ReadBin(ctxIdx,
-                ContextIndexRecord?.MaxBinIdxCtx.UsesDecodeBypass == true || ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
+                Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
 
             BinIndex++;
@@ -61,7 +61,7 @@
             }
 
             bool ret = await ArithmeticReader.ReadBinAsync(ctxIdx,
-                ContextIndexRecord?.MaxBinIdxCtx.UsesDecodeBypass == true || ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
+                Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
 
             BinIndex++;
