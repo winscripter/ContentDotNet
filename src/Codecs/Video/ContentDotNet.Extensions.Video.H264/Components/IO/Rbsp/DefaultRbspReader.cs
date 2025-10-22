@@ -1572,6 +1572,9 @@
 
                     while (i < numCoeff - 1)
                     {
+                        if (dv != null)
+                            dv.LevelListIndex = i;
+
                         significant_coeff_flag[i] = syntaxReader.ReadSignificantCoeffFlag();
                         if (significant_coeff_flag[i])
                         {
@@ -1582,9 +1585,6 @@
 
                         i++;
                     }
-
-                    if (dv != null)
-                        dv.LevelListIndex = numCoeff - 1;
 
                     uint coeff_abs_level_minus1 = syntaxReader.ReadCoeffAbsLevelMinus1();
                     bool coeff_sign_flag = syntaxReader.ReadCoeffSignFlag();
