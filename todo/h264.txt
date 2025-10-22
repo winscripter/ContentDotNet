@@ -1,5 +1,5 @@
 ﻿CURRENT:
-  We have to fix coded_block_flag in the residual.
+  We have to test FL binarization for 4 bins.
 
 1. Implement CABAC encoding
 2. Implement NAL Unit Parsing Code into the IH264IOReader and IH264IOWriter interfaces

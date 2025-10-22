@@ -16,6 +16,8 @@
     <None Include="$(MSBuildThisFileDirectory)abstractions\README.md" />
     <None Include="$(MSBuildThisFileDirectory)g722\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\cabac\arithmetic-reader-writer.md" />
+    <None Include="$(MSBuildThisFileDirectory)h264\cabac\binarization.md" />
+    <None Include="$(MSBuildThisFileDirectory)h264\cabac\ctxidx-model.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\productivity\syntax-element-grabber.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\sei\examples.md" />

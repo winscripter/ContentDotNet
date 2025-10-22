@@ -4,8 +4,16 @@
     using ContentDotNet.Extensions.Video.H264.Utilities;
     using ContentDotNet.Primitives;
 
-    internal static class H264Binarization
+    /// <summary>
+    ///   Provides access to H.264 binarization.
+    /// </summary>
+    public static class H264Binarization
     {
+        /// <summary>
+        ///   Performs H.264 unary binarization.
+        /// </summary>
+        /// <param name="decoder">The source H.264 CABAC decoder.</param>
+        /// <returns>The result of the unary-binarized integer.</returns>
         public static int U(IH264CabacDecoder decoder)
         {
             // Allows preventing runaway infinite loop
@@ -22,6 +30,12 @@
             return uValue;
         }
 
+        /// <summary>
+        ///   Performs H.264 truncated unary binarization.
+        /// </summary>
+        /// <param name="decoder">The source H.264 CABAC decoder.</param>
+        /// <param name="cMax">Maximum number of bins.</param>
+        /// <returns>The result of the truncated unary-binarized integer and the number of bins read.</returns>
         public static TuResult TU(IH264CabacDecoder decoder, int cMax)
         {
             // Principles are same as U, except, if uValue == cMax, abort and return.
@@ -48,6 +62,14 @@
             return new(tuValue, bitsRead);
         }
 
+        /// <summary>
+        ///   Performs UEGk binarization.
+        /// </summary>
+        /// <param name="decoder">The input H.264 decoder.</param>
+        /// <param name="signedValFlag"></param>
+        /// <param name="uCoff"></param>
+        /// <param name="k"></param>
+        /// <returns>The result of the UEGk binarized integer.</returns>
         public static int Uegk(IH264CabacDecoder decoder, bool signedValFlag, int uCoff, int k)
         {
             ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(uCoff, 0, nameof(uCoff));
@@ -111,6 +133,12 @@
             return synElVal;
         }
 
+        /// <summary>
+        ///   Performs H.264 Fixed-Length binarization.
+        /// </summary>
+        /// <param name="decoder">The source H.264 CABAC decoder</param>
+        /// <param name="cMax">Maximum fixed length integer value.</param>
+        /// <returns>The result of Fixed-length binarization</returns>
         public static int FL(IH264CabacDecoder decoder, int cMax)
         {
             int fixedLength = (int)Math.Ceiling(Math.Log2(cMax + 1));
@@ -120,6 +148,14 @@
             return value;
         }
 
+        // This is the internal mb_type function. The caller, MbType, invokes this and just sets
+        // the decoder.Affix value to Prefix prior to returning.
+        //
+        // It might look like a God method, but it's really just decoding the integer-to-bins table
+        // for different slice types. It's described in the H.264 spec, clause 9.3.2.5.
+        //
+        // We have tested this method for all possible integers and slice types in unit tests,
+        // and I'm sure it probably works as it should.
         private static int MbTypeInternal(IH264CabacDecoder decoder, H264SliceType slice, bool subMbType)
         {
             decoder.Affix = H264Affix.Prefix;
@@ -374,6 +410,13 @@
             }
         }
 
+        /// <summary>
+        ///   Performs H.264 mb_type binarization.
+        /// </summary>
+        /// <param name="decoder">The source H.264 decoder</param>
+        /// <param name="slice">The type of the slice</param>
+        /// <param name="subMbType">Decoding sub_mb_type?</param>
+        /// <returns>The result of the mb_type binarization.</returns>
         public static int MbType(IH264CabacDecoder decoder, H264SliceType slice, bool subMbType)
         {
             int retval = MbTypeInternal(decoder, slice, subMbType);
@@ -381,6 +424,12 @@
             return retval;
         }
 
+        /// <summary>
+        ///   Performs H.264 coded_block_pattern binarization.
+        /// </summary>
+        /// <param name="decoder">The source H.264 decoder.</param>
+        /// <param name="chromaArrayType">The ChromaArrayType variable.</param>
+        /// <returns>The result of the coded_block_pattern binarization.</returns>
         public static int CodedBlockPattern(IH264CabacDecoder decoder, int chromaArrayType)
         {
             decoder.Affix = H264Affix.Prefix;
@@ -399,6 +448,11 @@
             }
         }
 
+        /// <summary>
+        ///   Performs H.264 mb_qp_delta binarization.
+        /// </summary>
+        /// <param name="decoder">The source H.264 CABAC decoder</param>
+        /// <returns>The result of the mb_qp_delta binarization.</returns>
         public static int MbQpDelta(IH264CabacDecoder decoder)
         {
             int codeNum = U(decoder);
