@@ -1,6 +1,7 @@
 ﻿namespace ContentDotNet.Protocols.Sdp
 {
     using ContentDotNet.Protocols.Sdp.Abstractions;
+    using ContentDotNet.Protocols.Sdp.Lines;
     using System.IO;
     using System.Threading.Tasks;
 
@@ -9,49 +10,32 @@
     /// </summary>
     public class BuiltInLineSerializer : ISdpLineSerializer
     {
-        private delegate ISdpLineModel ModelFactory();
+        private delegate ISdpLineModel ModelFactory(string? line);
 
-        private static readonly Type ModelInterface = typeof(ISdpLineModel);
-        private static readonly List<ModelFactory> s_models = [];
-
-        /// <summary>
-        ///   Singleton instance.
-        /// </summary>
-        public static readonly BuiltInLineSerializer Instance = new();
-
-        /// <summary>
-        ///   The static constructor initializes the <see cref="s_models"/> private static field.
-        /// </summary>
-        static BuiltInLineSerializer()
+        private static readonly Dictionary<char, ModelFactory> s_models = new()
         {
-            // Here we just get all the classes that inherit from ISdpLineModel
-            // throughout the entire assembly and instantiate them using the
-            // 'Activator.CreateInstance' method. They're located in the Lines folder.
-
-            s_models =
-                [.. typeof(BuiltInLineSerializer)
-                .Assembly
-                .GetTypes()
-                .Where(type => type.BaseType == ModelInterface)
-                .Select(x =>
-                    {
-                        return (ModelFactory)(() => (ISdpLineModel)Activator.CreateInstance(x, null)!);
-                    })];
-        }
+            { 'v', (x) => new SdpVersionLine(x) },
+            { 'o', (x) => new SdpOriginLine(x) },
+            { 's', (x) => new SdpSessionNameLine(x) },
+            { 'i', (x) => new SdpSessionInformationLine(x) },
+            { 'u', (x) => new SdpUriLine(x) },
+            { 'e', (x) => new SdpEmailAddressLine(x) },
+            { 'p', (x) => new SdpPhoneNumberLine(x) },
+            { 'c', (x) => new SdpConnectionInformationLine(x) },
+            { 'b', (x) => new SdpBandwidthInformationLine(x) },
+            { 't', (x) => new SdpTimeActiveLine(x) },
+            { 'r', (x) => new SdpRepeatTimesLine(x) },
+            { 'z', (x) => new SdpTimeZoneAdjustmentLine(x) },
+            { 'k', (x) => new SdpEncryptionKeysLine(x) },
+            { 'a', (x) => new SdpAttributesLine(x) },
+            { 'm', (x) => new SdpMediaDescriptorsLine(x) }
+        };
 
         private static ISdpLineModel ReadModel(string? line)
         {
-            if (line == null)
-                throw new EndOfStreamException();
-
-            foreach (ModelFactory factory in s_models)
+            if (s_models.TryGetValue(line?[0] ?? '\0', out ModelFactory? factory))
             {
-                var model = factory();
-                if (model.Character == line[0])
-                {
-                    model.RawText = line;
-                    return model;
-                }
+                return factory(line);
             }
 
             throw new SdpException("The character of the provided line before the equals (=) character does not match any known SDP line");
