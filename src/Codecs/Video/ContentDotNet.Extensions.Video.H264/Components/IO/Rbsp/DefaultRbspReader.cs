@@ -1583,6 +1583,9 @@
                         i++;
                     }
 
+                    if (dv != null)
+                        dv.LevelListIndex = numCoeff - 1;
+
                     uint coeff_abs_level_minus1 = syntaxReader.ReadCoeffAbsLevelMinus1();
                     bool coeff_sign_flag = syntaxReader.ReadCoeffSignFlag();
 
@@ -1596,6 +1599,7 @@
                             {
                                 dv.ReportedCoefficientsForCurrentListEqualTo1 = coeffLevel.Count(x => x == 1);
                                 dv.ReportedCoefficientsForCurrentListGreaterThan1 = coeffLevel.Count(x => x > 1);
+                                dv.LevelListIndex = i;
                             }
 
                             coeff_abs_level_minus1 = syntaxReader.ReadCoeffAbsLevelMinus1();
@@ -1605,9 +1609,6 @@
                         }
                     }
                 }
-
-                if (dv != null)
-                    dv.LevelListIndex++;
             }
         }
 
