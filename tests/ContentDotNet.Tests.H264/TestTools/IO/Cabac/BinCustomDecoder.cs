@@ -1,6 +1,5 @@
 ﻿namespace ContentDotNet.Tests.H264.TestTools.IO.Cabac
 {
-    using ContentDotNet.Collections.Bits;
     using ContentDotNet.Extensions.Video.H264;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
@@ -17,7 +16,7 @@
 
         public IH264ArithmeticReader ArithmeticReader => throw new NotImplementedException();
 
-        public UnprocessedContextIndexRecord? ContextIndexRecord => throw new NotImplementedException();
+        public UnprocessedContextIndexRecord? ContextIndexRecord { get; set; }
 
         public int CtxIdxSuffix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int CtxIdxPrefix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
