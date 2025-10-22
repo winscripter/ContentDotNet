@@ -4,6 +4,7 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Presets;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Models;
+    using ContentDotNet.Extensions.Video.H264.Utilities;
     using ContentDotNet.Primitives;
     using System.Diagnostics.CodeAnalysis;
     using System.Threading.Tasks;
@@ -16,13 +17,13 @@
         private readonly int cabacInitIdc;
         private readonly H264State state;
 
-        public H264CabacReader(IH264CabacDecoder decoder, int sliceQPY, H264SliceType sliceType, int cabacInitIdc, H264State h264)
+        public H264CabacReader(IH264CabacDecoder decoder)
         {
             this.decoder = decoder;
-            this.sliceQPY = sliceQPY;
-            this.sliceType = sliceType;
-            this.cabacInitIdc = cabacInitIdc;
-            state = h264;
+            this.sliceQPY = decoder.State.H264RbspState?.SliceQpy() ?? 0;
+            this.sliceType = H264SliceTypes.FetchSliceType(decoder.State.H264RbspState?.SliceHeader?.SliceType ?? 0);
+            this.cabacInitIdc = (int?)decoder.State.H264RbspState?.SliceHeader?.CabacInitIdc ?? 0;
+            state = decoder.State;
 
             this.Miscellaneous["CabacDecodingVariables"] = decoder.DecodingVariables;
         }
@@ -44,13 +45,13 @@
                 decoder.InitializeContext(ctxIdx, sliceQPY, cabacInitIdc, sliceType, false);
         }
 
-        private int GetContextIndex(H264SyntaxElement se, ContextIndexAndParser cip)
+        private int GetContextIndex(H264SyntaxElement se, ContextIndexAndParser cip, StandaloneCtxIdxIncDerivativeMode mode = 0)
         {
-            int ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetOffset(decoder), decoder.BinIndex);
-            decoder.CtxIdxPrefix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex);
+            int ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetOffset(decoder), decoder.BinIndex, mode);
+            decoder.CtxIdxPrefix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex, mode);
 
             if (cip.Record.CtxIdxOffset.HasSuffix)
-                decoder.CtxIdxSuffix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex);
+                decoder.CtxIdxSuffix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex, mode);
 
             decoder.ForcePrefix = !cip.Record.CtxIdxOffset.HasSuffix;
 
@@ -89,9 +90,6 @@
             decoder.BinIndex = 0;
             decoder.ArithmeticReader.BinTracker.Reset();
 
-            H264CabacCtxIdxIncDerivativeStandalone.AssignCtxIdxIncForCoeffFlagsAndAbsLevel(decoder,
-                decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
-                mode, IsFrameMacroblock, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
             var parser = H264BaseCtxIdxAssignments.GetParserWithCtxIdx(se, decoder.DecodingVariables.CtxBlockCat, IsFrameMacroblock, sliceType);
             this.decoder.ContextIndexRecord = parser?.Record;
 
@@ -100,15 +98,12 @@
                 ThrowNullParserFailure(se);
             }
 
-            int ctxIdx = GetContextIndex(se, parser);
+            int ctxIdx = GetContextIndex(se, parser, mode);
             InitializeContextIndex(ctxIdx);
 
             decoder.Recompute = () =>
             {
-                H264CabacCtxIdxIncDerivativeStandalone.AssignCtxIdxIncForCoeffFlagsAndAbsLevel(decoder,
-                    decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
-                    mode, IsFrameMacroblock, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
-                ctxIdx = GetContextIndex(se, parser);
+                ctxIdx = GetContextIndex(se, parser, mode);
                 InitializeContextIndex(ctxIdx);
             };
 

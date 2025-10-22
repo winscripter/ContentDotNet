@@ -25,10 +25,7 @@
             {
                 var arithmeticDecoder = new ArithmeticDecodingEngine(reader, new BinTrackerImpl(), 510, (int)reader.ReadBits(9));
                 var cabacDecoder = new H264CabacDecoder(arithmeticDecoder, state);
-                return new H264CabacReader(cabacDecoder, state?.DeriveSliceQpy() ?? 0,
-                    state?.GetSliceType() ?? 0,
-                    (int?)state?.H264RbspState?.SliceHeader?.CabacInitIdc ?? 0,
-                    state!)
+                return new H264CabacReader(cabacDecoder)
                 {
                     Reader = reader
                 };

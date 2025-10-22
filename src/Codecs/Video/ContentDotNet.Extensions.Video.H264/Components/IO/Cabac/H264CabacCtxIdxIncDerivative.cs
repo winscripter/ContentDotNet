@@ -422,11 +422,11 @@
                         if (!(mb == P_Skip || mb == B_Skip || mb == I_PCM) &&
                             ((mb.Rbsp.GetCodedBlockPatternLuma() >> (n.Luma4x4BlkIdx.BlockIndex >> 2)) & 1) != 0 &&
                             !mb.Rbsp.TransformSize8x8Flag)
-                            return mb.Rbsp.Residual?.CbfCbLevel4x4[n.Luma4x4BlkIdx.BlockIndex];
+                            return mb.Rbsp.Residual?.CbfLumaLevel4x4[n.Luma4x4BlkIdx.BlockIndex];
                         else if (!(mb == P_Skip || mb == B_Skip) &&
                             ((mb.Rbsp.GetCodedBlockPatternLuma() >> (n.Luma4x4BlkIdx.BlockIndex >> 2)) & 1) != 0 &&
                             mb.Rbsp.TransformSize8x8Flag)
-                            return mb.Rbsp.Residual?.CbfCbLevel8x8[n.Luma4x4BlkIdx.BlockIndex >> 2];
+                            return mb.Rbsp.Residual?.CbfLumaLevel8x8[n.Luma4x4BlkIdx.BlockIndex >> 2];
                         else
                             return null;
                     }

@@ -4,6 +4,7 @@
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Exceptions;
+    using ContentDotNet.Extensions.Video.H264.Extensions;
     using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using ContentDotNet.Extensions.Video.H264.Utilities;
     using System.Threading.Tasks;
@@ -34,7 +35,7 @@
 
         public bool ReadBin()
         {
-            int ctxIdx = Affix == H264Affix.Prefix ? CtxIdxPrefix : CtxIdxSuffix;
+            int ctxIdx = this.GetCtxIdx();
             if (!cvInit[ctxIdx])
             {
                 InitializeContext(ctxIdx, State.DeriveSliceQpy(), (int?)SyntaxElementGrabber.FetchCabacInitIdc(State.H264RbspState) ?? 0, State.GetSliceType());
@@ -53,7 +54,7 @@
 
         public async Task<bool> ReadBinAsync()
         {
-            int ctxIdx = Affix == H264Affix.Prefix ? CtxIdxPrefix : CtxIdxSuffix;
+            int ctxIdx = this.GetCtxIdx();
             if (!cvInit[ctxIdx])
             {
                 InitializeContext(ctxIdx, State.DeriveSliceQpy(), (int?)SyntaxElementGrabber.FetchCabacInitIdc(State.H264RbspState) ?? 0, State.GetSliceType());

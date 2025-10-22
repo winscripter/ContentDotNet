@@ -28,20 +28,28 @@
             0, 10, 20, 30, 39, 0, 0, 10, 20, 0, 0, 10, 20, 0
         ];
 
-        public static int Assign(IH264CabacDecoder decoder, H264State state, H264MacroblockInfo? currMB, H264SyntaxElement se, int ctxIdxOffset, int binIdx)
+        public static int Assign(IH264CabacDecoder decoder, H264State state, H264MacroblockInfo? currMB, H264SyntaxElement se, int ctxIdxOffset, int binIdx, StandaloneCtxIdxIncDerivativeMode ctxIdxIncDerivativeMode)
         {
             ArgumentNullException.ThrowIfNull(currMB, nameof(currMB));
 
-            if (se is not (H264SyntaxElement.CodedBlockFlag or H264SyntaxElement.SignificantCoeffFlag or H264SyntaxElement.LastSignificantCoeffFlag or H264SyntaxElement.CoeffAbsLevelMinus1))
+            if (ctxIdxOffset is 0 or 3 or 11 or 14 or 17 or 21 or 24 or 27 or 32 or 36 or 40 or 47 or 54 or 60 or 64 or 68 or 69 or 70 or 73 or 77 or 276 or 399)
             {
                 return Core(decoder, state, currMB, binIdx, ctxIdxOffset);
             }
             else
             {
-                if (se == H264SyntaxElement.CodedBlockFlag) return ctxIdxOffset + CodedBlockFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat];
-                else if (se == H264SyntaxElement.SignificantCoeffFlag) return ctxIdxOffset + SignificantCoeffFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat];
-                else if (se == H264SyntaxElement.LastSignificantCoeffFlag) return ctxIdxOffset + LastSignificantCoeffFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat];
-                else if (se == H264SyntaxElement.CoeffAbsLevelMinus1) return ctxIdxOffset + CoeffAbsLevelMinus1ToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat];
+                int ctxIdxInc = H264CabacCtxIdxIncDerivativeStandalone.AssignCtxIdxIncForCoeffFlagsAndAbsLevel(decoder,
+                    decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
+                    ctxIdxIncDerivativeMode, !currMB.MbFieldDecodingFlag, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
+
+                if (se == H264SyntaxElement.SignificantCoeffFlag) return ctxIdxOffset + SignificantCoeffFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat] + ctxIdxInc;
+                else if (se == H264SyntaxElement.LastSignificantCoeffFlag) return ctxIdxOffset + LastSignificantCoeffFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat] + ctxIdxInc;
+                else if (se == H264SyntaxElement.CoeffAbsLevelMinus1) return ctxIdxOffset + CoeffAbsLevelMinus1ToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat] + ctxIdxInc;
+                else if (se == H264SyntaxElement.CodedBlockFlag)
+                {
+                    ctxIdxInc = H264CabacCtxIdxIncDerivative.CodedBlockFlag(state, currMB, decoder.DecodingVariables.CtxBlockCat, decoder.DecodingVariables.CodedBlockFlagOptions);
+                    return ctxIdxOffset + CodedBlockFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat] + ctxIdxInc;
+                }
                 else throw new InvalidOperationException();
             }
         }
