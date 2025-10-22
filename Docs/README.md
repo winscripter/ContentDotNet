@@ -1,7 +1,11 @@
-﻿[PCM Audio Decoding](pcmaudio/decoding.md)
+﻿# Pick a category
 
-[G.722 Decoding](g722/decoding.md)
+[Abstractions](abstractions/README.md) - about the ContentDotNet library
 
-[H.264 Decoding](h264/decoding.md)
+[PCM Audio Decoding](pcmaudio/decoding.md) - about using IPcmAudioCodec
 
-[SDP](sdp/sdp.md)
+[G.722 Decoding](g722/decoding.md) - about decoding G.722 streams
+
+[H.264 Decoding](h264/decoding.md) - about decoding H.264 streams (Incomplete, please help!)
+
+[SDP](sdp/sdp.md) - about reading/writing the Session Description Protocol (SDP) lines

@@ -13,6 +13,7 @@
     <None Include="$(MSBuildThisFileDirectory)abstractions\colors.md" />
     <None Include="$(MSBuildThisFileDirectory)abstractions\loop-executors.md" />
     <None Include="$(MSBuildThisFileDirectory)abstractions\pictures.md" />
+    <None Include="$(MSBuildThisFileDirectory)abstractions\README.md" />
     <None Include="$(MSBuildThisFileDirectory)g722\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\cabac\arithmetic-reader-writer.md" />
     <None Include="$(MSBuildThisFileDirectory)h264\decoding.md" />
