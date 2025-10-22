@@ -30,18 +30,6 @@
             this.Miscellaneous["CabacDecodingVariables"] = decoder.DecodingVariables;
         }
 
-        public static H264CabacReader Initialize(BitStreamReader reader, H264State h264, IH264CabacService cabacService, IH264ArithmeticFactoryService arithmeticFactory)
-        {
-            IH264ArithmeticReaderFactory arithmeticReaderFactory = arithmeticFactory.CreateArithmeticReaderFactory();
-            IBinTrackerFactory binTrackerFactory = arithmeticFactory.CreateBinTrackerFactory();
-            IBinTracker binTracker = binTrackerFactory.Create();
-            int offset = (int)reader.ReadBits(9);
-            IH264ArithmeticReader ar = arithmeticReaderFactory.Create(reader, 510, offset, binTracker);
-            IH264CabacDecoder decoder = cabacService.CreateDecoder(ar, h264);
-
-            return new H264CabacReader(decoder, h264.DeriveSliceQpy(), h264.GetSliceType(), (int?)h264.H264RbspState?.SliceHeader?.CabacInitIdc ?? 0, h264);
-        }
-
         public bool IsFrameMacroblock { get; set; }
         public override H264MacroblockInfo? MacroblockInfo { get; set; } = null;
 
