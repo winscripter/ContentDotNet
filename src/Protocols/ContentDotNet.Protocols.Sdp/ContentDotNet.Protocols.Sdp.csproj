@@ -5,6 +5,11 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
+    <Title>ContentDotNet.Protocols.Sdp</Title>
+    <Version>1.0.0-alpha4</Version>
+    <Authors>winscripter</Authors>
+    <Description>SDP (Session Description Protocol) library for C#</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -19,6 +24,10 @@
     <None Update="Lines\Lines.tt">
       <LastGenOutput>Lines.g.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 

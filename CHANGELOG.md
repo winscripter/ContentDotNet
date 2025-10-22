@@ -1,7 +1,13 @@
 # Changelog
 All versions and revisions.
 
-Current: 1.0.0-alpha3
+Current: 1.0.0-alpha4
+
+### 1.0.0-alpha4
+
+Released: 10/22/2025
+
+Publishes SDP libraries
 
 ### 1.0.0-alpha3
 
