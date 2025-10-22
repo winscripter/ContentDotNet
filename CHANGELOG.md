@@ -1,17 +1,23 @@
 # Changelog
 All versions and revisions.
 
-Current: 1.0.0-alpha2
+Current: 1.0.0-alpha3
+
+### 1.0.0-alpha3
+
+Released: 10/22/2025
+
+Removed unused primitive types
 
 ### 1.0.0-alpha2
 
-Released: 10/22/2025
+Released: 10/21/2025
 
-Small readme fixes.
+Tiny readme fixes.
 
 ### 1.0.0-alpha
 
-Released: 10/22/2025
+Released: 10/21/2025
 
 First public alpha release. Supports basic image/audio/protocol reading and writing,
 but is largely undone and seeks community help.
