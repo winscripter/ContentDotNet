@@ -10,6 +10,11 @@
     /// </summary>
     public class BuiltInLineSerializer : ISdpLineSerializer
     {
+        /// <summary>
+        ///   Singleton instance of the <see cref="BuiltInLineSerializer"/> class.
+        /// </summary>
+        public static readonly BuiltInLineSerializer Instance = new();
+
         private delegate ISdpLineModel ModelFactory(string? line);
 
         private static readonly Dictionary<char, ModelFactory> s_models = new()
