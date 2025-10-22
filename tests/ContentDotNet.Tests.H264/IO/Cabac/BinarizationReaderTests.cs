@@ -1,6 +1,5 @@
 ﻿namespace ContentDotNet.Tests.H264.IO.Cabac
 {
-    using ContentDotNet.Collections.Bits;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Binarization;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Tests.H264.TestTools.IO.Cabac;
@@ -315,6 +314,18 @@
             Assert.Equal(0, H264Binarization.FL(bcd, 1));
             Assert.Equal(1, H264Binarization.FL(bcd, 1));
             Assert.Equal(1, H264Binarization.FL(bcd, 1));
+        }
+
+        [Fact]
+        public void FL_15_Seq()
+        {
+            var bytes = new[]
+            {
+                true, false, true, false
+            };
+
+            var bcd = new BinCustomDecoder(bytes);
+            Assert.Equal(10, H264Binarization.FL(bcd, 15));
         }
     }
 }
