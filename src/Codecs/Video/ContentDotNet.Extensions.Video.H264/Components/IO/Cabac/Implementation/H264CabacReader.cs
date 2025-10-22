@@ -48,7 +48,10 @@
         {
             int ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetOffset(decoder), decoder.BinIndex);
             decoder.CtxIdxPrefix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex);
-            decoder.CtxIdxSuffix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex);
+
+            if (cip.Record.CtxIdxOffset.HasSuffix)
+                decoder.CtxIdxSuffix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex);
+
             decoder.ForcePrefix = !cip.Record.CtxIdxOffset.HasSuffix;
 
             return ctxIdx;
@@ -103,8 +106,8 @@
             decoder.Recompute = () =>
             {
                 H264CabacCtxIdxIncDerivativeStandalone.AssignCtxIdxIncForCoeffFlagsAndAbsLevel(decoder,
-                decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
-                mode, IsFrameMacroblock, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
+                    decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
+                    mode, IsFrameMacroblock, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
                 ctxIdx = GetContextIndex(se, parser);
                 InitializeContextIndex(ctxIdx);
             };

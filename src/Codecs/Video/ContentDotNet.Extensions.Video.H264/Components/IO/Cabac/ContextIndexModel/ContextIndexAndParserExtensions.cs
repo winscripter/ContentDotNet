@@ -22,6 +22,10 @@
         public static int GetOffset(
             this ContextIndexAndParser parser,
             IH264CabacDecoder decoder)
-            => decoder.Affix == H264Affix.Suffix ? parser.GetSuffixOffset() : parser.GetPrefixOffset();
+        {
+            if (decoder.ForcePrefix) return parser.GetPrefixOffset();
+
+            return decoder.Affix == H264Affix.Suffix ? parser.GetSuffixOffset() : parser.GetPrefixOffset();
+        }
     }
 }

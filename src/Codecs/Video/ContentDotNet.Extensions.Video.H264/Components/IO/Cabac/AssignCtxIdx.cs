@@ -8,11 +8,6 @@
     /// </summary>
     public static partial class AssignCtxIdx
     {
-        private static ReadOnlySpan<int> IncludedCtxIdxOffsets =>
-        [
-            0, 3, 11, 14, 17, 21, 24, 27, 32, 36, 40, 47, 54, 60, 64, 68, 69, 70, 73, 77, 276, 399
-        ];
-
         private static ReadOnlySpan<int> CodedBlockFlagToCtxIdxBlockCatOffsetAssignments =>
         [
             0, 4, 8, 12, 16, 0, 0, 4, 8, 4, 0, 4, 8, 8
@@ -37,7 +32,7 @@
         {
             ArgumentNullException.ThrowIfNull(currMB, nameof(currMB));
 
-            if (IncludedCtxIdxOffsets.Contains(ctxIdxOffset))
+            if (se is not (H264SyntaxElement.CodedBlockFlag or H264SyntaxElement.SignificantCoeffFlag or H264SyntaxElement.LastSignificantCoeffFlag or H264SyntaxElement.CoeffAbsLevelMinus1))
             {
                 return Core(decoder, state, currMB, binIdx, ctxIdxOffset);
             }

@@ -5,7 +5,6 @@
     using ContentDotNet.Collections.Generic;
     using ContentDotNet.Extensions.Video.H264.Components.Common;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions;
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac;
     using ContentDotNet.Extensions.Video.H264.Components.SliceDecoding;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Exceptions;
@@ -2698,8 +2697,16 @@
             bool mb_field_decoding_flag;
             bool mb_skip_flag = false;
 
+            AddressAndAvailability? prev = null;
+            AddressAndAvailability curr = new(state.CurrMbAddr, true);
+
+            H264DecodingVariables? dv = GetDecodingVariables(syntaxReader);
+
             do
             {
+                if (prev != null && dv != null)
+                    dv.PreviousMacroblockAddress = prev.Value;
+
                 H264MacroblockInfo mb = new(slice_type, new(), false);
                 syntaxReader.MacroblockInfo = mb;
                 receiveMacroblock(mb);
@@ -2764,6 +2771,9 @@
                 }
 
                 state.CurrMbAddr = sliceDecoder.NextMbAddress(state, mbToSliceGroupMap, state.CurrMbAddr);
+
+                prev = curr;
+                curr = new(state.CurrMbAddr, true);
             }
             while (moreDataFlag.AsBoolean());
         }
