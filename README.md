@@ -69,6 +69,9 @@ platform dependencies, there's no library for that, and ContentDotNet could be t
 As for patents like H.264, we believe that we can use a technique where we delegate the need to obtain licenses and pay royalties
 to the end-user of the library. This applies to profit-generating and enterprise context, while personal and non-profit use legally remains free of charge.
 
+## Documentation
+See [Docs/README.md](Docs/README.md).
+
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
