@@ -29,7 +29,9 @@
                     H264RbspState = new()
                     {
                         PictureParameterSet = new(
-                            0, 0, true, false, 0, 0, null, null, null, null, null, null, null, 0, 0, false, 0, 0, 0, 0, false, false, false, null, null, null, [], [], [], [], null)
+                            0, 0, true, false, 0, 0, null, null, null, null, null, null, null, 0, 0, false, 0, 0, 0, 0, false, false, false, null, null, null, [], [], [], [], null),
+                        SliceHeader = new(
+                            0, 2, 0, null, 0, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, null, 0, null, null, null, null, null, null)
                     }
                 }, bsr);
             var h264Reader = (H264CabacReader)reader;
