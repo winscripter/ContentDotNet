@@ -16,10 +16,11 @@
 > writing better tests, and creating Pull Requests. See the CONTRIBUTING.md file.
 > With your help, this framework could eventually unify multimedia processing in C#,
 > and be the first framework ever in the .NET ecosystem for video, image and audio editing without relying on
-> native libraries.
+> native libraries. It will always be cross-platform, open-source, and managed. See also the
+> "Why this project exists?" section below in this README.
 
 ContentDotNet is a cross-platform, open-source, managed framework for C# to read/write videos, audios, images and other multimedia. It allows reading them,
-creating them, and inspecting or editing their contents. It provides a user-friendly API. It does not use any native libraries; everything is pure C#.
+creating them, and inspecting or editing their contents. It provides a user-friendly API. It does not use any native libraries; everything is C#.
 
 It is cross-platform and platform-independent, allowing ContentDotNet to run on a wide range of systems without
 worrying about compatibility, while also making deployment easier. It will work where .NET can run - yes, even Blazor WebAssembly.
