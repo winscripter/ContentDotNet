@@ -18,6 +18,9 @@
         /// <inheritdoc cref="IH264SyntaxReaderFactory.CreateSyntaxReader(H264State, BitStreamReader)" />
         public IH264SyntaxReader CreateSyntaxReader(H264State state, BitStreamReader reader)
         {
+            // NOTE: The state variable may be null because we pass state as 'null!'
+            // in unit tests.
+
             if (state?.H264RbspState?.PictureParameterSet?.EntropyCodingModeFlag == true)
             {
                 var arithmeticDecoder = new ArithmeticDecodingEngine(reader, new BinTrackerImpl(), 510, (int)reader.ReadBits(9));
