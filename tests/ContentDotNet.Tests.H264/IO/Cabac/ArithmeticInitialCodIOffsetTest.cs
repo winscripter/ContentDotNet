@@ -37,7 +37,7 @@
             var h264Reader = (H264CabacReader)reader;
 
             Assert.Equal(H264, (uint)h264Reader.CabacDecoder.ArithmeticReader.Offset);
-            Assert.Equal(1, h264Reader.Reader.GetState().ByteOffset);
+            Assert.Equal(2, h264Reader.Reader.GetState().ByteOffset);
             Assert.Equal(1, h264Reader.Reader.GetState().BitPosition);
         }
     }
