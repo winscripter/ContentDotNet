@@ -271,24 +271,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 
 
 	/// <summary>
-	///   Represents the Bandwidth RTSP header.
-	/// </summary>
-	public interface IRtspBandwidthHeader : IRtspHeader
-	{
-				
-		/// <summary>
-		///   The value named BandwidthValue.
-		/// </summary>
-	    long? BandwidthValue
-		{
-			get;
-			set;
-		}
-
-			}
-
-
-	/// <summary>
 	///   Represents the BlockSize RTSP header.
 	/// </summary>
 	public interface IRtspBlockSizeHeader : IRtspHeader
@@ -384,34 +366,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 		///   The value named Directives.
 		/// </summary>
 	    List<string> Directives
-		{
-			get;
-			set;
-		}
-
-			}
-
-
-	/// <summary>
-	///   Represents the ConnectionCredentials RTSP header.
-	/// </summary>
-	public interface IRtspConnectionCredentialsHeader : IRtspHeader
-	{
-				
-		/// <summary>
-		///   The value named Uri.
-		/// </summary>
-	    string? Uri
-		{
-			get;
-			set;
-		}
-
-				
-		/// <summary>
-		///   The value named CertificateBase64.
-		/// </summary>
-	    string? CertificateBase64
 		{
 			get;
 			set;
@@ -1909,25 +1863,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 
 		
 		/// <summary>
-		///   Sets the <see cref="IRtspBandwidthHeader.BandwidthValue" /> property
-		///   inside <paramref name="header" /> to be equal to <paramref name="valueToReplaceWith" />
-		///   and returns the mutated <paramref name="header" />.
-		/// </summary>
-		/// <param name="header">The source RTSP header.</header>
-		/// <param name="valueToReplaceWith">The value to mutate with.</param>
-		/// <returns>
-		///   The mutated <paramref name="header" />.
-		/// </returns>
-		public static IRtspBandwidthHeader WithBandwidthValue(
-			this IRtspBandwidthHeader header,
-			long? valueToReplaceWith)
-		{
-			header.BandwidthValue = valueToReplaceWith;
-			return header;
-		}
-
-		
-		/// <summary>
 		///   Sets the <see cref="IRtspBlockSizeHeader.Value" /> property
 		///   inside <paramref name="header" /> to be equal to <paramref name="valueToReplaceWith" />
 		///   and returns the mutated <paramref name="header" />.
@@ -2075,44 +2010,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			List<string> valueToReplaceWith)
 		{
 			header.Directives = valueToReplaceWith;
-			return header;
-		}
-
-		
-		/// <summary>
-		///   Sets the <see cref="IRtspConnectionCredentialsHeader.Uri" /> property
-		///   inside <paramref name="header" /> to be equal to <paramref name="valueToReplaceWith" />
-		///   and returns the mutated <paramref name="header" />.
-		/// </summary>
-		/// <param name="header">The source RTSP header.</header>
-		/// <param name="valueToReplaceWith">The value to mutate with.</param>
-		/// <returns>
-		///   The mutated <paramref name="header" />.
-		/// </returns>
-		public static IRtspConnectionCredentialsHeader WithUri(
-			this IRtspConnectionCredentialsHeader header,
-			string? valueToReplaceWith)
-		{
-			header.Uri = valueToReplaceWith;
-			return header;
-		}
-
-		
-		/// <summary>
-		///   Sets the <see cref="IRtspConnectionCredentialsHeader.CertificateBase64" /> property
-		///   inside <paramref name="header" /> to be equal to <paramref name="valueToReplaceWith" />
-		///   and returns the mutated <paramref name="header" />.
-		/// </summary>
-		/// <param name="header">The source RTSP header.</header>
-		/// <param name="valueToReplaceWith">The value to mutate with.</param>
-		/// <returns>
-		///   The mutated <paramref name="header" />.
-		/// </returns>
-		public static IRtspConnectionCredentialsHeader WithCertificateBase64(
-			this IRtspConnectionCredentialsHeader header,
-			string? valueToReplaceWith)
-		{
-			header.CertificateBase64 = valueToReplaceWith;
 			return header;
 		}
 
@@ -3548,526 +3445,474 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 	/// </summary>
 	public interface IRtspHeaderFactory
 	{
-		
 		/// <summary>
-		///   Creates a blank <see cref="IRtspAcceptHeader" /> instance.
+		///   Creates the blank RTSP header with the specified name.
 		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAcceptHeader" /> without any actual values.
-		/// </returns>
-		IRtspAcceptHeader CreateAccept();
+		/// <param name="rtspHeaderName">RTSP header name</param>
+		/// <returns>The RTSP header</returns>
+		IRtspHeader Create(string rtspHeaderName);
 
-		
 		/// <summary>
-		///   Creates a blank <see cref="IRtspAcceptCredentialsHeader" /> instance.
+		///   Returns the RTSP header of specified type.
 		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAcceptCredentialsHeader" /> without any actual values.
-		/// </returns>
-		IRtspAcceptCredentialsHeader CreateAcceptCredentials();
+		/// <typeparam name="T">The type of RTSP header to create</typeparam>
+		/// <returns>The RTSP header</returns>
+		T Create<T>() where T : IRtspHeader;
 
-		
 		/// <summary>
-		///   Creates a blank <see cref="IRtspAcceptEncodingHeader" /> instance.
+		///   Returns the RTSP header of specified type.
 		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAcceptEncodingHeader" /> without any actual values.
-		/// </returns>
-		IRtspAcceptEncodingHeader CreateAcceptEncoding();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspAcceptLanguageHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAcceptLanguageHeader" /> without any actual values.
-		/// </returns>
-		IRtspAcceptLanguageHeader CreateAcceptLanguage();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspAcceptRangesHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAcceptRangesHeader" /> without any actual values.
-		/// </returns>
-		IRtspAcceptRangesHeader CreateAcceptRanges();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspAllowHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAllowHeader" /> without any actual values.
-		/// </returns>
-		IRtspAllowHeader CreateAllow();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspAuthenticationInfoHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAuthenticationInfoHeader" /> without any actual values.
-		/// </returns>
-		IRtspAuthenticationInfoHeader CreateAuthenticationInfo();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspAuthorizationHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspAuthorizationHeader" /> without any actual values.
-		/// </returns>
-		IRtspAuthorizationHeader CreateAuthorization();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspBandwidthHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspBandwidthHeader" /> without any actual values.
-		/// </returns>
-		IRtspBandwidthHeader CreateBandwidth();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspBlockSizeHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspBlockSizeHeader" /> without any actual values.
-		/// </returns>
-		IRtspBlockSizeHeader CreateBlockSize();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspCacheControlHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspCacheControlHeader" /> without any actual values.
-		/// </returns>
-		IRtspCacheControlHeader CreateCacheControl();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspConnectionHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspConnectionHeader" /> without any actual values.
-		/// </returns>
-		IRtspConnectionHeader CreateConnection();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspConnectionCredentialsHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspConnectionCredentialsHeader" /> without any actual values.
-		/// </returns>
-		IRtspConnectionCredentialsHeader CreateConnectionCredentials();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspContentBaseHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspContentBaseHeader" /> without any actual values.
-		/// </returns>
-		IRtspContentBaseHeader CreateContentBase();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspContentEncodingHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspContentEncodingHeader" /> without any actual values.
-		/// </returns>
-		IRtspContentEncodingHeader CreateContentEncoding();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspContentLanguageHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspContentLanguageHeader" /> without any actual values.
-		/// </returns>
-		IRtspContentLanguageHeader CreateContentLanguage();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspContentLengthHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspContentLengthHeader" /> without any actual values.
-		/// </returns>
-		IRtspContentLengthHeader CreateContentLength();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspContentLocationHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspContentLocationHeader" /> without any actual values.
-		/// </returns>
-		IRtspContentLocationHeader CreateContentLocation();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspCSeqHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspCSeqHeader" /> without any actual values.
-		/// </returns>
-		IRtspCSeqHeader CreateCSeq();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspDateHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspDateHeader" /> without any actual values.
-		/// </returns>
-		IRtspDateHeader CreateDate();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspExpiresHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspExpiresHeader" /> without any actual values.
-		/// </returns>
-		IRtspExpiresHeader CreateExpires();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspFromHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspFromHeader" /> without any actual values.
-		/// </returns>
-		IRtspFromHeader CreateFrom();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspIfMatchHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspIfMatchHeader" /> without any actual values.
-		/// </returns>
-		IRtspIfMatchHeader CreateIfMatch();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspIfModifiedSinceHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspIfModifiedSinceHeader" /> without any actual values.
-		/// </returns>
-		IRtspIfModifiedSinceHeader CreateIfModifiedSince();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspIfNoneMatchHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspIfNoneMatchHeader" /> without any actual values.
-		/// </returns>
-		IRtspIfNoneMatchHeader CreateIfNoneMatch();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspLastModifiedHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspLastModifiedHeader" /> without any actual values.
-		/// </returns>
-		IRtspLastModifiedHeader CreateLastModified();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspLocationHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspLocationHeader" /> without any actual values.
-		/// </returns>
-		IRtspLocationHeader CreateLocation();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspMediaPropertiesHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspMediaPropertiesHeader" /> without any actual values.
-		/// </returns>
-		IRtspMediaPropertiesHeader CreateMediaProperties();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspMediaRangeHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspMediaRangeHeader" /> without any actual values.
-		/// </returns>
-		IRtspMediaRangeHeader CreateMediaRange();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspMTagHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspMTagHeader" /> without any actual values.
-		/// </returns>
-		IRtspMTagHeader CreateMTag();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspNotifyReasonHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspNotifyReasonHeader" /> without any actual values.
-		/// </returns>
-		IRtspNotifyReasonHeader CreateNotifyReason();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspPipelinedRequestsHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspPipelinedRequestsHeader" /> without any actual values.
-		/// </returns>
-		IRtspPipelinedRequestsHeader CreatePipelinedRequests();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspProxyAuthenticateHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspProxyAuthenticateHeader" /> without any actual values.
-		/// </returns>
-		IRtspProxyAuthenticateHeader CreateProxyAuthenticate();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspProxyAuthenticationInfoHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspProxyAuthenticationInfoHeader" /> without any actual values.
-		/// </returns>
-		IRtspProxyAuthenticationInfoHeader CreateProxyAuthenticationInfo();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspProxyAuthorizationHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspProxyAuthorizationHeader" /> without any actual values.
-		/// </returns>
-		IRtspProxyAuthorizationHeader CreateProxyAuthorization();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspProxyRequireHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspProxyRequireHeader" /> without any actual values.
-		/// </returns>
-		IRtspProxyRequireHeader CreateProxyRequire();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspProxySupportedHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspProxySupportedHeader" /> without any actual values.
-		/// </returns>
-		IRtspProxySupportedHeader CreateProxySupported();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspPublicHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspPublicHeader" /> without any actual values.
-		/// </returns>
-		IRtspPublicHeader CreatePublic();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspRangeHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspRangeHeader" /> without any actual values.
-		/// </returns>
-		IRtspRangeHeader CreateRange();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspReferrerHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspReferrerHeader" /> without any actual values.
-		/// </returns>
-		IRtspReferrerHeader CreateReferrer();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspRequestStatusHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspRequestStatusHeader" /> without any actual values.
-		/// </returns>
-		IRtspRequestStatusHeader CreateRequestStatus();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspRequireHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspRequireHeader" /> without any actual values.
-		/// </returns>
-		IRtspRequireHeader CreateRequire();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspRetryAfterHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspRetryAfterHeader" /> without any actual values.
-		/// </returns>
-		IRtspRetryAfterHeader CreateRetryAfter();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspRtpInfoHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspRtpInfoHeader" /> without any actual values.
-		/// </returns>
-		IRtspRtpInfoHeader CreateRtpInfo();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspScaleHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspScaleHeader" /> without any actual values.
-		/// </returns>
-		IRtspScaleHeader CreateScale();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspSeekStyleHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspSeekStyleHeader" /> without any actual values.
-		/// </returns>
-		IRtspSeekStyleHeader CreateSeekStyle();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspServerHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspServerHeader" /> without any actual values.
-		/// </returns>
-		IRtspServerHeader CreateServer();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspSessionHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspSessionHeader" /> without any actual values.
-		/// </returns>
-		IRtspSessionHeader CreateSession();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspSpeedHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspSpeedHeader" /> without any actual values.
-		/// </returns>
-		IRtspSpeedHeader CreateSpeed();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspSupportedHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspSupportedHeader" /> without any actual values.
-		/// </returns>
-		IRtspSupportedHeader CreateSupported();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspTerminateReasonHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspTerminateReasonHeader" /> without any actual values.
-		/// </returns>
-		IRtspTerminateReasonHeader CreateTerminateReason();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspTimestampHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspTimestampHeader" /> without any actual values.
-		/// </returns>
-		IRtspTimestampHeader CreateTimestamp();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspTransportHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspTransportHeader" /> without any actual values.
-		/// </returns>
-		IRtspTransportHeader CreateTransport();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspUnsupportedHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspUnsupportedHeader" /> without any actual values.
-		/// </returns>
-		IRtspUnsupportedHeader CreateUnsupported();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspUserAgentHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspUserAgentHeader" /> without any actual values.
-		/// </returns>
-		IRtspUserAgentHeader CreateUserAgent();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspViaHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspViaHeader" /> without any actual values.
-		/// </returns>
-		IRtspViaHeader CreateVia();
-
-		
-		/// <summary>
-		///   Creates a blank <see cref="IRtspWwwAuthenticateHeader" /> instance.
-		/// </summary>
-		/// <returns>
-		///   <see cref="IRtspWwwAuthenticateHeader" /> without any actual values.
-		/// </returns>
-		IRtspWwwAuthenticateHeader CreateWwwAuthenticate();
-
-			}
+		/// <param name="type">The type of RTSP header to create</param>
+		/// <returns>The RTSP header</returns>
+		IRtspHeader Create(Type type);
+	}
 
 	/// <summary>
 	///   Extensions for <see cref="IRtspHeaderFactory" />.
 	/// </summary>
 	public static class RtspHeaderFactoryExtensions
 	{
+
+		/// <summary>
+		///   A shorthand to create IRtspAccept.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAcceptHeader CreateEmptyAccept(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAcceptHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAcceptCredentials.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAcceptCredentialsHeader CreateEmptyAcceptCredentials(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAcceptCredentialsHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAcceptEncoding.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAcceptEncodingHeader CreateEmptyAcceptEncoding(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAcceptEncodingHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAcceptLanguage.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAcceptLanguageHeader CreateEmptyAcceptLanguage(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAcceptLanguageHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAcceptRanges.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAcceptRangesHeader CreateEmptyAcceptRanges(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAcceptRangesHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAllow.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAllowHeader CreateEmptyAllow(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAllowHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAuthenticationInfo.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAuthenticationInfoHeader CreateEmptyAuthenticationInfo(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAuthenticationInfoHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspAuthorization.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspAuthorizationHeader CreateEmptyAuthorization(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspAuthorizationHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspBlockSize.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspBlockSizeHeader CreateEmptyBlockSize(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspBlockSizeHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspCacheControl.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspCacheControlHeader CreateEmptyCacheControl(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspCacheControlHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspConnection.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspConnectionHeader CreateEmptyConnection(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspConnectionHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspContentBase.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspContentBaseHeader CreateEmptyContentBase(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspContentBaseHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspContentEncoding.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspContentEncodingHeader CreateEmptyContentEncoding(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspContentEncodingHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspContentLanguage.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspContentLanguageHeader CreateEmptyContentLanguage(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspContentLanguageHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspContentLength.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspContentLengthHeader CreateEmptyContentLength(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspContentLengthHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspContentLocation.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspContentLocationHeader CreateEmptyContentLocation(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspContentLocationHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspCSeq.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspCSeqHeader CreateEmptyCSeq(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspCSeqHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspDate.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspDateHeader CreateEmptyDate(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspDateHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspExpires.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspExpiresHeader CreateEmptyExpires(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspExpiresHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspFrom.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspFromHeader CreateEmptyFrom(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspFromHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspIfMatch.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspIfMatchHeader CreateEmptyIfMatch(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspIfMatchHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspIfModifiedSince.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspIfModifiedSinceHeader CreateEmptyIfModifiedSince(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspIfModifiedSinceHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspIfNoneMatch.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspIfNoneMatchHeader CreateEmptyIfNoneMatch(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspIfNoneMatchHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspLastModified.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspLastModifiedHeader CreateEmptyLastModified(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspLastModifiedHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspLocation.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspLocationHeader CreateEmptyLocation(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspLocationHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspMediaProperties.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspMediaPropertiesHeader CreateEmptyMediaProperties(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspMediaPropertiesHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspMediaRange.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspMediaRangeHeader CreateEmptyMediaRange(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspMediaRangeHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspMTag.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspMTagHeader CreateEmptyMTag(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspMTagHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspNotifyReason.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspNotifyReasonHeader CreateEmptyNotifyReason(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspNotifyReasonHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspPipelinedRequests.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspPipelinedRequestsHeader CreateEmptyPipelinedRequests(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspPipelinedRequestsHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspProxyAuthenticate.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspProxyAuthenticateHeader CreateEmptyProxyAuthenticate(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspProxyAuthenticateHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspProxyAuthenticationInfo.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspProxyAuthenticationInfoHeader CreateEmptyProxyAuthenticationInfo(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspProxyAuthenticationInfoHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspProxyAuthorization.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspProxyAuthorizationHeader CreateEmptyProxyAuthorization(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspProxyAuthorizationHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspProxyRequire.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspProxyRequireHeader CreateEmptyProxyRequire(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspProxyRequireHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspProxySupported.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspProxySupportedHeader CreateEmptyProxySupported(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspProxySupportedHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspPublic.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspPublicHeader CreateEmptyPublic(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspPublicHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspRange.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspRangeHeader CreateEmptyRange(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspRangeHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspReferrer.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspReferrerHeader CreateEmptyReferrer(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspReferrerHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspRequestStatus.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspRequestStatusHeader CreateEmptyRequestStatus(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspRequestStatusHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspRequire.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspRequireHeader CreateEmptyRequire(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspRequireHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspRetryAfter.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspRetryAfterHeader CreateEmptyRetryAfter(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspRetryAfterHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspRtpInfo.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspRtpInfoHeader CreateEmptyRtpInfo(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspRtpInfoHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspScale.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspScaleHeader CreateEmptyScale(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspScaleHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspSeekStyle.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspSeekStyleHeader CreateEmptySeekStyle(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspSeekStyleHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspServer.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspServerHeader CreateEmptyServer(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspServerHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspSession.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspSessionHeader CreateEmptySession(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspSessionHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspSpeed.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspSpeedHeader CreateEmptySpeed(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspSpeedHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspSupported.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspSupportedHeader CreateEmptySupported(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspSupportedHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspTerminateReason.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspTerminateReasonHeader CreateEmptyTerminateReason(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspTerminateReasonHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspTimestamp.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspTimestampHeader CreateEmptyTimestamp(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspTimestampHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspTransport.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspTransportHeader CreateEmptyTransport(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspTransportHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspUnsupported.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspUnsupportedHeader CreateEmptyUnsupported(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspUnsupportedHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspUserAgent.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspUserAgentHeader CreateEmptyUserAgent(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspUserAgentHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspVia.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspViaHeader CreateEmptyVia(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspViaHeader>();
+
+		/// <summary>
+		///   A shorthand to create IRtspWwwAuthenticate.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtspWwwAuthenticateHeader CreateEmptyWwwAuthenticate(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtspWwwAuthenticateHeader>();
+
 		/// <summary>
 		///   Creates an <see cref="IRtspAcceptHeader" /> instance and populates it with given value..
 		/// </summary>
@@ -4079,7 +3924,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<AcceptRecord> @value)
 		{
-			var theCreatedInterface = headerFactory.CreateAccept();
+			var theCreatedInterface = headerFactory.CreateEmptyAccept();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4096,7 +3941,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			AcceptCredentialsPolicy @policy, List<AcceptCredentialsRecord> @value)
 		{
-			var theCreatedInterface = headerFactory.CreateAcceptCredentials();
+			var theCreatedInterface = headerFactory.CreateEmptyAcceptCredentials();
 						theCreatedInterface.Policy = @policy;
 			theCreatedInterface.Value = @value;
 			return theCreatedInterface;
@@ -4113,7 +3958,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<AcceptEncodingRecord> @value)
 		{
-			var theCreatedInterface = headerFactory.CreateAcceptEncoding();
+			var theCreatedInterface = headerFactory.CreateEmptyAcceptEncoding();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4129,7 +3974,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<AcceptLanguageRecord> @value)
 		{
-			var theCreatedInterface = headerFactory.CreateAcceptLanguage();
+			var theCreatedInterface = headerFactory.CreateEmptyAcceptLanguage();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4145,7 +3990,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @ranges)
 		{
-			var theCreatedInterface = headerFactory.CreateAcceptRanges();
+			var theCreatedInterface = headerFactory.CreateEmptyAcceptRanges();
 						theCreatedInterface.Ranges = @ranges;
 			return theCreatedInterface;
 		}
@@ -4161,7 +4006,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @methods)
 		{
-			var theCreatedInterface = headerFactory.CreateAllow();
+			var theCreatedInterface = headerFactory.CreateEmptyAllow();
 						theCreatedInterface.Methods = @methods;
 			return theCreatedInterface;
 		}
@@ -4181,7 +4026,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @nextNonce, string? @qualityOfProtection, string? @responseAuthenticationDigest, string? @clientNonce, int? @nonceCount)
 		{
-			var theCreatedInterface = headerFactory.CreateAuthenticationInfo();
+			var theCreatedInterface = headerFactory.CreateEmptyAuthenticationInfo();
 						theCreatedInterface.NextNonce = @nextNonce;
 			theCreatedInterface.QualityOfProtection = @qualityOfProtection;
 			theCreatedInterface.ResponseAuthenticationDigest = @responseAuthenticationDigest;
@@ -4208,7 +4053,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @digestUsername, string? @realm, string? @nonce, string? @uri, string? @response, string? @qualityOfProtection, int? @nonceCount, string? @clientNonce)
 		{
-			var theCreatedInterface = headerFactory.CreateAuthorization();
+			var theCreatedInterface = headerFactory.CreateEmptyAuthorization();
 						theCreatedInterface.DigestUsername = @digestUsername;
 			theCreatedInterface.Realm = @realm;
 			theCreatedInterface.Nonce = @nonce;
@@ -4217,22 +4062,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			theCreatedInterface.QualityOfProtection = @qualityOfProtection;
 			theCreatedInterface.NonceCount = @nonceCount;
 			theCreatedInterface.ClientNonce = @clientNonce;
-			return theCreatedInterface;
-		}
-
-				/// <summary>
-		///   Creates an <see cref="IRtspBandwidthHeader" /> instance and populates it with given value..
-		/// </summary>
-		/// <param name="bandwidthValue">The parameter.</param>
-		/// <returns>
-		///   <see cref="IRtspBandwidthHeader" /> with populated values.
-		/// </returns>
-		public static IRtspBandwidthHeader CreateBandwidth(
-			this IRtspHeaderFactory headerFactory,
-			long? @bandwidthValue)
-		{
-			var theCreatedInterface = headerFactory.CreateBandwidth();
-						theCreatedInterface.BandwidthValue = @bandwidthValue;
 			return theCreatedInterface;
 		}
 
@@ -4247,7 +4076,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			int? @value)
 		{
-			var theCreatedInterface = headerFactory.CreateBlockSize();
+			var theCreatedInterface = headerFactory.CreateEmptyBlockSize();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4268,7 +4097,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			bool @noCache, bool @noStore, bool @mustRevalidate, bool @public, bool @private, int? @maxAge)
 		{
-			var theCreatedInterface = headerFactory.CreateCacheControl();
+			var theCreatedInterface = headerFactory.CreateEmptyCacheControl();
 						theCreatedInterface.NoCache = @noCache;
 			theCreatedInterface.NoStore = @noStore;
 			theCreatedInterface.MustRevalidate = @mustRevalidate;
@@ -4289,26 +4118,8 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @directives)
 		{
-			var theCreatedInterface = headerFactory.CreateConnection();
+			var theCreatedInterface = headerFactory.CreateEmptyConnection();
 						theCreatedInterface.Directives = @directives;
-			return theCreatedInterface;
-		}
-
-				/// <summary>
-		///   Creates an <see cref="IRtspConnectionCredentialsHeader" /> instance and populates it with given value..
-		/// </summary>
-		/// <param name="uri">The parameter.</param>
-		/// <param name="certificateBase64">The parameter.</param>
-		/// <returns>
-		///   <see cref="IRtspConnectionCredentialsHeader" /> with populated values.
-		/// </returns>
-		public static IRtspConnectionCredentialsHeader CreateConnectionCredentials(
-			this IRtspHeaderFactory headerFactory,
-			string? @uri, string? @certificateBase64)
-		{
-			var theCreatedInterface = headerFactory.CreateConnectionCredentials();
-						theCreatedInterface.Uri = @uri;
-			theCreatedInterface.CertificateBase64 = @certificateBase64;
 			return theCreatedInterface;
 		}
 
@@ -4323,7 +4134,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @uri)
 		{
-			var theCreatedInterface = headerFactory.CreateContentBase();
+			var theCreatedInterface = headerFactory.CreateEmptyContentBase();
 						theCreatedInterface.Uri = @uri;
 			return theCreatedInterface;
 		}
@@ -4339,7 +4150,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @encoding)
 		{
-			var theCreatedInterface = headerFactory.CreateContentEncoding();
+			var theCreatedInterface = headerFactory.CreateEmptyContentEncoding();
 						theCreatedInterface.Encoding = @encoding;
 			return theCreatedInterface;
 		}
@@ -4355,7 +4166,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @languages)
 		{
-			var theCreatedInterface = headerFactory.CreateContentLanguage();
+			var theCreatedInterface = headerFactory.CreateEmptyContentLanguage();
 						theCreatedInterface.Languages = @languages;
 			return theCreatedInterface;
 		}
@@ -4371,7 +4182,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			int @length)
 		{
-			var theCreatedInterface = headerFactory.CreateContentLength();
+			var theCreatedInterface = headerFactory.CreateEmptyContentLength();
 						theCreatedInterface.Length = @length;
 			return theCreatedInterface;
 		}
@@ -4387,7 +4198,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @location)
 		{
-			var theCreatedInterface = headerFactory.CreateContentLocation();
+			var theCreatedInterface = headerFactory.CreateEmptyContentLocation();
 						theCreatedInterface.Location = @location;
 			return theCreatedInterface;
 		}
@@ -4403,7 +4214,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			int? @sequenceNumber)
 		{
-			var theCreatedInterface = headerFactory.CreateCSeq();
+			var theCreatedInterface = headerFactory.CreateEmptyCSeq();
 						theCreatedInterface.SequenceNumber = @sequenceNumber;
 			return theCreatedInterface;
 		}
@@ -4419,7 +4230,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @time)
 		{
-			var theCreatedInterface = headerFactory.CreateDate();
+			var theCreatedInterface = headerFactory.CreateEmptyDate();
 						theCreatedInterface.Time = @time;
 			return theCreatedInterface;
 		}
@@ -4435,7 +4246,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @time)
 		{
-			var theCreatedInterface = headerFactory.CreateExpires();
+			var theCreatedInterface = headerFactory.CreateEmptyExpires();
 						theCreatedInterface.Time = @time;
 			return theCreatedInterface;
 		}
@@ -4451,7 +4262,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @emailAddress)
 		{
-			var theCreatedInterface = headerFactory.CreateFrom();
+			var theCreatedInterface = headerFactory.CreateEmptyFrom();
 						theCreatedInterface.EmailAddress = @emailAddress;
 			return theCreatedInterface;
 		}
@@ -4467,7 +4278,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @eTags)
 		{
-			var theCreatedInterface = headerFactory.CreateIfMatch();
+			var theCreatedInterface = headerFactory.CreateEmptyIfMatch();
 						theCreatedInterface.ETags = @eTags;
 			return theCreatedInterface;
 		}
@@ -4483,7 +4294,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @time)
 		{
-			var theCreatedInterface = headerFactory.CreateIfModifiedSince();
+			var theCreatedInterface = headerFactory.CreateEmptyIfModifiedSince();
 						theCreatedInterface.Time = @time;
 			return theCreatedInterface;
 		}
@@ -4499,7 +4310,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @eTags)
 		{
-			var theCreatedInterface = headerFactory.CreateIfNoneMatch();
+			var theCreatedInterface = headerFactory.CreateEmptyIfNoneMatch();
 						theCreatedInterface.ETags = @eTags;
 			return theCreatedInterface;
 		}
@@ -4515,7 +4326,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @time)
 		{
-			var theCreatedInterface = headerFactory.CreateLastModified();
+			var theCreatedInterface = headerFactory.CreateEmptyLastModified();
 						theCreatedInterface.Time = @time;
 			return theCreatedInterface;
 		}
@@ -4531,7 +4342,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @uri)
 		{
-			var theCreatedInterface = headerFactory.CreateLocation();
+			var theCreatedInterface = headerFactory.CreateEmptyLocation();
 						theCreatedInterface.Uri = @uri;
 			return theCreatedInterface;
 		}
@@ -4556,7 +4367,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			double? @randomAccess, bool @beginningOnly, bool @noSeeking, bool @immutable, bool @dynamic, bool @timeProgressing, bool @unlimited, bool @timeLimited, bool @timeDuration, string? @scales)
 		{
-			var theCreatedInterface = headerFactory.CreateMediaProperties();
+			var theCreatedInterface = headerFactory.CreateEmptyMediaProperties();
 						theCreatedInterface.RandomAccess = @randomAccess;
 			theCreatedInterface.BeginningOnly = @beginningOnly;
 			theCreatedInterface.NoSeeking = @noSeeking;
@@ -4581,7 +4392,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @normalPlayTime)
 		{
-			var theCreatedInterface = headerFactory.CreateMediaRange();
+			var theCreatedInterface = headerFactory.CreateEmptyMediaRange();
 						theCreatedInterface.NormalPlayTime = @normalPlayTime;
 			return theCreatedInterface;
 		}
@@ -4597,7 +4408,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @value)
 		{
-			var theCreatedInterface = headerFactory.CreateMTag();
+			var theCreatedInterface = headerFactory.CreateEmptyMTag();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4613,7 +4424,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @reasonToken)
 		{
-			var theCreatedInterface = headerFactory.CreateNotifyReason();
+			var theCreatedInterface = headerFactory.CreateEmptyNotifyReason();
 						theCreatedInterface.ReasonToken = @reasonToken;
 			return theCreatedInterface;
 		}
@@ -4629,7 +4440,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @token)
 		{
-			var theCreatedInterface = headerFactory.CreatePipelinedRequests();
+			var theCreatedInterface = headerFactory.CreateEmptyPipelinedRequests();
 						theCreatedInterface.Token = @token;
 			return theCreatedInterface;
 		}
@@ -4648,7 +4459,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @authScheme, string? @realm, string? @nonce, string? @algorithm)
 		{
-			var theCreatedInterface = headerFactory.CreateProxyAuthenticate();
+			var theCreatedInterface = headerFactory.CreateEmptyProxyAuthenticate();
 						theCreatedInterface.AuthScheme = @authScheme;
 			theCreatedInterface.Realm = @realm;
 			theCreatedInterface.Nonce = @nonce;
@@ -4669,7 +4480,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @nextNonce, string? @qualityOfProtection, string? @rspAuth)
 		{
-			var theCreatedInterface = headerFactory.CreateProxyAuthenticationInfo();
+			var theCreatedInterface = headerFactory.CreateEmptyProxyAuthenticationInfo();
 						theCreatedInterface.NextNonce = @nextNonce;
 			theCreatedInterface.QualityOfProtection = @qualityOfProtection;
 			theCreatedInterface.RspAuth = @rspAuth;
@@ -4691,7 +4502,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @digestUsername, string? @realm, string? @nonce, string? @uri, string? @response)
 		{
-			var theCreatedInterface = headerFactory.CreateProxyAuthorization();
+			var theCreatedInterface = headerFactory.CreateEmptyProxyAuthorization();
 						theCreatedInterface.DigestUsername = @digestUsername;
 			theCreatedInterface.Realm = @realm;
 			theCreatedInterface.Nonce = @nonce;
@@ -4711,7 +4522,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @require)
 		{
-			var theCreatedInterface = headerFactory.CreateProxyRequire();
+			var theCreatedInterface = headerFactory.CreateEmptyProxyRequire();
 						theCreatedInterface.Require = @require;
 			return theCreatedInterface;
 		}
@@ -4727,7 +4538,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @values)
 		{
-			var theCreatedInterface = headerFactory.CreateProxySupported();
+			var theCreatedInterface = headerFactory.CreateEmptyProxySupported();
 						theCreatedInterface.Values = @values;
 			return theCreatedInterface;
 		}
@@ -4743,7 +4554,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @methods)
 		{
-			var theCreatedInterface = headerFactory.CreatePublic();
+			var theCreatedInterface = headerFactory.CreateEmptyPublic();
 						theCreatedInterface.Methods = @methods;
 			return theCreatedInterface;
 		}
@@ -4760,7 +4571,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @clock, string? @normalPlayTime)
 		{
-			var theCreatedInterface = headerFactory.CreateRange();
+			var theCreatedInterface = headerFactory.CreateEmptyRange();
 						theCreatedInterface.Clock = @clock;
 			theCreatedInterface.NormalPlayTime = @normalPlayTime;
 			return theCreatedInterface;
@@ -4777,7 +4588,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @uri)
 		{
-			var theCreatedInterface = headerFactory.CreateReferrer();
+			var theCreatedInterface = headerFactory.CreateEmptyReferrer();
 						theCreatedInterface.Uri = @uri;
 			return theCreatedInterface;
 		}
@@ -4795,7 +4606,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			int? @cSeq, int? @status, string? @reason)
 		{
-			var theCreatedInterface = headerFactory.CreateRequestStatus();
+			var theCreatedInterface = headerFactory.CreateEmptyRequestStatus();
 						theCreatedInterface.CSeq = @cSeq;
 			theCreatedInterface.Status = @status;
 			theCreatedInterface.Reason = @reason;
@@ -4813,7 +4624,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @feature)
 		{
-			var theCreatedInterface = headerFactory.CreateRequire();
+			var theCreatedInterface = headerFactory.CreateEmptyRequire();
 						theCreatedInterface.Feature = @feature;
 			return theCreatedInterface;
 		}
@@ -4829,7 +4640,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @dateOrTime)
 		{
-			var theCreatedInterface = headerFactory.CreateRetryAfter();
+			var theCreatedInterface = headerFactory.CreateEmptyRetryAfter();
 						theCreatedInterface.DateOrTime = @dateOrTime;
 			return theCreatedInterface;
 		}
@@ -4845,7 +4656,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<RtpInfoRecord> @value)
 		{
-			var theCreatedInterface = headerFactory.CreateRtpInfo();
+			var theCreatedInterface = headerFactory.CreateEmptyRtpInfo();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4861,7 +4672,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			double? @scaleValue)
 		{
-			var theCreatedInterface = headerFactory.CreateScale();
+			var theCreatedInterface = headerFactory.CreateEmptyScale();
 						theCreatedInterface.ScaleValue = @scaleValue;
 			return theCreatedInterface;
 		}
@@ -4877,7 +4688,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @value)
 		{
-			var theCreatedInterface = headerFactory.CreateSeekStyle();
+			var theCreatedInterface = headerFactory.CreateEmptySeekStyle();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -4893,7 +4704,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @serverValue)
 		{
-			var theCreatedInterface = headerFactory.CreateServer();
+			var theCreatedInterface = headerFactory.CreateEmptyServer();
 						theCreatedInterface.ServerValue = @serverValue;
 			return theCreatedInterface;
 		}
@@ -4910,7 +4721,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			int? @sessionId, int? @timeout)
 		{
-			var theCreatedInterface = headerFactory.CreateSession();
+			var theCreatedInterface = headerFactory.CreateEmptySession();
 						theCreatedInterface.SessionId = @sessionId;
 			theCreatedInterface.Timeout = @timeout;
 			return theCreatedInterface;
@@ -4927,7 +4738,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @speedRange)
 		{
-			var theCreatedInterface = headerFactory.CreateSpeed();
+			var theCreatedInterface = headerFactory.CreateEmptySpeed();
 						theCreatedInterface.SpeedRange = @speedRange;
 			return theCreatedInterface;
 		}
@@ -4943,7 +4754,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @supportedExtensions)
 		{
-			var theCreatedInterface = headerFactory.CreateSupported();
+			var theCreatedInterface = headerFactory.CreateEmptySupported();
 						theCreatedInterface.SupportedExtensions = @supportedExtensions;
 			return theCreatedInterface;
 		}
@@ -4959,7 +4770,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @reason)
 		{
-			var theCreatedInterface = headerFactory.CreateTerminateReason();
+			var theCreatedInterface = headerFactory.CreateEmptyTerminateReason();
 						theCreatedInterface.Reason = @reason;
 			return theCreatedInterface;
 		}
@@ -4975,7 +4786,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @dateTime)
 		{
-			var theCreatedInterface = headerFactory.CreateTimestamp();
+			var theCreatedInterface = headerFactory.CreateEmptyTimestamp();
 						theCreatedInterface.DateTime = @dateTime;
 			return theCreatedInterface;
 		}
@@ -4998,7 +4809,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @mediaDeliveryProtocol, string? @transportMethod, string? @ssrc, string? @sourceAddress, string? @destinationAddress, string? @timeToLive, string? @mode, bool @interleaved)
 		{
-			var theCreatedInterface = headerFactory.CreateTransport();
+			var theCreatedInterface = headerFactory.CreateEmptyTransport();
 						theCreatedInterface.MediaDeliveryProtocol = @mediaDeliveryProtocol;
 			theCreatedInterface.TransportMethod = @transportMethod;
 			theCreatedInterface.Ssrc = @ssrc;
@@ -5021,7 +4832,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<string> @unsupportedExtensions)
 		{
-			var theCreatedInterface = headerFactory.CreateUnsupported();
+			var theCreatedInterface = headerFactory.CreateEmptyUnsupported();
 						theCreatedInterface.UnsupportedExtensions = @unsupportedExtensions;
 			return theCreatedInterface;
 		}
@@ -5037,7 +4848,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @value)
 		{
-			var theCreatedInterface = headerFactory.CreateUserAgent();
+			var theCreatedInterface = headerFactory.CreateEmptyUserAgent();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -5053,7 +4864,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			List<ViaRecord> @value)
 		{
-			var theCreatedInterface = headerFactory.CreateVia();
+			var theCreatedInterface = headerFactory.CreateEmptyVia();
 						theCreatedInterface.Value = @value;
 			return theCreatedInterface;
 		}
@@ -5071,7 +4882,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			string? @digestRealm, string? @nonce, string? @algorithm)
 		{
-			var theCreatedInterface = headerFactory.CreateWwwAuthenticate();
+			var theCreatedInterface = headerFactory.CreateEmptyWwwAuthenticate();
 						theCreatedInterface.DigestRealm = @digestRealm;
 			theCreatedInterface.Nonce = @nonce;
 			theCreatedInterface.Algorithm = @algorithm;
@@ -5079,5 +4890,284 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 		}
 
 			}
+}
+
+namespace ContentDotNet.Protocols.Rtsp.Headers.Impl.Base
+{
+	internal abstract class AcceptBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AcceptCredentialsBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AcceptEncodingBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AcceptLanguageBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AcceptRangesBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AllowBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AuthenticationInfoBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class AuthorizationBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class BlockSizeBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class CacheControlBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ConnectionBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ContentBaseBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ContentEncodingBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ContentLanguageBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ContentLengthBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ContentLocationBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class CSeqBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class DateBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ExpiresBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class FromBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class IfMatchBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class IfModifiedSinceBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class IfNoneMatchBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class LastModifiedBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class LocationBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class MediaPropertiesBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class MediaRangeBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class MTagBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class NotifyReasonBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class PipelinedRequestsBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ProxyAuthenticateBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ProxyAuthenticationInfoBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ProxyAuthorizationBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ProxyRequireBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ProxySupportedBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class PublicBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class RangeBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ReferrerBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class RequestStatusBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class RequireBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class RetryAfterBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class RtpInfoBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ScaleBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class SeekStyleBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ServerBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class SessionBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class SpeedBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class SupportedBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class TerminateReasonBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class TimestampBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class TransportBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class UnsupportedBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class UserAgentBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class ViaBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+	internal abstract class WwwAuthenticateBase : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
 }
 

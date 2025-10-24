@@ -33,7 +33,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 		Obj("string?", "QualityOfProtection"),
 		Obj("int?", "NonceCount"),
 		Obj("string?", "ClientNonce"));
-	Hdr("Bandwidth", Obj("long?", "BandwidthValue"));
 	Hdr("BlockSize", Obj("int?", "Value"));
 	Hdr("CacheControl",
 		Obj("bool", "NoCache"),
@@ -43,7 +42,6 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 		Obj("bool", "Private"),
 		Obj("int?", "MaxAge"));
 	Hdr("Connection", Obj("List<string>", "Directives"));
-	Hdr("ConnectionCredentials", Obj("string?", "Uri"), Obj("string?", "CertificateBase64"));
 	Hdr("ContentBase", Obj("string?", "Uri"));
 	Hdr("ContentEncoding", Obj("string?", "Encoding"));
 	Hdr("ContentLanguage", Obj("List<string>", "Languages"));
@@ -167,20 +165,26 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 	/// </summary>
 	public interface IRtspHeaderFactory
 	{
-		<#
-			foreach (Header hdr in _headers)
-			{
-		#>
+		/// <summary>
+		///   Creates the blank RTSP header with the specified name.
+		/// </summary>
+		/// <param name="rtspHeaderName">RTSP header name</param>
+		/// <returns>The RTSP header</returns>
+		IRtspHeader Create(string rtspHeaderName);
 
 		/// <summary>
-		///   Creates a blank <see cref="IRtsp<#= hdr.Name #>Header" /> instance.
+		///   Returns the RTSP header of specified type.
 		/// </summary>
-		/// <returns>
-		///   <see cref="IRtsp<#= hdr.Name #>Header" /> without any actual values.
-		/// </returns>
-		IRtsp<#= hdr.Name #>Header Create<#= hdr.Name #>();
+		/// <typeparam name="T">The type of RTSP header to create</typeparam>
+		/// <returns>The RTSP header</returns>
+		T Create<T>() where T : IRtspHeader;
 
-		<# } #>
+		/// <summary>
+		///   Returns the RTSP header of specified type.
+		/// </summary>
+		/// <param name="type">The type of RTSP header to create</param>
+		/// <returns>The RTSP header</returns>
+		IRtspHeader Create(Type type);
 	}
 
 	/// <summary>
@@ -188,6 +192,20 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 	/// </summary>
 	public static class RtspHeaderFactoryExtensions
 	{
+<#
+	foreach (Header hdr in _headers)
+	{
+#>
+
+		/// <summary>
+		///   A shorthand to create IRtsp<#= hdr.Name #>.
+		/// </summary>
+		/// <param name="factory">Input RTSP header factory</param>
+		/// <returns>The created RTSP header</returns>
+		public static IRtsp<#= hdr.Name #>Header CreateEmpty<#= hdr.Name #>(this IRtspHeaderFactory factory)
+			=> factory.Create<IRtsp<#= hdr.Name #>Header>();
+<# } #>
+
 <#
 			foreach (Header hdr in _headers)
 			{
@@ -209,7 +227,7 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 			this IRtspHeaderFactory headerFactory,
 			<#= args #>)
 		{
-			var theCreatedInterface = headerFactory.Create<#= hdr.Name #>();
+			var theCreatedInterface = headerFactory.CreateEmpty<#= hdr.Name #>();
 			<#
 			foreach (Parameter p in hdr.Parameters)
 			{
@@ -221,6 +239,20 @@ namespace ContentDotNet.Protocols.Rtsp.Headers
 
 		<# } #>
 	}
+}
+
+namespace ContentDotNet.Protocols.Rtsp.Headers.Impl.Base
+{
+<#
+	foreach (Header hdr in _headers)
+	{
+#>
+	internal abstract class <#= hdr.Name #>Base : IRtspHeader
+	{
+		public abstract string Text { get; }
+	}
+
+<# } #>
 }
 
 <#+

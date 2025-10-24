@@ -60,6 +60,8 @@
 
         private int ParseSimple(H264SyntaxElement se)
         {
+            this.decoder.Affix = H264Affix.Prefix;
+
             decoder.BinIndex = 0;
             decoder.ArithmeticReader.BinTracker.Reset();
 
@@ -87,6 +89,8 @@
 
         private int ParseForCoeffFlagAndAbsLevel(H264SyntaxElement se, StandaloneCtxIdxIncDerivativeMode mode)
         {
+            this.decoder.Affix = H264Affix.Prefix;
+
             decoder.BinIndex = 0;
             decoder.ArithmeticReader.BinTracker.Reset();
 

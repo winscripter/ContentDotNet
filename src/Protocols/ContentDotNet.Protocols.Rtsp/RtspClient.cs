@@ -40,7 +40,7 @@
         /// <param name="clientMessage">The client message.</param>
         public void Send(RtspClientMessage clientMessage)
         {
-            byte[] utf8 = Encoding.GetBytes(clientMessage.ToString());
+            byte[] utf8 = Encoding.GetBytes(clientMessage.ToString() + "\0");
             _rtspServer.Write(utf8);
         }
 
@@ -50,10 +50,38 @@
         /// <param name="clientMessage">The client message.</param>
         public async Task SendAsync(RtspClientMessage clientMessage)
         {
-            byte[] utf8 = Encoding.GetBytes(clientMessage.ToString());
+            byte[] utf8 = Encoding.GetBytes(clientMessage.ToString() + "\0");
             await _rtspServer.WriteAsync(utf8);
         }
 
+        /// <summary>
+        ///   Receives an RTSP server message.
+        /// </summary>
+        /// <returns>The message from the server.</returns>
+        public RtspServerMessage Receive()
+        {
+            using var ms = new MemoryStream();
+            int b;
+            while ((b = _rtspServer.ReadByte()) > 0)
+                ms.WriteByte((byte)b);
+            ms.Position = 0;
+            using var stringReader = new StringReader(this.Encoding.GetString(ms.ToArray()));
+            return RtspServerMessage.Parse(stringReader);
+        }
 
+        /// <summary>
+        ///   Receives an RTSP server message.
+        /// </summary>
+        /// <returns>The message from the server.</returns>
+        public async Task<RtspServerMessage> ReceiveAsync()
+        {
+            using var ms = new MemoryStream();
+            int b;
+            while ((b = _rtspServer.ReadByte()) > 0)
+                ms.WriteByte((byte)b);
+            ms.Position = 0;
+            using var stringReader = new StringReader(this.Encoding.GetString(ms.ToArray()));
+            return await RtspServerMessage.ParseAsync(stringReader);
+        }
     }
 }

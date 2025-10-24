@@ -144,7 +144,7 @@
             int fixedLength = (int)Math.Ceiling(Math.Log2(cMax + 1));
             int value = 0;
             for (int i = 0; i < fixedLength; i++)
-                value = value << 1 | decoder.ReadBin().AsInt32();
+                value = (value << 1) | decoder.ReadBin().AsInt32();
             return value;
         }
 

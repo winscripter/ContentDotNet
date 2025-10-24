@@ -46,8 +46,8 @@
                 Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
 
-            BinIndex++;
             Recompute();
+            BinIndex++;
 
             return ret;
         }
@@ -65,8 +65,8 @@
                 Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
                 cv[ctxIdx]);
 
-            BinIndex++;
             Recompute();
+            BinIndex++;
 
             return ret;
         }

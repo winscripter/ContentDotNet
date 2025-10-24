@@ -47,6 +47,36 @@
             }
             return sb.ToString();
         }
+
+        public static RtspClientMessage Parse(TextReader reader)
+        {
+            var message = new RtspClientMessage();
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                if (line.Contains(':')) message.HeaderLines.Add(line);
+                else if (line.Contains('=')) message.Sdp.Lines.Add(line);
+                else if (Enum.TryParse<RtspMethodType>(line.Split(' ')[0], out _)) message.RequestLine = RtspRequestLine.Parse(line);
+            }
+            return message;
+        }
+
+        public static async Task<RtspClientMessage> ParseAsync(TextReader reader)
+        {
+            var message = new RtspClientMessage();
+            string? line;
+            while ((line = await reader.ReadLineAsync()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+
+                if (line.Contains(':')) message.HeaderLines.Add(line);
+                else if (line.Contains('=')) message.Sdp.Lines.Add(line);
+                else if (Enum.TryParse<RtspMethodType>(line.Split(' ')[0], out _)) message.RequestLine = RtspRequestLine.Parse(line);
+            }
+            return message;
+        }
     }
 
     /// <summary>
@@ -109,6 +139,48 @@
                 }
             }
             return sb.ToString();
+        }
+
+        public static RtspServerMessage Parse(TextReader reader)
+        {
+            var message = new RtspServerMessage();
+            bool first = true;
+            string? line;
+            while ((line = reader.ReadLine()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                if (first)
+                {
+                    first = false;
+                    message.StatusLine = line;
+                    continue;
+                }
+
+                if (line.Contains(':')) message.HeaderLines.Add(line);
+                else if (line.Contains('=')) message.Sdp.Lines.Add(line);
+            }
+            return message;
+        }
+
+        public static async Task<RtspServerMessage> ParseAsync(TextReader reader)
+        {
+            var message = new RtspServerMessage();
+            bool first = true;
+            string? line;
+            while ((line = await reader.ReadLineAsync()) != null)
+            {
+                if (string.IsNullOrWhiteSpace(line)) continue;
+                if (first)
+                {
+                    first = false;
+                    message.StatusLine = line;
+                    continue;
+                }
+
+                if (line.Contains(':')) message.HeaderLines.Add(line);
+                else if (line.Contains('=')) message.Sdp.Lines.Add(line);
+            }
+            return message;
         }
     }
 }

@@ -6,11 +6,6 @@
     public interface IRtspHeader
     {
         /// <summary>
-        ///   The raw RTSP text.
-        /// </summary>
-        string? RawText { get; set; }
-
-        /// <summary>
         ///   The RTSP text that identifies the line, before the
         ///   : character.
         /// </summary>
