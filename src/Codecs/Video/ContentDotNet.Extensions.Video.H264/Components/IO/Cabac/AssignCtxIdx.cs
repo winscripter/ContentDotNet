@@ -39,8 +39,7 @@
             else
             {
                 int ctxIdxInc = H264CabacCtxIdxIncDerivativeStandalone.AssignCtxIdxIncForCoeffFlagsAndAbsLevel(decoder,
-                    decoder.BinIndex, decoder.DecodingVariables.NumC8x8, decoder.DecodingVariables.LevelListIndex, decoder.DecodingVariables.ResidualBlockType,
-                    ctxIdxIncDerivativeMode, !currMB.MbFieldDecodingFlag, decoder.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1, decoder.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1);
+                    decoder.DecodingVariables.ResidualBlockType, ctxIdxIncDerivativeMode, !currMB.MbFieldDecodingFlag);
 
                 if (se == H264SyntaxElement.SignificantCoeffFlag) return ctxIdxOffset + SignificantCoeffFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat] + ctxIdxInc;
                 else if (se == H264SyntaxElement.LastSignificantCoeffFlag) return ctxIdxOffset + LastSignificantCoeffFlagToCtxIdxBlockCatOffsetAssignments[decoder.DecodingVariables.CtxBlockCat] + ctxIdxInc;

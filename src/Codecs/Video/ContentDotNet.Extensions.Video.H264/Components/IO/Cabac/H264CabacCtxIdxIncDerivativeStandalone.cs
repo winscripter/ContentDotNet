@@ -49,8 +49,14 @@
             throw UnreachableException.Instance;
         }
 
-        public static int AssignCtxIdxIncForCoeffFlagsAndAbsLevel(IH264CabacDecoder cd, int binIdx, int NumC8x8, int levelListIdx, ResidualBlockType blkType, StandaloneCtxIdxIncDerivativeMode derivativeMode, bool isFrame, int numDecodAbsLevelEq1, int numDecodAbsLevelGt1)
+        public static int AssignCtxIdxIncForCoeffFlagsAndAbsLevel(IH264CabacDecoder cd, ResidualBlockType blkType, StandaloneCtxIdxIncDerivativeMode derivativeMode, bool isFrame)
         {
+            int numDecodAbsLevelEq1 = cd.DecodingVariables.ReportedCoefficientsForCurrentListEqualTo1;
+            int numDecodAbsLevelGt1 = cd.DecodingVariables.ReportedCoefficientsForCurrentListGreaterThan1;
+            int levelListIdx = cd.DecodingVariables.LevelListIndex;
+            int binIdx = cd.BinIndex;
+            int NumC8x8 = cd.DecodingVariables.NumC8x8;
+
             int ctxBlockCat = CabacResidualToCtxBlockCatMapping.GetCtxBlockCat(blkType);
             cd.DecodingVariables.CtxBlockCat = ctxBlockCat;
 
