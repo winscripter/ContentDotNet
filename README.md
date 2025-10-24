@@ -30,13 +30,12 @@ worrying about compatibility, while also making deployment easier. It will work 
 
 - Video:
     - Codecs:
-        - H.261 (⚠️)
-        - H.264 (⚠️)
+        - H.264 (⚠️, see [issue #6](https://github.com/winscripter/ContentDotNet/issues/6) if you're willing to help - and it's potentially doable! Most of our work went into the H.264 implementation)
     - Formats:
         - MP4 (⚠️)
 - Image:
     - Formats:
-        - BMP (⚠️)
+        - BMP
         - WebP
         - JPEG (⚠️)
 - Audio:
@@ -44,7 +43,7 @@ worrying about compatibility, while also making deployment easier. It will work 
         - G.722
 - Protocols:
     - SDP
-    - RTSP (⚠️)
+    - RTSP
     - RTP (⚠️)
  
 > [!NOTE]
