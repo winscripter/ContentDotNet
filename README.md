@@ -1,24 +1,4 @@
 ﻿# ContentDotNet
-
-> [!WARNING]
-> While some components of this framework are complete, others are still under development,
-> such as H.264 decoding, and as such, are not yet published on NuGet.
->
-> We have released this framework early hoping to get some community support and contributions
-> with components like H.264 and JPEG decoding, writing tests, and finding bugs/sample files
-> for the formats we support. It's really hard to write a framework like this alone, and we
-> would appreciate any help we can get.
->
-> Please note that this framework is not production-ready yet, and should not be used in
-> production environments.
->
-> We are open to contributions, including but not limited to bug reports, suggestions,
-> writing better tests, and creating Pull Requests. See the CONTRIBUTING.md file.
-> With your help, this framework could eventually unify multimedia processing in C#,
-> and be the first framework ever in the .NET ecosystem for video, image and audio editing without relying on
-> native libraries. It will always be cross-platform, open-source, and managed. See also the
-> "Why this project exists?" section below in this README.
-
 ContentDotNet is a cross-platform, open-source, managed framework for C# to read/write videos, audios, images and other multimedia. It allows reading them,
 creating them, and inspecting or editing their contents. It provides a user-friendly API. It does not use any native libraries; everything is C#.
 
