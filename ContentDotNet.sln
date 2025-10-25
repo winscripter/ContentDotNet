@@ -90,6 +90,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Extensions.Im
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Tests.Sdp", "tests\ContentDotNet.Tests.Sdp\ContentDotNet.Tests.Sdp.csproj", "{9EE4491D-A4F3-4523-A254-CB789CB9BE42}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Tests.Rtsp", "tests\ContentDotNet.Tests.Rtsp\ContentDotNet.Tests.Rtsp.csproj", "{A1D47DB6-F481-41BD-A673-44CD00B3088E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -172,6 +174,10 @@ Global
 		{9EE4491D-A4F3-4523-A254-CB789CB9BE42}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EE4491D-A4F3-4523-A254-CB789CB9BE42}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EE4491D-A4F3-4523-A254-CB789CB9BE42}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -206,6 +212,7 @@ Global
 		{F8E0743C-2EA1-473D-9E41-1C3276BAE82D} = {DA3D2F90-D4F7-4C5A-8430-7D95167D5D67}
 		{AB92FB53-5D90-414B-A1CE-4C99CF7FBAB2} = {7E05CDAD-144E-48DC-A83D-5E45E606166B}
 		{9EE4491D-A4F3-4523-A254-CB789CB9BE42} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
+		{A1D47DB6-F481-41BD-A673-44CD00B3088E} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

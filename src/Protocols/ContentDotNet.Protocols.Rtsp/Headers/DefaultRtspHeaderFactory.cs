@@ -39,7 +39,7 @@
         /// <inheritdoc cref="IRtspHeaderFactory.Create(Type)" />
         public IRtspHeader Create(Type type)
         {
-            Type type1 = types.SingleOrDefault(x => x == type)
+            Type type1 = types.SingleOrDefault(x => x.BaseType == type)
                 ?? throw new InvalidOperationException("No RTSP header exists with name " + type.FullName);
 
             // New fresh copy since they have instance fields
