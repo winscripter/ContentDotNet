@@ -25,6 +25,7 @@
     <None Include="$(MSBuildThisFileDirectory)h264\slice-decoder.md" />
     <None Include="$(MSBuildThisFileDirectory)pcmaudio\decoding.md" />
     <None Include="$(MSBuildThisFileDirectory)README.md" />
+    <None Include="$(MSBuildThisFileDirectory)rtsp\rtsp.md" />
     <None Include="$(MSBuildThisFileDirectory)sdp\sdp.md" />
   </ItemGroup>
 </Project>

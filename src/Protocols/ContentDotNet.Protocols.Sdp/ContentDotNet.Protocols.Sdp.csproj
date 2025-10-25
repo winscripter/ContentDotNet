@@ -6,7 +6,7 @@
     <Nullable>enable</Nullable>
     <GenerateDocumentationFile>True</GenerateDocumentationFile>
     <Title>ContentDotNet.Protocols.Sdp</Title>
-    <Version>1.0.0-alpha5</Version>
+    <Version>1.0.0-alpha6</Version>
     <Authors>winscripter</Authors>
     <Description>SDP (Session Description Protocol) library for C#</Description>
     <PackageReadmeFile>README.md</PackageReadmeFile>

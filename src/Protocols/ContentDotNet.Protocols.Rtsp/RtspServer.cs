@@ -44,8 +44,10 @@
         /// <param name="clientIndex">The index of the client to send to.</param>
         public void SendMessageToClient(RtspServerMessage serverMessage, int clientIndex)
         {
+            long prevPos = _clients[clientIndex].Position;
             byte[] data = this.Encoding.GetBytes(serverMessage.ToString());
             _clients[clientIndex].Write(data);
+            _clients[clientIndex].Position = prevPos;
         }
 
         /// <summary>
@@ -55,8 +57,10 @@
         /// <param name="clientIndex">The index of the client to send to.</param>
         public async Task SendMessageToClientAsync(RtspServerMessage serverMessage, int clientIndex)
         {
+            long prevPos = _clients[clientIndex].Position;
             byte[] data = this.Encoding.GetBytes(serverMessage.ToString());
             await _clients[clientIndex].WriteAsync(data);
+            _clients[clientIndex].Position = prevPos;
         }
 
         /// <summary>
@@ -77,6 +81,38 @@
         {
             for (int i = 0; i < _clients.Count; i++)
                 await SendMessageToClientAsync(serverMessage, i);
+        }
+
+        /// <summary>
+        ///   Receives a message from the client of specified index.
+        /// </summary>
+        /// <param name="clientIndex">The index of the client.</param>
+        /// <returns>The message.</returns>
+        public RtspClientMessage Receive(int clientIndex)
+        {
+            using var ms = new MemoryStream();
+            int b;
+            while ((b = _clients[clientIndex].ReadByte()) > 0)
+                ms.WriteByte((byte)b);
+            ms.Position = 0;
+            using var stringReader = new StringReader(this.Encoding.GetString(ms.ToArray()));
+            return RtspClientMessage.Parse(stringReader);
+        }
+
+        /// <summary>
+        ///   Receives a message from the client of specified index.
+        /// </summary>
+        /// <param name="clientIndex">The index of the client.</param>
+        /// <returns>The message.</returns>
+        public async Task<RtspClientMessage> ReceiveAsync(int clientIndex)
+        {
+            using var ms = new MemoryStream();
+            int b;
+            while ((b = _clients[clientIndex].ReadByte()) > 0)
+                ms.WriteByte((byte)b);
+            ms.Position = 0;
+            using var stringReader = new StringReader(this.Encoding.GetString(ms.ToArray()));
+            return await RtspClientMessage.ParseAsync(stringReader);
         }
     }
 }

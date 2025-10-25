@@ -1,7 +1,13 @@
 # Changelog
 All versions and revisions.
 
-Current: 1.0.0-alpha5
+Current: 1.0.0-alpha6
+
+### 1.0.0-alpha6
+
+Released: 10/25/2025
+
+Documents and publishes the RTSP package on NuGet
 
 ### 1.0.0-alpha5
 

@@ -40,8 +40,10 @@
         /// <param name="clientMessage">The client message.</param>
         public void Send(RtspClientMessage clientMessage)
         {
+            long prev = _rtspServer.Position;
             byte[] utf8 = Encoding.GetBytes(clientMessage.ToString() + "\0");
             _rtspServer.Write(utf8);
+            _rtspServer.Position = prev;
         }
 
         /// <summary>
@@ -50,8 +52,10 @@
         /// <param name="clientMessage">The client message.</param>
         public async Task SendAsync(RtspClientMessage clientMessage)
         {
+            long prev = _rtspServer.Position;
             byte[] utf8 = Encoding.GetBytes(clientMessage.ToString() + "\0");
             await _rtspServer.WriteAsync(utf8);
+            _rtspServer.Position = prev;
         }
 
         /// <summary>

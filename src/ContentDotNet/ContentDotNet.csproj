@@ -9,10 +9,10 @@
     <Copyright>Copyright (c) 2023-2025, winscripter</Copyright>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <PackageReadmeFile>README.md</PackageReadmeFile>
-    <PackageTags>h264;g722;h.264;g.722;rtsp;rtp;rtcp;sdp;bmp;webp;jpeg;h.261;h261;video;audio;image;processing;multimedia;codec;decoder;encoder</PackageTags>
-    <Version>1.0.0-alpha5</Version>
+    <PackageTags>h264;g722;h.264;g.722;rtsp;rtp;rtcp;sdp;bmp;webp;jpeg;h.261;h261;video;audio;image;processing;multimedia;codec;decoder;encoder;client;server</PackageTags>
+    <Version>1.0.0-alpha6</Version>
     <Description>ContentDotNet abstractions library.</Description>
-    <PackageReleaseNotes>Adds support for RTSP and BMP</PackageReleaseNotes>
+    <PackageReleaseNotes>Documents and publishes the RTSP package on NuGet</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>

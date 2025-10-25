@@ -4,6 +4,10 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <Title>ContentDotNet.Protocols.Rtsp</Title>
+    <Version>1.0.0-alpha6</Version>
+    <Description>An RTSP client/server for C# - cross-platform.</Description>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
 
   <ItemGroup>
@@ -27,6 +31,10 @@
     <None Update="Headers\Headers.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Headers.g.cs</LastGenOutput>
+    </None>
+    <None Update="README.md">
+      <Pack>True</Pack>
+      <PackagePath>\</PackagePath>
     </None>
   </ItemGroup>
 
