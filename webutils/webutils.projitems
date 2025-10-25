@@ -9,6 +9,7 @@
     <Import_RootNamespace>webutils</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Content Include="$(MSBuildThisFileDirectory)h264\bin-encoder.html" />
     <Content Include="$(MSBuildThisFileDirectory)h264\symbol.html" />
     <Content Include="$(MSBuildThisFileDirectory)json-string-extract.html" />
   </ItemGroup>

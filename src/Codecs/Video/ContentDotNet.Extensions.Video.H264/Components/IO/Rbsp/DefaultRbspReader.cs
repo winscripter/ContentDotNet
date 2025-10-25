@@ -11,10 +11,8 @@
     using ContentDotNet.Extensions.Video.H264.Extensions;
     using ContentDotNet.Extensions.Video.H264.Models;
     using ContentDotNet.Extensions.Video.H264.Models.Cabac;
-    using ContentDotNet.Extensions.Video.H264.Models.ResidualBlocks;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
     using ContentDotNet.Extensions.Video.H264.Utilities;
-    using ContentDotNet.Primitives;
     using System.Threading.Tasks;
     using static ContentDotNet.Extensions.Video.H264.Components.Common.MacroblockTypes;
     using static ContentDotNet.Extensions.Video.H264.Components.Common.PredictionModes;
@@ -396,9 +394,7 @@
                     {
                         if (variables != null)
                         {
-                            CodedBlockFlagDerivationOptions cbfOptions = variables.CodedBlockFlagOptions;
-                            cbfOptions.Luma4x4BlkIdx = i;
-                            variables.CodedBlockFlagOptions = cbfOptions;
+                            variables.CodedBlockFlagOptions.Luma4x4BlkIdx = i;
                         }
 
                         prev_intra_4x4_pred_mode_flag.Add(syntaxReader.ReadPrevIntra4x4PredModeFlag());
@@ -418,9 +414,7 @@
                     {
                         if (variables != null)
                         {
-                            CodedBlockFlagDerivationOptions cbfOptions = variables.CodedBlockFlagOptions;
-                            cbfOptions.Luma8x8BlkIdx = i;
-                            variables.CodedBlockFlagOptions = cbfOptions;
+                            variables.CodedBlockFlagOptions.Luma8x8BlkIdx = i;
                         }
 
                         prev_intra_8x8_pred_mode_flag.Add(syntaxReader.ReadPrevIntra8x8PredModeFlag());
@@ -2447,7 +2441,7 @@
                 if (moreDataFlag.AsBoolean())
                 {
                     if (state.DeriveMbaffFrameFlag() && (state.CurrMbAddr % 2 == 0 ||
-                        (state.CurrMbAddr % 2 == 1 && prevMbSkipped == 1)))
+                        (state.CurrMbAddr % 2 == 1 && prevMbSkipped.AsBoolean())))
                     {
                         mb_field_decoding_flag = syntaxReader.ReadMbFieldDecodingFlag();
                         mb.MbFieldDecodingFlag = mb_field_decoding_flag;

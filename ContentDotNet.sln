@@ -92,6 +92,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Tests.Sdp", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Tests.Rtsp", "tests\ContentDotNet.Tests.Rtsp\ContentDotNet.Tests.Rtsp.csproj", "{A1D47DB6-F481-41BD-A673-44CD00B3088E}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UncompressedH264Encoder", "tools\UncompressedH264Encoder\UncompressedH264Encoder.csproj", "{656C7E6E-C908-44FC-971F-43C8A7D7AF02}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -178,6 +180,10 @@ Global
 		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A1D47DB6-F481-41BD-A673-44CD00B3088E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{656C7E6E-C908-44FC-971F-43C8A7D7AF02}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{656C7E6E-C908-44FC-971F-43C8A7D7AF02}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{656C7E6E-C908-44FC-971F-43C8A7D7AF02}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{656C7E6E-C908-44FC-971F-43C8A7D7AF02}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -213,6 +219,7 @@ Global
 		{AB92FB53-5D90-414B-A1CE-4C99CF7FBAB2} = {7E05CDAD-144E-48DC-A83D-5E45E606166B}
 		{9EE4491D-A4F3-4523-A254-CB789CB9BE42} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
 		{A1D47DB6-F481-41BD-A673-44CD00B3088E} = {5859F425-318E-4E28-BB77-D7C9C503C37F}
+		{656C7E6E-C908-44FC-971F-43C8A7D7AF02} = {4E0443FC-FAD2-405D-9141-CD2AD6D47582}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}
