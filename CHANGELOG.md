@@ -1,7 +1,13 @@
 # Changelog
 All versions and revisions.
 
-Current: 1.0.0-alpha4
+Current: 1.0.0-alpha5
+
+### 1.0.0-alpha5
+
+Released: 10/24/2025
+
+Implements support for RTSP and BMP
 
 ### 1.0.0-alpha4
 
