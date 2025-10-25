@@ -18,12 +18,11 @@
                 var sb = new StringBuilder();
 
                 sb.Append(x.MimeType);
-                sb.Append(' ');
                 if (x.Quality != null)
                 {
-                    sb.Append(',');
+                    sb.Append(", ");
                     sb.Append("q=");
-                    sb.Append(x.Quality!.Value.ToString(provider: null));
+                    sb.Append(x.Quality!.Value.ToString(provider: null).Trim());
                 }
 
                 return sb.ToString();
