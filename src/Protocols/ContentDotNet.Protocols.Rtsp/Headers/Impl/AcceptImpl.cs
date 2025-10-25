@@ -13,14 +13,14 @@
 
         public override string ToString()
         {
-            return string.Join("; ", Value.Select(x =>
+            return string.Join(", ", Value.Select(x =>
             {
                 var sb = new StringBuilder();
 
                 sb.Append(x.MimeType);
                 if (x.Quality != null)
                 {
-                    sb.Append(", ");
+                    sb.Append("; ");
                     sb.Append("q=");
                     sb.Append(x.Quality!.Value.ToString(provider: null).Trim());
                 }
