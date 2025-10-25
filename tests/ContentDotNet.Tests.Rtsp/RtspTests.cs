@@ -12,7 +12,7 @@ namespace ContentDotNet.Tests.Rtsp
             var accept = factory.Create<IRtspAcceptHeader>();
             accept.Value.Add(new AcceptRecord("SampleMIME", null));
             accept.Value.Add(new AcceptRecord("SampleMIME2", 0.50D));
-            Assert.Equal("SampleMIME, SampleMIME2; q=0.50", accept.ToString());
+            Assert.Equal("SampleMIME, SampleMIME2; q=0.5", accept.ToString());
         }
     }
 }
