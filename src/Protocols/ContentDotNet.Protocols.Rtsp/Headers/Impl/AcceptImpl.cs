@@ -13,7 +13,7 @@
 
         public override string ToString()
         {
-            return string.Join(", ", Value.Select(x =>
+            return string.Join("; ", Value.Select(x =>
             {
                 var sb = new StringBuilder();
 
