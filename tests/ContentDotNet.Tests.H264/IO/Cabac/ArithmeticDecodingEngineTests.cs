@@ -37,7 +37,8 @@
             };
             while (countOfBins < timesToRead)
             {
-                Assert.True(arithmeticEngine.ReadBin(ArithmeticBinType.Decision, cv) == ((Test1SourceBytes[countOfBins / 8] & (1 << (7 - (countOfBins % 8)))) != 0));
+                if (arithmeticEngine.ReadBin(ArithmeticBinType.Decision, cv) != ((Test1SourceBytes[countOfBins / 8] & (1 << (7 - (countOfBins % 8)))) != 0))
+                    Assert.Fail($"Opposite bin! Bin number: {countOfBins}");
                 countOfBins++;
             }
         }
