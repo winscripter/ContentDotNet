@@ -10,7 +10,6 @@
         private static readonly byte[] Test1ResultBytes = [0x00, 0x00, 0xe3, 0x2f, 0xd2, 0x8c, 0x04];
         private static readonly byte[] Test1SourceBytes = [0x89, 0x45, 0x67, 0xf5, 0x98, 0x43, 0x62, 0x95, 0xab];
 
-        [Fact]
         public void Test_1()
         {
             // Generated using webutils/h264/bin-encoder.html.
