@@ -52,6 +52,14 @@ to the end-user of the library. This applies to profit-generating and enterprise
 ## Documentation
 See [Docs/README.md](Docs/README.md).
 
+## Packages
+| Package Name | Package URL (NuGet) |
+| ------------ | ------------------- |
+| ContentDotNet | [https://www.nuget.org/packages/ContentDotNet](https://www.nuget.org/packages/ContentDotNet) |
+| ContentDotNet.Protocols.Sdp | [https://www.nuget.org/packages/ContentDotNet.Protocols.Sdp](https://www.nuget.org/packages/ContentDotNet.Protocols.Sdp) |
+| ContentDotNet.Protocols.Rtsp | [https://www.nuget.org/packages/ContentDotNet.Protocols.Rtsp](https://www.nuget.org/packages/ContentDotNet.Protocols.Rtsp) |
+
+
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).
 
