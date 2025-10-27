@@ -1,7 +1,8 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Binarization
 {
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Extensions;
     using ContentDotNet.Extensions.Video.H264.Utilities;
     using ContentDotNet.Primitives;
 
@@ -28,6 +29,7 @@
                 uValue++;
                 rc.Increment();
             }
+
             return uValue;
         }
 
@@ -81,7 +83,7 @@
 
             if ((!signedValFlag && !(prefix.BinsRead == uCoff && IntrinsicFunctions.AllBitsAreOne(prefix.Value, prefix.BinsRead))) ||
                 (signedValFlag && prefix.BinsRead == 1 && prefix.Value == 0) ||
-                decoder.ForcePrefix)
+                decoder.IsPrefixOnly())
             {
                 return prefix.Value;
             }

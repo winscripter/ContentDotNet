@@ -7,7 +7,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine
+namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Components
 {
     /// <summary>
     ///   State transitioning table for H.264 CABAC.

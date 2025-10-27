@@ -1,6 +1,6 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Implementation
 {
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Delegates.IO.Cabac;
@@ -26,17 +26,20 @@
             State = state;
         }
 
-        public int CtxIdxSuffix { get; set; } = 0;
-        public int CtxIdxPrefix { get; set; } = 0;
-        public bool ForcePrefix { get; set; } = false;
         public int BinIndex { get; set; } = 0;
         public H264State State { get; set; }
 
         public H264Affix Affix { get; set; }
         public RecomputeCallback Recompute { get; set; } = () => { };
+        public int SuffixContextIndex { get; set; }
+        public int PrefixContextIndex { get; set; }
 
         public bool ReadBin()
         {
+            bool useBypass = Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true;
+            if (useBypass)
+                return ArithmeticReader.ReadBin(ArithmeticBinType.Bypass, null);
+
             int ctxIdx = this.GetCtxIdx();
             if (!cvInit[ctxIdx])
             {
@@ -45,7 +48,7 @@
             }
 
             bool ret = ArithmeticReader.ReadBin(ctxIdx,
-                Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
+                false, // We performed the check earlier
                 cv[ctxIdx]);
 
             Recompute();
@@ -56,6 +59,10 @@
 
         public async Task<bool> ReadBinAsync()
         {
+            bool useBypass = Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true;
+            if (useBypass)
+                return await ArithmeticReader.ReadBinAsync(ArithmeticBinType.Bypass, null);
+
             int ctxIdx = this.GetCtxIdx();
             if (!cvInit[ctxIdx])
             {
@@ -64,7 +71,7 @@
             }
 
             bool ret = await ArithmeticReader.ReadBinAsync(ctxIdx,
-                Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true,
+                false, // We performed the check earlier
                 cv[ctxIdx]);
 
             Recompute();

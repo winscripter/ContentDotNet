@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions
+﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac
 {
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
 

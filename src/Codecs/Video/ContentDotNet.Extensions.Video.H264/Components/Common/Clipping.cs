@@ -20,15 +20,9 @@
             return Clip(0, 1 << BitDepthY, value);
         }
 
-        public static int Clip1Y(int value, H264State state) =>
-            Clip1Y(value, state.DeriveBitDepthY());
-
         public static int Clip1C(int value, int BitDepthC)
         {
             return Clip(0, 1 << BitDepthC, value);
         }
-
-        public static int Clip1C(int value, H264State state) =>
-            Clip1C(value, state.DeriveBitDepthC());
     }
 }

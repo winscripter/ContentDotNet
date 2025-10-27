@@ -1,6 +1,5 @@
-﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions
+﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac
 {
-    using ContentDotNet.BitStream;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Delegates.IO.Cabac;
@@ -13,6 +12,16 @@
     /// </summary>
     public interface IH264CabacDecoder
     {
+        /// <summary>
+        ///   Context index for suffix
+        /// </summary>
+        int SuffixContextIndex { get; set; }
+
+        /// <summary>
+        ///   Context index for prefix
+        /// </summary>
+        int PrefixContextIndex { get; set; }
+
         /// <summary>
         ///   The H.264 state.
         /// </summary>
@@ -32,23 +41,6 @@
         ///   Context indices
         /// </summary>
         UnprocessedContextIndexRecord? ContextIndexRecord { get; set; }
-
-        /// <summary>
-        ///   Suffix ctxIdx
-        /// </summary>
-        int CtxIdxSuffix { get; set; }
-
-        /// <summary>
-        ///   Prefix ctxIdx
-        /// </summary>
-        int CtxIdxPrefix { get; set; }
-
-        /// <summary>
-        ///   Forces all affixes to be prefix only. Do not use this without knowing what
-        ///   you're doing, as it is almost certainly guaranteed to corrupt the decoder
-        ///   when used incorrectly.
-        /// </summary>
-        bool ForcePrefix { get; set; }
 
         /// <summary>
         ///   The bin index.

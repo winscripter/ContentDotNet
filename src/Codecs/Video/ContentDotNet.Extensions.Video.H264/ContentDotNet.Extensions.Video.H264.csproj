@@ -73,7 +73,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>IH264SyntaxIO_Impl.g.cs</LastGenOutput>
     </None>
-    <None Update="Components\IO\Cabac\ArithmeticEngine\StateTransitioningTable.tt">
+    <None Update="Components\IO\Cabac\Components\StateTransitioningTable.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>StateTransitioningTable.g.cs</LastGenOutput>
     </None>
@@ -125,7 +125,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>IH264SyntaxIO_Impl.tt</DependentUpon>
     </Compile>
-    <Compile Update="Components\IO\Cabac\ArithmeticEngine\StateTransitioningTable.g.cs">
+    <Compile Update="Components\IO\Cabac\Components\StateTransitioningTable.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>StateTransitioningTable.tt</DependentUpon>

@@ -1,6 +1,6 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.IOImplementation
 {
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.CtxIdxDerivative;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Presets;
@@ -50,12 +50,10 @@
         private int GetContextIndex(H264SyntaxElement se, ContextIndexAndParser cip, StandaloneCtxIdxIncDerivativeMode mode = 0)
         {
             int ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetOffset(decoder), decoder.BinIndex, mode);
-            decoder.CtxIdxPrefix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex, mode);
+            decoder.PrefixContextIndex = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex, mode);
 
             if (cip.Record.CtxIdxOffset.HasSuffix)
-                decoder.CtxIdxSuffix = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex, mode);
-
-            decoder.ForcePrefix = !cip.Record.CtxIdxOffset.HasSuffix;
+                decoder.SuffixContextIndex = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex, mode);
 
             return ctxIdx;
         }

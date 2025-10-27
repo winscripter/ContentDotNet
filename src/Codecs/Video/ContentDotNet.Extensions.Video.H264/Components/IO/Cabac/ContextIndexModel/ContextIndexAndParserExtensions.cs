@@ -1,7 +1,8 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel
 {
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Extensions;
 
     /// <summary>
     ///   Context index and parser extensions
@@ -24,7 +25,7 @@
             this ContextIndexAndParser parser,
             IH264CabacDecoder decoder)
         {
-            if (decoder.ForcePrefix) return parser.GetPrefixOffset();
+            if (decoder.IsPrefixOnly()) return parser.GetPrefixOffset();
 
             return decoder.Affix == H264Affix.Suffix ? parser.GetSuffixOffset() : parser.GetPrefixOffset();
         }
