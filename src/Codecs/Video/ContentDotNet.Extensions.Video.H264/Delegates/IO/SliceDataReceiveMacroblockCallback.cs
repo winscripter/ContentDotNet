@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO
+﻿namespace ContentDotNet.Extensions.Video.H264.Delegates.IO
 {
     using ContentDotNet.Extensions.Video.H264.Models;
 

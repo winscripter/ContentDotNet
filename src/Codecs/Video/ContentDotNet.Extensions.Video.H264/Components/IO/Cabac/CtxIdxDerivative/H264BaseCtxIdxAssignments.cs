@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
+﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.CtxIdxDerivative
 {
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Binarization;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;

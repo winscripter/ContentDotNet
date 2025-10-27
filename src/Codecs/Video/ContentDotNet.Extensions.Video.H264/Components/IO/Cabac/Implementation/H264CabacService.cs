@@ -1,5 +1,6 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Implementation
 {
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ArithmeticEngine;
 
     internal class H264CabacService : IH264CabacService

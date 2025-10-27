@@ -36,7 +36,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Predictors.tt</DependentUpon>
     </None>
-    <None Include="Components\IO\Cabac\AssignCtxidxCore.g.cs">
+    <None Include="Components\IO\Cabac\CtxIdxDerivative\AssignCtxidxCore.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>AssignCtxidxCore.tt</DependentUpon>
@@ -77,7 +77,7 @@
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>StateTransitioningTable.g.cs</LastGenOutput>
     </None>
-    <None Update="Components\IO\Cabac\AssignCtxidxCore.tt">
+    <None Update="Components\IO\Cabac\CtxIdxDerivative\AssignCtxidxCore.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>AssignCtxidxCore.g.cs</LastGenOutput>
     </None>
@@ -130,7 +130,7 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>StateTransitioningTable.tt</DependentUpon>
     </Compile>
-    <Compile Update="Components\IO\Cabac\AssignCtxidxCore.g.cs">
+    <Compile Update="Components\IO\Cabac\CtxIdxDerivative\AssignCtxidxCore.g.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
       <DependentUpon>AssignCtxidxCore.tt</DependentUpon>

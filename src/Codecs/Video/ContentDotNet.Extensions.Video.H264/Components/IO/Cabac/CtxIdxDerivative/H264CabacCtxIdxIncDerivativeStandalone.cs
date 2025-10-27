@@ -1,5 +1,6 @@
-﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
+﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.CtxIdxDerivative
 {
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Components;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Models.Cabac;

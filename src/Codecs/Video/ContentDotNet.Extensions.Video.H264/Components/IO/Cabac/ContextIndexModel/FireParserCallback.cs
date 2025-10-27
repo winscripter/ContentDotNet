@@ -1,5 +1,6 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel
 {
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
 
     /// <summary>

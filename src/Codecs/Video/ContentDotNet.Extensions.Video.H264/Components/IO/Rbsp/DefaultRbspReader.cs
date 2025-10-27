@@ -6,6 +6,7 @@
     using ContentDotNet.Extensions.Video.H264.Components.Common;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions;
     using ContentDotNet.Extensions.Video.H264.Components.SliceDecoding;
+    using ContentDotNet.Extensions.Video.H264.Delegates.IO;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Exceptions;
     using ContentDotNet.Extensions.Video.H264.Extensions;

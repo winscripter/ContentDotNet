@@ -165,8 +165,7 @@
             {
                 Range <<= 1;
                 Offset <<= 1;
-                if (Reader.ReadBit())
-                    Offset += 1;
+                Offset |= Reader.ReadBit().AsInt32();
             }
         }
 
@@ -176,8 +175,7 @@
             {
                 Range <<= 1;
                 Offset <<= 1;
-                if (await Reader.ReadBitAsync())
-                    Offset += 1;
+                Offset |= (await Reader.ReadBitAsync()).AsInt32();
             }
         }
 

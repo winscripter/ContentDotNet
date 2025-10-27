@@ -1,5 +1,6 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Binarization
 {
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Abstractions;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
     using ContentDotNet.Extensions.Video.H264.Utilities;
     using ContentDotNet.Primitives;

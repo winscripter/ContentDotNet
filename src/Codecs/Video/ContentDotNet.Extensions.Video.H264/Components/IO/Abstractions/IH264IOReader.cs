@@ -2,6 +2,7 @@
 {
     using ContentDotNet.BitStream;
     using ContentDotNet.Extensions.Video.H264.Components.SliceDecoding;
+    using ContentDotNet.Extensions.Video.H264.Delegates.IO;
     using ContentDotNet.Extensions.Video.H264.Models;
     using ContentDotNet.Extensions.Video.H264.RbspModels;
 

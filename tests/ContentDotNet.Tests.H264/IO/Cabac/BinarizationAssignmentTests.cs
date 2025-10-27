@@ -1,7 +1,7 @@
 ﻿namespace ContentDotNet.Tests.H264.IO.Cabac
 {
-    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac;
     using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.ContextIndexModel;
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.CtxIdxDerivative;
     using ContentDotNet.Extensions.Video.H264.Enumerations;
 
     public class BinarizationAssignmentTests
