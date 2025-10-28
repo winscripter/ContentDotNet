@@ -32,6 +32,18 @@
 
             Ref<bool> coded_block_flag = new();
 
+            Action<int> setIdx4x4 = (x) =>
+            {
+                if (dv != null)
+                    dv.CodedBlockFlagOptions.Luma4x4BlkIdx = x;
+            };
+
+            Action<int> setIdx8x8 = (x) =>
+            {
+                if (dv != null)
+                    dv.CodedBlockFlagOptions.Luma8x8BlkIdx = x;
+            };
+
             if (!Grabber.GetEntropyCodingModeFlag(rbspState))
                 residual_block = ReadCavlcResidual;
             else
@@ -146,7 +158,10 @@
                             {
                                 // Set levelListIdx
                                 if (dv != null)
+                                {
                                     dv.LevelListIndex = i8x8 * 4 + i4x4;
+                                    dv.CodedBlockFlagOptions.Chroma4x4BlkIdx = i4x4;
+                                }
 
                                 residual_block(ChromaACLevel[iCbCr][i8x8 * 4 + i4x4], Math.Max(0, startIdx - 1), endIdx - 1, 15);
                                 CbfChromaACLevel[iCbCr].Add(coded_block_flag.Value);
@@ -168,6 +183,17 @@
                 receiveCbfForLL4 = CbfCbLevel4x4.Add;
                 receiveCbfForLL8 = CbfCrLevel8x8.Add;
 
+                setIdx4x4 = (x) =>
+                {
+                    if (dv != null)
+                        dv.CodedBlockFlagOptions.Cb4x4BlkIdx = x;
+                };
+                setIdx8x8 = (x) =>
+                {
+                    if (dv != null)
+                        dv.CodedBlockFlagOptions.Cb8x8BlkIdx = x;
+                };
+
                 ResidualLuma(CbIntra16x16DCLevel, CbIntra16x16ACLevel, CbLevel4x4, CbLevel8x8, startIdx, endIdx);
 
                 blockType = ResidualBlockType.Cr16x16DCLevel;
@@ -177,6 +203,17 @@
                 receiveCbfForAC = CbfCrIntra16x16ACLevel.Add;
                 receiveCbfForLL4 = CbfCrLevel4x4.Add;
                 receiveCbfForLL8 = CbfCrLevel8x8.Add;
+
+                setIdx4x4 = (x) =>
+                {
+                    if (dv != null)
+                        dv.CodedBlockFlagOptions.Cr4x4BlkIdx = x;
+                };
+                setIdx8x8 = (x) =>
+                {
+                    if (dv != null)
+                        dv.CodedBlockFlagOptions.Cr8x8BlkIdx = x;
+                };
 
                 ResidualLuma(CrIntra16x16DCLevel, CrIntra16x16ACLevel, CrLevel4x4, CrLevel8x8, startIdx, endIdx);
             }
@@ -232,6 +269,9 @@
                                 if (dv != null)
                                     dv.LevelListIndex = i8x8 * 4 + i4x4;
 
+                                setIdx4x4(i4x4);
+                                setIdx8x8(i8x8);
+
                                 if (MacroblockTraits.MbPartPredMode(mb, 0) == Intra_16x16)
                                 {
                                     blockType = blockBase + 1;
@@ -266,6 +306,9 @@
 
                             if (!Grabber.GetEntropyCodingModeFlag(rbspState) && mb.Rbsp.TransformSize8x8Flag)
                             {
+                                setIdx4x4(i4x4);
+                                setIdx8x8(i8x8);
+
                                 for (int i = 0; i < 16; i++)
                                 {
                                     blockType = blockBase + 3;
@@ -287,6 +330,8 @@
                         // Set levelListIdx
                         if (dv != null)
                             dv.LevelListIndex = i8x8;
+
+                        setIdx8x8(i8x8);
 
                         residual_block(level8x8.Value[i8x8], 4 * startIdx, 4 * endIdx + 3, 64);
                         receiveCbfForLL8(false);
@@ -336,6 +381,7 @@
                     while (i < numCoeff - 1)
                     {
                         significant_coeff_flag[i] = syntaxReader.ReadSignificantCoeffFlag();
+
                         if (significant_coeff_flag[i])
                         {
                             last_significant_coeff_flag[i] = syntaxReader.ReadLastSignificantCoeffFlag();

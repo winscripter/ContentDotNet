@@ -19,8 +19,8 @@
 
         public UnprocessedContextIndexRecord? ContextIndexRecord { get; set; }
 
-        public int CtxIdxSuffix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
-        public int CtxIdxPrefix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int SuffixContextIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
+        public int PrefixContextIndex { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public bool ForcePrefix { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public int BinIndex { get; set; }
         public H264Affix Affix { get; set; }
