@@ -28,8 +28,7 @@ worrying about compatibility, while also making deployment easier. It will work 
  
 > [!NOTE]
 > Almost all of the work went into the H.264 implementation,
-> though, which is still incomplete. The formats/codecs marked with (⚠️) are undone or unimplemented,
-> and we need community help to finish them.
+> though, which is still incomplete. The formats/codecs marked with (⚠️) are undone or unimplemented.
 
 ## Why this project exists?
 With the rise of multimedia content in applications, there is a growing need for robust and efficient libraries to handle various multimedia formats.
