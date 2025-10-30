@@ -29,7 +29,17 @@
         public int BinIndex { get; set; } = 0;
         public H264State State { get; set; }
 
-        public H264Affix Affix { get; set; }
+        private H264Affix affix;
+        public H264Affix Affix
+        {
+            get => affix;
+            set
+            {
+                affix = value;
+                BinIndex = 0;
+                Recompute();
+            }
+        }
         public RecomputeCallback Recompute { get; set; } = () => { };
         public int SuffixContextIndex { get; set; }
         public int PrefixContextIndex { get; set; }
