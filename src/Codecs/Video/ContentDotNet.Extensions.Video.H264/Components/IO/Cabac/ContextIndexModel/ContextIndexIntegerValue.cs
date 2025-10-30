@@ -16,9 +16,9 @@
         public bool UsesDecodeBypass { get; set; }
 
         /// <summary>
-        ///   Has suffix? (defaults to true)
+        ///   Has suffix? (defaults to false)
         /// </summary>
-        public bool HasSuffix { get; set; } = true;
+        public bool HasSuffix { get; set; } = false;
 
         /// <summary>
         ///   Initializes a new instance of the <see cref="ContextIndexIntegerValue"/> class.

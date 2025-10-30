@@ -358,7 +358,7 @@
             }
             else
             {
-                throw new InvalidOperationException("NotAn reached");
+                throw new InvalidOperationException($"NotAn reached. ctxIdxOffset: {ctxIdxOffset}, binIdx: {binIdx}");
             }
             return incrementalCtxIdx + ctxIdxOffset;
         }

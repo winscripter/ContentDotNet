@@ -440,6 +440,7 @@
             if (chromaArrayType is not (0 or 3))
             {
                 decoder.Affix = H264Affix.Suffix;
+                decoder.BinIndex = 0;
                 int suffix = TU(decoder, 2).Value;
                 decoder.Affix = H264Affix.Prefix;
 

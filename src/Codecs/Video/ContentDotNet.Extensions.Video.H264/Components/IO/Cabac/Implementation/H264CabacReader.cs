@@ -49,11 +49,17 @@
 
         private int GetContextIndex(H264SyntaxElement se, ContextIndexAndParser cip, StandaloneCtxIdxIncDerivativeMode mode = 0)
         {
-            int ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetOffset(decoder), decoder.BinIndex, mode);
-            decoder.PrefixContextIndex = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex, mode);
-
-            if (cip.Record.CtxIdxOffset.HasSuffix)
-                decoder.SuffixContextIndex = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex, mode);
+            int ctxIdx;
+            if (decoder.Affix == H264Affix.Prefix)
+            {
+                ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetOffset(decoder), decoder.BinIndex, mode);
+                decoder.PrefixContextIndex = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetPrefixOffset(), decoder.BinIndex, mode);
+            }
+            else
+            {
+                ctxIdx = AssignCtxIdx.Assign(decoder, state, MacroblockInfo, se, cip.GetSuffixOffset(), decoder.BinIndex, mode);
+                decoder.SuffixContextIndex = ctxIdx;
+            }
 
             return ctxIdx;
         }

@@ -254,7 +254,7 @@ namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
 <# first = false; invkIdx++; } } #>
             else
             {
-                throw new InvalidOperationException("NotAn reached");
+                throw new InvalidOperationException($"NotAn reached. ctxIdxOffset: {ctxIdxOffset}, binIdx: {binIdx}");
             }
             return incrementalCtxIdx + ctxIdxOffset;
         }
