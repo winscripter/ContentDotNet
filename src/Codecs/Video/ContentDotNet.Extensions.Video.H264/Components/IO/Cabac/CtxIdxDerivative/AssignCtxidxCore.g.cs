@@ -356,6 +356,10 @@
             {
                 incrementalCtxIdx = InvokeCiiFunction(cd, 10, h264, currMB, binIdx, ctxIdxOffset);
             }
+            else
+            {
+                throw new InvalidOperationException("NotAn reached");
+            }
             return incrementalCtxIdx + ctxIdxOffset;
         }
     }

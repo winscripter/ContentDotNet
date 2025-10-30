@@ -34,6 +34,6 @@
         }
 
         private static float Cu(float u) => Cx(u);
-        private static float Cv(float v) => Cv(v);
+        private static float Cv(float v) => Cx(v);
     }
 }

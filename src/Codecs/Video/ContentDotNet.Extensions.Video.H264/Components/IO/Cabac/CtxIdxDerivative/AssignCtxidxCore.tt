@@ -6,6 +6,7 @@
 <#@ output extension=".g.cs" #>
 namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
 {
+    using ContentDotNet.Extensions.Video.H264.Components.IO.Abstractions.Cabac;
     using ContentDotNet.Extensions.Video.H264.Models;
 
     public static partial class AssignCtxIdx
@@ -14,8 +15,6 @@ namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
         {
             int incrementalCtxIdx = 0;
 <#
-    string na = "na";
-
     // The one with the dot . means it refers to a clause under 9.3.3.1.1.x where x is the number after the dot
     // The one with ! means direct ctxIdx assignment, no waiting.
     // The one with na means Not An.
@@ -253,6 +252,10 @@ namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
                 <#= invkString #>
             }
 <# first = false; invkIdx++; } } #>
+            else
+            {
+                throw new InvalidOperationException("NotAn reached");
+            }
             return incrementalCtxIdx + ctxIdxOffset;
         }
     }
