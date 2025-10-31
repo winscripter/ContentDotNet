@@ -2,7 +2,7 @@
 {
     internal static class InitializationTables
     {
-        private const int na = -1;
+        internal const int na = int.MinValue;
 
         public static readonly Dictionary<int, int[]> RangeTabLPS = new()
         {

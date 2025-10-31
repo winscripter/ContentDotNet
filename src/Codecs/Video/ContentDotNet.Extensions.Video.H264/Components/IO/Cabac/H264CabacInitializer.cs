@@ -36,8 +36,8 @@
         public static H264ContextVariable CreateContextVariable(int ctxIdx, int cabacInitIdc, H264SliceType sliceType, int sliceQPY)
         {
             (int m, int n) = sliceType is H264SliceType.SI or H264SliceType.I ? GetInitDataForIOrSISlice(ctxIdx) : GetInitData(ctxIdx, cabacInitIdc);
-            if (m == -1 || n == -1)
-                throw new H264Exception("m or n is not-an");
+            if (m == na || n == na)
+                throw new H264Exception($"m or n is not-an. ctxIdx={ctxIdx}, initIDC={cabacInitIdc}, slice type={sliceType}, QPY={sliceQPY}");
 
             int preCtxState = IntrinsicFunctions.Clip3(1, 126, ((m * IntrinsicFunctions.Clip3(0, 51, sliceQPY)) >> 4) + n);
             int pStateIdx;

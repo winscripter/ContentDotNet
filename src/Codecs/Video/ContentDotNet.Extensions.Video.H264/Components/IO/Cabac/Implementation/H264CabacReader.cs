@@ -79,13 +79,20 @@
                 ThrowNullParserFailure(se);
             }
 
-            int ctxIdx = GetContextIndex(se, parser);
-            InitializeContextIndex(ctxIdx);
-
-            decoder.Recompute = () =>
+            int ctxIdx = 0;
+            if (se != H264SyntaxElement.EndOfSliceFlag)
             {
                 ctxIdx = GetContextIndex(se, parser);
                 InitializeContextIndex(ctxIdx);
+            }
+
+            decoder.Recompute = () =>
+            {
+                if (se != H264SyntaxElement.EndOfSliceFlag)
+                {
+                    ctxIdx = GetContextIndex(se, parser);
+                    InitializeContextIndex(ctxIdx);
+                }
             };
 
             int binarized = parser.Parse(decoder, sliceType);
@@ -108,13 +115,20 @@
                 ThrowNullParserFailure(se);
             }
 
-            int ctxIdx = GetContextIndex(se, parser, mode);
-            InitializeContextIndex(ctxIdx);
+            int ctxIdx = 0;
+            if (se != H264SyntaxElement.EndOfSliceFlag)
+            {
+                ctxIdx = GetContextIndex(se, parser);
+                InitializeContextIndex(ctxIdx);
+            }
 
             decoder.Recompute = () =>
             {
-                ctxIdx = GetContextIndex(se, parser, mode);
-                InitializeContextIndex(ctxIdx);
+                if (se != H264SyntaxElement.EndOfSliceFlag)
+                {
+                    ctxIdx = GetContextIndex(se, parser);
+                    InitializeContextIndex(ctxIdx);
+                }
             };
 
             int binarized = parser.Parse(decoder, sliceType);
