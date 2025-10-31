@@ -1,9 +1,9 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Components
 {
-    using static ContentDotNet.Extensions.Video.H264.Components.Common.NotAn;
-
     internal static class InitializationTables
     {
+        private const int na = -1;
+
         public static readonly Dictionary<int, int[]> RangeTabLPS = new()
         {
             /*0*/ { 0, new[] { 128, 176, 208, 240 } },

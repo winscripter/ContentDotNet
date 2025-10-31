@@ -46,6 +46,9 @@
 
         public bool ReadBin()
         {
+            if (ContextIndexRecord is not null && ContextIndexRecord.CtxIdxOffset is ContextIndexIntegerValue intVal && intVal.Value == 276)
+                return ArithmeticReader.ReadBin(ArithmeticBinType.Termination, null);
+
             bool useBypass = Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true;
             if (useBypass)
                 return ArithmeticReader.ReadBin(ArithmeticBinType.Bypass, null);
@@ -69,6 +72,9 @@
 
         public async Task<bool> ReadBinAsync()
         {
+            if (ContextIndexRecord is not null && ContextIndexRecord.CtxIdxOffset is ContextIndexIntegerValue intVal && intVal.Value == 276)
+                return ArithmeticReader.ReadBin(ArithmeticBinType.Termination, null);
+
             bool useBypass = Affix == H264Affix.Suffix && ContextIndexRecord?.CtxIdxOffset.UsesDecodeBypass == true;
             if (useBypass)
                 return await ArithmeticReader.ReadBinAsync(ArithmeticBinType.Bypass, null);

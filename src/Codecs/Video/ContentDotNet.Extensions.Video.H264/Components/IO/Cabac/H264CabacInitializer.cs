@@ -1,6 +1,7 @@
 ﻿namespace ContentDotNet.Extensions.Video.H264.Components.IO.Cabac
 {
     using ContentDotNet.Extensions.Video.H264.Enumerations;
+    using ContentDotNet.Extensions.Video.H264.Exceptions;
     using ContentDotNet.Extensions.Video.H264.Models.Cabac;
     using System.Runtime.CompilerServices;
     using static ContentDotNet.Extensions.Video.H264.Components.IO.Cabac.Components.InitializationTables;
@@ -35,6 +36,8 @@
         public static H264ContextVariable CreateContextVariable(int ctxIdx, int cabacInitIdc, H264SliceType sliceType, int sliceQPY)
         {
             (int m, int n) = sliceType is H264SliceType.SI or H264SliceType.I ? GetInitDataForIOrSISlice(ctxIdx) : GetInitData(ctxIdx, cabacInitIdc);
+            if (m == -1 || n == -1)
+                throw new H264Exception("m or n is not-an");
 
             int preCtxState = IntrinsicFunctions.Clip3(1, 126, ((m * IntrinsicFunctions.Clip3(0, 51, sliceQPY)) >> 4) + n);
             int pStateIdx;
