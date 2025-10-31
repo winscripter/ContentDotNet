@@ -36,9 +36,10 @@
             throw new NotImplementedException();
         }
 
+        private int binN;
         public bool ReadBin()
         {
-            return binSequence.ElementAt(BinIndex++);
+            return binSequence.ElementAt(binN++);
         }
 
         public Task<bool> ReadBinAsync()
