@@ -273,8 +273,71 @@
             }
             else // B slice
             {
+                H264Derivative.DeriveNeighboringMacroblocks(CodecContext, out var mbA, out var mbB);
+                if (mbB.Availability) b = (CodecContext.MacroblockUtility?.GetMacroblock(mbB.Address)?.MacroblockLayer.MbType != 0) ? 1 : 0;
+                if (mbA.Availability) a = (CodecContext.MacroblockUtility?.GetMacroblock(mbA.Address)?.MacroblockLayer.MbType != 0) ? 1 : 0;
+                int actCtx = a + b;
+                int actSym = 0;
+                if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, actCtx)))
+                {
+                    if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 4)))
+                    {
+                        if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 5)))
+                        {
+                            actSym = 12;
+                            if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym += 8;
+                            if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym += 4;
+                            if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym += 2;
+                            if (actSym == 24) actSym = 11;
+                            else if (actSym == 26) actSym = 22;
+                            else
+                            {
+                                if (actSym == 22) actSym = 23;
+                                if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym++;
+                            }
+                        }
+                        else
+                        {
+                            actSym = 3;
+                            if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym += 4;
+                            if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym += 2;
+                            if (this.ArithmeticReader.DecodeSymbol(this, this.Contexts.GetMacroblockTypeContextRef(2, 6))) actSym++;
+                        }
+                    }
+                    else
+                    {
+                        actSym = 1 + this.ArithmeticReader.DecodeSymbolAsInt32(this, this.Contexts.GetMacroblockTypeContextRef(2, 6));
+                    }
+                }
 
+                if (actSym <= 23) currMbType = actSym;
+                else
+                {
+                    int modeSym = this.ArithmeticReader.DecodeFinalAsInt32(this);
+                    if (modeSym == 1) currMbType = 48;
+                    else
+                    {
+                        actCtx = 8;
+                        modeSym = this.ArithmeticReader.DecodeSymbolAsInt32(this, this.Contexts.GetMacroblockTypeContextRef(1, actCtx));
+                        actSym = modeSym * 12;
+                        actCtx = 9;
+                        modeSym = this.ArithmeticReader.DecodeSymbolAsInt32(this, this.Contexts.GetMacroblockTypeContextRef(1, actCtx));
+                        if (modeSym != 0)
+                        {
+                            actSym += 4;
+                            modeSym = this.ArithmeticReader.DecodeSymbolAsInt32(this, this.Contexts.GetMacroblockTypeContextRef(1, actCtx));
+                            if (modeSym != 0) actSym += 4;
+                        }
+                        actCtx = 10;
+                        modeSym = this.ArithmeticReader.DecodeSymbolAsInt32(this, this.Contexts.GetMacroblockTypeContextRef(1, actCtx));
+                        actSym = modeSym * 2;
+                        modeSym = this.ArithmeticReader.DecodeSymbolAsInt32(this, this.Contexts.GetMacroblockTypeContextRef(1, actCtx));
+                        actSym += modeSym;
+                        currMbType = actSym;
+                    }
+                }
             }
+            return currMbType;
         }
     }
 }
