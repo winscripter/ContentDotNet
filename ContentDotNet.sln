@@ -39,8 +39,6 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Docs", "Docs\Docs.shproj", 
 EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "webutils", "webutils\webutils.shproj", "{A32B53AA-3C70-4E7B-8FED-A445C7C2E61D}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "theory", "theory\theory.shproj", "{037301AE-2732-4248-8C59-8AB16A5E897F}"
-EndProject
 Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "todo", "todo\todo.shproj", "{45F57B0C-C413-46A1-AE8D-397303EE3ACE}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Protocols", "Protocols", "{B5DB1593-F306-4AB4-A313-6797743A453F}"
@@ -146,7 +144,6 @@ Global
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
-		theory\theory.projitems*{037301ae-2732-4248-8c59-8ab16a5e897f}*SharedItemsImports = 13
 		todo\todo.projitems*{45f57b0c-c413-46a1-ae8d-397303ee3ace}*SharedItemsImports = 13
 		Docs\Docs.projitems*{68a8f7a5-08c4-41e4-ae85-6fd34b7f9dba}*SharedItemsImports = 13
 		webutils\webutils.projitems*{a32b53aa-3c70-4e7b-8fed-a445c7c2e61d}*SharedItemsImports = 13
