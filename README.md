@@ -6,7 +6,10 @@ It is cross-platform and platform-independent, allowing ContentDotNet to run on 
 worrying about compatibility, while also making deployment easier. It will work where .NET can run - yes, even Blazor WebAssembly.
 
 ## What's supported?
-### Formats
+
+> [!NOTE]
+> We've began rewriting the entire framework completely to get a fresh start. Because of this,
+> more components are now incomplete.
 
 - Video:
     - Codecs:
@@ -15,15 +18,15 @@ worrying about compatibility, while also making deployment easier. It will work 
         - MP4 (⚠️)
 - Image:
     - Formats:
-        - BMP
-        - WebP
+        - BMP (⚠️)
+        - WebP (⚠️)
         - JPEG (⚠️)
 - Audio:
     - Codecs:
         - G.722
 - Protocols:
-    - SDP
-    - RTSP
+    - SDP (⚠️)
+    - RTSP (⚠️)
     - RTP (⚠️)
  
 > [!NOTE]
