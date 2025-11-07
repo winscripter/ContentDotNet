@@ -1,0 +1,27 @@
+﻿derive_mb_skip_flag ( ) {
+	derive_neighboring_macroblocks ( )
+	return ((!Avail(mbAddrA) || mbAddrA->mb_skip_flag == 1) ? 0 : 1) + ((!Avail(mbAddrB) || mbAddrB->mb_skip_flag == 1) ? 0 : 1)
+}
+
+derive_mb_field_decoding_flag ( ) {
+	derive_mbaff_neighboring_macroblocks ( )
+	return ((!Avail(mbAddrA) || Frame(mbAddrA)) ? 0 : 1) + ((!Avail(mbAddrB) || Frame(mbAddrB)) ? 0 : 1)
+}
+
+derive_mb_type ( ) {
+	derive_neighboring_macroblocks ( )
+	return (!Avail(mbAddrA) || (ctxIdxOffset == 0 && mbAddrA->mb_type == SI) || (ctxIdxOffset == 3 && mbAddrA->mb_type == I_NxN) || (ctxIdxOffset == 27 && mbAddrA->mb_type == (B_Skip || B_Direct_16x16)) ? 0 : 1)
+		+ (!Avail(mbAddrB) || (ctxIdxOffset == 0 && mbAddrB->mb_type == SI) || (ctxIdxOffset == 3 && mbAddrB->mb_type == I_NxN) || (ctxIdxOffset == 27 && mbAddrB->mb_type == (B_Skip || B_Direct_16x16)) ? 0 : 1)
+}
+
+derive_cbp ( ) {
+	if (ctxIdxOffset == 73) {
+		derive_neighboring_8x8_luma_blocks ( )
+		condTermFlagA = (!Avail(mbAddrA) || mbAddrA->mb_type == I_PCM || (mbAddrA != CurrMbAddr && mbAddrA->mb_type != P_Skip && mbAddrA->mb_type != B_Skip && ((mbAddrA->CodedBlockPatternLuma >> luma8x8BlkIdxA) & 1)) || (mbAddrA == CurrMbAddr && Bin(coded_block_pattern, luma8x8BlkIdxA) != 0)) ? 0 : 1
+		condTermFlagB = (!Avail(mbAddrB) || mbAddrB->mb_type == I_PCM || (mbAddrB != CurrMbAddr && mbAddrB->mb_type != P_Skip && mbAddrB->mb_type != B_Skip && ((mbAddrB->CodedBlockPatternLuma >> luma8x8BlkIdxB) & 1)) || (mbAddrB == CurrMbAddr && Bin(coded_block_pattern, luma8x8BlkIdxB) != 0)) ? 0 : 1
+		return condTermFlagA + 2 * condTermFlagB
+	}
+	else {
+		// TODO
+	}
+}

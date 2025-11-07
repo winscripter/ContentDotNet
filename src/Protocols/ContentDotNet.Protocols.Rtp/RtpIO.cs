@@ -1,6 +1,6 @@
 ﻿namespace ContentDotNet.Protocols.Rtp
 {
-    using ContentDotNet.BitStream;
+    using ContentDotNet.Api.BitStream;
     using ContentDotNet.Protocols.Rtp.Models;
 
     /// <summary>

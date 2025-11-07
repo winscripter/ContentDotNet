@@ -13,6 +13,7 @@
     <Version>1.0.0-alpha6</Version>
     <Description>ContentDotNet abstractions library.</Description>
     <PackageReleaseNotes>Documents and publishes the RTSP package on NuGet</PackageReleaseNotes>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
   </PropertyGroup>
 
   <ItemGroup>

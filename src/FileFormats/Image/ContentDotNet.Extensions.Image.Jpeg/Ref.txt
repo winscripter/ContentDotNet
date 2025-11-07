@@ -1,5 +1,0 @@
-﻿The ITU-T T.81 spec doesn't seem to provide Table Of Contents directly in the PDF, so this is our own TOC.
-
-Page 11 - Symbols
-Page 31 - FDCT, IDCT
-Page 36 - markers

@@ -1,4 +1,5 @@
-﻿using ContentDotNet.BitStream;
+﻿using ContentDotNet.Api.BitStream;
+using ContentDotNet.BitStream;
 
 namespace ContentDotNet.Abstractions.Tests;
 

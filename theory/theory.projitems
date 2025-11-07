@@ -11,4 +11,7 @@
   <ItemGroup>
     <Content Include="$(MSBuildThisFileDirectory)h264\encode-motionvectors-pseudocode.txt" />
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)h264\CABAC Parsing Processes\" />
+  </ItemGroup>
 </Project>

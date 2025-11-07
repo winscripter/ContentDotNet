@@ -1,0 +1,59 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="Codecs\H264\Components\H264PredictionModes.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>H264PredictionModes.tt</DependentUpon>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Codecs\H264\Components\H264PredictionModes.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>H264PredictionModes.g.cs</LastGenOutput>
+    </None>
+    <None Update="Codecs\H264\Extensions\SemanticVariableDerivative.tt">
+      <LastGenOutput>SemanticVariableDerivative.g.cs</LastGenOutput>
+      <Generator>TextTemplatingFileGenerator</Generator>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Update="Codecs\H264\Components\H264PredictionModes.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>H264PredictionModes.tt</DependentUpon>
+    </Compile>
+    <Compile Update="Codecs\H264\Components\Traits.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+    <Compile Update="Codecs\H264\Extensions\SemanticVariableDerivative.g.cs">
+      <DependentUpon>SemanticVariableDerivative.tt</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Formats\Mkv\" />
+    <Folder Include="Formats\Mp4\" />
+  </ItemGroup>
+
+</Project>

@@ -1,4 +1,4 @@
-﻿using ContentDotNet.Primitives;
+﻿using ContentDotNet.Api.Primitives;
 
 namespace ContentDotNet.Abstractions.Tests.Primitives;
 
