@@ -53,8 +53,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Protocols.Sdp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UncompressedH264Encoder", "tools\UncompressedH264Encoder\UncompressedH264Encoder.csproj", "{656C7E6E-C908-44FC-971F-43C8A7D7AF02}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "pseudocode", "pseudocode\pseudocode.shproj", "{8F4B1655-5991-4938-ACB1-20BBE66CD6E7}"
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Video", "src\ContentDotNet.Video\ContentDotNet.Video.csproj", "{DEE445AB-A2CA-4ADE-BAFD-F3D01D4AACAD}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Image", "src\ContentDotNet.Image\ContentDotNet.Image.csproj", "{58219D7C-720C-4778-AACD-C382B352D420}"
@@ -151,7 +149,6 @@ Global
 		theory\theory.projitems*{037301ae-2732-4248-8c59-8ab16a5e897f}*SharedItemsImports = 13
 		todo\todo.projitems*{45f57b0c-c413-46a1-ae8d-397303ee3ace}*SharedItemsImports = 13
 		Docs\Docs.projitems*{68a8f7a5-08c4-41e4-ae85-6fd34b7f9dba}*SharedItemsImports = 13
-		pseudocode\pseudocode.projitems*{8f4b1655-5991-4938-acb1-20bbe66cd6e7}*SharedItemsImports = 13
 		webutils\webutils.projitems*{a32b53aa-3c70-4e7b-8fed-a445c7c2e61d}*SharedItemsImports = 13
 	EndGlobalSection
 EndGlobal
