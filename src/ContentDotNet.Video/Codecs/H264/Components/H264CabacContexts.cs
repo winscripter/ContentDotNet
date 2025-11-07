@@ -11,6 +11,9 @@
         private H264CabacContextVariable[][] MbType { get; set; } = JaggedArrayFactory.Create2D<H264CabacContextVariable>(3, 11);
         private H264CabacContextVariable[][] MvContexts { get; set; } = JaggedArrayFactory.Create2D<H264CabacContextVariable>(2, 10);
 
+        // Texture
+        private H264CabacContextVariable[] IntraPredModeContexts { get; set; } = new H264CabacContextVariable[2];
+
         /// <summary>
         ///   Returns the reference to the motion vector ctx.
         /// </summary>
@@ -33,6 +36,17 @@
         public ref H264CabacContextVariable GetMacroblockTypeContextRef(int x, int y)
         {
             return ref MbType[x][y];
+        }
+
+        /// <summary>
+        ///   Returns the reference to the intra prediction mode ctx.
+        /// </summary>
+        /// <param name="index"></param>
+        /// <returns></returns>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public ref H264CabacContextVariable GetIntraPredModeContext(int index)
+        {
+            return ref IntraPredModeContexts[index];
         }
     }
 }
