@@ -184,9 +184,15 @@
             int GetRefIdx(int x, int y) => CodecContext.CurrentMacroblock!.SubMacroblocks![x][y].ReferenceIndices[list];
         }
 
-        private int DecodeUnaryExpGolombMotionVector(ref H264CabacContextVariable cv, int maxBins)
+        private int DecodeUnaryExpGolombMotionVector(ref H264CabacContextVariable contextVariable, ref H264CabacContextVariable nextContextVariable, int maxBins)
         {
+            int symbol = this.ArithmeticReader.DecodeSymbolAsInt32(ref contextVariable);
+            if (symbol == 0) return 0;
+            else
+            {
+                symbol = 0;
 
+            }
         }
     }
 }
