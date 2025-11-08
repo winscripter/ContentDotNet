@@ -1,5 +1,6 @@
 ﻿namespace ContentDotNet.Video
 {
+    using ContentDotNet.Api;
     using ContentDotNet.Api.BitStream;
     using ContentDotNet.Api.Colors;
     using ContentDotNet.Api.Pictures;
@@ -9,6 +10,11 @@
     /// </summary>
     public interface IVideoCodecDecoder<TPixelFormat> where TPixelFormat : unmanaged, IColor
     {
+        /// <summary>
+        ///   The configuration.
+        /// </summary>
+        Configuration Configuration { get; set; }
+
         /// <summary>
         ///   Is async supported?
         /// </summary>

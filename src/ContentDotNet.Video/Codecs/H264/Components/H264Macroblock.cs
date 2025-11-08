@@ -47,6 +47,11 @@
         /// </summary>
         public bool IsField => MbaffEnabled && MbFieldDecodingFlag;
 
+        /// <summary>
+        ///   The sub-macroblocks
+        /// </summary>
+        public H264SubMacroblock[][]? SubMacroblocks { get; set; }
+
         public H264Macroblock(RbspMacroblockLayer macroblockLayer, bool mbaffEnabled, bool mbFieldDecodingFlag, bool skipped, int index, H264SliceType sliceType)
         {
             MacroblockLayer = macroblockLayer;

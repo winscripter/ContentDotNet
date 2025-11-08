@@ -5,6 +5,15 @@ creating them, and inspecting or editing their contents. It provides a user-frie
 It is cross-platform and platform-independent, allowing ContentDotNet to run on a wide range of systems without
 worrying about compatibility, while also making deployment easier. It will work where .NET can run - yes, even Blazor WebAssembly.
 
+It's:
+- ✅ Reliable: Real world releases are likely going to be able to process most kinds of formats and codecs without issues.
+- 💨 Fast: Uses techniques like SIMD and Parallelism (if possible on the active environment) to process all kinds of multimedia as fast as possible
+- ❤️ Well maintained: If you ever encounter an issue or have a suggestion, you're more than welcome to create an Issue post. We can also answer questions or just have a general conversation in Discussions.
+- 🧠 Memory efficient: Uses techniques like `stackalloc` or structs to allocate as least memory as possible. Some codecs like H.264 might still result in lots of memory allocations, but this is the case for every other codec - there's no way around it, it's how codecs like H.264 are designed.
+- 📑 Documented: Ensures that anyone interested in this framework can get started right away.
+- 🧹 Got a user-friendly API: Provides ways to use the file formats, codecs and protocols without getting **too** techy - just basic concepts like "decode a frame" or "get frames per second". But it also allows access to internal components too! In H.264 for instance, it allows both a user-friendly API and direct access to internal components, like CABAC decoding or Intra prediction.
+- 🪪 Completely free: It is licensed under the MIT License, and the project itself does not have a fee to use it - and it is open-source, too. Though, if you're using specific patented technologies like H.264, you'll have to obtain a license from the creators of these technologies, since they're patented. Note that this is the case for any other implementation of patented technologies - it's not explicitly a creator of the implementation can control - use of any implementation will require a license, that's said to be by the creators of patented multimedia codecs/protocols/formats themselves. But for **some** other general multimedia technologies like MP4, G.722 or RTSP, they're royalty-free. Before using a multimedia format, codec or protocol, be sure to check if it's royalty free.
+
 ## What's supported?
 
 > [!NOTE]
