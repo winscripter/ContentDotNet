@@ -42,7 +42,7 @@
             if (actSym != 0)
             {
                 ctx = 5 * mvdComponent;
-                actSym = DecodeUnaryExpGolombMotionVector(this, ref this.Contexts.GetMotionVectorContextRef(1, ctx), 3) + 1;
+                actSym = DecodeUnaryExpGolombMotionVector(ref this.Contexts.GetMotionVectorContextRef(1, ctx), 3) + 1;
 
                 if (this.ArithmeticReader.DecodeSymbolWithEqualProbability())
                     actSym = -actSym;
@@ -95,7 +95,7 @@
             if (actSym != 0)
             {
                 actCtx = 5 * mvdComponent;
-                actSym = DecodeUnaryExpGolombMotionVector(this, this.Contexts.GetMotionVectorContextRef(1, actCtx), 3) + 1;
+                actSym = DecodeUnaryExpGolombMotionVector(ref this.Contexts.GetMotionVectorContextRef(1, actCtx), 3) + 1;
 
                 if (this.ArithmeticReader.DecodeSymbolWithEqualProbability())
                     actSym = -actSym;
@@ -182,6 +182,11 @@
             return actSym;
 
             int GetRefIdx(int x, int y) => CodecContext.CurrentMacroblock!.SubMacroblocks![x][y].ReferenceIndices[list];
+        }
+
+        private int DecodeUnaryExpGolombMotionVector(ref H264CabacContextVariable cv, int maxBins)
+        {
+
         }
     }
 }
