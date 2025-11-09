@@ -6,7 +6,6 @@
     using ContentDotNet.Audio;
     using ContentDotNet.Audio.Codecs.G722.Internal;
     using ContentDotNet.Audio.Codecs.G722.Internal.Components;
-    using System;
 
     /// <summary>
     ///   The G.722 decoder.

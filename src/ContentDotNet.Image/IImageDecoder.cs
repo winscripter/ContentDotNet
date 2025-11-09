@@ -1,12 +1,13 @@
-﻿namespace ContentDotNet.Video
+﻿namespace ContentDotNet.Image
 {
     using ContentDotNet.Api.BitStream;
+
     using ContentDotNet.Api.Pictures;
 
     /// <summary>
-    ///   Decoder for video codecs.
+    ///   Decoder for image formats.
     /// </summary>
-    public interface IVideoCodec
+    public interface IImageDecoder
     {
         /// <summary>
         ///   Is async supported?
@@ -14,30 +15,25 @@
         bool SupportsAsync { get; }
 
         /// <summary>
-        ///   Codec technical name (i.e. H264)
+        ///   Image technical name (i.e. PNG)
         /// </summary>
         string Name { get; }
 
         /// <summary>
-        ///   Actual codec name (i.e. H.264 or ITU-T H.264)
+        ///   Actual format name (i.e. Bitmap or Portable Network Graphics (PNG))
         /// </summary>
         string DisplayName { get; }
 
         /// <summary>
-        ///   The backing bit-stream.
-        /// </summary>
-        BitStreamReader BitStream { get; }
-
-        /// <summary>
-        ///   Decodes the picture.
+        ///   Decodes the image.
         /// </summary>
         /// <returns>The picture.</returns>
-        IPicture DecodePicture();
+        IPicture Decode();
 
         /// <summary>
-        ///   Asynchronously decodes the picture.
+        ///   Asynchronously decodes the image.
         /// </summary>
         /// <returns>The decoded picture.</returns>
-        Task<IPicture> DecodePictureAsync();
+        Task<IPicture> DecodeAsync();
     }
 }

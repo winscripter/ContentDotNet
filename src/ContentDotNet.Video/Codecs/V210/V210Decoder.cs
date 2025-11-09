@@ -8,8 +8,6 @@
 
     public class V210Decoder : IVideoCodec
     {
-        public Configuration Configuration { get; set; } = new();
-
         public bool SupportsAsync => true;
 
         public string Name => "V210";
