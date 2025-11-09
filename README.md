@@ -18,31 +18,51 @@ It's:
 
 ## What's supported?
 
-> [!NOTE]
-> We've began rewriting the entire framework completely to get a fresh start. Because of this,
-> more components are now incomplete.
+All of the file formats in the "In-progress formats" are expected to be implemented by version 1.0. File formats
+in "Postponed formats" are expected to be implemented by subsequent versions.
 
-- Video:
-    - Codecs:
-        - H.264 (⚠️)
-    - Formats:
-        - MP4 (⚠️)
-- Image:
-    - Formats:
-        - BMP (⚠️)
-        - WebP (⚠️)
-        - JPEG (⚠️)
-- Audio:
-    - Codecs:
-        - G.722
-- Protocols:
-    - SDP (⚠️)
-    - RTSP (⚠️)
-    - RTP (⚠️)
- 
-> [!NOTE]
-> Almost all of the work went into the H.264 implementation,
-> though, which is still incomplete. The formats/codecs marked with (⚠️) are undone or unimplemented.
+### Currently supported formats
+These are now done.
+
+| Type | Sub-type | Name | Notes |
+| ---- | -------- | ---- | ----- |
+| Codec | Video | V210 | Decoder only; supports async |
+| File format | Audio | OGG | Includes a super easy-to-use System.IO.Stream subset for reading/writing audio data directly |
+| File format | Video | WebP | Supports multiplexing and demultiplexing content, both synchronously and asynchronously |
+| Codec | Audio | ITU-T G.722 | Decoder only &amp; not tested |
+| File format | Audio | WAV (Wave) | Reader &amp; writer |
+| Codec | Video | V210 | Decoder only |
+| File format | Subtitle | SSA (Advanced Substation Alpha) | Supports reading and writing + async support |
+| File format | Subtitle | SRT (SubRip) | Supports reading and writing + async support |
+
+### In-progress formats
+We're actively working on those.
+
+| Type | Sub-type | Name | Complexity |
+| ---- | -------- | ---- | ----- |
+| File format | Video | MP4, HEIF, HEIC, MOV, M4V, M4A | Might take some time due to large number of boxes in the ISOBMFF format, but we'll get there |
+| File format | Video, audio | WMV, WMA | These two Microsoft Windows file formats are based on the ASF container, which can take some time to implement |
+| File format | Audio | FLAC | Has many kinds of metadata blocks |
+| File format | Image | JPEG | Uses Huffman and DCT compression which can take some time to implement |
+| File format | Image | GIF | Compresses pixel data |
+| File format | Image | PNG | Compresses pixel data, may support interlacing, supports many chunks, which all have to be implemented |
+| File format | Image | BMP | We're implementing this next |
+| File format | Video | AVI | We'll implement this after H.264 |
+| File format | Video | MKV | We'll have to implement the EBML container first, as EBML is what MKV files consist of |
+| File format | Subtitle | WebVTT | |
+| File format | Subtitle | TTML | |
+| Codec | Video | H.264 | Our top priority. Extremely complex: uses DCT, Intra/Inter prediction, arithmetic coding, deblocking filter, 5 types of frames (slices), etc. We're using JM Reference Software to finish the arithmetic coding part alone. This will take a long time to implement, but it is expected to be done by 1.0. |
+
+### Postponed formats
+We will work on them sometime later.
+
+| Type | Sub-type | Name | Notes |
+| ---- | -------- | ---- | ----- |
+| File format | Video, audio, ... | MPEG-TS | Includes 60 types of descriptors and we have to implement readers/writers (both sync and async) for all of them |
+| Codec | Video | H.262 (better known as MPEG-2 Video) | Mostly used in Blu-ray discs, but not used for real-world video anymore |
+| Codec | Video | VP8 | Used in WebP and WebM files |
+| Codec | Audio | G.726 | Popular in the VoIP world |
+| Codec | Audio | G.711 | Popular in the VoIP world |
 
 ## Why this project exists?
 With the rise of multimedia content in applications, there is a growing need for robust and efficient libraries to handle various multimedia formats.

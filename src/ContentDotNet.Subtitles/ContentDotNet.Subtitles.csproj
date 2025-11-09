@@ -11,7 +11,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Formats\Lrc\" />
     <Folder Include="Formats\Ttml\" />
     <Folder Include="Formats\WebVtt\" />
   </ItemGroup>
