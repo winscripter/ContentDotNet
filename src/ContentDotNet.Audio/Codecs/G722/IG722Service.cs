@@ -14,13 +14,13 @@
         /// </summary>
         /// <param name="reader">The bit-stream reader</param>
         /// <returns>The G.722 decoder</returns>
-        IPcmAudioCodec CreateDecoder(BitStreamReader reader);
+        IAudioCodec CreateDecoder(BitStreamReader reader);
 
         /// <summary>
         ///   Creates a G.722 encoder.
         /// </summary>
         /// <param name="writer">The bit-stream writer</param>
         /// <returns>The G.722 encoder</returns>
-        IPcmAudioCodecWriter CreateEncoder(BitStreamWriter writer);
+        IAudioCodecWriter CreateEncoder(BitStreamWriter writer);
     }
 }

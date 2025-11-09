@@ -11,11 +11,11 @@
     /// <summary>
     ///   The G.722 decoder.
     /// </summary>
-    public class G722Decoder : IPcmAudioCodec
+    public class G722Decoder : IAudioCodec
     {
         private readonly G722DecoderInternal _internalDecoder = new(new SbAdpcm(new Variables()));
 
-        /// <inheritdoc cref="IPcmAudioCodec.SampleRate" />
+        /// <inheritdoc cref="IAudioCodec.SampleRate" />
         public int SampleRate
         {
             get => 16000;
@@ -25,19 +25,19 @@
             }
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.BitRate" />
+        /// <inheritdoc cref="IAudioCodec.BitRate" />
         public int BitRate { get; set; } = DataSize.Kilobytes(64);
 
-        /// <inheritdoc cref="IPcmAudioCodec.CanChangeBitRate" />
+        /// <inheritdoc cref="IAudioCodec.CanChangeBitRate" />
         public bool CanChangeBitRate => true;
 
-        /// <inheritdoc cref="IPcmAudioCodec.CanChangeSampleRate" />
+        /// <inheritdoc cref="IAudioCodec.CanChangeSampleRate" />
         public bool CanChangeSampleRate => false;
 
-        /// <inheritdoc cref="IPcmAudioCodec.Stream" />
+        /// <inheritdoc cref="IAudioCodec.Stream" />
         public BitStreamReader Stream { get; }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ChannelCount" />
+        /// <inheritdoc cref="IAudioCodec.ChannelCount" />
         public int ChannelCount { get; set; }
 
         /// <inheritdoc cref="ICodecWithNames.Name" />
@@ -55,7 +55,7 @@
             GC.SuppressFinalize(this);
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamples(Span{short}, int)" />
+        /// <inheritdoc cref="IAudioCodec.ReadInterleavedSamples(Span{short}, int)" />
         public void ReadInterleavedSamples(Span<short> samplesBuffer, int length)
         {
             int currOffset = 0;
@@ -69,7 +69,7 @@
             }
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamples(Span{byte}, int)" />
+        /// <inheritdoc cref="IAudioCodec.ReadInterleavedSamples(Span{byte}, int)" />
         public void ReadInterleavedSamples(Span<byte> samplesBuffer, int length)
         {
             int currOffset = 0;
@@ -83,14 +83,14 @@
             }
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadSamples(Span{short})" />
+        /// <inheritdoc cref="IAudioCodec.ReadSamples(Span{short})" />
         public void ReadSamples(Span<short> samplesBuffer)
         {
             for (int i = 0; i < samplesBuffer.Length; i++)
                 samplesBuffer[i] = ReadSample();
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadSamples(Span{byte})" />
+        /// <inheritdoc cref="IAudioCodec.ReadSamples(Span{byte})" />
         public void ReadSamples(Span<byte> samplesBuffer)
         {
             for (int i = 0; i < samplesBuffer.Length; i++)
@@ -107,21 +107,21 @@
             return _internalDecoder.DecodeSample((short)await Stream.ReadBitsAsync(16));
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadSamplesAsync(short[])" />
+        /// <inheritdoc cref="IAudioCodec.ReadSamplesAsync(short[])" />
         public async Task ReadSamplesAsync(short[] samplesBuffer)
         {
             for (int i = 0; i < samplesBuffer.Length; i++)
                 samplesBuffer[i] = await ReadSampleAsync();
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadSamplesAsync(byte[])" />
+        /// <inheritdoc cref="IAudioCodec.ReadSamplesAsync(byte[])" />
         public async Task ReadSamplesAsync(byte[] samplesBuffer)
         {
             for (int i = 0; i < samplesBuffer.Length; i++)
                 samplesBuffer[i] = (byte)await ReadSampleAsync();
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamplesAsync(short[], int)" />
+        /// <inheritdoc cref="IAudioCodec.ReadInterleavedSamplesAsync(short[], int)" />
         public async Task ReadInterleavedSamplesAsync(short[] samplesBuffer, int length)
         {
             int currOffset = 0;
@@ -135,7 +135,7 @@
             }
         }
 
-        /// <inheritdoc cref="IPcmAudioCodec.ReadInterleavedSamplesAsync(byte[], int)" />
+        /// <inheritdoc cref="IAudioCodec.ReadInterleavedSamplesAsync(byte[], int)" />
         public async Task ReadInterleavedSamplesAsync(byte[] samplesBuffer, int length)
         {
             int currOffset = 0;

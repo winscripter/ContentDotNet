@@ -7,7 +7,7 @@
     /// <summary>
     ///   Decoder for video codecs.
     /// </summary>
-    public interface IVideoCodecDecoder
+    public interface IVideoCodec
     {
         /// <summary>
         ///   The configuration.
