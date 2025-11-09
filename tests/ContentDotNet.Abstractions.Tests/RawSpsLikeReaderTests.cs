@@ -1,6 +1,6 @@
 ﻿namespace ContentDotNet.Abstractions.Tests
 {
-    using ContentDotNet.BitStream;
+    using ContentDotNet.Api.BitStream;
 
     public class RawSpsLikeReaderTests
     {
