@@ -29,7 +29,7 @@ These are now done.
 | Codec | Video | V210 | Decoder only; supports async |
 | File format | Audio | OGG | Includes a super easy-to-use System.IO.Stream subset for reading/writing audio data directly |
 | File format | Video | WebP | Supports multiplexing and demultiplexing content, both synchronously and asynchronously |
-| Codec | Audio | ITU-T G.722 | Decoder only &amp; not tested |
+| Codec | Audio | ITU-T G.722 | Decoder only &amp; not tested &amp; zero-allocation |
 | File format | Audio | WAV (Wave) | Reader &amp; writer |
 | File format | Subtitle | SSA (Advanced Substation Alpha) | Supports reading and writing + async support |
 | File format | Subtitle | SRT (SubRip) | Supports reading and writing + async support |
