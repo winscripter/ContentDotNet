@@ -42,7 +42,7 @@
             if (actSym != 0)
             {
                 ctx = 5 * mvdComponent;
-                actSym = DecodeUnaryExpGolombMotionVector(ref this.Contexts.GetMotionVectorContextRef(1, ctx), 3) + 1;
+                actSym = DecodeUnaryExpGolombMotionVector(ctx, 1, 3) + 1;
 
                 if (this.ArithmeticReader.DecodeSymbolWithEqualProbability())
                     actSym = -actSym;
@@ -95,7 +95,7 @@
             if (actSym != 0)
             {
                 actCtx = 5 * mvdComponent;
-                actSym = DecodeUnaryExpGolombMotionVector(ref this.Contexts.GetMotionVectorContextRef(1, actCtx), 3) + 1;
+                actSym = DecodeUnaryExpGolombMotionVector(actCtx, 1, 3) + 1;
 
                 if (this.ArithmeticReader.DecodeSymbolWithEqualProbability())
                     actSym = -actSym;
@@ -178,20 +178,71 @@
             }
             int actCtx = a + b;
             int actSym = this.ArithmeticReader.DecodeSymbolAsInt32(ref this.Contexts.GetReferenceIndexContextRef(0, actCtx));
-            if (actSym != 0) actSym = DecodeUnary(this, this.Contexts.GetReferenceIndexContextRef(0, 4), 1) + 1;
+            if (actSym != 0) actSym = DecodeUnaryForRefIdx(4, 0, 1) + 1;
             return actSym;
 
             int GetRefIdx(int x, int y) => CodecContext.CurrentMacroblock!.SubMacroblocks![x][y].ReferenceIndices[list];
         }
 
-        private int DecodeUnaryExpGolombMotionVector(ref H264CabacContextVariable contextVariable, ref H264CabacContextVariable nextContextVariable, int maxBins)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int DecodeUnaryExpGolombMotionVector(int ctxBase, int ctxLane, int maxBins)
         {
-            int symbol = this.ArithmeticReader.DecodeSymbolAsInt32(ref contextVariable);
+            int symbol = this.ArithmeticReader.DecodeSymbolAsInt32(ref this.Contexts.GetMotionVectorContextRef(ctxLane, ctxBase));
             if (symbol == 0) return 0;
             else
             {
                 symbol = 0;
+                ctxBase++;
+                int l, bin = 1, k = 1, expStart = 8;
+                do
+                {
+                    l = this.ArithmeticReader.DecodeSymbolAsInt32(ref this.Contexts.GetMotionVectorContextRef(ctxLane, ctxBase));
+                    if (++bin == 2) ctxBase++;
+                    if (bin == maxBins) ctxBase++;
+                    symbol++;
+                    k++;
+                }
+                while (l != 0 && k != expStart);
+                if (l != 0) symbol += DecodeExpGolombWithEqualProbability(3) + 1;
+                return symbol;
+            }
+        }
 
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int DecodeExpGolombWithEqualProbability(int k)
+        {
+            int l, symbol = 0, binarySymbol = 0;
+            do
+            {
+                l = this.ArithmeticReader.DecodeSymbolWithEqualProbabilityAsInt32();
+                if (l == 1)
+                {
+                    symbol += 1 << k;
+                    k++;
+                }
+            }
+            while (l != 0);
+            while (k--.AsBoolean()) if (this.ArithmeticReader.DecodeSymbolWithEqualProbability()) binarySymbol |= 1 << k;
+            return symbol + binarySymbol;
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        private int DecodeUnaryForRefIdx(int ctxBase, int ctxLane, int ctxOffset)
+        {
+            int symbol = this.ArithmeticReader.DecodeSymbolAsInt32(ref this.Contexts.GetReferenceIndexContextRef(ctxLane, ctxBase));
+            if (symbol == 0) return 0;
+            else
+            {
+                int l;
+                symbol = 0;
+                ctxBase += ctxOffset;
+                do
+                {
+                    l = this.ArithmeticReader.DecodeSymbolAsInt32(ref this.Contexts.GetReferenceIndexContextRef(ctxLane, ctxBase));
+                    symbol++;
+                }
+                while (l != 0);
+                return symbol;
             }
         }
     }

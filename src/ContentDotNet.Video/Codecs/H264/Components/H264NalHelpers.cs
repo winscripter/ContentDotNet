@@ -1,7 +1,6 @@
 ﻿namespace ContentDotNet.Video.Codecs.H264.Components
 {
     using ContentDotNet.Api.BitStream;
-    using ContentDotNet.BitStream;
 
     /// <summary>
     ///   Utilities that assist with NAL units.

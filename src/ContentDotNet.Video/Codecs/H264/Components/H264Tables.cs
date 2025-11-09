@@ -96,5 +96,7 @@
         };
 
         public static ReadOnlySpan<int> RenormTable32 => [6, 5, 4, 4, 3, 3, 3, 3, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+        public static ReadOnlySpan<int> CabacResidualBlockMaxPos => [15, 14, 63, 31, 31, 15, 3, 14, 7, 15, 15, 14, 63, 31, 31, 15, 15, 14, 63, 31, 31, 15];
     }
 }

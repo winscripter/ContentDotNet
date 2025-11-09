@@ -22,11 +22,6 @@
 
         #region Structures
 
-        public RbspSequenceParameterSetData ParseSps()
-        {
-
-        }
-
         #endregion
     }
 }

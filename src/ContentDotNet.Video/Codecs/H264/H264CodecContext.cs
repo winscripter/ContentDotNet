@@ -49,7 +49,10 @@
         /// </summary>
         public Point MacroblockIndex { get; set; }
 
-        public H264SliceType SliceType => H264SliceTypes.
+        /// <summary>
+        ///   The slice type.
+        /// </summary>
+        public H264SliceType SliceType => H264SliceTypes.Derive((int)this.SliceHeader!.SliceType);
 
         /// <summary>
         ///   Non-nullable macroblock utility

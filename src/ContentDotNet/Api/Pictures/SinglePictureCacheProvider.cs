@@ -1,7 +1,7 @@
 ﻿namespace ContentDotNet.Api.Pictures
 {
     using ContentDotNet.Api.Colors;
-    using ContentDotNet.Pictures.Implementation;
+    using ContentDotNet.Api.Pictures.Implementation;
 
     /// <summary>
     ///   Single picture cache provider

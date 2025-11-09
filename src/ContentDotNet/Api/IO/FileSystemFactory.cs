@@ -1,6 +1,4 @@
-﻿using ContentDotNet.IO;
-
-namespace ContentDotNet.Api.IO;
+﻿namespace ContentDotNet.Api.IO;
 
 /// <summary>
 ///   The file system factory.
