@@ -10,4 +10,11 @@
     <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Formats\Lrc\" />
+    <Folder Include="Formats\Ttml\" />
+    <Folder Include="Formats\WebVtt\" />
+    <Folder Include="Formats\Ssa\" />
+  </ItemGroup>
+
 </Project>
