@@ -1,6 +1,7 @@
 ﻿namespace ContentDotNet.Subtitles.Formats.SubRip
 {
     using ContentDotNet.Api;
+    using ContentDotNet.Subtitles.Formats.Ssa;
     using System.Drawing;
     using System.IO;
     using System.Text;

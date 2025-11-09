@@ -14,7 +14,6 @@
     <Folder Include="Formats\Lrc\" />
     <Folder Include="Formats\Ttml\" />
     <Folder Include="Formats\WebVtt\" />
-    <Folder Include="Formats\Ssa\" />
   </ItemGroup>
 
 </Project>
