@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Folder Include="Formats\" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
