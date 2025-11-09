@@ -31,7 +31,6 @@ These are now done.
 | File format | Video | WebP | Supports multiplexing and demultiplexing content, both synchronously and asynchronously |
 | Codec | Audio | ITU-T G.722 | Decoder only &amp; not tested |
 | File format | Audio | WAV (Wave) | Reader &amp; writer |
-| Codec | Video | V210 | Decoder only |
 | File format | Subtitle | SSA (Advanced Substation Alpha) | Supports reading and writing + async support |
 | File format | Subtitle | SRT (SubRip) | Supports reading and writing + async support |
 
