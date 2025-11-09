@@ -1,6 +1,7 @@
-﻿using ContentDotNet.Api.BitStream;
+﻿namespace ContentDotNet.Audio;
 
-namespace ContentDotNet.Api.Abstractions;
+using ContentDotNet.Api.Abstractions;
+using ContentDotNet.Api.BitStream;
 
 /// <summary>
 ///   PCM audio codec writer.

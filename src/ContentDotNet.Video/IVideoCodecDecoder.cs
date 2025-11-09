@@ -2,13 +2,12 @@
 {
     using ContentDotNet.Api;
     using ContentDotNet.Api.BitStream;
-    using ContentDotNet.Api.Colors;
     using ContentDotNet.Api.Pictures;
 
     /// <summary>
     ///   Decoder for video codecs.
     /// </summary>
-    public interface IVideoCodecDecoder<TPixelFormat> where TPixelFormat : unmanaged, IColor
+    public interface IVideoCodecDecoder
     {
         /// <summary>
         ///   The configuration.
@@ -39,12 +38,12 @@
         ///   Decodes the picture.
         /// </summary>
         /// <returns>The picture.</returns>
-        Picture<TPixelFormat> DecodePicture();
+        IPicture DecodePicture();
 
         /// <summary>
         ///   Asynchronously decodes the picture.
         /// </summary>
         /// <returns>The decoded picture.</returns>
-        Task<Picture<TPixelFormat>> DecodePictureAsync();
+        Task<IPicture> DecodePictureAsync();
     }
 }

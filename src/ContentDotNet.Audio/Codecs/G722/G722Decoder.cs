@@ -3,6 +3,7 @@
     using ContentDotNet.Api.Abstractions;
     using ContentDotNet.Api.BitStream;
     using ContentDotNet.Api.Primitives;
+    using ContentDotNet.Audio;
     using ContentDotNet.Audio.Codecs.G722.Internal;
     using ContentDotNet.Audio.Codecs.G722.Internal.Components;
     using System;

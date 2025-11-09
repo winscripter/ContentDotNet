@@ -2,6 +2,7 @@
 {
     using ContentDotNet.Api.Abstractions;
     using ContentDotNet.Api.BitStream;
+    using ContentDotNet.Audio;
 
     /// <summary>
     ///   Built-in G.722 service
