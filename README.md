@@ -33,6 +33,7 @@ These are now done.
 | File format | Audio | WAV (Wave) | Reader &amp; writer |
 | File format | Subtitle | SSA (Advanced Substation Alpha) | Supports reading and writing + async support |
 | File format | Subtitle | SRT (SubRip) | Supports reading and writing + async support |
+| File format | Image | BMP | Decoding only |
 
 ### In-progress formats
 We're actively working on those.
@@ -45,7 +46,6 @@ We're actively working on those.
 | File format | Image | JPEG | Uses Huffman and DCT compression which can take some time to implement |
 | File format | Image | GIF | Compresses pixel data |
 | File format | Image | PNG | Compresses pixel data, may support interlacing, supports many chunks, which all have to be implemented |
-| File format | Image | BMP | We're implementing this next |
 | File format | Video | AVI | We'll implement this after H.264 |
 | File format | Video | MKV | We'll have to implement the EBML container first, as EBML is what MKV files consist of |
 | File format | Subtitle | WebVTT | |
