@@ -91,8 +91,9 @@ See [Docs/README.md](Docs/README.md).
 | Package Name | Package URL (NuGet) |
 | ------------ | ------------------- |
 | ContentDotNet | [https://www.nuget.org/packages/ContentDotNet](https://www.nuget.org/packages/ContentDotNet) |
-| ContentDotNet.Protocols.Sdp | [https://www.nuget.org/packages/ContentDotNet.Protocols.Sdp](https://www.nuget.org/packages/ContentDotNet.Protocols.Sdp) |
-| ContentDotNet.Protocols.Rtsp | [https://www.nuget.org/packages/ContentDotNet.Protocols.Rtsp](https://www.nuget.org/packages/ContentDotNet.Protocols.Rtsp) |
+
+We have only published the abstractions package for now. To publish other packages that handle video, audio,
+image, protocols and subtitles, we'll have to finish them first. (See the "In-progress formats" section)
 
 ## Contributing
 See [CONTRIBUTING.md](CONTRIBUTING.md).
