@@ -84,6 +84,13 @@ platform dependencies, there's no library for that, and ContentDotNet could be t
 As for patents like H.264, we believe that we can use a technique where we delegate the need to obtain licenses and pay royalties
 to the end-user of the library. This applies to profit-generating and enterprise context, while personal and non-profit use legally remains free of charge.
 
+## Good to know
+In real-world scenarios, multimedia files may be malformed, corrupted, or even crafted as part of a denial-of-service (DoS) attack. Such files can trigger excessive memory allocations, potentially leading to server crashes due to OutOfMemory exceptions.
+
+ContentDotNet includes robust safeguards to detect and mitigate these risks. Instead of allowing unsafe operations to proceed, the framework proactively aborts processing and throws a controlled exception - ensuring system stability and resilience under hostile or malformed input.
+
+If a file that's malformed, corrupted, or crafted as a DoS attack slips through the cracks and causes a server crash, you're more than welcome to report the issue to us through GitHub Issues.
+
 ## Documentation
 See [Docs/README.md](Docs/README.md).
 
