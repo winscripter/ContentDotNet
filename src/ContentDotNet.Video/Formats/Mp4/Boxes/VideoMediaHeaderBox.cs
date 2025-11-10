@@ -25,7 +25,7 @@
             return box;
         }
 
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             Size = 8 + 4 + 2 + 6; // header + fields
 

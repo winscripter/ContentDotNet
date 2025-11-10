@@ -2,7 +2,7 @@
 {
     using ContentDotNet.Api.Primitives;
 
-    public class SoundMediaHeaderBox : Mp4BoxBase
+    public class SoundMediaHeaderBox : Mp4MediaHeaderBox
     {
         public byte Version { get; set; }
         public byte[] Flags { get; set; } = new byte[3];
@@ -24,7 +24,7 @@
             return box;
         }
 
-        public void Write(BinaryWriter writer)
+        public override void Write(BinaryWriter writer)
         {
             Size = 8 + 4 + 2 + 2;
 
