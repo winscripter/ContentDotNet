@@ -8,7 +8,10 @@
 
   <ItemGroup>
     <Folder Include="Formats\Asf\" />
-    <Folder Include="Formats\Ebml\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
 </Project>
