@@ -19,4 +19,14 @@
     }
 
     internal record struct H264AddressMvAndRefIdx(H264AddressAndAvailability Address, MotionVector Mv, int RefIdx, bool Availability);
+
+    /// <summary>
+    ///   Extended positions for H.264 macroblocks.
+    /// </summary>
+    internal struct H264JmExtendedPositions
+    {
+        public int X, Y, PosX, PosY;
+    }
+
+    internal record struct PartitionIndices(int MbPartIdx, int SubMbPartIdx);
 }

@@ -8,22 +8,10 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <None Include="Codecs\H264\Components\H264PredictionModes.g.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>H264PredictionModes.tt</DependentUpon>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\ContentDotNet\ContentDotNet.csproj" />
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Codecs\H264\Components\H264PredictionModes.tt">
-      <Generator>TextTemplatingFileGenerator</Generator>
-      <LastGenOutput>H264PredictionModes.g.cs</LastGenOutput>
-    </None>
     <None Update="Codecs\H264\Extensions\SemanticVariableDerivative.tt">
       <LastGenOutput>SemanticVariableDerivative.g.cs</LastGenOutput>
       <Generator>TextTemplatingFileGenerator</Generator>
@@ -35,11 +23,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Codecs\H264\Components\H264PredictionModes.g.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>H264PredictionModes.tt</DependentUpon>
-    </Compile>
     <Compile Update="Codecs\H264\Components\Traits.cs">
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>

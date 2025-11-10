@@ -3,6 +3,7 @@
     using ContentDotNet.Api.Primitives;
     using ContentDotNet.Video.Codecs.H264.Components.AddressesAndBlockIndices;
     using ContentDotNet.Video.Codecs.H264.Extensions;
+    using ContentDotNet.Video.Shared;
     using System;
     using System.Runtime.CompilerServices;
     using static H264MacroblockTypes;

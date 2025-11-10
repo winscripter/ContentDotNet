@@ -8,6 +8,9 @@
 
     public partial class H264CabacEntropyReader
     {
+        public static ReadOnlySpan<int> SkipFlagCtxIdxBase => [-50, 0, 7, -50, -50];
+        public static ReadOnlySpan<int> SkipFlagCtxIdxAccessor => [-50, 1, 2, -50, -50];
+
         public H264CodecContext CodecContext { get; set; }
         public H264CabacArithmeticReader ArithmeticReader { get; set; }
         public H264CabacContexts Contexts { get; set; } = new();
@@ -112,8 +115,8 @@
         public bool SkipFlag()
         {
             H264SliceType st = this.CodecContext.SliceType;
-            int ctxBase = H264CabacInternalTables.SkipFlagCtxIdxBase[(int)st];
-            int ctxAcc = H264CabacInternalTables.SkipFlagCtxIdxAccessor[(int)st];
+            int ctxBase = SkipFlagCtxIdxBase[(int)st];
+            int ctxAcc = SkipFlagCtxIdxAccessor[(int)st];
 
             H264Derivative.DeriveNeighboringMacroblocks(CodecContext, out var mbA, out var mbB);
             ref H264CabacContextVariable contextVariable = ref this.Contexts.GetMacroblockTypeContextRef(ctxAcc,

@@ -2,7 +2,6 @@
 {
     using ContentDotNet.Api.BitStream;
     using ContentDotNet.Api.Primitives;
-    using ContentDotNet.Video.Codecs.H264.Rbsp;
     using ContentDotNet.Video.Shared.ItuT.RbspBuilder;
 
     public class H264Reader

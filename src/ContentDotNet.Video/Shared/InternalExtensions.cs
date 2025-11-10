@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Video.Codecs.H264.Components
+﻿namespace ContentDotNet.Video.Shared
 {
     using System.Runtime.InteropServices;
 
