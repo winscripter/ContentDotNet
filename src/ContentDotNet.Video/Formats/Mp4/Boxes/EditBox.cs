@@ -1,6 +1,7 @@
 ﻿namespace ContentDotNet.Video.Formats.Mp4.Boxes
 {
     using ContentDotNet.Api.Primitives;
+    using ContentDotNet.Video.Formats.Mp4.Boxes.Presets;
 
     public class EditBox : Mp4BoxBase
     {

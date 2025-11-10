@@ -1,4 +1,4 @@
-﻿namespace ContentDotNet.Video.Formats.Mp4
+﻿namespace ContentDotNet.Video.Formats.Mp4.Boxes.Presets
 {
     /// <summary>
     ///   Abstracts the stsz and stz2 boxes
