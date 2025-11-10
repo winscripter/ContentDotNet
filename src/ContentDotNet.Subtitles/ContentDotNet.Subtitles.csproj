@@ -12,7 +12,6 @@
 
   <ItemGroup>
     <Folder Include="Formats\Ttml\" />
-    <Folder Include="Formats\WebVtt\" />
   </ItemGroup>
 
 </Project>
