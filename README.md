@@ -34,6 +34,7 @@ These are now done.
 | File format | Subtitle | SSA (Advanced Substation Alpha) | Supports reading and writing + async support |
 | File format | Subtitle | SRT (SubRip) | Supports reading and writing + async support |
 | File format | Image | BMP | Decoding only |
+| File format | Subtitle | WebVTT | |
 
 ### In-progress formats
 We're actively working on those.
@@ -48,12 +49,15 @@ We're actively working on those.
 | File format | Image | PNG | Compresses pixel data, may support interlacing, supports many chunks, which all have to be implemented |
 | File format | Video | AVI | We'll implement this after H.264 |
 | File format | Video | MKV | We'll have to implement the EBML container first, as EBML is what MKV files consist of |
-| File format | Subtitle | WebVTT | |
 | File format | Subtitle | TTML | |
 | Codec | Video | H.264 | Our top priority. Extremely complex: uses DCT, Intra/Inter prediction, arithmetic coding, deblocking filter, 5 types of frames (slices), etc. We're using JM Reference Software to finish the arithmetic coding part alone. This will take a long time to implement, but it is expected to be done by 1.0. |
 
 ### Postponed formats
 We will work on them sometime later.
+
+> [!NOTE]
+> These and "In-progress formats" aren't the **only** formats/codecs that will ever be featured on ContentDotNet.
+> It's just those that we have plans to implement right now. You can always propose a new codec/file format implementation in Issues.
 
 | Type | Sub-type | Name | Notes |
 | ---- | -------- | ---- | ----- |
