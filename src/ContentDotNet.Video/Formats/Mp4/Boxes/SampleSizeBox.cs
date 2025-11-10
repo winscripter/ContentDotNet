@@ -5,6 +5,8 @@
 
     public class SampleSizeBox : Mp4SampleSizeBoxBase
     {
+        private const int MaximumSamples = 32_000_000;
+
         public byte Version { get; set; }
         public byte[] Flags { get; set; } = new byte[3];
 
@@ -14,13 +16,19 @@
 
         public static SampleSizeBox Parse(BinaryReader reader, long boxSize)
         {
-            var box = new SampleSizeBox { Size = boxSize, Type = new FourCC("stsz") };
+            var box = new SampleSizeBox
+            {
+                Size = boxSize,
+                Type = new FourCC("stsz"),
+                Version = reader.ReadByte(),
+                Flags = reader.ReadBytes(3),
 
-            box.Version = reader.ReadByte();
-            box.Flags = reader.ReadBytes(3);
+                SampleSize = reader.ReadUInt32(),
+                SampleCount = reader.ReadUInt32()
+            };
 
-            box.SampleSize = reader.ReadUInt32();
-            box.SampleCount = reader.ReadUInt32();
+            if (box.SampleCount > MaximumSamples)
+                throw new InvalidOperationException("Too many stsz samples");
 
             if (box.SampleSize == 0)
             {
