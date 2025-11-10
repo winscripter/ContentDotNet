@@ -3,10 +3,21 @@
     using static H264PredictionModes;
 
     /// <summary>
+    ///   The H.264 macroblock type.
+    /// </summary>
+    /// <param name="SliceType">Slice type</param>
+    /// <param name="MacroblockTypeNumber">Macroblock type number</param>
+    /// <param name="Inferred">Inferred?</param>
+    public record struct H264MacroblockType(H264SliceType SliceType, int MacroblockTypeNumber, bool Inferred);
+
+    /// <summary>
     ///   Common macroblock types.
     /// </summary>
     public static partial class H264MacroblockTypes
     {
+        public static readonly H264MacroblockType P_Skip = new(H264SliceType.P, 0, true);
+        public static readonly H264MacroblockType B_Skip = new(H264SliceType.B, 0, true);
+
         /// <summary>
         ///   Represents the value <c>I_NxN</c>.
         /// </summary>
