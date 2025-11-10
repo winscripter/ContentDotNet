@@ -91,10 +91,6 @@ ContentDotNet includes robust safeguards to detect and mitigate these risks. Ins
 
 If a file that's malformed, corrupted, or crafted as a DoS attack slips through the cracks and causes a server crash, you're more than welcome to report the issue to us through GitHub Issues.
 
-See the example diagram below.
-
-![Diagram](resources/Diagram-Throw-On-Too-Large-Buffers.png)
-
 ## Documentation
 See [Docs/README.md](Docs/README.md).
 
