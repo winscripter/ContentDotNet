@@ -35,13 +35,13 @@ These are now done.
 | File format | Subtitle | SRT (SubRip) | Supports reading and writing + async support |
 | File format | Image | BMP | Decoding only |
 | File format | Subtitle | WebVTT | |
+| File format | Video, audio, subtitle, ... | MP4, HEIF, HEIC, MOV, M4V, M4A | Decoder-only (for now; we'll add encoding support later, but it will definitely be done by the 1.0 release) |
 
 ### In-progress formats
 We're actively working on those.
 
 | Type | Sub-type | Name | Complexity |
 | ---- | -------- | ---- | ----- |
-| File format | Video | MP4, HEIF, HEIC, MOV, M4V, M4A | Might take some time due to large number of boxes in the ISOBMFF format, but we'll get there |
 | File format | Video, audio | WMV, WMA | These two Microsoft Windows file formats are based on the ASF container, which can take some time to implement |
 | File format | Audio | FLAC | Has many kinds of metadata blocks |
 | File format | Image | JPEG | Uses Huffman and DCT compression which can take some time to implement |
