@@ -7,7 +7,7 @@
     {
         public Ttm1NameType NameType
         {
-            get => Ttm1NameTypeFormatter.FromString(Element.Attribute("type")!.Value) ?? throw new InvalidOperationException("Invalid name type"),
+            get => Ttm1NameTypeFormatter.FromString(Element.Attribute("type")!.Value) ?? throw new InvalidOperationException("Invalid name type");
             set => Element.SetAttributeValue("type", Ttm1NameTypeFormatter.ToString(value));
         }
 
