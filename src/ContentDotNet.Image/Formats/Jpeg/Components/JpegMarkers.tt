@@ -1,0 +1,94 @@
+﻿<#@ template debug="false" hostspecific="false" language="C#" #>
+<#@ assembly name="System.Core" #>
+<#@ import namespace="System.Linq" #>
+<#@ import namespace="System.Text" #>
+<#@ import namespace="System.Collections.Generic" #>
+<#@ output extension=".g.cs" #>
+namespace ContentDotNet.Image.Formats.Jpeg.Components
+{
+    /// <summary>
+    ///   The JPEG markers.
+    /// </summary>
+    public enum JpegMarkers : ushort
+    {
+<#
+    char[] hexTable = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A', 'B', 'C', 'D', 'E', 'F'};
+
+    M("Sof0", "FFC0", "Baseline DCT");
+    M("Sof1", "FFC1", "Extended sequential DCT");
+    M("Sof2", "FFC2", "Progressive DCT");
+    M("Sof3", "FFC3", "Lossless (sequential)");
+
+    M("Sof5", "FFC5", "Differential sequential DCT");
+    M("Sof6", "FFC6", "Differential progressive DCT");
+    M("Sof7", "FFC7", "Differential lossless (sequential)");
+
+    M("Jpg", "FFC8", "Reserved for JPEG extensions");
+    M("Sof9", "FFC9", "Extended sequential DCT");
+    M("Sof10", "FFCA", "Progressive DCT");
+    M("Sof11", "FFCB", "Lossless (sequential)");
+
+    M("Sof13", "FFCD", "Differential sequential DCT");
+    M("Sof14", "FFCE", "Differential progressive DCT");
+    M("Sof15", "FFCF", "Differential lossless");
+
+    M("Dht", "FFC4", "Define Huffman Table(s)");
+
+    M("Dac", "FFCC", "Define arithmetic coding conditioning(s)");
+
+    M("Rst0", "FFD0", "Restart with modulo 8 count '0'");
+    M("Rst1", "FFD1", "Restart with modulo 8 count '1'");
+    M("Rst2", "FFD2", "Restart with modulo 8 count '2'");
+    M("Rst3", "FFD3", "Restart with modulo 8 count '3'");
+    M("Rst4", "FFD4", "Restart with modulo 8 count '4'");
+    M("Rst5", "FFD5", "Restart with modulo 8 count '5'");
+    M("Rst6", "FFD6", "Restart with modulo 8 count '6'");
+    M("Rst7", "FFD7", "Restart with modulo 8 count '7'");
+
+    M("Soi", "FFD8", "Start of image");
+    M("Eoi", "FFD9", "End of image");
+    M("Sos", "FFDA", "Start of scan");
+    M("Dqt", "FFDB", "Define quantization table(s)");
+    M("Dnl", "FFDC", "Define number of line(s)");
+    M("Dri", "FFDD", "Define restart interval");
+    M("Dhp", "FFDE", "Define hierarchical progression");
+    M("Exp", "FFDF", "Expand reference component(s)");
+    for (int i = 0; i < 16; i++)
+        M("App" + i.ToString(), "FFE" + hexTable[i], "Reserved for application segments");
+    for (int i = 0; i < 15; i++)
+        M("Jpg" + i.ToString(), "FFF" + hexTable[i], "Reserved for JPEG extensions");
+    M("Com", "FFFE", "Comment");
+
+    M("Tem", "FF01", "For temporary private use in arithmetic coding");
+
+    foreach (Record record in _records)
+    {
+#>
+        /// <summary>
+        ///   A JPEG marker with the value being 0x<#= record.HexCode #>.
+        /// </summary>
+        /// <remarks>
+        ///   <para>
+        ///     The description of this JPEG marker is as follows (as also specified in the ITU-T T.81 specification):
+        ///   </para>
+        ///   <para>
+        ///     <em><#= record.Description #></em> - from ITU-T T.81 specification.
+        ///   </para>
+        /// </remarks>
+        <#= record.Name #> = 0x<#= record.HexCode#>,
+<# } #>
+    }
+}
+
+<#+
+class Record {
+    public string Name, HexCode, Description;
+}
+
+private static readonly List<Record> _records = new List<Record>();
+
+public static void M(string name, string hexCode, string description) =>
+    _records.Add(new Record() {
+        Name = name, HexCode = hexCode, Description = description
+    });
+#>

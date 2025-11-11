@@ -12,6 +12,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Headers.tt</DependentUpon>
     </None>
+    <None Include="Formats\Jpeg\Components\JpegMarkers.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>JpegMarkers.tt</DependentUpon>
+    </None>
   </ItemGroup>
 
   <ItemGroup>
@@ -22,6 +27,10 @@
     <None Update="Formats\Bmp\Headers.tt">
       <Generator>TextTemplatingFileGenerator</Generator>
       <LastGenOutput>Headers.g.cs</LastGenOutput>
+    </None>
+    <None Update="Formats\Jpeg\Components\JpegMarkers.tt">
+      <Generator>TextTemplatingFileGenerator</Generator>
+      <LastGenOutput>JpegMarkers.g.cs</LastGenOutput>
     </None>
   </ItemGroup>
 
@@ -35,10 +44,11 @@
       <AutoGen>True</AutoGen>
       <DependentUpon>Headers.tt</DependentUpon>
     </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
-    <Folder Include="Formats\Jpeg\" />
+    <Compile Update="Formats\Jpeg\Components\JpegMarkers.g.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>JpegMarkers.tt</DependentUpon>
+    </Compile>
   </ItemGroup>
 
 </Project>
