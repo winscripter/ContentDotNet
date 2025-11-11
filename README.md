@@ -78,9 +78,6 @@ frameworks and video codec implementations. If we use native libraries like FFmp
 we have to use different types of binaries for different architectures (x64, ARM64, RISC-V, ...) **and** platforms (Windows, macOS, Linux, WebAssembly, ...).
 If there's one managed .NET framework to do this, you just need one binary for all platforms and architectures.
 
-There are a few powerful image and VoIP libraries in .NET, but for comprehensive video and audio decoding without
-platform dependencies, there's no library for that, and ContentDotNet could be the first. It will also always be open-source and use the MIT license.
-
 As for patents like H.264, we believe that we can use a technique where we delegate the need to obtain licenses and pay royalties
 to the end-user of the library. This applies to profit-generating and enterprise context, while personal and non-profit use legally remains free of charge.
 
