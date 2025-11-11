@@ -66,6 +66,7 @@ We will work on them sometime later.
 | Codec | Video | VP8 | Used in WebP and WebM files |
 | Codec | Audio | G.726 | Popular in the VoIP world |
 | Codec | Audio | G.711 | Popular in the VoIP world |
+| Codec | Video | H.265 (better known as HEVC) | Achieves great compression, and is popular, however, it is quite complex. |
 
 ## Why this project exists?
 With the rise of multimedia content in applications, there is a growing need for robust and efficient libraries to handle various multimedia formats.
