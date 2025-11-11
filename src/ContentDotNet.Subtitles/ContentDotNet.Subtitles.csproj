@@ -11,7 +11,9 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Formats\Ttml\" />
+    <Folder Include="Formats\Ttml\V3\" />
+    <Folder Include="Formats\Ttml\V2\" />
+    <Folder Include="Formats\Ttml\V1\" />
   </ItemGroup>
 
 </Project>
