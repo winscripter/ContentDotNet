@@ -43,7 +43,6 @@ We're actively working on those.
 | Type | Sub-type | Name | Complexity |
 | ---- | -------- | ---- | ----- |
 | File format | Video, audio | WMV, WMA | These two Microsoft Windows file formats are based on the ASF container, which can take some time to implement |
-| File format | Audio | FLAC | Has many kinds of metadata blocks |
 | File format | Image | JPEG | Uses Huffman and DCT compression which can take some time to implement |
 | File format | Image | GIF | Compresses pixel data |
 | File format | Image | PNG | Compresses pixel data, may support interlacing, supports many chunks, which all have to be implemented |
@@ -66,7 +65,17 @@ We will work on them sometime later.
 | Codec | Video | VP8 | Used in WebP and WebM files |
 | Codec | Audio | G.726 | Popular in the VoIP world |
 | Codec | Audio | G.711 | Popular in the VoIP world |
+| Codec | Audio | G.729 | Popular in the VoIP world |
 | Codec | Video | H.265 (better known as HEVC) | Achieves great compression, and is popular, however, it is quite complex. |
+| Codec | Audio | AC-3 | Mostly deprecated, although, still used in many video/audio files |
+| Codec | Audio | E-AC-3 | Mostly deprecated, although, still used in many video/audio files |
+| File format | Audio | AIFF | Uncompressed audio |
+| File format | Audio | MP3 | Specification is paid, and costs too much for an open-source project |
+| Codec | Audio | AAC | Specification is paid, and costs too much for an open-source project |
+| Codec | Video | AV1 | Royalty-free codec that is getting more and more popular very quickly |
+| Codec | Video | MJPEG (Motion JPEG) | Just a sequence of JPEG's. Doesn't compress that much though. |
+| Codec | Video | H.261 | Very old, deprecated, and only supports small resolutions (CIF/QCIF), but might still be worth implementing to read/write from/to old/deprecated sources |
+| Codec | Audio | ALAC | Compresses about 2x better than uncompressed audio, and is lossless |
 
 ## Why this project exists?
 With the rise of multimedia content in applications, there is a growing need for robust and efficient libraries to handle various multimedia formats.

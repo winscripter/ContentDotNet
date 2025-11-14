@@ -13,6 +13,7 @@
   <ItemGroup>
     <Folder Include="Formats\Ttml\V1\Head\Layout\" />
     <Folder Include="Formats\Ttml\V1\Head\Styling\" />
+    <Folder Include="Formats\Ttml\V1\Common\" />
     <Folder Include="Formats\Ttml\V3\" />
     <Folder Include="Formats\Ttml\V2\" />
   </ItemGroup>
