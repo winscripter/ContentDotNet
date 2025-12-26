@@ -1,0 +1,504 @@
+﻿{
+    "fileName": "SpsPpsVuiHrd.generated.cs",
+    "namespace": "ContentDotNet.Video.Codecs.H264.Models",
+    "types": [
+        {
+            "className": "SequenceParameterSetData",
+            "properties": [
+                {
+                    "specification": "byte ProfileIdc",
+                    "documentation": "The profile identifier code."
+                },
+                {
+                    "specification": "bool ConstraintSet0Flag",
+                    "documentation": "Constraint set 0"
+                },
+                {
+                    "specification": "bool ConstraintSet1Flag",
+                    "documentation": "Constraint set 1"
+                },
+                {
+                    "specification": "bool ConstraintSet2Flag",
+                    "documentation": "Constraint set 2"
+                },
+                {
+                    "specification": "bool ConstraintSet3Flag",
+                    "documentation": "Constraint set 3"
+                },
+                {
+                    "specification": "bool ConstraintSet4Flag",
+                    "documentation": "Constraint set 4"
+                },
+                {
+                    "specification": "bool ConstraintSet5Flag",
+                    "documentation": "Constraint set 5"
+                },
+                {
+                    "specification": "byte ReservedZero2Bits",
+                    "documentation": "Must be 0."
+                },
+                {
+                    "specification": "byte LevelIdc",
+                    "documentation": "The level identifier code."
+                },
+                {
+                    "specification": "uint SeqParameterSetId",
+                    "documentation": "Identifier of this SPS."
+                },
+                {
+                    "specification": "uint? ChromaFormatIdc",
+                    "documentation": "Chroma format identifier code."
+                },
+                {
+                    "specification": "bool? SeparateColourPlaneFlag",
+                    "documentation": "Separate color plane flag."
+                },
+                {
+                    "specification": "uint? BitDepthLumaMinus8",
+                    "documentation": "Luma bit depth."
+                },
+                {
+                    "specification": "uint? BitDepthChromaMinus8",
+                    "documentation": "Chroma bit depth."
+                },
+                {
+                    "specification": "bool? QpprimeYZeroTransformBypassFlag",
+                    "documentation": "Syntax element qpprime_y_zero_transform_bypass_flag."
+                },
+                {
+                    "specification": "bool? SeqScalingMatrixPresentFlag",
+                    "documentation": "Is scaling matrix present?"
+                },
+                {
+                    "specification": "bool[]? SeqScalingListPresentFlag",
+                    "documentation": "Scaling list present flags."
+                },
+                {
+                    "specification": "ScalingList[]? ScalingLists4x4",
+                    "documentation": "4x4 scaling lists."
+                },
+                {
+                    "specification": "ScalingList[]? ScalingLists8x8",
+                    "documentation": "8x8 scaling lists."
+                },
+                {
+                    "specification": "uint Log2MaxFrameNumMinus4",
+                    "documentation": "Syntax element log2_max_frame_num_minus4."
+                },
+                {
+                    "specification": "uint PicOrderCntType",
+                    "documentation": "Syntax element pic_order_cnt_type."
+                },
+                {
+                    "specification": "uint? Log2MaxPicOrderCntLsbMinus4",
+                    "documentation": "Syntax element log2_max_pic_order_cnt_lsb_minus4."
+                },
+                {
+                    "specification": "bool? DeltaPicOrderAlwaysZeroFlag",
+                    "documentation": "Syntax element delta_pic_order_always_zero_flag."
+                },
+                {
+                    "specification": "int? OffsetForNonRefPic",
+                    "documentation": "Syntax element offset_for_non_ref_pic."
+                },
+                {
+                    "specification": "int? OffsetForTopToBottomField",
+                    "documentation": "Syntax element offset_for_top_to_bottom_field."
+                },
+                {
+                    "specification": "uint? NumRefFramesInPicOrderCntCycle",
+                    "documentation": "Syntax element num_ref_frames_in_pic_order_cnt_cycle."
+                },
+                {
+                    "specification": "List<int>? OffsetForRefFrame",
+                    "documentation": "Syntax element offset_for_ref_frame."
+                },
+                {
+                    "specification": "uint MaxNumRefFrames",
+                    "documentation": "Syntax element max_num_ref_frames."
+                },
+                {
+                    "specification": "bool GapsInFrameNumValueAllowedFlag",
+                    "documentation": "Syntax element gaps_in_frame_num_value_allowed_flag."
+                },
+                {
+                    "specification": "uint PicWidthInMbsMinus1",
+                    "documentation": "Syntax element pic_width_in_mbs_minus1."
+                },
+                {
+                    "specification": "uint PicHeightInMapUnitsMinus1",
+                    "documentation": "Syntax element pic_height_in_map_units_minus1."
+                },
+                {
+                    "specification": "bool FrameMbsOnlyFlag",
+                    "documentation": "Syntax element frame_mbs_only_flag."
+                },
+                {
+                    "specification": "bool? MbAdaptiveFrameFieldFlag",
+                    "documentation": "Syntax element mb_adaptive_frame_field_flag."
+                },
+                {
+                    "specification": "bool Direct8x8InferenceFlag",
+                    "documentation": "Syntax element direct_8x8_inference_flag."
+                },
+                {
+                    "specification": "bool FrameCroppingFlag",
+                    "documentation": "Syntax element frame_cropping_flag."
+                },
+                {
+                    "specification": "uint? FrameCropLeftOffset",
+                    "documentation": "Syntax element frame_crop_left_offset."
+                },
+                {
+                    "specification": "uint? FrameCropRightOffset",
+                    "documentation": "Syntax element frame_crop_right_offset."
+                },
+                {
+                    "specification": "uint? FrameCropTopOffset",
+                    "documentation": "Syntax element frame_crop_top_offset."
+                },
+                {
+                    "specification": "uint? FrameCropBottomOffset",
+                    "documentation": "Syntax element frame_crop_bottom_offset."
+                },
+                {
+                    "specification": "bool VuiParametersPresentFlag",
+                    "documentation": "Syntax element vui_parameters_present_flag."
+                },
+                {
+                    "specification": "VuiParameters? VuiParameters",
+                    "documentation": "The VUI parameters."
+                }
+            ]
+        },
+        {
+            "className": "HrdParameters",
+            "properties": [
+                {
+                    "specification": "uint CpbCntMinus1",
+                    "documentation": "Syntax element cpb_cnt_minus1."
+                },
+                {
+                    "specification": "byte BitRateScale",
+                    "documentation": "Syntax element bit_rate_scale."
+                },
+                {
+                    "specification": "byte CpbSizeScale",
+                    "documentation": "Syntax element cpb_size_scale."
+                },
+                {
+                    "specification": "uint[] BitRateValueMinus1",
+                    "documentation": "Syntax element bit_rate_value_minus1[SchedSelIdx]. One entry per CPB."
+                },
+                {
+                    "specification": "uint[] CpbSizeValueMinus1",
+                    "documentation": "Syntax element cpb_size_value_minus1[SchedSelIdx]. One entry per CPB."
+                },
+                {
+                    "specification": "bool[] CbrFlag",
+                    "documentation": "Syntax element cbr_flag[SchedSelIdx]. One entry per CPB."
+                },
+                {
+                    "specification": "byte InitialCpbRemovalDelayLengthMinus1",
+                    "documentation": "Syntax element initial_cpb_removal_delay_length_minus1."
+                },
+                {
+                    "specification": "byte CpbRemovalDelayLengthMinus1",
+                    "documentation": "Syntax element cpb_removal_delay_length_minus1."
+                },
+                {
+                    "specification": "byte DpbOutputDelayLengthMinus1",
+                    "documentation": "Syntax element dpb_output_delay_length_minus1."
+                },
+                {
+                    "specification": "byte TimeOffsetLength",
+                    "documentation": "Syntax element time_offset_length."
+                }
+            ]
+        },
+        {
+            "className": "VuiParameters",
+            "properties": [
+                {
+                    "specification": "bool AspectRatioInfoPresentFlag",
+                    "documentation": "Syntax element aspect_ratio_info_present_flag."
+                },
+                {
+                    "specification": "byte? AspectRatioIdc",
+                    "documentation": "Syntax element aspect_ratio_idc."
+                },
+                {
+                    "specification": "ushort? SarWidth",
+                    "documentation": "Syntax element sar_width (only when aspect_ratio_idc == Extended_SAR)."
+                },
+                {
+                    "specification": "ushort? SarHeight",
+                    "documentation": "Syntax element sar_height (only when aspect_ratio_idc == Extended_SAR)."
+                },
+                {
+                    "specification": "bool OverscanInfoPresentFlag",
+                    "documentation": "Syntax element overscan_info_present_flag."
+                },
+                {
+                    "specification": "bool? OverscanAppropriateFlag",
+                    "documentation": "Syntax element overscan_appropriate_flag."
+                },
+                {
+                    "specification": "bool VideoSignalTypePresentFlag",
+                    "documentation": "Syntax element video_signal_type_present_flag."
+                },
+                {
+                    "specification": "byte? VideoFormat",
+                    "documentation": "Syntax element video_format."
+                },
+                {
+                    "specification": "bool? VideoFullRangeFlag",
+                    "documentation": "Syntax element video_full_range_flag."
+                },
+                {
+                    "specification": "bool? ColourDescriptionPresentFlag",
+                    "documentation": "Syntax element colour_description_present_flag."
+                },
+                {
+                    "specification": "byte? ColourPrimaries",
+                    "documentation": "Syntax element colour_primaries."
+                },
+                {
+                    "specification": "byte? TransferCharacteristics",
+                    "documentation": "Syntax element transfer_characteristics."
+                },
+                {
+                    "specification": "byte? MatrixCoefficients",
+                    "documentation": "Syntax element matrix_coefficients."
+                },
+                {
+                    "specification": "bool ChromaLocInfoPresentFlag",
+                    "documentation": "Syntax element chroma_loc_info_present_flag."
+                },
+                {
+                    "specification": "uint? ChromaSampleLocTypeTopField",
+                    "documentation": "Syntax element chroma_sample_loc_type_top_field."
+                },
+                {
+                    "specification": "uint? ChromaSampleLocTypeBottomField",
+                    "documentation": "Syntax element chroma_sample_loc_type_bottom_field."
+                },
+                {
+                    "specification": "bool TimingInfoPresentFlag",
+                    "documentation": "Syntax element timing_info_present_flag."
+                },
+                {
+                    "specification": "uint? NumUnitsInTick",
+                    "documentation": "Syntax element num_units_in_tick."
+                },
+                {
+                    "specification": "uint? TimeScale",
+                    "documentation": "Syntax element time_scale."
+                },
+                {
+                    "specification": "bool? FixedFrameRateFlag",
+                    "documentation": "Syntax element fixed_frame_rate_flag."
+                },
+                {
+                    "specification": "bool NalHrdParametersPresentFlag",
+                    "documentation": "Syntax element nal_hrd_parameters_present_flag."
+                },
+                {
+                    "specification": "HrdParameters? NalHrdParameters",
+                    "documentation": "NAL HRD parameters."
+                },
+                {
+                    "specification": "bool VclHrdParametersPresentFlag",
+                    "documentation": "Syntax element vcl_hrd_parameters_present_flag."
+                },
+                {
+                    "specification": "HrdParameters? VclHrdParameters",
+                    "documentation": "VCL HRD parameters."
+                },
+                {
+                    "specification": "bool? LowDelayHrdFlag",
+                    "documentation": "Syntax element low_delay_hrd_flag."
+                },
+                {
+                    "specification": "bool PicStructPresentFlag",
+                    "documentation": "Syntax element pic_struct_present_flag."
+                },
+                {
+                    "specification": "bool BitstreamRestrictionFlag",
+                    "documentation": "Syntax element bitstream_restriction_flag."
+                },
+                {
+                    "specification": "bool? MotionVectorsOverPicBoundariesFlag",
+                    "documentation": "Syntax element motion_vectors_over_pic_boundaries_flag."
+                },
+                {
+                    "specification": "uint? MaxBytesPerPicDenom",
+                    "documentation": "Syntax element max_bytes_per_pic_denom."
+                },
+                {
+                    "specification": "uint? MaxBitsPerMbDenom",
+                    "documentation": "Syntax element max_bits_per_mb_denom."
+                },
+                {
+                    "specification": "uint? Log2MaxMvLengthHorizontal",
+                    "documentation": "Syntax element log2_max_mv_length_horizontal."
+                },
+                {
+                    "specification": "uint? Log2MaxMvLengthVertical",
+                    "documentation": "Syntax element log2_max_mv_length_vertical."
+                },
+                {
+                    "specification": "uint? MaxNumReorderFrames",
+                    "documentation": "Syntax element max_num_reorder_frames."
+                },
+                {
+                    "specification": "uint? MaxDecFrameBuffering",
+                    "documentation": "Syntax element max_dec_frame_buffering."
+                }
+            ]
+        },
+        {
+            "className": "PictureParameterSetData",
+            "properties": [
+                {
+                    "specification": "uint PicParameterSetId",
+                    "documentation": "Syntax element pic_parameter_set_id."
+                },
+                {
+                    "specification": "uint SeqParameterSetId",
+                    "documentation": "Syntax element seq_parameter_set_id."
+                },
+                {
+                    "specification": "bool EntropyCodingModeFlag",
+                    "documentation": "Syntax element entropy_coding_mode_flag."
+                },
+                {
+                    "specification": "bool BottomFieldPicOrderInFramePresentFlag",
+                    "documentation": "Syntax element bottom_field_pic_order_in_frame_present_flag."
+                },
+                {
+                    "specification": "uint NumSliceGroupsMinus1",
+                    "documentation": "Syntax element num_slice_groups_minus1."
+                },
+                {
+                    "specification": "uint? SliceGroupMapType",
+                    "documentation": "Syntax element slice_group_map_type."
+                },
+                {
+                    "specification": "uint[]? RunLengthMinus1",
+                    "documentation": "Syntax element run_length_minus1[iGroup]."
+                },
+                {
+                    "specification": "uint[]? TopLeft",
+                    "documentation": "Syntax element top_left[iGroup]."
+                },
+                {
+                    "specification": "uint[]? BottomRight",
+                    "documentation": "Syntax element bottom_right[iGroup]."
+                },
+                {
+                    "specification": "bool? SliceGroupChangeDirectionFlag",
+                    "documentation": "Syntax element slice_group_change_direction_flag."
+                },
+                {
+                    "specification": "uint? SliceGroupChangeRateMinus1",
+                    "documentation": "Syntax element slice_group_change_rate_minus1."
+                },
+                {
+                    "specification": "uint? PicSizeInMapUnitsMinus1",
+                    "documentation": "Syntax element pic_size_in_map_units_minus1."
+                },
+                {
+                    "specification": "uint[]? SliceGroupId",
+                    "documentation": "Syntax element slice_group_id[i]."
+                },
+                {
+                    "specification": "uint NumRefIdxL0DefaultActiveMinus1",
+                    "documentation": "Syntax element num_ref_idx_l0_default_active_minus1."
+                },
+                {
+                    "specification": "uint NumRefIdxL1DefaultActiveMinus1",
+                    "documentation": "Syntax element num_ref_idx_l1_default_active_minus1."
+                },
+                {
+                    "specification": "bool WeightedPredFlag",
+                    "documentation": "Syntax element weighted_pred_flag."
+                },
+                {
+                    "specification": "byte WeightedBipredIdc",
+                    "documentation": "Syntax element weighted_bipred_idc."
+                },
+                {
+                    "specification": "int PicInitQpMinus26",
+                    "documentation": "Syntax element pic_init_qp_minus26."
+                },
+                {
+                    "specification": "int PicInitQsMinus26",
+                    "documentation": "Syntax element pic_init_qs_minus26."
+                },
+                {
+                    "specification": "int ChromaQpIndexOffset",
+                    "documentation": "Syntax element chroma_qp_index_offset."
+                },
+                {
+                    "specification": "bool DeblockingFilterControlPresentFlag",
+                    "documentation": "Syntax element deblocking_filter_control_present_flag."
+                },
+                {
+                    "specification": "bool ConstrainedIntraPredFlag",
+                    "documentation": "Syntax element constrained_intra_pred_flag."
+                },
+                {
+                    "specification": "bool RedundantPicCntPresentFlag",
+                    "documentation": "Syntax element redundant_pic_cnt_present_flag."
+                },
+                {
+                    "specification": "bool? Transform8x8ModeFlag",
+                    "documentation": "Syntax element transform_8x8_mode_flag."
+                },
+                {
+                    "specification": "bool? PicScalingMatrixPresentFlag",
+                    "documentation": "Is picture scaling matrix present?"
+                },
+                {
+                    "specification": "bool[]? PicScalingListPresentFlag",
+                    "documentation": "Picture scaling list present flags."
+                },
+                {
+                    "specification": "ScalingList[]? ScalingLists4x4",
+                    "documentation": "4x4 picture scaling lists."
+                },
+                {
+                    "specification": "ScalingList[]? ScalingLists8x8",
+                    "documentation": "8x8 picture scaling lists."
+                },
+                {
+                    "specification": "int? SecondChromaQpIndexOffset",
+                    "documentation": "Syntax element second_chroma_qp_index_offset."
+                }
+            ]
+        },
+        {
+            "className": "AccessUnitDelimiter",
+            "properties": [
+                {
+                    "specification": "byte PrimaryPicType",
+                    "documentation": "Syntax element primary_pic_type."
+                }
+            ]
+        },
+        {
+            "className": "ScalingList",
+            "properties": [
+                {
+                    "specification": "int[] Values",
+                    "documentation": "Final scaling list values after delta decoding."
+                },
+                {
+                    "specification": "bool UseDefaultScalingMatrixFlag",
+                    "documentation": "Indicates the default scaling matrix is used."
+                }
+            ]
+        }
+    ]
+}

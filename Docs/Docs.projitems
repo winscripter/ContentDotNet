@@ -8,24 +8,4 @@
   <PropertyGroup Label="Configuration">
     <Import_RootNamespace>Docs</Import_RootNamespace>
   </PropertyGroup>
-  <ItemGroup>
-    <None Include="$(MSBuildThisFileDirectory)abstractions\bit-stream.md" />
-    <None Include="$(MSBuildThisFileDirectory)abstractions\colors.md" />
-    <None Include="$(MSBuildThisFileDirectory)abstractions\loop-executors.md" />
-    <None Include="$(MSBuildThisFileDirectory)abstractions\pictures.md" />
-    <None Include="$(MSBuildThisFileDirectory)abstractions\README.md" />
-    <None Include="$(MSBuildThisFileDirectory)g722\decoding.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\cabac\arithmetic-reader-writer.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\cabac\binarization.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\cabac\ctxidx-model.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\decoding.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\productivity\syntax-element-grabber.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\sei\examples.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\sei\sei-abstractions.md" />
-    <None Include="$(MSBuildThisFileDirectory)h264\slice-decoder.md" />
-    <None Include="$(MSBuildThisFileDirectory)pcmaudio\decoding.md" />
-    <None Include="$(MSBuildThisFileDirectory)README.md" />
-    <None Include="$(MSBuildThisFileDirectory)rtsp\rtsp.md" />
-    <None Include="$(MSBuildThisFileDirectory)sdp\sdp.md" />
-  </ItemGroup>
 </Project>

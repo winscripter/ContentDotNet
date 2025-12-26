@@ -1,0 +1,300 @@
+﻿{
+    "fileName": "SliceHeader.generated.cs",
+    "namespace": "ContentDotNet.Video.Codecs.H264.Models",
+    "types": [
+        {
+            "className": "SliceHeader",
+            "properties": [
+                {
+                    "specification": "uint FirstMbInSlice",
+                    "documentation": "Syntax element first_mb_in_slice."
+                },
+                {
+                    "specification": "uint SliceType",
+                    "documentation": "Syntax element slice_type."
+                },
+                {
+                    "specification": "uint PicParameterSetId",
+                    "documentation": "Syntax element pic_parameter_set_id."
+                },
+                {
+                    "specification": "byte? ColourPlaneId",
+                    "documentation": "Syntax element colour_plane_id."
+                },
+                {
+                    "specification": "uint FrameNum",
+                    "documentation": "Syntax element frame_num."
+                },
+                {
+                    "specification": "bool? FieldPicFlag",
+                    "documentation": "Syntax element field_pic_flag."
+                },
+                {
+                    "specification": "bool? BottomFieldFlag",
+                    "documentation": "Syntax element bottom_field_flag."
+                },
+                {
+                    "specification": "uint? IdrPicId",
+                    "documentation": "Syntax element idr_pic_id."
+                },
+                {
+                    "specification": "uint? PicOrderCntLsb",
+                    "documentation": "Syntax element pic_order_cnt_lsb."
+                },
+                {
+                    "specification": "int? DeltaPicOrderCntBottom",
+                    "documentation": "Syntax element delta_pic_order_cnt_bottom."
+                },
+                {
+                    "specification": "int[]? DeltaPicOrderCnt",
+                    "documentation": "Syntax element delta_pic_order_cnt[ ]."
+                },
+                {
+                    "specification": "uint? RedundantPicCnt",
+                    "documentation": "Syntax element redundant_pic_cnt."
+                },
+                {
+                    "specification": "bool? DirectSpatialMvPredFlag",
+                    "documentation": "Syntax element direct_spatial_mv_pred_flag."
+                },
+                {
+                    "specification": "bool? NumRefIdxActiveOverrideFlag",
+                    "documentation": "Syntax element num_ref_idx_active_override_flag."
+                },
+                {
+                    "specification": "uint? NumRefIdxL0ActiveMinus1",
+                    "documentation": "Syntax element num_ref_idx_l0_active_minus1."
+                },
+                {
+                    "specification": "uint? NumRefIdxL1ActiveMinus1",
+                    "documentation": "Syntax element num_ref_idx_l1_active_minus1."
+                },
+                {
+                    "specification": "object? RefPicListModification",
+                    "documentation": "ref_pic_list_modification() or ref_pic_list_mvc_modification()."
+                },
+                {
+                    "specification": "object? PredWeightTable",
+                    "documentation": "pred_weight_table()."
+                },
+                {
+                    "specification": "object? DecRefPicMarking",
+                    "documentation": "dec_ref_pic_marking()."
+                },
+                {
+                    "specification": "uint? CabacInitIdc",
+                    "documentation": "Syntax element cabac_init_idc."
+                },
+                {
+                    "specification": "int SliceQpDelta",
+                    "documentation": "Syntax element slice_qp_delta."
+                },
+                {
+                    "specification": "bool? SpForSwitchFlag",
+                    "documentation": "Syntax element sp_for_switch_flag."
+                },
+                {
+                    "specification": "int? SliceQsDelta",
+                    "documentation": "Syntax element slice_qs_delta."
+                },
+                {
+                    "specification": "uint? DisableDeblockingFilterIdc",
+                    "documentation": "Syntax element disable_deblocking_filter_idc."
+                },
+                {
+                    "specification": "int? SliceAlphaC0OffsetDiv2",
+                    "documentation": "Syntax element slice_alpha_c0_offset_div2."
+                },
+                {
+                    "specification": "int? SliceBetaOffsetDiv2",
+                    "documentation": "Syntax element slice_beta_offset_div2."
+                },
+                {
+                    "specification": "uint? SliceGroupChangeCycle",
+                    "documentation": "Syntax element slice_group_change_cycle."
+                }
+            ]
+        },
+        {
+            "className": "RefPicListModification",
+            "properties": [
+                {
+                    "specification": "bool? RefPicListModificationFlagL0",
+                    "documentation": "Syntax element ref_pic_list_modification_flag_l0."
+                },
+                {
+                    "specification": "RefPicListModificationEntry[]? List0Modifications",
+                    "documentation": "Modification entries for reference picture list 0."
+                },
+                {
+                    "specification": "bool? RefPicListModificationFlagL1",
+                    "documentation": "Syntax element ref_pic_list_modification_flag_l1."
+                },
+                {
+                    "specification": "RefPicListModificationEntry[]? List1Modifications",
+                    "documentation": "Modification entries for reference picture list 1."
+                }
+            ]
+        },
+        {
+            "className": "RefPicListModificationEntry",
+            "properties": [
+                {
+                    "specification": "uint ModificationOfPicNumsIdc",
+                    "documentation": "Syntax element modification_of_pic_nums_idc."
+                },
+                {
+                    "specification": "uint? AbsDiffPicNumMinus1",
+                    "documentation": "Syntax element abs_diff_pic_num_minus1."
+                },
+                {
+                    "specification": "uint? LongTermPicNum",
+                    "documentation": "Syntax element long_term_pic_num."
+                }
+            ]
+        },
+        {
+            "className": "PredWeightTable",
+            "properties": [
+                {
+                    "specification": "uint LumaLog2WeightDenom",
+                    "documentation": "Syntax element luma_log2_weight_denom."
+                },
+                {
+                    "specification": "uint? ChromaLog2WeightDenom",
+                    "documentation": "Syntax element chroma_log2_weight_denom, present if ChromaArrayType != 0."
+                },
+                {
+                    "specification": "bool[]? LumaWeightL0Flag",
+                    "documentation": "Syntax element luma_weight_l0_flag for each reference in L0, present in loop over i."
+                },
+                {
+                    "specification": "int[]? LumaWeightL0",
+                    "documentation": "Syntax element luma_weight_l0[i], present if luma_weight_l0_flag[i] is true."
+                },
+                {
+                    "specification": "int[]? LumaOffsetL0",
+                    "documentation": "Syntax element luma_offset_l0[i], present if luma_weight_l0_flag[i] is true."
+                },
+                {
+                    "specification": "bool[][]? ChromaWeightL0Flag",
+                    "documentation": "Syntax element chroma_weight_l0_flag[i] for each reference in L0, present if ChromaArrayType != 0."
+                },
+                {
+                    "specification": "int[][]? ChromaWeightL0",
+                    "documentation": "Syntax element chroma_weight_l0[i][j], present if chroma_weight_l0_flag[i] is true."
+                },
+                {
+                    "specification": "int[][]? ChromaOffsetL0",
+                    "documentation": "Syntax element chroma_offset_l0[i][j], present if chroma_weight_l0_flag[i] is true."
+                },
+                {
+                    "specification": "bool[]? LumaWeightL1Flag",
+                    "documentation": "Syntax element luma_weight_l1_flag for each reference in L1, present if slice_type % 5 == 1."
+                },
+                {
+                    "specification": "int[]? LumaWeightL1",
+                    "documentation": "Syntax element luma_weight_l1[i], present if luma_weight_l1_flag[i] is true."
+                },
+                {
+                    "specification": "int[]? LumaOffsetL1",
+                    "documentation": "Syntax element luma_offset_l1[i], present if luma_weight_l1_flag[i] is true."
+                },
+                {
+                    "specification": "bool[][]? ChromaWeightL1Flag",
+                    "documentation": "Syntax element chroma_weight_l1_flag[i] for each reference in L1, present if ChromaArrayType != 0 and slice_type % 5 == 1."
+                },
+                {
+                    "specification": "int[][]? ChromaWeightL1",
+                    "documentation": "Syntax element chroma_weight_l1[i][j], present if chroma_weight_l1_flag[i] is true."
+                },
+                {
+                    "specification": "int[][]? ChromaOffsetL1",
+                    "documentation": "Syntax element chroma_offset_l1[i][j], present if chroma_weight_l1_flag[i] is true."
+                }
+            ]
+        },
+        {
+            "className": "DecRefPicMarking",
+            "properties": [
+                {
+                    "specification": "bool? NoOutputOfPriorPicsFlag",
+                    "documentation": "Syntax element no_output_of_prior_pics_flag, present if IdrPicFlag is true."
+                },
+                {
+                    "specification": "bool? LongTermReferenceFlag",
+                    "documentation": "Syntax element long_term_reference_flag, present if IdrPicFlag is true."
+                },
+                {
+                    "specification": "bool? AdaptiveRefPicMarkingModeFlag",
+                    "documentation": "Syntax element adaptive_ref_pic_marking_mode_flag, present if IdrPicFlag is false."
+                },
+                {
+                    "specification": "int[]? MemoryManagementControlOperation",
+                    "documentation": "Syntax element memory_management_control_operation, present if adaptive_ref_pic_marking_mode_flag is true."
+                },
+                {
+                    "specification": "int[]? DifferenceOfPicNumsMinus1",
+                    "documentation": "Syntax element difference_of_pic_nums_minus1, present if memory_management_control_operation[i] == 1 or 3."
+                },
+                {
+                    "specification": "int[]? LongTermPicNum",
+                    "documentation": "Syntax element long_term_pic_num, present if memory_management_control_operation[i] == 2."
+                },
+                {
+                    "specification": "int[]? LongTermFrameIdx",
+                    "documentation": "Syntax element long_term_frame_idx, present if memory_management_control_operation[i] == 3 or 6."
+                },
+                {
+                    "specification": "int[]? MaxLongTermFrameIdxPlus1",
+                    "documentation": "Syntax element max_long_term_frame_idx_plus1, present if memory_management_control_operation[i] == 4."
+                }
+            ]
+        },
+        {
+            "className": "RefPicListMvcModification",
+            "properties": [
+                {
+                    "specification": "bool? RefPicListModificationFlagL0",
+                    "documentation": "Syntax element ref_pic_list_modification_flag_l0, present if slice_type % 5 != 2 and slice_type % 5 != 4."
+                },
+                {
+                    "specification": "int[]? ModificationOfPicNumsIdcL0",
+                    "documentation": "Syntax element modification_of_pic_nums_idc for L0, present if RefPicListModificationFlagL0 is true."
+                },
+                {
+                    "specification": "int[]? AbsDiffPicNumMinus1L0",
+                    "documentation": "Syntax element abs_diff_pic_num_minus1 for L0, present if modification_of_pic_nums_idc == 0 or 1."
+                },
+                {
+                    "specification": "int[]? LongTermPicNumL0",
+                    "documentation": "Syntax element long_term_pic_num for L0, present if modification_of_pic_nums_idc == 2."
+                },
+                {
+                    "specification": "int[]? AbsDiffViewIdxMinus1L0",
+                    "documentation": "Syntax element abs_diff_view_idx_minus1 for L0, present if modification_of_pic_nums_idc == 4 or 5."
+                },
+                {
+                    "specification": "bool? RefPicListModificationFlagL1",
+                    "documentation": "Syntax element ref_pic_list_modification_flag_l1, present if slice_type % 5 == 1."
+                },
+                {
+                    "specification": "int[]? ModificationOfPicNumsIdcL1",
+                    "documentation": "Syntax element modification_of_pic_nums_idc for L1, present if RefPicListModificationFlagL1 is true."
+                },
+                {
+                    "specification": "int[]? AbsDiffPicNumMinus1L1",
+                    "documentation": "Syntax element abs_diff_pic_num_minus1 for L1, present if modification_of_pic_nums_idc == 0 or 1."
+                },
+                {
+                    "specification": "int[]? LongTermPicNumL1",
+                    "documentation": "Syntax element long_term_pic_num for L1, present if modification_of_pic_nums_idc == 2."
+                },
+                {
+                    "specification": "int[]? AbsDiffViewIdxMinus1L1",
+                    "documentation": "Syntax element abs_diff_view_idx_minus1 for L1, present if modification_of_pic_nums_idc == 4 or 5."
+                }
+            ]
+        }
+    ]
+}

@@ -61,6 +61,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Subtitles", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ContentDotNet.Containers", "src\ContentDotNet.Containers\ContentDotNet.Containers.csproj", "{223396CF-BBFF-4065-8501-BAA80D7CAA87}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Misc", "Misc", "{35B251DB-8036-47C4-8691-025B19422D01}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TypeGenerator", "generators\Misc\TypeGenerator\TypeGenerator.csproj", "{6BBE1D03-4951-47FA-8AFF-CCF36ABD7B6A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -123,6 +127,10 @@ Global
 		{223396CF-BBFF-4065-8501-BAA80D7CAA87}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{223396CF-BBFF-4065-8501-BAA80D7CAA87}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{223396CF-BBFF-4065-8501-BAA80D7CAA87}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6BBE1D03-4951-47FA-8AFF-CCF36ABD7B6A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6BBE1D03-4951-47FA-8AFF-CCF36ABD7B6A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6BBE1D03-4951-47FA-8AFF-CCF36ABD7B6A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6BBE1D03-4951-47FA-8AFF-CCF36ABD7B6A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -144,6 +152,8 @@ Global
 		{36EE378C-D301-4694-8C83-17E4F9CA018C} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{0F38D523-BEFC-4A43-8329-AEAC04616280} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
 		{223396CF-BBFF-4065-8501-BAA80D7CAA87} = {94093CAF-9AE3-44C5-A92A-3A157B5B2F96}
+		{35B251DB-8036-47C4-8691-025B19422D01} = {E69A62AA-B5DA-48D1-B473-3565AB4371C0}
+		{6BBE1D03-4951-47FA-8AFF-CCF36ABD7B6A} = {35B251DB-8036-47C4-8691-025B19422D01}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {C6D32263-B2D0-4204-8A4E-BA2FFF41CF9B}

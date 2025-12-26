@@ -1,0 +1,146 @@
+﻿{
+    "fileName": "NalUnits.generated.cs",
+    "namespace": "ContentDotNet.Video.Codecs.H264.Models",
+    "types": [
+        {
+            "className": "NalUnit",
+            "properties": [
+                {
+                    "specification": "bool ForbiddenZeroBit",
+                    "documentation": "A bit that is always required to be 0."
+                },
+                {
+                    "specification": "byte NalRefIdc",
+                    "documentation": "NAL Reference Identifier Code"
+                },
+                {
+                    "specification": "byte NalUnitType",
+                    "documentation": "Type of this nal unit"
+                },
+                {
+                    "specification": "bool SvcExtensionFlag",
+                    "documentation": "A flag that, when 1, signifies that <see cref=\"NalUnitExtension\"/> is an SVC extension."
+                },
+                {
+                    "specification": "bool Avc3DExtensionFlag",
+                    "documentation": "A flag that, when 1, signifies that <see cref=\"NalUnitExtension\"/> is a 3D-AVC extension."
+                },
+                {
+                    "specification": "INalUnitHeaderExtension? NalUnitExtension",
+                    "documentation": "NAL unit extension."
+                },
+                {
+                    "specification": "Stream? Rbsp",
+                    "documentation": "The Raw Byte Sequence Payload (RBSP)."
+                }
+            ]
+        },
+        {
+            "className": "NalUnitSvcHeaderExtension",
+            "properties": [
+                {
+                    "specification": "bool IdrFlag",
+                    "documentation": "Syntax element idr_flag."
+                },
+                {
+                    "specification": "byte PriorityId",
+                    "documentation": "Syntax element priority_id."
+                },
+                {
+                    "specification": "bool NoInterLayerPredFlag",
+                    "documentation": "Syntax element no_inter_layer_pred_flag."
+                },
+                {
+                    "specification": "byte DependencyId",
+                    "documentation": "Syntax element dependency_id."
+                },
+                {
+                    "specification": "byte QualityId",
+                    "documentation": "Syntax element quality_id."
+                },
+                {
+                    "specification": "bool TemporalId",
+                    "documentation": "Syntax element temporal_id."
+                },
+                {
+                    "specification": "bool UseRefBasePicFlag",
+                    "documentation": "Syntax element use_ref_base_pic_flag."
+                },
+                {
+                    "specification": "bool DiscardableFlag",
+                    "documentation": "Syntax element discardable_flag."
+                },
+                {
+                    "specification": "bool OutputFlag",
+                    "documentation": "Syntax element output_flag."
+                },
+                {
+                    "specification": "byte ReservedThree2Bits",
+                    "documentation": "Syntax element reserved_three_2bits."
+                }
+            ]
+        },
+        {
+            "className": "NalUnitMvcHeaderExtension",
+            "properties": [
+                {
+                    "specification": "bool NonIdrFlag",
+                    "documentation": "Syntax element non_idr_flag."
+                },
+                {
+                    "specification": "byte PriorityId",
+                    "documentation": "Syntax element priority_id."
+                },
+                {
+                    "specification": "ushort ViewId",
+                    "documentation": "Syntax element view_id."
+                },
+                {
+                    "specification": "byte TemporalId",
+                    "documentation": "Syntax element temporal_id."
+                },
+                {
+                    "specification": "bool AnchorPicFlag",
+                    "documentation": "Syntax element anchor_pic_flag."
+                },
+                {
+                    "specification": "bool InterViewFlag",
+                    "documentation": "Syntax element inter_view_flag."
+                },
+                {
+                    "specification": "bool ReservedOneBit",
+                    "documentation": "Syntax element reserved_one_bit."
+                }
+            ]
+        },
+        {
+            "className": "NalUnit3DAvcHeaderExtension",
+            "properties": [
+                {
+                    "specification": "byte ViewIdx",
+                    "documentation": "Syntax element view_idx."
+                },
+                {
+                    "specification": "bool DepthFlag",
+                    "documentation": "Syntax element depth_flag."
+                },
+                {
+                    "specification": "bool NonIdrFlag",
+                    "documentation": "Syntax element non_idr_flag."
+                },
+                {
+                    "specification": "byte TemporalId",
+                    "documentation": "Syntax element temporal_id."
+                },
+                {
+                    "specification": "bool AnchorPicFlag",
+                    "documentation": "Syntax element anchor_pic_flag."
+                },
+                {
+                    "specification": "bool InterViewFlag",
+                    "documentation": "Syntax element inter_view_flag."
+                }
+            ]
+        }
+    ]
+}

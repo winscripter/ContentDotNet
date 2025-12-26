@@ -1,10 +1,4 @@
 ﻿# ContentDotNet
-> [!NOTE]  
-> Development is ongoing! We're currently refactoring some components into a separate library  
-> (which handles H.264 arithmetic coding). Once that's complete, ContentDotNet will integrate it  
-> and continue evolving with new features.  
-> Thanks for your patience and stay tuned! 🎉
-
 ContentDotNet is a cross-platform, open-source, managed framework for C# to read/write videos, audios, images and other multimedia. It allows reading them,
 creating them, and inspecting or editing their contents. It provides a user-friendly API. It does not use any native libraries; everything is C#.
 

@@ -12,29 +12,13 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="Codecs\H264\Extensions\SemanticVariableDerivative.tt">
-      <LastGenOutput>SemanticVariableDerivative.g.cs</LastGenOutput>
-      <Generator>TextTemplatingFileGenerator</Generator>
-    </None>
-  </ItemGroup>
-
-  <ItemGroup>
     <Service Include="{508349b6-6b84-4df5-91f0-309beebad82d}" />
   </ItemGroup>
 
   <ItemGroup>
-    <Compile Update="Codecs\H264\Components\Traits.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Codecs\H264\Extensions\SemanticVariableDerivative.g.cs">
-      <DependentUpon>SemanticVariableDerivative.tt</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-  </ItemGroup>
-
-  <ItemGroup>
+    <Folder Include="Codecs\H264\Internal\" />
+    <Folder Include="Codecs\H264\Abstractions\" />
+    <Folder Include="Codecs\H264\Enums\" />
     <Folder Include="Formats\Mkv\" />
   </ItemGroup>
 
